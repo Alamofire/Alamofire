@@ -1,6 +1,6 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/master/alamofire.png)
 
-[![Build Status](https://travis-ci.org/Alamofire/Alamofire.svg?branch=master)](https://travis-ci.org/Alamofire/Alamofire)
+[![Build Status](https://github.com/Alamofire/Alamofire/workflows/Alamofire%20CI/badge.svg?branch=master)](https://github.com/Alamofire/Alamofire/actions)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg)](https://img.shields.io/cocoapods/v/Alamofire.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Platform](https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat)](https://alamofire.github.io/Alamofire)
@@ -9,8 +9,6 @@
 [![Open Source Helpers](https://www.codetriage.com/alamofire/alamofire/badges/users.svg)](https://www.codetriage.com/alamofire/alamofire)
 
 Alamofire is an HTTP networking library written in Swift.
-
-**⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️** This documentation is out of date during the Alamofire 5 beta process.
 
 - [Features](#features)
 - [Component Libraries](#component-libraries)
@@ -24,7 +22,7 @@ Alamofire is an HTTP networking library written in Swift.
 	- **Large Data -** [Downloading Data to a File](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file), [Uploading Data to a Server](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#uploading-data-to-a-server)
 	- **Tools -** [Statistical Metrics](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#statistical-metrics), [cURL Command Output](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#curl-command-output)
 - [Advanced Usage](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md)
-	- **URL Session -** [Session Manager](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session-manager), [Session Delegate](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session-delegate), [Request](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request)
+	- **URL Session -** [Session Manager](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session), [Session Delegate](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#sessiondelegate), [Request](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request)
 	- **Routing -** [Routing Requests](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#routing-requests), [Adapting and Retrying Requests](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#adapting-and-retrying-requests)
 	- **Model Objects -** [Custom Response Serialization](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#custom-response-serialization)
 	- **Connection -** [Security](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#security), [Network Reachability](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#network-reachability)
@@ -37,7 +35,7 @@ Alamofire is an HTTP networking library written in Swift.
 ## Features
 
 - [x] Chainable Request / Response Methods
-- [x] URL / JSON / plist Parameter Encoding
+- [x] URL / JSON Parameter Encoding
 - [x] Upload File / Data / Stream / MultipartFormData
 - [x] Download File using Request or Resume Data
 - [x] Authentication with URLCredential
@@ -60,12 +58,12 @@ In order to keep Alamofire focused specifically on core networking implementatio
 ## Requirements
 
 - iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+
-- Xcode 10.2+
-- Swift 5+
+- Xcode 11+
+- Swift 5.1+
 
 ## Migration Guides
 
-- Alamofire 5.0 Migration Guide: To be written!
+- [Alamofire 5.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%205.0%20Migration%20Guide.md)
 - [Alamofire 4.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%204.0%20Migration%20Guide.md)
 - [Alamofire 3.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%203.0%20Migration%20Guide.md)
 - [Alamofire 2.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%202.0%20Migration%20Guide.md)
@@ -77,7 +75,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 - If you'd like to **discuss Alamofire best practices**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
 - If you'd like to **discuss a feature request**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire). 
 - If you **found a bug**, open an issue here on GitHub and follow the guide. The more detail the better!
-- If you **want to contribute**, submit a pull request.
+- If you **want to contribute**, submit a pull request!
 
 ## Installation
 
@@ -86,7 +84,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'Alamofire', '~> 5.0.0-rc.3'
+pod 'Alamofire', '~> 5.1'
 ```
 
 ### Carthage
@@ -94,7 +92,7 @@ pod 'Alamofire', '~> 5.0.0-rc.3'
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" "5.0.0-rc.3"
+github "Alamofire/Alamofire" ~> 5.1
 ```
 
 ### Swift Package Manager
@@ -105,7 +103,7 @@ Once you have your Swift package set up, adding Alamofire as a dependency is as 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0-rc.3")
+    .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.1.0"))
 ]
 ```
 
@@ -154,6 +152,7 @@ The following radars have some effect on the current implementation of Alamofire
 - [`rdar://21349340`](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
 - `rdar://26870455` - Background URL Session Configurations do not work in the simulator
 - `rdar://26849668` - Some URLProtocol APIs do not properly handle `URLRequest`
+- `FB7624529` - `urlSession(_:task:didFinishCollecting:)` never called on watchOS
 
 ## Resolved Radars
 
@@ -163,7 +162,11 @@ The following radars have been resolved over time after being filed against the 
   - (Resolved): 9/1/17 in Xcode 9 beta 6.
 - [`rdar://36082113`](http://openradar.appspot.com/radar?id=4942308441063424) - `URLSessionTaskMetrics` failing to link on watchOS 3.0+
   - (Resolved): Just add `CFNetwork` to your linked frameworks.
-  
+
+## Workarounds
+
+- Collection of `URLSessionTaskMetrics` is currently disabled on watchOS due to `FB7624529`.
+
 ## FAQ
 
 ### What's the origin of the name Alamofire?
@@ -181,7 +184,7 @@ If you believe you have identified a security vulnerability with Alamofire, you 
 ## Donations
 
 The [ASF](https://github.com/Alamofire/Foundation#members) is looking to raise money to officially stay registered as a federal non-profit organization.
-Registering will allow us members to gain some legal protections and also allow us to put donations to use, tax free.
+Registering will allow us members to gain some legal protections and also allow us to put donations to use, tax-free.
 Donating to the ASF will enable us to:
 
 - Pay our yearly legal fees to keep the non-profit in good status
@@ -190,7 +193,7 @@ Donating to the ASF will enable us to:
 - Potentially fund developers to work on one of our projects full-time
 
 The community adoption of the ASF libraries has been amazing.
-We are greatly humbled by your enthusiasm around the projects, and want to continue to do everything we can to move the needle forward.
+We are greatly humbled by your enthusiasm around the projects and want to continue to do everything we can to move the needle forward.
 With your continued support, the ASF will be able to improve its reach and also provide better legal safety for the core members.
 If you use any of our libraries for work, see if your employers would be interested in donating.
 Any amount you can donate today to help us reach our goal would be greatly appreciated.

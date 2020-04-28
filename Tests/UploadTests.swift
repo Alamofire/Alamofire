@@ -26,7 +26,8 @@ import Alamofire
 import Foundation
 import XCTest
 
-class UploadFileInitializationTestCase: BaseTestCase {
+#if !SWIFT_PACKAGE
+final class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
         // Given
         let urlString = "https://httpbin.org/post"
@@ -72,6 +73,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         XCTAssertNotNil(request.response, "response should not be nil")
     }
 }
+#endif
 
 // MARK: -
 
@@ -122,7 +124,8 @@ class UploadDataInitializationTestCase: BaseTestCase {
 
 // MARK: -
 
-class UploadStreamInitializationTestCase: BaseTestCase {
+#if !SWIFT_PACKAGE
+final class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndStream() {
         // Given
         let urlString = "https://httpbin.org/post"
@@ -170,6 +173,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         XCTAssertNotNil(request.response, "response should not be nil, tasks: \(request.tasks)")
     }
 }
+#endif
 
 // MARK: -
 
@@ -200,7 +204,7 @@ class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequestWithProgress() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 100)
+        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 300)
         let data = Data(string.utf8)
 
         let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")
@@ -515,7 +519,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
-#if os(macOS)
+    #if os(macOS)
     func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
         let manager: Session = {
@@ -564,7 +568,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
     }
-#endif
+    #endif
 
     // MARK: Combined Test Execution
 
@@ -634,6 +638,37 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         } else {
             XCTFail("last item in downloadProgressValues should not be nil")
         }
+    }
+}
+
+final class UploadRetryTests: BaseTestCase {
+    func testThatDataUploadRetriesCorrectly() {
+        // Given
+        let request = URLRequest.makeHTTPBinRequest(path: "delay/1",
+                                                    method: .post,
+                                                    headers: [.contentType("text/plain")],
+                                                    timeout: 0.1)
+        let retrier = InspectorInterceptor(SingleRetrier())
+        let didRetry = expectation(description: "request did retry")
+        retrier.onRetry = { _ in didRetry.fulfill() }
+        let session = Session(interceptor: retrier)
+        let body = "body"
+        let data = Data(body.utf8)
+        var response: AFDataResponse<HTTPBinResponse>?
+        let completion = expectation(description: "upload should complete")
+
+        // When
+        session.upload(data, with: request).responseDecodable(of: HTTPBinResponse.self) {
+            response = $0
+            completion.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(retrier.retryCalledCount, 1)
+        XCTAssertTrue(response?.result.isSuccess == true)
+        XCTAssertEqual(response?.value?.data, body)
     }
 }
 
@@ -715,7 +750,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
 
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
-                                     with: URLRequest.makeHTTPBinRequest(path: "post", method: .post)).response { _ in
+                                     with: URLRequest.makeHTTPBinRequest(path: "delay/5", method: .post)).response { _ in
             responseHandler.fulfill()
         }
 

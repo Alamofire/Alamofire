@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (98% documented)
+         (97% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -82,6 +82,21 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest.html">DataStreamRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Event.html">– Event</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Completion.html">– Completion</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/CancellationToken.html">– CancellationToken</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a>
@@ -194,11 +209,16 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <a class="nav-group-name-link" href="../Global%20Variables.html">Global Variables</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/AF.html">AF</a>
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:9Alamofire2AFAA7SessionCvp">AF</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
               </li>
@@ -235,6 +255,9 @@
                 <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/CharacterSet.html">CharacterSet</a>
               </li>
               <li class="nav-group-task">
@@ -244,7 +267,25 @@
                 <a class="nav-group-task-link" href="../Extensions/HTTPURLResponse.html">HTTPURLResponse</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation11JSONDecoderC">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Notification.html">Notification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@OSStatus">OSStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecPolicyRef">SecPolicy</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecTrustRef">SecTrust</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@E@SecTrustResultType">SecTrustResultType</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
@@ -280,6 +321,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a>
@@ -339,6 +383,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
@@ -418,11 +465,12 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>HTTPHeader</h1>
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPHeader</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeader</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
 
                 </div>
               </div>
@@ -494,7 +542,7 @@
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV4name5valueACSS_SStcfc"></a>
                     <a name="//apple_ref/swift/Method/init(name:value:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV4name5valueACSS_SStcfc">init(name:value:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV4name5valueACSS_SStcfc">init(name:<wbr>value:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -553,9 +601,11 @@
               <div class="task-name-container">
                 <a name="/HTTPHeader"></a>
                 <a name="//apple_ref/swift/Section/HTTPHeader" class="dashAnchor"></a>
-                <a href="#/HTTPHeader">
-                  <h3 class="section-name">HTTPHeader</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/HTTPHeader"></a>
+                  <h3 class="section-name"><p>HTTPHeader</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -584,23 +634,12 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/HTTPHeader2"></a>
-                <a name="//apple_ref/swift/Section/HTTPHeader" class="dashAnchor"></a>
-                <a href="#/HTTPHeader2">
-                  <h3 class="section-name">HTTPHeader</h3>
-                </a>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV6acceptyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/accept(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV6acceptyACSSFZ">accept(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV6acceptyACSSFZ">accept(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -650,7 +689,7 @@
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV13acceptCharsetyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/acceptCharset(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13acceptCharsetyACSSFZ">acceptCharset(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13acceptCharsetyACSSFZ">acceptCharset(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -700,7 +739,7 @@
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV14acceptLanguageyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/acceptLanguage(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV14acceptLanguageyACSSFZ">acceptLanguage(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV14acceptLanguageyACSSFZ">acceptLanguage(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -753,7 +792,7 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV14acceptEncodingyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/acceptEncoding(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV14acceptEncodingyACSSFZ">acceptEncoding(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV14acceptEncodingyACSSFZ">acceptEncoding(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -806,7 +845,7 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV13authorization8username8passwordACSS_SStFZ"></a>
                     <a name="//apple_ref/swift/Method/authorization(username:password:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13authorization8username8passwordACSS_SStFZ">authorization(username:password:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13authorization8username8passwordACSS_SStFZ">authorization(username:<wbr>password:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -868,7 +907,7 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV13authorization11bearerTokenACSS_tFZ"></a>
                     <a name="//apple_ref/swift/Method/authorization(bearerToken:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13authorization11bearerTokenACSS_tFZ">authorization(bearerToken:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13authorization11bearerTokenACSS_tFZ">authorization(bearerToken:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -918,7 +957,7 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV13authorizationyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/authorization(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13authorizationyACSSFZ">authorization(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV13authorizationyACSSFZ">authorization(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -972,7 +1011,7 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV18contentDispositionyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/contentDisposition(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV18contentDispositionyACSSFZ">contentDisposition(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV18contentDispositionyACSSFZ">contentDisposition(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1022,7 +1061,7 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV11contentTypeyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/contentType(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV11contentTypeyACSSFZ">contentType(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV11contentTypeyACSSFZ">contentType(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1075,7 +1114,7 @@ set this value.</p>
                     <code>
                     <a name="/s:9Alamofire10HTTPHeaderV9userAgentyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/userAgent(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV9userAgentyACSSFZ">userAgent(_:)</a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV9userAgentyACSSFZ">userAgent(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1126,9 +1165,11 @@ set this value.</p>
               <div class="task-name-container">
                 <a name="/Defaults"></a>
                 <a name="//apple_ref/swift/Section/Defaults" class="dashAnchor"></a>
-                <a href="#/Defaults">
-                  <h3 class="section-name">Defaults</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Defaults"></a>
+                  <h3 class="section-name"><p>Defaults</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1230,8 +1271,8 @@ versions.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-10-26)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-04-04)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

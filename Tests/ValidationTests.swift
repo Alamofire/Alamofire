@@ -354,24 +354,24 @@ final class ContentTypeValidationTestCase: BaseTestCase {
 
         class MockDataRequest: DataRequest {
             override var response: HTTPURLResponse? {
-                return MockHTTPURLResponse(url: request!.url!,
-                                           statusCode: 204,
-                                           httpVersion: "HTTP/1.1",
-                                           headerFields: nil)
+                MockHTTPURLResponse(url: request!.url!,
+                                    statusCode: 204,
+                                    httpVersion: "HTTP/1.1",
+                                    headerFields: nil)
             }
         }
 
         class MockDownloadRequest: DownloadRequest {
             override var response: HTTPURLResponse? {
-                return MockHTTPURLResponse(url: request!.url!,
-                                           statusCode: 204,
-                                           httpVersion: "HTTP/1.1",
-                                           headerFields: nil)
+                MockHTTPURLResponse(url: request!.url!,
+                                    statusCode: 204,
+                                    httpVersion: "HTTP/1.1",
+                                    headerFields: nil)
             }
         }
 
         class MockHTTPURLResponse: HTTPURLResponse {
-            override var mimeType: String? { return nil }
+            override var mimeType: String? { nil }
         }
 
         let manager: Session = {
@@ -721,20 +721,20 @@ private enum ValidationError: Error {
 
 extension DataRequest {
     func validateDataExists() -> Self {
-        return validate { _, _, data in
+        validate { _, _, data in
             guard data != nil else { return .failure(ValidationError.missingData) }
             return .success(Void())
         }
     }
 
     func validate(with error: Error) -> Self {
-        return validate { _, _, _ in .failure(error) }
+        validate { _, _, _ in .failure(error) }
     }
 }
 
 extension DownloadRequest {
     func validateDataExists() -> Self {
-        return validate { _, _, _ in
+        validate { _, _, _ in
             let fileURL = self.fileURL
 
             guard let validFileURL = fileURL else { return .failure(ValidationError.missingFile) }
@@ -749,7 +749,7 @@ extension DownloadRequest {
     }
 
     func validate(with error: Error) -> Self {
-        return validate { _, _, _ in .failure(error) }
+        validate { _, _, _ in .failure(error) }
     }
 }
 

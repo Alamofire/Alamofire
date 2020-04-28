@@ -1,52 +1,56 @@
-- [Using Alamofire](#using-alamofire)
-  * [Introduction](#introduction)
-      - [Aside: The `AF` Namespace](#aside--the--af--namespace)
-  * [Making Requests](#making-requests)
-    + [HTTP Methods](#http-methods)
-    + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
-      - [`URLEncodedFormParameterEncoder`](#-urlencodedformparameterencoder-)
-        * [GET Request With URL-Encoded Parameters](#get-request-with-url-encoded-parameters)
-        * [POST Request With URL-Encoded Parameters](#post-request-with-url-encoded-parameters)
-        * [Configuring the Sorting of Encoded Parameters](#configuring-the-sorting-of-encoded-parameters)
-        * [Configuring the Encoding of `Array` Parameters](#configuring-the-encoding-of--array--parameters)
-        * [Configuring the Encoding of `Bool` Parameters](#configuring-the-encoding-of--bool--parameters)
-        * [Configuring the Encoding of `Data` Parameters](#configuring-the-encoding-of--data--parameters)
-        * [Configuring the Encoding of `Date` Parameters](#configuring-the-encoding-of--date--parameters)
-        * [Configuring the Encoding of Coding Keys](#configuring-the-encoding-of-coding-keys)
-        * [Configuring the Encoding of Spaces](#configuring-the-encoding-of-spaces)
-      - [`JSONParameterEncoder`](#-jsonparameterencoder-)
-        * [POST Request with JSON-Encoded Parameters](#post-request-with-json-encoded-parameters)
-        * [Configuring a Custom `JSONEncoder`](#configuring-a-custom--jsonencoder-)
-        * [Manual Parameter Encoding of a `URLRequest`](#manual-parameter-encoding-of-a--urlrequest-)
-    + [HTTP Headers](#http-headers)
-    + [Response Validation](#response-validation)
-      - [Automatic Validation](#automatic-validation)
-      - [Manual Validation](#manual-validation)
-    + [Response Handling](#response-handling)
-      - [Response Handler](#response-handler)
-      - [Response Data Handler](#response-data-handler)
-      - [Response String Handler](#response-string-handler)
-      - [Response JSON Handler](#response-json-handler)
-      - [Response `Decodable` Handler](#response--decodable--handler)
-      - [Chained Response Handlers](#chained-response-handlers)
-      - [Response Handler Queue](#response-handler-queue)
-    + [Response Caching](#response-caching)
-    + [Authentication](#authentication)
-      - [HTTP Basic Authentication](#http-basic-authentication)
-      - [Authentication with `URLCredential`](#authentication-with--urlcredential-)
-      - [Manual Authentication](#manual-authentication)
-    + [Downloading Data to a File](#downloading-data-to-a-file)
-      - [Download File Destination](#download-file-destination)
-      - [Download Progress](#download-progress)
-      - [Canceling and Resuming a Download](#canceling-and-resuming-a-download)
-    + [Uploading Data to a Server](#uploading-data-to-a-server)
-      - [Uploading Data](#uploading-data)
-      - [Uploading a File](#uploading-a-file)
-      - [Uploading Multipart Form Data](#uploading-multipart-form-data)
-      - [Upload Progress](#upload-progress)
-    + [Statistical Metrics](#statistical-metrics)
-      - [`URLSessionTaskMetrics`](#-urlsessiontaskmetrics-)
-    + [cURL Command Output](#curl-command-output)
+* [Introduction](#introduction)
+    - [Aside: The `AF` Namespace](#aside-the-af-namespace-and-reference)
+* [Making Requests](#making-requests)
+  + [HTTP Methods](#http-methods)
+  + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
+    - [`URLEncodedFormParameterEncoder`](#urlencodedformparameterencoder)
+      * [GET Request With URL-Encoded Parameters](#get-request-with-url-encoded-parameters)
+      * [POST Request With URL-Encoded Parameters](#post-request-with-url-encoded-parameters)
+      * [Configuring the Sorting of Encoded Parameters](#configuring-the-sorting-of-encoded-parameters)
+      * [Configuring the Encoding of `Array` Parameters](#configuring-the-encoding-of-array-parameters)
+      * [Configuring the Encoding of `Bool` Parameters](#configuring-the-encoding-of-bool-parameters)
+      * [Configuring the Encoding of `Data` Parameters](#configuring-the-encoding-of-data-parameters)
+      * [Configuring the Encoding of `Date` Parameters](#configuring-the-encoding-of-date-parameters)
+      * [Configuring the Encoding of Coding Keys](#configuring-the-encoding-of-coding-keys)
+      * [Configuring the Encoding of Spaces](#configuring-the-encoding-of-spaces)
+    - [`JSONParameterEncoder`](#jsonparameterencoder)
+      * [POST Request with JSON-Encoded Parameters](#post-request-with-json-encoded-parameters)
+      * [Configuring a Custom `JSONEncoder`](#configuring-a-custom-jsonencoder)
+      * [Manual Parameter Encoding of a `URLRequest`](#manual-parameter-encoding-of-a-urlrequest)
+  + [HTTP Headers](#http-headers)
+  + [Response Validation](#response-validation)
+    - [Automatic Validation](#automatic-validation)
+    - [Manual Validation](#manual-validation)
+  + [Response Handling](#response-handling)
+    - [Response Handler](#response-handler)
+    - [Response Data Handler](#response-data-handler)
+    - [Response String Handler](#response-string-handler)
+    - [Response JSON Handler](#response-json-handler)
+    - [Response `Decodable` Handler](#response-decodable-handler)
+    - [Chained Response Handlers](#chained-response-handlers)
+    - [Response Handler Queue](#response-handler-queue)
+  + [Response Caching](#response-caching)
+  + [Authentication](#authentication)
+    - [HTTP Basic Authentication](#http-basic-authentication)
+    - [Authentication with `URLCredential`](#authentication-with-urlcredential)
+    - [Manual Authentication](#manual-authentication)
+  + [Downloading Data to a File](#downloading-data-to-a-file)
+    - [Download File Destination](#download-file-destination)
+    - [Download Progress](#download-progress)
+    - [Canceling and Resuming a Download](#canceling-and-resuming-a-download)
+  + [Uploading Data to a Server](#uploading-data-to-a-server)
+    - [Uploading Data](#uploading-data)
+    - [Uploading a File](#uploading-a-file)
+    - [Uploading Multipart Form Data](#uploading-multipart-form-data)
+    - [Upload Progress](#upload-progress)
+  + [Streaming Data from a Server](#streaming-data-from-a-server)
+    - [Streaming `Data`](#streaming-data)
+    - [Streaming `String`s](#streaming-strings)
+    - [Streaming `Decodable` Values](#streaming-decodable-values)
+    - [Producing an `InputStream`](#producing-an-inputstream)
+  + [Statistical Metrics](#statistical-metrics)
+    - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
+  + [cURL Command Output](#curl-command-output)
 
 # Using Alamofire
 
@@ -55,8 +59,8 @@ Alamofire provides an elegant and composable interface to HTTP network requests.
 
 Additionally, networking in Alamofire (and the URL Loading System in general) is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
-#### Aside: The `AF` Namespace
-Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enum, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use an `af` property extension to separate the functionality Alamofire adds from other extensions.
+#### Aside: The `AF` Namespace and Reference
+Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been removed and instead the `AF` global is a reference to `Session.default`. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used and not having to duplicate the `Session` API globally. Similarly, types extended by Alamofire will use an `af` property extension to separate the functionality Alamofire adds from other extensions.
 
 ## Making Requests
 Alamofire provides a variety of convenience methods for making HTTP requests. At the simplest, just provide a `String` that can be converted into a `URL`:
@@ -147,9 +151,29 @@ extension HTTPMethod {
 }
 ```
 
+### Setting Other `URLRequest` Properties
+
+Alamofire's request creation methods offer the most common parameters for customization but sometimes those just aren't enough. The `URLRequest`s created from the passed values can be modified by using a `RequestModifier` closure when creating requests. For example, to set the `URLRequest`'s `timeoutInterval` to 5 seconds, modify the request in the closure.
+
+```swift
+AF.request("https://httpbin.org/get", requestModifier: { $0.timeoutInterval = 5 }).response(...)
+```
+
+`RequestModifier`s also work with trailing closure syntax.
+
+```swift
+AF.request("https://httpbin.org/get") { urlRequest in
+    urlRequest.timeoutInterval = 5
+    urlRequest.allowsConstrainedNetworkAccess = false
+}
+.response(...)
+```
+
+`RequestModifier`s only apply to request created using methods taking a `URL` and other individual components, not to values created directly from `URLRequestConvertible` values, as those values should be able to set all parameters themselves. Additionally, adoption of `URLRequestConvertible` is recommended once *most* requests start needing to be modified during creation. You can read more in our [Advanced Usage documentation](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#making-requests).
+
 ### Request Parameters and Parameter Encoders
 
-Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
+Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
 
 ```swift
 struct Login: Encodable {
@@ -560,7 +584,7 @@ Alamofire.request("https://httpbin.org/get")
 
 #### Response Handler Queue
 
-Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
+Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can be passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
@@ -709,10 +733,10 @@ AF.download("https://httpbin.org/image/png")
 The `downloadProgress` API can also take a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
 
 ```swift
-let utilityQueue = DispatchQueue.global(qos: .utility)
+let progressQueue = DispatchQueue(label: "com.alamofire.progressQueue", qos: .utility)
 
 AF.download("https://httpbin.org/image/png")
-    .downloadProgress(queue: utilityQueue) { progress in
+    .downloadProgress(queue: progressQueue) { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
     .responseData { response in
@@ -760,7 +784,7 @@ When sending relatively small amounts of data to a server using JSON or URL enco
 ```swift
 let data = Data("data".utf8)
 
-AF.upload(data, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(data, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
     debugPrint(response)
 }
 ```
@@ -770,7 +794,7 @@ AF.upload(data, to: "https://httpbin.org/post").responseJSON { response in
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-AF.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(fileURL, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
     debugPrint(response)
 }
 ```
@@ -782,7 +806,7 @@ AF.upload(multipartFormData: { multipartFormData in
     multipartFormData.append(Data("one".utf8), withName: "one")
     multipartFormData.append(Data("two".utf8), withName: "two")
 }, to: "https://httpbin.org/post")
-    .responseJSON { response in
+    .responseDecodable(of: HTTPBinResponse.self) { response in
         debugPrint(response)
     }
 ```
@@ -801,9 +825,189 @@ AF.upload(fileURL, to: "https://httpbin.org/post")
     .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
-    .responseJSON { response in
+    .responseDecodable(of: HTTPBinResponse.self) { response in
         debugPrint(response)
     }
+```
+
+### Streaming Data from a Server
+
+Large downloads or long lasting server connections which receive data over time may be better served by streaming rather than accumulating `Data` as it arrives. Alamofire offers the `DataStreamRequest` type and associated APIs to handle this usage. Although it offers much of the same API as other `Request`s, there are several key differences. Most notably, `DataStreamRequest` never accumulates `Data` in memory or saves it to disk. Instead, added `responseStream` closures are repeatedly called as `Data` arrives. The same closures are called again when the connection has completed or received an error.
+
+Every `Handler` closure captures a `Stream` value, which contains both the `Event` being processed as well as a `CancellationToken`, which can be used to cancel the request.
+
+```swift
+public struct Stream<Success, Failure: Error> {
+    /// Latest `Event` from the stream.
+    public let event: Event<Success, Failure>
+    /// Token used to cancel the stream.
+    public let token: CancellationToken
+    /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
+    public func cancel() {
+        token.cancel()
+    }
+}
+```
+
+An `Event` is an `enum` representing two possible stream states.
+
+```swift
+public enum Event<Success, Failure: Error> {
+    /// Output produced every time the instance receives additional `Data`. The associated value contains the
+    /// `Result` of processing the incoming `Data`.
+    case stream(Result<Success, Failure>)
+    /// Output produced when the instance has completed, whether due to stream end, cancellation, or an error.
+    /// Associated `Completion` value contains the final state.
+    case complete(Completion)
+}
+```
+
+When complete, the `Completion` value will contain the state of the `DataStreamRequest` when the stream ended.
+
+```swift
+public struct Completion {
+    /// Last `URLRequest` issued by the instance.
+    public let request: URLRequest?
+    /// Last `HTTPURLResponse` received by the instance.
+    public let response: HTTPURLResponse?
+    /// Last `URLSessionTaskMetrics` produced for the instance.
+    public let metrics: URLSessionTaskMetrics?
+    /// `AFError` produced for the instance, if any.
+    public let error: AFError?
+}
+```
+
+#### Streaming `Data`
+
+Streaming `Data` from a server can be accomplished like other Alamofire requests, but with a `Handler` closure added.
+
+```swift
+func responseStream(on queue: DispatchQueue = .main, stream: @escaping Handler<Data, Never>) -> Self
+```
+
+The provided `queue` is where the `Handler` closure will be called.
+
+```swift
+AF.streamRequest(...).responseStream { stream in
+    switch stream.event {
+    case let .stream(result):
+        switch result {
+        case let .success(data):
+            print(data)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+> Handling the `.failure` case of the `Result` in the example above is unnecessary, as receiving `Data` can never fail.
+
+#### Streaming `String`s
+
+Like `Data` streaming, `String`s can be streamed by adding a `Handler`.
+
+```swift
+func responseStreamString(on queue: DispatchQueue = .main,
+                          stream: @escaping StreamHandler<String, Never>) -> Self
+```
+
+`String` values are decoded as `UTF8` and the decoding cannot fail.
+
+```swift
+AF.streamRequest(...).responseStreamString { stream in
+    switch stream.event {
+    case let .stream(result):
+        switch result {
+        case let .success(string):
+            print(string)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+#### Streaming `Decodable` Values
+
+Incoming stream `Data` values can be turned into any `Decodable` value using `responseStreamDecodable`.
+
+```swift
+func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
+                                           on queue: DispatchQueue = .main,
+                                           using decoder: DataDecoder = JSONDecoder(),
+                                           preprocessor: DataPreprocessor = PassthroughPreprocessor(),
+                                           stream: @escaping Handler<T, AFError>) -> Self
+```
+
+Decoding failures do not end the stream, but instead produce an `AFError` in the `Result` of the `Output`.
+
+```swift
+AF.streamRequest(...).responseStreamDecodable(of: SomeType.self) { stream in
+    switch stream.event {
+    case let .stream(result):
+        switch result {
+        case let .success(value):
+            print(value)
+        case let .failure(error):
+            print(error)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+#### Producing an `InputStream`
+
+In addition to handling incoming `Data` using `StreamHandler` closures, `DataStreamRequest` can produce an `InputStream` value which can be used to read bytes as they arrive.
+
+```swift
+func asInputStream(bufferSize: Int = 1024) -> InputStream
+```
+
+`InputStream`s produced in this manner must have `open()` called before reading can start, or be passed to an API that opens the stream automatically. Once returned from this method, it's the caller's responsibility to keep the `InputStream` value alive and to call `close()` after reading is complete.
+
+```swift
+let inputStream = AF.streamRequest(...)
+    .responseStream { output in
+        ...
+    }
+    .asInputStream()
+```
+
+#### Cancellation
+
+`DataStreamRequest`s can be cancelled in four ways. First, like all other Alamofire `Request`s, `DataStreamRequest` can have `cancel()` called, canceling the underlying task and completing the stream.
+
+```swift
+let request = AF.streamRequest(...).responseStream(...)
+...
+request.cancel()
+```
+
+Second, `DataStreamRequest`s can be cancelled automatically when their `DataStreamSerializer` encounters and error. This behavior is disabled by default and can be enabled by passing the `automaticallyCancelOnStreamError` parameter when creating the request.
+
+```swift
+AF.streamRequest(..., automaticallyCancelOnStreamError: true).responseStream(...)
+```
+
+Third, `DataStreamRequest`s will be cancelled if an error is thrown out of the `Handler` closure. This error is then stored on the request and is available in the `Completion` value.
+
+```swift
+AF.streamRequest(...).responseStream { stream in
+    // Process stream.
+    throw SomeError() // Cancels request.
+}
+```
+
+Finally, `DataStreamRequest`s can be cancelled by using the `Stream` value's `cancel()` method. 
+
+```swift
+AF.streamRequest(...).responseStream { stream in 
+    // Decide to cancel request.
+    stream.cancel()
+}
 ```
 
 ### Statistical Metrics
@@ -817,6 +1021,8 @@ AF.request("https://httpbin.org/get").responseJSON { response in
     print(response.metrics)
 }
 ```
+
+> Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.
 
 ### cURL Command Output
 

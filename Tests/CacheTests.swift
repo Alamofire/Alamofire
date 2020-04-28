@@ -56,12 +56,12 @@ class CacheTestCase: BaseTestCase {
         static let noStore = "no-store"
 
         static var allValues: [String] {
-            return [CacheControl.publicControl,
-                    CacheControl.privateControl,
-                    CacheControl.maxAgeNonExpired,
-                    CacheControl.maxAgeExpired,
-                    CacheControl.noCache,
-                    CacheControl.noStore]
+            [CacheControl.publicControl,
+             CacheControl.privateControl,
+             CacheControl.maxAgeNonExpired,
+             CacheControl.maxAgeExpired,
+             CacheControl.noCache,
+             CacheControl.noStore]
         }
     }
 
@@ -83,17 +83,11 @@ class CacheTestCase: BaseTestCase {
 
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
-            // swiftformat:disable indent
-            #if swift(>=5.1)
-            if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
-                return URLCache(memoryCapacity: capacity, diskCapacity: capacity)
-            } else {
-                return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
-            }
+            #if targetEnvironment(macCatalyst)
+            return URLCache(memoryCapacity: capacity, diskCapacity: capacity)
             #else
             return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
             #endif
-            // swiftformat:enable indent
         }()
 
         manager = {

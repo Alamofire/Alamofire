@@ -73,9 +73,9 @@ open class ServerTrustManager {
 
 /// A protocol describing the API used to evaluate server trusts.
 public protocol ServerTrustEvaluating {
-#if os(Linux)
-// Implement this once Linux has API for evaluating server trusts.
-#else
+    #if os(Linux)
+    // Implement this once Linux has API for evaluating server trusts.
+    #else
     /// Evaluates the given `SecTrust` value for the given `host`.
     ///
     /// - Parameters:
@@ -84,7 +84,7 @@ public protocol ServerTrustEvaluating {
     ///
     /// - Returns: A `Bool` indicating whether the evaluator considers the `SecTrust` value valid for `host`.
     func evaluate(_ trust: SecTrust, forHost host: String) throws
-#endif
+    #endif
 }
 
 // MARK: - Server Trust Evaluators
@@ -345,9 +345,9 @@ public final class DisabledEvaluator: ServerTrustEvaluating {
 // MARK: - Extensions
 
 public extension Array where Element == ServerTrustEvaluating {
-#if os(Linux)
-// Add this same convenience method for Linux.
-#else
+    #if os(Linux)
+    // Add this same convenience method for Linux.
+    #else
     /// Evaluates the given `SecTrust` value for the given `host`.
     ///
     /// - Parameters:
@@ -360,14 +360,14 @@ public extension Array where Element == ServerTrustEvaluating {
             try evaluator.evaluate(trust, forHost: host)
         }
     }
-#endif
+    #endif
 }
 
 extension Bundle: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType: Bundle {
     /// Returns all valid `cer`, `crt`, and `der` certificates in the bundle.
     var certificates: [SecCertificate] {
-        return paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).compactMap { path in
+        paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).compactMap { path in
             guard
                 let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
                 let certificate = SecCertificateCreateWithData(nil, certificateData) else { return nil }
@@ -378,7 +378,7 @@ public extension AlamofireExtension where ExtendedType: Bundle {
 
     /// Returns all public keys for the valid certificates in the bundle.
     var publicKeys: [SecKey] {
-        return certificates.af.publicKeys
+        certificates.af.publicKeys
     }
 
     /// Returns all pathnames for the resources identified by the provided file extensions.
@@ -387,7 +387,7 @@ public extension AlamofireExtension where ExtendedType: Bundle {
     ///
     /// - Returns:         All pathnames for the given filename extensions.
     func paths(forResourcesOfTypes types: [String]) -> [String] {
-        return Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
+        Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
     }
 }
 
@@ -489,19 +489,19 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
 
     /// The public keys contained in `self`.
     var publicKeys: [SecKey] {
-        return certificates.af.publicKeys
+        certificates.af.publicKeys
     }
 
     /// The `SecCertificate`s contained i `self`.
     var certificates: [SecCertificate] {
-        return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
+        (0..<SecTrustGetCertificateCount(type)).compactMap { index in
             SecTrustGetCertificateAtIndex(type, index)
         }
     }
 
     /// The `Data` values for all certificates contained in `self`.
     var certificateData: [Data] {
-        return certificates.af.data
+        certificates.af.data
     }
 
     /// Validates `self` after applying `SecPolicy.af.default`. This evaluation does not validate the hostname.
@@ -545,7 +545,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
     ///
     /// - Returns:            The `SecPolicy`.
     static func hostname(_ hostname: String) -> SecPolicy {
-        return SecPolicyCreateSSL(true, hostname as CFString)
+        SecPolicyCreateSSL(true, hostname as CFString)
     }
 
     /// Creates a `SecPolicy` which checks the revocation of certificates.
@@ -568,12 +568,12 @@ extension Array: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == [SecCertificate] {
     /// All `Data` values for the contained `SecCertificate`s.
     var data: [Data] {
-        return type.map { SecCertificateCopyData($0) as Data }
+        type.map { SecCertificateCopyData($0) as Data }
     }
 
     /// All public `SecKey` values for the contained `SecCertificate`s.
     var publicKeys: [SecKey] {
-        return type.compactMap { $0.af.publicKey }
+        type.compactMap { $0.af.publicKey }
     }
 }
 
@@ -594,13 +594,13 @@ public extension AlamofireExtension where ExtendedType == SecCertificate {
 extension OSStatus: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == OSStatus {
     /// Returns whether `self` is `errSecSuccess`.
-    var isSuccess: Bool { return type == errSecSuccess }
+    var isSuccess: Bool { type == errSecSuccess }
 }
 
 extension SecTrustResultType: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == SecTrustResultType {
     /// Returns whether `self is `.unspecified` or `.proceed`.
     var isSuccess: Bool {
-        return (type == .unspecified || type == .proceed)
+        (type == .unspecified || type == .proceed)
     }
 }
