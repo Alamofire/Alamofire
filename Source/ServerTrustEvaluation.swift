@@ -480,7 +480,7 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
         }
 
         // Reenable system anchor certificates.
-        let systemStatus = SecTrustSetAnchorCertificatesOnly(type, true)
+        let systemStatus = SecTrustSetAnchorCertificatesOnly(type, false)
         guard systemStatus.af.isSuccess else {
             throw AFError.serverTrustEvaluationFailed(reason: .settingAnchorCertificatesFailed(status: systemStatus,
                                                                                                certificates: certificates))
