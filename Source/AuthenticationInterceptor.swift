@@ -35,18 +35,18 @@ public protocol AuthenticationCredential {
 /// NOTE: CN docstring
 public protocol Authenticator: AnyObject {
     /// NOTE: CN docstring
-    associatedtype AuthCredential: AuthenticationCredential
+    associatedtype Credential: AuthenticationCredential
 
     /// NOTE: CN rework docstring
     ///
     /// Authenticates the `URLRequest` with the `Credential` information. In the case of OAuth2, the access token of
     /// the `Credential` would be added as a Bearer token to the `Authorization` header.
-    func apply(_ credential: AuthCredential, to urlRequest: inout URLRequest)
+    func apply(_ credential: Credential, to urlRequest: inout URLRequest)
 
     /// NOTE: CN rework docstring
     ///
-    /// Refreshes the `AuthCredential` and executes the completion closure with the `Result` once complete.
-    func refresh(_ credential: AuthCredential, completion: @escaping (Result<AuthCredential, Error>) -> Void)
+    /// Refreshes the `Credential` and executes the completion closure with the `Result` once complete.
+    func refresh(_ credential: Credential, for session: Session, completion: @escaping (Result<Credential, Error>) -> Void)
 
     /// NOTE: CN rework docstring
     ///
@@ -80,7 +80,7 @@ public protocol Authenticator: AnyObject {
     /// to them is the same as the latest credential. If not, then we know we've refreshed the credential while the
     /// request was in flight and it is immediately retried with the new credential. If yes, then we know we've found
     /// the first request to fail due to a non-expired, invalidate credential and refresh is triggered.
-    func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: AuthCredential) -> Bool
+    func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: Credential) -> Bool
 }
 
 // MARK: -
@@ -97,10 +97,13 @@ public enum AuthenticationError: Error {
 // MARK: -
 
 /// NOTE: CN docstring
-public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: RequestInterceptor where
-    AuthenticatorType: Authenticator,
-    AuthenticatorType.AuthCredential == AuthCredential
-{
+public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor where AuthenticatorType: Authenticator {
+
+    // MARK: Typealiases
+
+    /// NOTE: CN docstring
+    public typealias Credential = AuthenticatorType.Credential
+
     // MARK: Helper Types
 
     /// NOTE: CN docstring
@@ -125,15 +128,15 @@ public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: Reque
     }
 
     private enum AdaptResult {
-        case adapt(AuthCredential)
+        case adapt(Credential)
         case doNotAdapt(AuthenticationError)
         case adaptDeferred
     }
 
     private struct MutableState {
-        var credential: AuthCredential?
+        var credential: Credential?
 
-        var isRefreshing: Bool = false
+        var isRefreshing = false
         var refreshTimestamps: [Date] = []
         var refreshWindow: RefreshWindow?
 
@@ -144,7 +147,7 @@ public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: Reque
     // MARK: Properties
 
     /// NOTE: CN docstring
-    public var credential: AuthCredential? {
+    public var credential: Credential? {
         get { mutableState.credential }
         set { mutableState.credential = newValue }
     }
@@ -160,7 +163,7 @@ public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: Reque
     /// NOTE: CN docstring
     public init(
         authenticator: AuthenticatorType,
-        credential: AuthCredential? = nil,
+        credential: Credential? = nil,
         refreshWindow: RefreshWindow? = nil)
     {
         self.authenticator = authenticator
@@ -189,7 +192,7 @@ public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: Reque
             guard !credential.requiresRefresh else {
                 let operation = AdaptOperation(urlRequest: urlRequest, session: session, completion: completion)
                 mutableState.adaptOperations.append(operation)
-                refresh(credential, insideLock: &mutableState)
+                refresh(credential, for: session, insideLock: &mutableState)
                 return .adaptDeferred
             }
 
@@ -244,13 +247,13 @@ public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: Reque
 
             guard !mutableState.isRefreshing else { return }
 
-            refresh(credential, insideLock: &mutableState)
+            refresh(credential, for: session, insideLock: &mutableState)
         }
     }
 
     // MARK: Refresh
 
-    private func refresh(_ credential: AuthCredential, insideLock mutableState: inout MutableState) {
+    private func refresh(_ credential: Credential, for session: Session, insideLock mutableState: inout MutableState) {
         guard !isRefreshExcessive(insideLock: &mutableState) else {
             let error = AuthenticationError.excessiveRefresh
             handleRefreshFailure(error, insideLock: &mutableState)
@@ -260,7 +263,7 @@ public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: Reque
         mutableState.refreshTimestamps.append(Date())
         mutableState.isRefreshing = true
 
-        authenticator.refresh(credential) { result in
+        authenticator.refresh(credential, for: session) { result in
             self.$mutableState.write { mutableState in
                 switch result {
                 case .success(let credential):
@@ -288,7 +291,7 @@ public class AuthenticationInterceptor<AuthenticatorType, AuthCredential>: Reque
         return isRefreshExcessive
     }
 
-    private func handleRefreshSuccess(_ credential: AuthCredential, insideLock mutableState: inout MutableState) {
+    private func handleRefreshSuccess(_ credential: Credential, insideLock mutableState: inout MutableState) {
         mutableState.credential = credential
 
         let adaptOperations = mutableState.adaptOperations
