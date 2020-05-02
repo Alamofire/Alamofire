@@ -24,97 +24,160 @@
 
 import Foundation
 
-/// NOTE: CN docstring
+/// Types adopting the `AuthenticationCredential` protocol can be used to authenticate `URLRequest`s.
+///
+/// One common example of an `AuthenticationCredential` is an OAuth2 credential containing an access token used to
+/// authenticate all requests on behalf of a user. The access token generally has an expiration window of 60 minutes
+/// which will then require a refresh of the credential using the refresh token to generate a new access token.
 public protocol AuthenticationCredential {
-    /// NOTE: CN docstring
+    /// Whether the credential requires a refresh. This property should always return `true` when the credential is
+    /// expired. It is also wise to consider returning `true` when the credential will expire in several seconds or
+    /// minutes depending on the expiration window of the credential.
+    ///
+    /// For example, if the credential is valid for
+    /// 60 minutes, then it would be wise to return `true` when the credential is only valid for 5 minutes or less.
+    /// That ensures the credential will not expire as it is passed around backend services.
     var requiresRefresh: Bool { get }
 }
 
 // MARK: -
 
-/// NOTE: CN docstring
+/// Types adopting the `Authentictor` protocol can be used to authenticate `URLRequest`s with an
+/// `AuthenticationCredential` as well as refresh the `AuthenticationCredential` when it requires a refresh.
 public protocol Authenticator: AnyObject {
-    /// NOTE: CN docstring
+    /// The type of credential associated with the `Authenticator` instance.
     associatedtype Credential: AuthenticationCredential
 
-    /// NOTE: CN rework docstring
+    /// Applies the credential to the `URLRequest`.
     ///
-    /// Authenticates the `URLRequest` with the `Credential` information. In the case of OAuth2, the access token of
-    /// the `Credential` would be added as a Bearer token to the `Authorization` header.
+    /// In the case of OAuth2, the access token of the `Credential` would be added to the `URLRequest` as a Bearer
+    /// token to the `Authorization` header.
+    ///
+    /// - Parameters:
+    ///   - credential: The `Credential`.
+    ///   - urlRequest: The `URLRequest`.
     func apply(_ credential: Credential, to urlRequest: inout URLRequest)
 
-    /// NOTE: CN rework docstring
+    /// Refreshes the `Credential` and executes the `completion` closure with the `Result` once complete.
     ///
-    /// Refreshes the `Credential` and executes the completion closure with the `Result` once complete.
+    /// In the case of OAuth2, this method would use the refresh token of the `Credential` to generate a new
+    /// `Credential` using the authentication service. Once complete, the `completion` closure should be called with
+    /// the new `Credential`, or the error that occurred.
+    ///
+    /// In general, if the refresh call fails with certain status codes from the authentication server (commonly a 401),
+    /// the refresh token in the `Credential` can no longer be used to generate a valid `Credential`. In these cases,
+    /// you will need to reauthenticate the user with their username / password.
+    ///
+    /// Please note, these are just general examples of common use cases. They are not meant to solve your specific
+    /// authentication server challenges. Please work with your authentication server team to ensure your
+    /// `Authenticator` logic matches their expectations.
+
+    /// - Parameters:
+    ///   - credential: The `Credential` to refresh.
+    ///   - session:    The `Session` requiring the refresh.
+    ///   - completion: The closure to be executed once the refresh is complete.
     func refresh(_ credential: Credential, for session: Session, completion: @escaping (Result<Credential, Error>) -> Void)
 
-    /// NOTE: CN rework docstring
+    /// Determines whether the `URLRequest` failed due to an authentication error based on the `HTTPURLResponse`.
     ///
-    /// Returns whether the `URLRequest` failed due to an authentication error based on the `HTTPURLResponse` and
-    /// the `Error`. In the case of OAuth2, if you authentication server can invalidate access tokens, then you need
-    /// to use this method to inspect the `HTTPURLResponse` looking for an indicator that this happened. This is
-    /// commonly handled by the authentication server returning a 401 and some additional header to indicate that
-    /// the `Authorization` header is invalid or not authorized.
+    /// If the authentication server **CANNOT** invalidate credentials after they are issued, then simply return `false`
+    /// for this method. If the authentication server **CAN** invalidate credentials due to security breaches, then you
+    /// will need to work with your authentication server team to understand how to identify when this occurs.
+    ///
+    /// In the case of OAuth2, where an authentication server can invalidate credentials, you will need to inspect the
+    /// `HTTPURLResponse` or possibly the `Error` for when this occurs. This is commonly handled by the authentication
+    /// server returning a 401 status code and some additional header to indicate an OAuth2 failure occurred.
     ///
     /// It is very important to understand how your authentication server works to be able to implement this correctly.
     /// For example, if your authentication server returns a 401 when an OAuth2 error occurs, and your downstream
     /// service also returns a 401 when you are not authorized to perform that operation, how do you know which layer
     /// of the backend returned you a 401? You do not want to trigger a refresh unless you know your authentication
-    /// server is actually the layer rejecting the request.
+    /// server is actually the layer rejecting the request. Again, work with your authentication server team to understand
+    /// how to identify an OAuth2 401 error vs. a downstream 401 error to avoid endless refresh loops.
     ///
-    /// If your authentication server will never reject non-expired credentials for performance reasons, then you can
-    /// safely return `false` for this method.
+    /// - Parameters:
+    ///   - urlRequest: The `URLRequest`.
+    ///   - response:   The `HTTPURLResponse`.
+    ///   - error:      The `Error`.
+    ///
+    /// - Returns: `true` if the `URLRequest` failed due to an authentication error, `false` otherwise.
     func didRequest(_ urlRequest: URLRequest, with response: HTTPURLResponse, failDueToAuthenticationError error: Error) -> Bool
 
-    /// NOTE: CN rework docstring
+    /// Determines whether the `URLRequest` is authenticated with the `Credential`.
     ///
-    /// Returns whether the `URLRequest` was authenticated with the specified `Credential`. If it was not, then we know
-    /// the `URLRequest` was authenticated with a previous `Credential` and can be immediately retried with the new
-    /// `Credential`.
+    /// If the authentication server **CANNOT** invalidate credentials after they are issued, then simply return `true`
+    /// for this method. If the authentication server **CAN** invalidate credentials due to security breaches, then
+    /// read on.
     ///
-    /// This is an edge case that can occur if the authentication server can invalidate non-expired credentials. In
-    /// this case, it's possible for requests to be executed with non-expired, invalid credentials. Refresh will be
-    /// triggered when the first failing response comes back from the authentication server. It is possible that some
-    /// of the requests will not return from the authentication server until the refresh is completed. In this case,
-    /// we inspect the slower requests when returned from the authentication server to see if the credential applied
-    /// to them is the same as the latest credential. If not, then we know we've refreshed the credential while the
-    /// request was in flight and it is immediately retried with the new credential. If yes, then we know we've found
-    /// the first request to fail due to a non-expired, invalidate credential and refresh is triggered.
+    /// When an authentication server can invalidate credentials, it means that you may have a non-expired credential
+    /// that appears to be valid, but will be rejected by the authentication server when used. Generally when this
+    /// happens, a number of requests are all sent when the application is foregrounded, and all of them will be
+    /// rejected by the authentication server in the order they are received. The first failed request will trigger a
+    /// refresh internally, which will update the credential, and then retry all the queued requests with the new
+    /// credential. However, it is possible that some of the original requests will not return from the authenitcation
+    /// server until the refresh has completed. This is where this method comes in.
+    ///
+    /// When the authentication server rejects a credential, we need to check to make sure we haven't refreshed the
+    /// credential while the request was in flight. If it has already refreshed, then we don't need to trigger an
+    /// additional refresh. If it hasn't refreshed, then we need to refresh.
+    ///
+    /// Now that it is understood how the result of this method is used in the refresh lifecyle, let's walk through how
+    /// to implement it. You should return `true` in this method if the `URLRequest` is authenticated in a way that
+    /// matches the values in the `Credential`. In the case of OAuth2, this would mean that the Bearer token in the
+    /// `Authorization` header of the `URLRequest` matches the access token in the `Credential`. If it matches, then we
+    /// know the `Credential` was used to authenticate the `URLRequest` and should return `true`. If the Bearer token
+    /// did not match the access token, then you should return `false`.
+    ///
+    /// - Parameters:
+    ///   - urlRequest: The `URLRequest`.
+    ///   - credential: The `Credential`.
+    ///
+    /// - Returns: `true` if the `URLRequest` is authenticated with the `Credential`, `false` otherwise.
     func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: Credential) -> Bool
 }
 
 // MARK: -
 
-/// NOTE: CN docstring
+/// Represents various authentication failures that fail when using the `AuthenticationInterceptor`. All errors are
+/// still vended from Alamofire as `AFError` types. The `AuthenticationError` instances will be embedded within
+/// `AFError` `.requestAdaptationFailed` or `.requestRetryFailed` cases.
 public enum AuthenticationError: Error {
-    /// NOTE: CN docstring
+    /// The credential was missing so the request could not be authenticated.
     case missingCredential
 
-    /// NOTE: CN docstring
+    /// The credential was refreshed too many times within the `RefreshWindow`.
     case excessiveRefresh
 }
 
 // MARK: -
 
-/// NOTE: CN docstring
+/// The `AuthenticationInterceptor` class manages the queuing and threading complexity of authenticating requests.
+/// It relies on an `Authenticator` type to handle the actual `URLRequest` authentication and `Credential` refresh.
 public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor where AuthenticatorType: Authenticator {
 
     // MARK: Typealiases
 
-    /// NOTE: CN docstring
+    /// Represents the type of credential used to authenticate requests.
     public typealias Credential = AuthenticatorType.Credential
 
     // MARK: Helper Types
 
-    /// NOTE: CN docstring
+    /// A container type that defines a refresh window to use to identify excessive refresh calls. When enabled, prior
+    /// to executing a refresh, the `AuthenticationInterceptor` compares the timestamp history of previous refresh calls
+    /// against the `RefreshWindow`. If more refreshes have occurred within the refresh window than allowed, the refresh
+    /// is cancelled an an `AuthorizationError.excessiveRefresh` error is thrown.
     public struct RefreshWindow {
-        /// NOTE: CN docstring
+        /// The past time interval to inspect to see how many refreshes occurred.
         public let interval: TimeInterval
 
-        /// NOTE: CN docstring
+        /// The total refresh attempts allowed within the refresh window before throwing an `.excessiveRefresh` error.
         public let maximumAttempts: Int
 
-        /// NOTE: CN docstring
+        /// Creates a `RefreshWindow` instance from the specified `interval` and `maximumAttempts`.
+        ///
+        /// - Parameters:
+        ///   - interval:        The past `TimeInterval` to inspect.
+        ///   - maximumAttempts: The maximum attempts allowed within the `TimeInterval`.
         public init(interval: TimeInterval = 30.0, maximumAttempts: Int = 5) {
             self.interval = interval
             self.maximumAttempts = maximumAttempts
@@ -146,7 +209,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Properties
 
-    /// NOTE: CN docstring
+    /// The `Credential` used to authenticate requests.
     public var credential: Credential? {
         get { mutableState.credential }
         set { mutableState.credential = newValue }
@@ -160,11 +223,19 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Initialization
 
-    /// NOTE: CN docstring
+    /// Creates an `AuthenticationInterceptor` instance from the specified parameters.
+    ///
+    /// A `nil` `RefreshWindow` will result in the `AuthenticationInterceptor` not checking for excessive refresh calls.
+    /// It is recommended to always use a `RefreshWindow` to avoid endless refresh cycles.
+    ///
+    /// - Parameters:
+    ///   - authenticator: The `Authenticator` type.
+    ///   - credential:    The `Credential` if it exists. `nil` by default.
+    ///   - refreshWindow: The `RefreshWindow` used to identify excessive refresh calls. `RefreshWindow()` by default.
     public init(
         authenticator: AuthenticatorType,
         credential: Credential? = nil,
-        refreshWindow: RefreshWindow? = nil)
+        refreshWindow: RefreshWindow? = RefreshWindow())
     {
         self.authenticator = authenticator
         self.mutableState.credential = credential
