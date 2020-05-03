@@ -64,6 +64,8 @@
     - [Response Transforms](#response-transforms)
     - [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
   + [Using Alamofire with Combine](#using-alamofire-with-combine)
+    - [`DownloadResponsePublisher`](#downloadresponsepublisher)
+    - [`DataStreamPublisher`](#datastreampublisher)
 * [Network Reachability](#network-reachability)
 
 # Advanced Usage
