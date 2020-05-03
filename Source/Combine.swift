@@ -138,7 +138,7 @@ extension DataRequest {
     ///   - serializer: `ResponseSerializer` used to serialize response `Data`.
     ///   - queue:      `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
     ///
-    /// - Returns: `    The `DataResponsePublisher`.
+    /// - Returns:      The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishResponse<Serializer: ResponseSerializer, T>(using serializer: Serializer, on queue: DispatchQueue = .main) -> DataResponsePublisher<T>
         where Serializer.SerializedObject == T {
@@ -328,12 +328,58 @@ public struct DataStreamPublisher<Value>: Publisher {
 }
 
 extension DataStreamRequest {
+    /// Crates a `DataStreamPublisher` for this instance using the given `DataStreamSerializer` and `DispatchQueue`.
+    ///
+    /// - Parameters:
+    ///   - serializer: `DataStreamSerializer` used to serialize the streamed `Data`.
+    ///   - queue:      `DispatchQueue` on which the `DataRequest.Stream` values will be published. `.main` by default.
+    /// - Returns:      The `DataStreamPublisher`.
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishStream<Serializer: DataStreamSerializer>(using serializer: Serializer,
+                                                                on queue: DispatchQueue = .main) -> DataStreamPublisher<Serializer.SerializedObject> {
+        DataStreamPublisher(self, queue: queue, serializer: serializer)
+    }
+
+    /// Crates a `DataStreamPublisher` for this instance which uses a `PassthroughStreamSerializer` to stream `Data`
+    /// unserialized.
+    ///
+    /// - Parameters:
+    ///   - queue:      `DispatchQueue` on which the `DataRequest.Stream` values will be published. `.main` by default.
+    /// - Returns:      The `DataStreamPublisher`.
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishData(queue: DispatchQueue = .main) -> DataStreamPublisher<Data> {
+        publishStream(using: PassthroughStreamSerializer(), on: queue)
+    }
+
+    /// Crates a `DataStreamPublisher` for this instance which uses a `StringStreamSerializer` to serialize stream
+    /// `Data` values into `String` values.
+    ///
+    /// - Parameters:
+    ///   - queue:      `DispatchQueue` on which the `DataRequest.Stream` values will be published. `.main` by default.
+    /// - Returns:      The `DataStreamPublisher`.
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishString(queue: DispatchQueue = .main) -> DataStreamPublisher<String> {
+        publishStream(using: StringStreamSerializer(), on: queue)
+    }
+
+    /// Crates a `DataStreamPublisher` for this instance which uses a `DecodableStreamSerializer` with the provided
+    /// parameters to serialize stream `Data` values into the provided type.
+    ///
+    /// - Parameters:
+    ///   - type:         `Decodable` type to which to decode stream `Data`. Inferred from the context by default.
+    ///   - queue:        `DispatchQueue` on which the `DataRequest.Stream` values will be published. `.main` by default.
+    ///   - decoder:      `DataDecoder` instance used to decode stream `Data`. `JSONDecoder()` by default.
+    ///   - preprocessor: `DataPreprocessor` which filters incoming stream `Data` before serialization.
+    ///                   `PassthroughPreprocessor()` by default.
+    /// - Returns:        The `DataStreamPublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
+                                               queue: DispatchQueue = .main,
                                                decoder: DataDecoder = JSONDecoder(),
                                                preprocessor: DataPreprocessor = PassthroughPreprocessor()) -> DataStreamPublisher<T> {
-        DataStreamPublisher(self, queue: .main, serializer: DecodableStreamSerializer(decoder: decoder,
-                                                                                      dataPreprocessor: preprocessor))
+        publishStream(using: DecodableStreamSerializer(decoder: decoder,
+                                                       dataPreprocessor: preprocessor),
+                      on: queue)
     }
 }
 
