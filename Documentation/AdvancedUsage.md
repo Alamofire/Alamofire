@@ -37,6 +37,7 @@
 * [Adapting and Retrying Requests with `RequestInterceptor`](#adapting-and-retrying-requests-with-requestinterceptor)
   + [`RequestAdapter`](#requestadapter)
   + [`RequestRetrier`](#requestretrier)
+  + [Using Multiple `RequestInterceptor`s](#using-multiple-requestinterceptors)
 * [Security](#security)
   + [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
     - [`ServerTrustEvaluting`](#servertrustevaluting)
@@ -519,6 +520,21 @@ open func retry(_ request: Request, for session: Session, dueTo error: Error, co
     }
 }
 ```
+
+### Using Multiple `RequestInterceptor`s
+
+Alamofire supports the use of multiple `RequestInterceptor`s at both the `Session` and `Request` levels through the use of the `Interceptor` type. `Interceptor`s can be composed of adapter and retrier closures, a single combination of a `RequestAdapter` and `RequestRetrier`, or a combination of arrays of `RequestAdapter`s, `RequestRetrier`s, and `RequestInterceptor`s.
+
+```swift
+let adapter = // Some RequestAdapter
+let retrier = // Some RequestRetrier
+let interceptor = // Some RequestInterceptor
+
+let adapterAndRetrier = Interceptor(adapter: adapter, retrier: retrier)
+let composite = Interceptor(interceptors: [adapterAndRetrier, interceptor])
+```
+
+When composed of multiple `RequestAdapter`s, `Interceptor` will call each `RequestAdapter` in succession. If they all succeed, the final `URLRequest` out of the chain of `RequestAdapter`s will be used to perform the request. If one fails, adaptation stops and the `Request` fails with the error returned. Similarly, when composed of multiple `RequestRetrier`s, retries are executed in the same order as the retriers were added to the instance, until either all of them complete or one of them fails with an error.
 
 ## Security
 Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire receives the same automatic TLS certificate and certificate chain validation as `URLSession`. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by Alamofire’s `ServerTrustEvaluating` protocol.
