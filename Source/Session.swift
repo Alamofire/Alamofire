@@ -963,9 +963,7 @@ open class Session {
 
     // MARK: Perform
 
-    /// Perform `Request`.
-    ///
-    /// - Note: Called during retry.
+    /// Starts performing the provided `Request`.
     ///
     /// - Parameter request: The `Request` to perform.
     func perform(_ request: Request) {
