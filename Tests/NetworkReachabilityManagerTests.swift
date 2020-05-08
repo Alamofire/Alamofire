@@ -139,12 +139,16 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
     func testThatAddressManagerCanBeDeinitialized() {
         // Given
         var manager: NetworkReachabilityManager? = NetworkReachabilityManager()
-
+        weak var weakManager = manager
+        
         // When
+        manager?.startListening(onUpdatePerforming: { _ in
+        })
+        manager?.stopListening()
         manager = nil
-
+        
         // Then
-        XCTAssertNil(manager)
+        XCTAssertNil(weakManager)
     }
 
     // MARK: - Listener
