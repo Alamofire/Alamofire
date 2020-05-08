@@ -131,7 +131,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     var errorCodes: Set<URLError.Code> {
         retryableErrorCodes.union(nonRetryableErrorCodes)
     }
-    
+
     // MARK: Test Helpers
 
     func request(method: HTTPMethod = .get, statusCode: Int? = nil) -> Request {
@@ -391,14 +391,14 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
             XCTAssertNil(results[4]?.error)
         }
     }
-    
+
     // MARK: Tests - Should Retry
-    
+
     func testThatShouldRetryBasedOnHTTPStatusCodesDoesNotRetryAFErrorsOtherThanUnacceptableStatusCode() {
         XCTAssertFalse(RetryPolicy.shouldRetry(basedOnHTTPStatusCodeFrom: .responseValidationFailed(reason: .dataFileNil)))
         XCTAssertFalse(RetryPolicy.shouldRetry(basedOnHTTPStatusCodeFrom: resourceUnavailableError))
     }
-    
+
     func testThatShouldRetryDueToErrorRetriesAFErrorUnacceptableStatusCode() {
         for code in statusCodes {
             // Given
@@ -406,12 +406,12 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
 
             // When
             let shouldRetry = RetryPolicy.shouldRetry(dueTo: error)
-            
+
             // Then
             XCTAssertEqual(shouldRetry, retryableStatusCodes.contains(code))
         }
     }
-    
+
     func testThatShouldRetryDueToErrorRetriesURLErrorWithRetryableCode() {
         for code in errorCodes {
             // Given
@@ -420,7 +420,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
             // When
             let shouldRetry = RetryPolicy.shouldRetry(dueTo: error)
             let shouldRetryUnderlying = RetryPolicy.shouldRetry(dueTo: underlyingError)
-            
+
             // Then
             XCTAssertEqual(shouldRetry, retryableErrorCodes.contains(code))
             XCTAssertEqual(shouldRetryUnderlying, retryableErrorCodes.contains(code))
@@ -431,19 +431,18 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
 // MARK: -
 
 final class ConditionalRetryPolicyTestCase: BaseRetryPolicyTestCase {
-
     func testThatConditionalRetryPolicyCanBeInitializedWithDefaultValues() {
         // Given, When
         let retryPolicy = ConditionalRetryPolicy()
         let expectation = self.expectation(description: "default conditional retry policy closures called")
-        
+
         // Then
         retryPolicy.retry(StubRequest(url, method: .get, response: nil, session: session), for: session, dueTo: resourceUnavailableError) { _ in
             expectation.fulfill()
         }
         waitForExpectations(timeout: timeout, handler: nil)
     }
-    
+
     func testThatConditionalRetryPolicyCanBeInitializedWithCustomValues() {
         // Given, When
         let expectation = self.expectation(description: "custom conditional retry policy closures called")
@@ -456,16 +455,16 @@ final class ConditionalRetryPolicyTestCase: BaseRetryPolicyTestCase {
         retryPolicy.retry(request(method: .get), for: session, dueTo: resourceUnavailableError) { _ in }
         waitForExpectations(timeout: timeout, handler: nil)
     }
-    
+
     func testThatConditionalRetryPolicyAbortsRetryingOnErrorInShouldRetry() {
         // Given, When
         let expectation = self.expectation(description: "retry policy should complete")
         let shouldRetry: ShouldRetry = { _, _, _ in throw self.resourceUnavailableError }
-        let delayForRetrying: DelayForRetrying = { _, _, _ in return 5 }
+        let delayForRetrying: DelayForRetrying = { _, _, _ in 5 }
         let retryPolicy = ConditionalRetryPolicy(shouldRetry: shouldRetry, delayForRetrying: delayForRetrying)
-        
+
         var retryResult: RetryResult?
-        
+
         // Then
         retryPolicy.retry(request(method: .get), for: session, dueTo: resourceUnavailableError) { result in
             retryResult = result
@@ -475,16 +474,16 @@ final class ConditionalRetryPolicyTestCase: BaseRetryPolicyTestCase {
         XCTAssertNotNil(retryResult?.error)
         XCTAssertEqual(retryResult?.retryRequired, false)
     }
-    
+
     func testThatConditionalRetryPolicyAbortsRetryingOnErrorInDelayForRetrying() {
         // Given, When
         let expectation = self.expectation(description: "retry policy should complete")
-        let shouldRetry: ShouldRetry = { _, _, _ in return true }
+        let shouldRetry: ShouldRetry = { _, _, _ in true }
         let delayForRetrying: DelayForRetrying = { _, _, _ in throw self.resourceUnavailableError }
         let retryPolicy = ConditionalRetryPolicy(shouldRetry: shouldRetry, delayForRetrying: delayForRetrying)
 
         var retryResult: RetryResult?
-        
+
         // Then
         retryPolicy.retry(request(method: .get), for: session, dueTo: resourceUnavailableError) { result in
             retryResult = result
@@ -494,7 +493,7 @@ final class ConditionalRetryPolicyTestCase: BaseRetryPolicyTestCase {
         XCTAssertNotNil(retryResult?.error)
         XCTAssertEqual(retryResult?.retryRequired, false)
     }
-    
+
     func testThatConditionalRetryPolicyRetriesRequestsBelowRetryLimit() {
         // Given
         let retryPolicy = ConditionalRetryPolicy()

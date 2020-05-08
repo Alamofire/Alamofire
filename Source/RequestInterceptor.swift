@@ -160,15 +160,14 @@ public typealias DelayForRetrying = (Request, Session, Error) throws -> TimeInte
 /// `RequestRetrier` that divides retry logic into two closures with different responsibility.
 /// `ShouldRetry` closure to decide when to retry and `DelayForRetrying` closure to provide an optional retry delay. Both can abort retrying by throwing an error.
 open class ConditionalRetrier: RequestRetrier {
-    
     private let shouldRetry: ShouldRetry
     private let delayForRetrying: DelayForRetrying
-    
+
     public init(shouldRetry: @escaping ShouldRetry, delayForRetrying: @escaping DelayForRetrying) {
         self.shouldRetry = shouldRetry
         self.delayForRetrying = delayForRetrying
     }
-    
+
     open func retry(_ request: Request,
                     for session: Session,
                     dueTo error: Error,
