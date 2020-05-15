@@ -142,12 +142,12 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         weak var weakManager = manager
         
         // When
-        manager?.startListening(onUpdatePerforming: { _ in
-        })
+        manager?.startListening(onUpdatePerforming: { _ in })
         manager?.stopListening()
         manager = nil
-        
+
         // Then
+        XCTAssertNil(manager)
         XCTAssertNil(weakManager)
     }
 
