@@ -29,12 +29,12 @@ Most APIs have changed in Alamofire 5, so this list is not complete. While most 
 - Global `Alamofire` namespace usage, which was never really necessary, has been removed and replaced with a single `AF` reference to `Session.default`.
 - `ServerTrustPolicyManager` has been renamed `ServerTrustManager` and now requires every evaluated request to match one of the provided hosts. This can be disabled by initializing an instance with `allHostsMustBeEvaluted: false`.
 - `ServerTrustPolicy` has be separated into a protocol, `ServerTrustEvaluating`, and several conforming types. Each case of `ServerTrustPolicy` now has equivalent types:
-  - `.performDefaultEvaluation` is replaced by `DefaultTrustEvaluator`.
-  - `.performRevokedEvaluation	` is replaced by `RevocationTrustEvaluator`.
-  - `.pinCertificates` is replaced by `PinnedCertificatesTrustEvaluator`.
-  - `.pinPublicKeys` is replaced by `PublicKeysTrustEvaluator`.
-  - `.disableEvaluation` is replaced by `DisabledTrustEvaluator`.
-  - `.customEvaluation` is replaced by either using `CompositeTrustEvaluator` to combine existing `ServerTrustEvaluating` types or by creating a new type that conforms to `ServerTrustEvaluating`.
+	- `.performDefaultEvaluation` is replaced by `DefaultTrustEvaluator`.
+	- `.performRevokedEvaluation` is replaced by `RevocationTrustEvaluator`.
+	- `.pinCertificates` is replaced by `PinnedCertificatesTrustEvaluator`.
+	- `.pinPublicKeys` is replaced by `PublicKeysTrustEvaluator`.
+	- `.disableEvaluation` is replaced by `DisabledTrustEvaluator`.
+	- `.customEvaluation` is replaced by either using `CompositeTrustEvalutor` to combine existing `ServerTrustEvaluating` types or by creating a new type that conforms to `ServerTrustEvaluating`.
 - `DataResponse` and `DownloadResponse` are now both doubly generic to both the response type as well as the error type. By default all Alamofire APIs return a `AF` prefixed response type, which defaults the `Error` type to `AFError`.
 - Alamofire now returns `AFError` for all of its APIs, wrapping any underlying system or custom APIs in `AFError` instances.
 - `HTTPMethod` is now a `struct` and not an `enum` and can be expanded to provide custom methods.

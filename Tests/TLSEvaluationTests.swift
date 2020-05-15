@@ -534,7 +534,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
-        let evaluators = [expiredHost: DisabledEvaluator()]
+        let evaluators = [expiredHost: DisabledTrustEvaluator()]
         let manager = Session(configuration: configuration,
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 

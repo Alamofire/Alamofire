@@ -557,7 +557,7 @@ Alamofire includes many different types of trust evaluators, providing composabl
 * `PinnedCertificatesTrustEvaluator`: Uses the provided certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates. This evaluator can also accept self-signed certificates.
 * `PublicKeysTrustEvaluator`: Uses the provided public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
 * `CompositeTrustEvaluator`: Evaluates an array of `ServerTrustEvaluating` values, only succeeding if all of them are successful. This type can be used to combine, for example, the `RevocationTrustEvaluator` and the `PinnedCertificatesTrustEvaluator`.
-* `DisabledEvaluator`: This evaluator should only be used in debug scenarios as it disables all evaluation which in turn will always consider any server trust as valid. This evaluator should **never** be used in production environments!
+* `DisabledTrustEvaluator`: This evaluator should only be used in debug scenarios as it disables all evaluation which in turn will always consider any server trust as valid. This evaluator should **never** be used in production environments!
 
 #### `ServerTrustManager`
 The `ServerTrustManager` is responsible for storing an internal mapping of `ServerTrustEvaluating` values to a particular host. This allows Alamofire to evaluate each host with different evaluators. 
