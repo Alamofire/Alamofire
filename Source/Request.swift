@@ -1508,7 +1508,7 @@ public class DownloadRequest: Request {
     ///
     /// - Returns: The instance.
     @discardableResult
-    public override func cancel() -> Self {
+    override public func cancel() -> Self {
         cancel(producingResumeData: false)
     }
 
@@ -1725,7 +1725,7 @@ public class UploadRequest: DataRequest {
         return stream
     }
 
-    public override func cleanup() {
+    override public func cleanup() {
         defer { super.cleanup() }
 
         guard
