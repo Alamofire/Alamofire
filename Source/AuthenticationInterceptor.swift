@@ -207,7 +207,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
         var credential: Credential?
 
         var isRefreshing = false
-        var refreshTimestamps: [Date] = []
+        var refreshTimestamps: [TimeInterval] = []
         var refreshWindow: RefreshWindow?
 
         var adaptOperations: [AdaptOperation] = []
@@ -338,7 +338,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
             return
         }
 
-        mutableState.refreshTimestamps.append(Date())
+        mutableState.refreshTimestamps.append(ProcessInfo.processInfo.systemUptime)
         mutableState.isRefreshing = true
 
         authenticator.refresh(credential, for: session) { result in
@@ -357,7 +357,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
     private func isRefreshExcessive(insideLock mutableState: inout MutableState) -> Bool {
         guard let refreshWindow = mutableState.refreshWindow else { return false }
 
-        let refreshWindowMin = Date(timeIntervalSinceNow: -refreshWindow.interval)
+        let refreshWindowMin = ProcessInfo.processInfo.systemUptime - refreshWindow.interval
 
         let refreshAttemptsWithinWindow = mutableState.refreshTimestamps.reduce(into: 0) { attempts, refreshTimestamp in
             guard refreshWindowMin <= refreshTimestamp else { return }
