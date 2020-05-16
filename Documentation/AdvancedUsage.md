@@ -65,6 +65,9 @@
   + [Customizing Response Handlers](#customizing-response-handlers)
     - [Response Transforms](#response-transforms)
     - [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
+  + [Using Alamofire with Combine](#using-alamofire-with-combine)
+    - [`DownloadResponsePublisher`](#downloadresponsepublisher)
+    - [`DataStreamPublisher`](#datastreampublisher)
 * [Network Reachability](#network-reachability)
 
 # Advanced Usage
@@ -1079,6 +1082,76 @@ AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableT
     // Process stream.
 }
 ```
+
+## Using Alamofire with Combine
+On systems supporting the Combine framework, Alamofire offers the ability to publish responses using a custom `Publisher` type. These publishers work much like Alamofire's response handlers. They are chained onto requests and like response handlers, should come after other API like `validate()`. For example:
+
+```swift
+AF.request(...).publishDecodable(type: DecodableType.self)
+```
+
+This code produces a `DataResponsePublisher<DecodableType>` value which will publish a `DataResponse<DecodableType, AFError>` value. Like all Alamofire `Publisher`s, `DataResponsePublisher` is fully lazy, meaning that will only add the response handler and `resume` the request once a downstream `Subscriber` has made demand for values. It only provides one value and cannot be retried. 
+
+> To properly handle retry when using Alamofire's `Publisher`s, use Alamofire's built in retry mechanisms, as explained [above](#adapting-and-retrying-requests-with-requestinterceptor).
+
+Additionally, `DataResponsePublisher` provides the ability to transform the outgoing `DataResponse<Success, Failure>` into a `Result<Success, Failure>` value or a `Success` value with `Failure` error. For example:
+
+```swift
+let publisher = AF.request(...).publishDecodable(type: DecodableType.self)
+let resultPublisher = publisher.result() // Provides an AnyPublisher<Result<DecodableType, AFError>, Never>.
+let valuePublisher = publisher.value() // Provides an AnyPublisher<DecodableType, AFError>.
+```
+
+As with any `Publisher`, `DataResponsePublisher` can be used with various Combine APIs, allow Alamofire to support easy simultaneous requests for the first time.
+
+```swift
+// All usage of cancellable Combine API must have its token stored to maintain the subscription.
+var tokens: Set<AnyCancellable> = []
+
+...
+
+let first = AF.request(...).publishDecodable(type: First.self)
+let second = AF.request(...).publishDecodable(type: Second.self)
+let both = Publishers.CombineLatest(first, second)
+both.sink { first, second in // DataResponse<First, AFError>, DataResponse<Second, AFError>
+    debugPrint(first)
+    debugPrint(second)
+}
+.store(in: &tokens)
+```
+
+Sequential requests are also possible:
+
+```swift
+// All usage of cancellable Combine API must have its token stored to maintain the subscription.
+var tokens: Set<AnyCancellable> = []
+
+...
+
+AF.request(...)
+    .publishDecodable(type: First.self)
+    .value()
+    .flatMap {
+        AF.request(...) // Use First value to create second request.
+            .publishDecodable(type: Second.self)
+    }
+    .sink { second in // DataResponse<Second, AFError>
+        debugPrint(second)
+    }
+    .store(in: &tokens)
+```
+
+Once subscribed, this chain of transformations will make the first request and then create a publisher for a second, finishing when the second request has finished.
+
+> As with all Combine usage, care must be taken to ensure that subscriptions are not cancelled early by maintaining the lifetime of the `AnyCancellable` tokens returned by functions like `sink`. If a request is cancelled prematurely, the response's error will be set to `AFError.explicitlyCancelled`.
+
+#### `DownloadResponsePublisher`
+Alamofire also offers a `Publisher` for `DownloadRequest`s, `DownloadResponsePublisher`. Its behavior and capabilities are the same as `DataResponsePublisher`.
+
+Like most `DownloadRequest`'s response handlers, `DownloadResponsePublisher` reads `Data` from disk to perform serialization, which can impact system performance if reading a large amount of `Data`. It's recommended you use `publishUnserialized()` to receive just the `URL?` that the file was downloaded to and perform your own read from disk for large files.
+
+#### `DataStreamPublisher`
+`DataStreamPublisher` is a `Publisher` for `DataStreamRequest`s. Like `DataStreamRequest` itself, and unlike Alamofire's other `Publisher`s, `DataStreamPublisher` can return multiple values serialized from `Data` received from the network, as well as a final completion event. For more information on how `DataStreamRequest` works, please see our [detailed usage documentation](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#streaming-data-from-a-server).
 
 ## Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.

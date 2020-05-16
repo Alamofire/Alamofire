@@ -81,6 +81,10 @@
 		317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
 		317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
 		317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
+		318DD40F2439780500963291 /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318DD40E2439780500963291 /* Combine.swift */; };
+		318DD4102439780500963291 /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318DD40E2439780500963291 /* Combine.swift */; };
+		318DD4112439780500963291 /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318DD40E2439780500963291 /* Combine.swift */; };
+		318DD4122439780500963291 /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318DD40E2439780500963291 /* Combine.swift */; };
 		3191B5751F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
 		3191B5761F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
 		3191B5771F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
@@ -116,6 +120,9 @@
 		31B51E8C2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
 		31B51E8D2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
 		31B51E8E2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
+		31BADE4E2439A8D1007D2AB9 /* CombineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */; };
+		31BADE4F2439A8D1007D2AB9 /* CombineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */; };
+		31BADE502439A8D1007D2AB9 /* CombineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */; };
 		31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
@@ -384,6 +391,7 @@
 		31727417218BAEC90039FFCC /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		3172741C218BB1790039FFCC /* ParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoder.swift; sourceTree = "<group>"; };
 		31727421218BB9A50039FFCC /* HTTPBin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPBin.swift; sourceTree = "<group>"; };
+		318DD40E2439780500963291 /* Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Combine.swift; sourceTree = "<group>"; };
 		3191B5741F5F53A6003960A8 /* Protected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protected.swift; sourceTree = "<group>"; };
 		31991790209CDA7F00103A19 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		31991791209CDA7F00103A19 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
@@ -394,6 +402,7 @@
 		319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Alamofire.swift"; sourceTree = "<group>"; };
 		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		31B51E8B2434FECB005356DB /* RequestModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModifierTests.swift; sourceTree = "<group>"; };
+		31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineTests.swift; sourceTree = "<group>"; };
 		31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLConvertible+URLRequestConvertible.swift"; sourceTree = "<group>"; };
 		31DADDFA224811ED0051390F /* AlamofireExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireExtended.swift; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
@@ -574,6 +583,7 @@
 				4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */,
 				4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */,
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
+				31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */,
 				3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
 				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
@@ -758,6 +768,7 @@
 				31DADDFA224811ED0051390F /* AlamofireExtended.swift */,
 				4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */,
 				4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */,
+				318DD40E2439780500963291 /* Combine.swift */,
 				3111CE8720A77843008315E2 /* EventMonitor.swift */,
 				4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */,
 				311B198F20B0D3B40036823B /* MultipartUpload.swift */,
@@ -1324,6 +1335,7 @@
 				4C256A1C21F1449C00AD5D87 /* RetryPolicy.swift in Sources */,
 				31991796209CDA7F00103A19 /* Request.swift in Sources */,
 				4CF627101BA7CBF60011A099 /* ServerTrustEvaluation.swift in Sources */,
+				318DD4112439780500963291 /* Combine.swift in Sources */,
 				3199179E209CDA7F00103A19 /* Session.swift in Sources */,
 				4CF627071BA7CBF60011A099 /* Alamofire.swift in Sources */,
 				3111CE8A20A77945008315E2 /* EventMonitor.swift in Sources */,
@@ -1366,6 +1378,7 @@
 				3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
 				3111CE9120A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
+				31BADE502439A8D1007D2AB9 /* CombineTests.swift in Sources */,
 				31425AC3241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				4CF627171BA7CC240011A099 /* ParameterEncodingTests.swift in Sources */,
 			);
@@ -1405,6 +1418,7 @@
 				4C3D00551C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				4C256A1B21F1449C00AD5D87 /* RetryPolicy.swift in Sources */,
 				31991795209CDA7F00103A19 /* Request.swift in Sources */,
+				318DD4102439780500963291 /* Combine.swift in Sources */,
 				4CDE2C441AF89F0900BABAE5 /* Validation.swift in Sources */,
 				3199179D209CDA7F00103A19 /* Session.swift in Sources */,
 				3111CE8920A77944008315E2 /* EventMonitor.swift in Sources */,
@@ -1446,6 +1460,7 @@
 				4C256A1D21F1449C00AD5D87 /* RetryPolicy.swift in Sources */,
 				31991797209CDA7F00103A19 /* Request.swift in Sources */,
 				E4202FD61B667AA100C997FB /* ServerTrustEvaluation.swift in Sources */,
+				318DD4122439780500963291 /* Combine.swift in Sources */,
 				3199179F209CDA7F00103A19 /* Session.swift in Sources */,
 				E4202FD81B667AA100C997FB /* Validation.swift in Sources */,
 				3111CE8B20A77945008315E2 /* EventMonitor.swift in Sources */,
@@ -1487,6 +1502,7 @@
 				4CDE2C431AF89F0900BABAE5 /* Validation.swift in Sources */,
 				4C256A1A21F1449C00AD5D87 /* RetryPolicy.swift in Sources */,
 				31991794209CDA7F00103A19 /* Request.swift in Sources */,
+				318DD40F2439780500963291 /* Combine.swift in Sources */,
 				4CB928291C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				3199179C209CDA7F00103A19 /* Session.swift in Sources */,
 				3111CE8820A77843008315E2 /* EventMonitor.swift in Sources */,
@@ -1529,6 +1545,7 @@
 				3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
 				3111CE8F20A7EC26008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
+				31BADE4E2439A8D1007D2AB9 /* CombineTests.swift in Sources */,
 				31425AC1241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */,
 			);
@@ -1569,6 +1586,7 @@
 				3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
 				3111CE9020A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
+				31BADE4F2439A8D1007D2AB9 /* CombineTests.swift in Sources */,
 				31425AC2241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				4C256A541B096C770065714F /* BaseTestCase.swift in Sources */,
 			);
