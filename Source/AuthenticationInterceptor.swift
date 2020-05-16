@@ -34,21 +34,21 @@ public protocol AuthenticationCredential {
     /// expired. It is also wise to consider returning `true` when the credential will expire in several seconds or
     /// minutes depending on the expiration window of the credential.
     ///
-    /// For example, if the credential is valid for
-    /// 60 minutes, then it would be wise to return `true` when the credential is only valid for 5 minutes or less.
-    /// That ensures the credential will not expire as it is passed around backend services.
+    /// For example, if the credential is valid for 60 minutes, then it would be wise to return `true` when the
+    /// credential is only valid for 5 minutes or less. That ensures the credential will not expire as it is passed
+    /// around backend services.
     var requiresRefresh: Bool { get }
 }
 
 // MARK: -
 
-/// Types adopting the `Authentictor` protocol can be used to authenticate `URLRequest`s with an
-/// `AuthenticationCredential` as well as refresh the `AuthenticationCredential` when it requires a refresh.
+/// Types adopting the `Authenticator` protocol can be used to authenticate `URLRequest`s with an
+/// `AuthenticationCredential` as well as refresh the `AuthenticationCredential` when required.
 public protocol Authenticator: AnyObject {
     /// The type of credential associated with the `Authenticator` instance.
     associatedtype Credential: AuthenticationCredential
 
-    /// Applies the credential to the `URLRequest`.
+    /// Applies the `Credential` to the `URLRequest`.
     ///
     /// In the case of OAuth2, the access token of the `Credential` would be added to the `URLRequest` as a Bearer
     /// token to the `Authorization` header.
@@ -59,6 +59,11 @@ public protocol Authenticator: AnyObject {
     func apply(_ credential: Credential, to urlRequest: inout URLRequest)
 
     /// Refreshes the `Credential` and executes the `completion` closure with the `Result` once complete.
+    ///
+    /// Refresh can be called in one of two ways. It can be called before the `Request` is actually executed due to
+    /// a `requiresRefresh` returning `true` during the adapt portion of the `Request` creation process. It can also
+    /// be triggered by a failed `Request` where the authentication server denied access due to an expired or
+    /// invalidated access token.
     ///
     /// In the case of OAuth2, this method would use the refresh token of the `Credential` to generate a new
     /// `Credential` using the authentication service. Once complete, the `completion` closure should be called with
@@ -71,7 +76,7 @@ public protocol Authenticator: AnyObject {
     /// Please note, these are just general examples of common use cases. They are not meant to solve your specific
     /// authentication server challenges. Please work with your authentication server team to ensure your
     /// `Authenticator` logic matches their expectations.
-
+    ///
     /// - Parameters:
     ///   - credential: The `Credential` to refresh.
     ///   - session:    The `Session` requiring the refresh.
@@ -114,7 +119,7 @@ public protocol Authenticator: AnyObject {
     /// happens, a number of requests are all sent when the application is foregrounded, and all of them will be
     /// rejected by the authentication server in the order they are received. The first failed request will trigger a
     /// refresh internally, which will update the credential, and then retry all the queued requests with the new
-    /// credential. However, it is possible that some of the original requests will not return from the authenitcation
+    /// credential. However, it is possible that some of the original requests will not return from the authentication
     /// server until the refresh has completed. This is where this method comes in.
     ///
     /// When the authentication server rejects a credential, we need to check to make sure we haven't refreshed the
@@ -138,13 +143,12 @@ public protocol Authenticator: AnyObject {
 
 // MARK: -
 
-/// Represents various authentication failures that fail when using the `AuthenticationInterceptor`. All errors are
+/// Represents various authentication failures that occur when using the `AuthenticationInterceptor`. All errors are
 /// still vended from Alamofire as `AFError` types. The `AuthenticationError` instances will be embedded within
 /// `AFError` `.requestAdaptationFailed` or `.requestRetryFailed` cases.
 public enum AuthenticationError: Error {
     /// The credential was missing so the request could not be authenticated.
     case missingCredential
-
     /// The credential was refreshed too many times within the `RefreshWindow`.
     case excessiveRefresh
 }
@@ -157,26 +161,29 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Typealiases
 
-    /// Represents the type of credential used to authenticate requests.
+    /// Type of credential used to authenticate requests.
     public typealias Credential = AuthenticatorType.Credential
 
     // MARK: Helper Types
 
-    /// A container type that defines a refresh window to use to identify excessive refresh calls. When enabled, prior
-    /// to executing a refresh, the `AuthenticationInterceptor` compares the timestamp history of previous refresh calls
-    /// against the `RefreshWindow`. If more refreshes have occurred within the refresh window than allowed, the refresh
-    /// is cancelled an an `AuthorizationError.excessiveRefresh` error is thrown.
+    /// Type that defines a time window used to identify excessive refresh calls. When enabled, prior to executing a
+    /// refresh, the `AuthenticationInterceptor` compares the timestamp history of previous refresh calls against the
+    /// `RefreshWindow`. If more refreshes have occurred within the refresh window than allowed, the refresh is
+    /// cancelled and an `AuthorizationError.excessiveRefresh` error is thrown.
     public struct RefreshWindow {
-        /// The past time interval to inspect to see how many refreshes occurred.
+        /// `TimeInterval` defining the duration of the time window before the current time in which the number of
+        /// refresh attempts is compared against `maximumAttempts`. For example, if `interval` is 30 seconds, then the
+        /// `RefreshWindow` represents the past 30 seconds. If more attempts occurred in the past 30 seconds than
+        /// `maximumAttempts`, an `.excessiveRefresh` error will be thrown.
         public let interval: TimeInterval
 
-        /// The total refresh attempts allowed within the refresh window before throwing an `.excessiveRefresh` error.
+        /// Total refresh attempts allowed within `interval` before throwing an `.excessiveRefresh` error.
         public let maximumAttempts: Int
 
         /// Creates a `RefreshWindow` instance from the specified `interval` and `maximumAttempts`.
         ///
         /// - Parameters:
-        ///   - interval:        The past `TimeInterval` to inspect.
+        ///   - interval:        `TimeInterval` defining the duration of the time window before the current time.
         ///   - maximumAttempts: The maximum attempts allowed within the `TimeInterval`.
         public init(interval: TimeInterval = 30.0, maximumAttempts: Int = 5) {
             self.interval = interval
@@ -246,20 +253,20 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         let adaptResult: AdaptResult = $mutableState.write { mutableState in
-            // Queue the adapt operation if a refresh is already in place
+            // Queue the adapt operation if a refresh is already in place.
             guard !mutableState.isRefreshing else {
                 let operation = AdaptOperation(urlRequest: urlRequest, session: session, completion: completion)
                 mutableState.adaptOperations.append(operation)
                 return .adaptDeferred
             }
 
-            // Throw missing credential error is the credential is missing
+            // Throw missing credential error is the credential is missing.
             guard let credential = mutableState.credential else {
                 let error = AuthenticationError.missingCredential
                 return .doNotAdapt(error)
             }
 
-            // Queue the adapt operation and trigger refresh operation if credential is requires refresh
+            // Queue the adapt operation and trigger refresh operation if credential requires refresh.
             guard !credential.requiresRefresh else {
                 let operation = AdaptOperation(urlRequest: urlRequest, session: session, completion: completion)
                 mutableState.adaptOperations.append(operation)
@@ -280,7 +287,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
             completion(.failure(adaptError))
 
         case .adaptDeferred:
-            // No-op: adapt operation captured during refresh
+            // No-op: adapt operation captured during refresh.
             break
         }
     }
@@ -288,26 +295,26 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
     // MARK: Retry
 
     public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        // Do not attempt retry if there was not an original request and response from the server
+        // Do not attempt retry if there was not an original request and response from the server.
         guard let urlRequest = request.request, let response = request.response else {
             completion(.doNotRetry)
             return
         }
 
-        // Do not attempt retry unless inspector verifies failure was due to authentication error (i.e. 401 status code)
+        // Do not attempt retry unless the `Authenticator` verifies failure was due to authentication error (i.e. 401 status code).
         guard authenticator.didRequest(urlRequest, with: response, failDueToAuthenticationError: error) else {
             completion(.doNotRetry)
             return
         }
 
-        // Do not attempt retry if there is no credential (throw missing credential error instead since retry required)
+        // Do not attempt retry if there is no credential.
         guard let credential = credential else {
             let error = AuthenticationError.missingCredential
             completion(.doNotRetryWithError(error))
             return
         }
 
-        // Retry the request if inspector verifies it was authenticated with a previous credential
+        // Retry the request if the `Authenticator` verifies it was authenticated with a previous credential.
         guard authenticator.isRequest(urlRequest, authenticatedWith: credential) else {
             completion(.retry)
             return

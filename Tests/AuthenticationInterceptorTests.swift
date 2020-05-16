@@ -120,7 +120,7 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
 
             let bearerToken = HTTPHeader.authorization(bearerToken: credential.accessToken).value
 
-            return urlRequest.value(forHTTPHeaderField: "Authorization") == bearerToken
+            return urlRequest.headers["Authorization"] == bearerToken
         }
     }
 
@@ -207,8 +207,8 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response1?.request?.value(forHTTPHeaderField: "Authorization"), "Bearer a1")
-        XCTAssertEqual(response2?.request?.value(forHTTPHeaderField: "Authorization"), "Bearer a1")
+        XCTAssertEqual(response1?.request?.headers["Authorization"], "Bearer a1")
+        XCTAssertEqual(response2?.request?.headers["Authorization"], "Bearer a1")
         XCTAssertEqual(response1?.result.isSuccess, true)
         XCTAssertEqual(response2?.result.isSuccess, true)
 
