@@ -485,22 +485,34 @@ func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue =
 
 // Response Data Handler - Serialized into Data
 func responseData(queue: DispatchQueue = .main,
+                  dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                  emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
+                  emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods,
                   completionHandler: @escaping (AFDataResponse<Data>) -> Void) -> Self
 
 // Response String Handler - Serialized into String
 func responseString(queue: DispatchQueue = .main,
+                    dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                     encoding: String.Encoding? = nil,
+                    emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
+                    emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods,
                     completionHandler: @escaping (AFDataResponse<String>) -> Void) -> Self
 
 // Response JSON Handler - Serialized into Any Using JSONSerialization
 func responseJSON(queue: DispatchQueue = .main,
+                  dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
+                  emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
+                  emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                   options: JSONSerialization.ReadingOptions = .allowFragments,
                   completionHandler: @escaping (AFDataResponse<Any>) -> Void) -> Self
 
 // Response Decodable Handler - Serialized into Decodable Type
 func responseDecodable<T: Decodable>(of type: T.Type = T.self,
                                      queue: DispatchQueue = .main,
+                                     dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
                                      decoder: DataDecoder = JSONDecoder(),
+                                     emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
+                                     emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods,
                                      completionHandler: @escaping (AFDataResponse<T>) -> Void) -> Self
 ```
 
