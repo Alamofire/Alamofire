@@ -778,6 +778,9 @@ extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContai
             }
 
             try encode(value, as: string)
+        case let decimal as Decimal:
+            // Decimal's `Encodable` implementation returns an object, not a single value, so override it.
+            try encode(value, as: String(describing: decimal))
         default:
             try attemptToEncode(value)
         }
