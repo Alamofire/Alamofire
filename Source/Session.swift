@@ -33,6 +33,10 @@ open class Session {
 
     /// Underlying `URLSession` used to create `URLSessionTasks` for this instance, and for which this instance's
     /// `delegate` handles `URLSessionDelegate` callbacks.
+    ///
+    /// - Note: This instance should **NOT** be used to interact with the underlying `URLSessionTask`s. Doing so will
+    ///         break internal Alamofire logic that tracks those tasks.
+    ///
     public let session: URLSession
     /// Instance's `SessionDelegate`, which handles the `URLSessionDelegate` methods and `Request` interaction.
     public let delegate: SessionDelegate

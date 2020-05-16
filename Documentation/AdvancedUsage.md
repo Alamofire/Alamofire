@@ -132,7 +132,7 @@ let session = Session(configuration: configuration)
 A `SessionDelegate` instance encapsulates all handling of the various `URLSessionDelegate` and related protocols callbacks. `SessionDelegate` also acts as the `SessionStateDelegate` for every `Request` produced by Alamofire, allowing the `Request` to indirectly import state from the `Session` instance that created them. `SessionDelegate` can be customized with a specific `FileManager` instance, which will be used for any disk access, like accessing files to be uploaded by `UploadRequest`s or files downloaded by `DownloadRequest`s.
 
 ```swift
-let delelgate = SessionDelegate(fileManager: .default)
+let delegate = SessionDelegate(fileManager: .default)
 ```
 
 ### `startRequestsImmediately`
@@ -649,9 +649,9 @@ The `ServerTrustManager` is responsible for storing an internal mapping of `Serv
 ```swift
 let evaluators: [String: ServerTrustEvaluating] = [
     // By default, certificates included in the app bundle are pinned automatically.
-    "cert.example.com": PinnedCertificatesTrustEvalutor(),
+    "cert.example.com": PinnedCertificatesTrustEvaluator(),
     // By default, public keys from certificates included in the app bundle are used automatically.
-    "keys.example.com": PublicKeysTrustEvalutor(),
+    "keys.example.com": PublicKeysTrustEvaluator(),
 ]
 
 let manager = ServerTrustManager(evaluators: serverTrustPolicies)

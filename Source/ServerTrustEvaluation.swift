@@ -334,11 +334,18 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 
 /// Disables all evaluation which in turn will always consider any server trust as valid.
 ///
+/// - Note: Instead of disabling server trust evaluation, it's a better idea to configure systems to properly trust test
+///         certificates, as outlined in [this Apple tech note](https://developer.apple.com/library/archive/qa/qa1948/_index.html).
+///
 /// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
 @available(*, deprecated, renamed: "DisabledTrustEvaluator", message: "DisabledEvaluator has been renamed DisabledTrustEvaluator.")
 public typealias DisabledEvaluator = DisabledTrustEvaluator
 
 /// Disables all evaluation which in turn will always consider any server trust as valid.
+///
+///
+/// - Note: Instead of disabling server trust evaluation, it's a better idea to configure systems to properly trust test
+///         certificates, as outlined in [this Apple tech note](https://developer.apple.com/library/archive/qa/qa1948/_index.html).
 ///
 /// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
 public final class DisabledTrustEvaluator: ServerTrustEvaluating {
@@ -485,10 +492,10 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
                                                                                                certificates: certificates))
         }
 
-        // Reenable system anchor certificates.
-        let systemStatus = SecTrustSetAnchorCertificatesOnly(type, true)
-        guard systemStatus.af.isSuccess else {
-            throw AFError.serverTrustEvaluationFailed(reason: .settingAnchorCertificatesFailed(status: systemStatus,
+        // Trust only the set anchor certs.
+        let onlyStatus = SecTrustSetAnchorCertificatesOnly(type, true)
+        guard onlyStatus.af.isSuccess else {
+            throw AFError.serverTrustEvaluationFailed(reason: .settingAnchorCertificatesFailed(status: onlyStatus,
                                                                                                certificates: certificates))
         }
     }
