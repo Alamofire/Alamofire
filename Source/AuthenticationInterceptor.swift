@@ -193,7 +193,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     private struct AdaptOperation {
         let urlRequest: URLRequest
-        let session: Alamofire.Session
+        let session: Session
         let completion: (Result<URLRequest, Error>) -> Void
     }
 
