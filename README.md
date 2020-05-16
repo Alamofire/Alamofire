@@ -35,10 +35,11 @@ Alamofire is an HTTP networking library written in Swift.
 ## Features
 
 - [x] Chainable Request / Response Methods
+- [x] Combine Support
 - [x] URL / JSON Parameter Encoding
 - [x] Upload File / Data / Stream / MultipartFormData
 - [x] Download File using Request or Resume Data
-- [x] Authentication with URLCredential
+- [x] Authentication with `URLCredential`
 - [x] HTTP Response Validation
 - [x] Upload and Download Progress Closures with Progress
 - [x] cURL Command Output
@@ -84,7 +85,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'Alamofire', '~> 5.1'
+pod 'Alamofire', '~> 5.2'
 ```
 
 ### Carthage
@@ -92,7 +93,7 @@ pod 'Alamofire', '~> 5.1'
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" ~> 5.1
+github "Alamofire/Alamofire" ~> 5.2
 ```
 
 ### Swift Package Manager
@@ -103,7 +104,7 @@ Once you have your Swift package set up, adding Alamofire as a dependency is as 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.1.0"))
+    .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.0"))
 ]
 ```
 
