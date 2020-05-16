@@ -43,20 +43,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
-      "line": 817,
-      "symbol": "DecodableStreamSerializer.decoder",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
-      "line": 818,
-      "symbol": "DecodableStreamSerializer.dataPreprocessor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
       "line": 73,
       "symbol": "SessionDelegate.urlSession(_:didBecomeInvalidWithError:)",
@@ -173,13 +159,6 @@
       "line": 34,
       "symbol": "URLRequest.validate()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Validation.swift",
-      "line": 195,
-      "symbol": "DataStreamRequest.Validation",
-      "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     }
   ],
