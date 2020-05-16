@@ -200,7 +200,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
     }
 
-    func testThatRequestsWorksWithRequestAndSerializationQueue() {
+    func testThatRequestsWorksWithRequestAndSerializationQueues() {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
@@ -218,6 +218,31 @@ final class RequestResponseTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
+    }
+
+    func testThatRequestsWorksWithConcurrentRequestAndSerializationQueues() {
+        // Given
+        let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
+        let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
+        let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
+        let count = 10
+        let expectation = self.expectation(description: "request should complete")
+        expectation.expectedFulfillmentCount = count
+        var responses: [DataResponse<Any, AFError>] = []
+
+        // When
+        DispatchQueue.concurrentPerform(iterations: count) { _ in
+            session.request("https://httpbin.org/get").responseJSON { resp in
+                responses.append(resp)
+                expectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(responses.count, count)
+        XCTAssertTrue(responses.allSatisfy { $0.result.isSuccess })
     }
 
     // MARK: Encodable Parameters
