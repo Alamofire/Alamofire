@@ -987,7 +987,7 @@ AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableT
 ```
 
 ## Using Alamofire with Combine
-On systems supporting the Combine framework, Alamofire offers the ability to publish responses using a custom `Publisher` type. These publishers would similarly to Alamofire's existing response handlers, in that they are chained onto the various request APIs, such as `validate()`. For example:
+On systems supporting the Combine framework, Alamofire offers the ability to publish responses using a custom `Publisher` type. These publishers work much like Alamofire's response handlers. They are chained onto requests and like response handlers, should come after other API like `validate()`. For example:
 
 ```swift
 AF.request(...).publishDecodable(type: DecodableType.self)
@@ -1034,7 +1034,7 @@ AF.request(...)
 
 Once subscribed, this chain of transformations will make the first request and then create a publisher for a second, finishing when the second request has finished.
 
-> As with all Combine usage, care must be taken to ensure that subscriptions are cancelled early by maintaining the lifetime of the `AnyCancellable` tokens returned by functions like `sink`. If a request is cancelled prematurely, the response's error will be set to `AFError.explicitlyCancelled`.
+> As with all Combine usage, care must be taken to ensure that subscriptions are not cancelled early by maintaining the lifetime of the `AnyCancellable` tokens returned by functions like `sink`. If a request is cancelled prematurely, the response's error will be set to `AFError.explicitlyCancelled`.
 
 #### `DownloadResponsePublisher`
 Alamofire also offers a `Publisher` for `DownloadRequest`s, `DownloadResponsePublisher`. Its behavior and capabilities are the same as `DataResponsePublisher`.
