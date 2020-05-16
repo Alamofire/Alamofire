@@ -1008,6 +1008,11 @@ let valuePublisher = publisher.value() // Provides an AnyPublisher<DecodableType
 As with any `Publisher`, `DataResponsePublisher` can be used with various Combine APIs, allow Alamofire to support easy simultaneous requests for the first time.
 
 ```swift
+// All usage of cancellable Combine API must have its token stored to maintain the subscription.
+var tokens: Set<AnyCancellable> = []
+
+...
+
 let first = AF.request(...).publishDecodable(type: First.self)
 let second = AF.request(...).publishDecodable(type: Second.self)
 let both = Publishers.CombineLatest(first, second)
@@ -1015,11 +1020,17 @@ both.sink { first, second in // DataResponse<First, AFError>, DataResponse<Secon
     debugPrint(first)
     debugPrint(second)
 }
+.store(in: &tokens)
 ```
 
 Sequential requests are also possible:
 
 ```swift
+// All usage of cancellable Combine API must have its token stored to maintain the subscription.
+var tokens: Set<AnyCancellable> = []
+
+...
+
 AF.request(...)
     .publishDecodable(type: First.self)
     .value()
@@ -1030,6 +1041,7 @@ AF.request(...)
     .sink { second in // DataResponse<Second, AFError>
         debugPrint(second)
     }
+    .store(in: &tokens)
 ```
 
 Once subscribed, this chain of transformations will make the first request and then create a publisher for a second, finishing when the second request has finished.
@@ -1039,7 +1051,7 @@ Once subscribed, this chain of transformations will make the first request and t
 #### `DownloadResponsePublisher`
 Alamofire also offers a `Publisher` for `DownloadRequest`s, `DownloadResponsePublisher`. Its behavior and capabilities are the same as `DataResponsePublisher`.
 
-Like most `DownloadRequest`'s response handlers, `DownloadResponsePublisher` reads `Data` from disk to perform serialization, which can impact system performance if reading a large amount of `Data`. It's recommend you use `publishUnserialized()` to receive just the `URL?` that the file was downloaded to and perform your own read from disk for large files.
+Like most `DownloadRequest`'s response handlers, `DownloadResponsePublisher` reads `Data` from disk to perform serialization, which can impact system performance if reading a large amount of `Data`. It's recommended you use `publishUnserialized()` to receive just the `URL?` that the file was downloaded to and perform your own read from disk for large files.
 
 #### `DataStreamPublisher`
 `DataStreamPublisher` is a `Publisher` for `DataStreamRequest`s. Like `DataStreamRequest` itself, and unlike Alamofire's other `Publisher`s, `DataStreamPublisher` can return multiple values serialized from `Data` received from the network, as well as a final completion event. For more information on how `DataStreamRequest` works, please see our [detailed usage documentation](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#streaming-data-from-a-server).
