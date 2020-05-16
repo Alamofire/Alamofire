@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 class AuthenticationInterceptorTestCase: BaseTestCase {
-
     // MARK: - Helper Types
 
     struct OAuthCredential: AuthenticationCredential {
@@ -38,13 +37,11 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
 
         let requiresRefresh: Bool
 
-        init(
-            accessToken: String = "a0",
-            refreshToken: String = "r0",
-            userID: String = "u0",
-            expiration: Date = Date(),
-            requiresRefresh: Bool = false)
-        {
+        init(accessToken: String = "a0",
+             refreshToken: String = "r0",
+             userID: String = "u0",
+             expiration: Date = Date(),
+             requiresRefresh: Bool = false) {
             self.accessToken = accessToken
             self.refreshToken = refreshToken
             self.userID = userID
@@ -71,42 +68,36 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         }
 
         func apply(_ credential: OAuthCredential, to urlRequest: inout URLRequest) {
-            lock.lock() ; defer { lock.unlock() }
+            lock.lock(); defer { lock.unlock() }
 
             applyCount += 1
 
             urlRequest.headers.add(.authorization(bearerToken: credential.accessToken))
         }
 
-        func refresh(
-            _ credential: OAuthCredential,
-            for session: Session,
-            completion: @escaping (Result<OAuthCredential, Error>) -> Void)
-        {
-            lock.lock() ; defer { lock.unlock() }
+        func refresh(_ credential: OAuthCredential,
+                     for session: Session,
+                     completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
+            lock.lock(); defer { lock.unlock() }
 
             refreshCount += 1
 
             let refreshResult = self.refreshResult ?? .success(
-                OAuthCredential(
-                    accessToken: "a\(refreshCount)",
-                    refreshToken: "a\(refreshCount)",
-                    userID: "u1",
-                    expiration: Date()
-                )
+                OAuthCredential(accessToken: "a\(refreshCount)",
+                                refreshToken: "a\(refreshCount)",
+                                userID: "u1",
+                                expiration: Date())
             )
 
             // The 100 ms delay here is important to allow multiple requests to queue up while refreshing
             DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.1) { completion(refreshResult) }
         }
 
-        func didRequest(
-            _ urlRequest: URLRequest,
-            with response: HTTPURLResponse,
-            failDueToAuthenticationError error: Error)
-            -> Bool
-        {
-            lock.lock() ; defer { lock.unlock() }
+        func didRequest(_ urlRequest: URLRequest,
+                        with response: HTTPURLResponse,
+                        failDueToAuthenticationError error: Error)
+            -> Bool {
+            lock.lock(); defer { lock.unlock() }
 
             didRequestFailDueToAuthErrorCount += 1
 
@@ -114,7 +105,7 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         }
 
         func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: OAuthCredential) -> Bool {
-            lock.lock() ; defer { lock.unlock() }
+            lock.lock(); defer { lock.unlock() }
 
             isRequestAuthenticatedWithCredentialCount += 1
 
@@ -282,7 +273,7 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.failure?.asAFError?.isRequestAdaptationError, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? OAuthError, .refreshNetworkFailure)
 
-        if case .requestRetryFailed(_, let originalError) = response?.result.failure {
+        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
             XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
             XCTAssertEqual(originalError.asAFError?.responseCode, 401)
         }
@@ -397,7 +388,7 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .missingCredential)
 
-        if case .requestRetryFailed(_, let originalError) = response?.result.failure {
+        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
             XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
             XCTAssertEqual(originalError.asAFError?.responseCode, 401)
         }
@@ -419,13 +410,11 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
 
         eventMonitor.requestDidCreateTask = { _, _ in
-            interceptor.credential = OAuthCredential(
-                accessToken: "a1",
-                refreshToken: "r1",
-                userID: "u0",
-                expiration: Date(),
-                requiresRefresh: false
-            )
+            interceptor.credential = OAuthCredential(accessToken: "a1",
+                                                     refreshToken: "r1",
+                                                     userID: "u0",
+                                                     expiration: Date(),
+                                                     requiresRefresh: false)
         }
 
         let session = Session(eventMonitors: [eventMonitor])
@@ -521,7 +510,7 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? OAuthError, .refreshNetworkFailure)
 
-        if case .requestRetryFailed(_, let originalError) = response?.result.failure {
+        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
             XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
             XCTAssertEqual(originalError.asAFError?.responseCode, 401)
         }
@@ -589,14 +578,12 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = OAuthAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let pathAdapter = PathAdapter(paths: [
-            "/status/401",
-            "/status/401",
-            "/status/401",
-            "/status/401",
-            "/status/401",
-            "/status/200"
-        ])
+        let pathAdapter = PathAdapter(paths: ["/status/401",
+                                              "/status/401",
+                                              "/status/401",
+                                              "/status/401",
+                                              "/status/401",
+                                              "/status/200"])
 
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
@@ -630,11 +617,9 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         // Given
         let credential = OAuthCredential()
         let authenticator = OAuthAuthenticator()
-        let interceptor = AuthenticationInterceptor(
-            authenticator: authenticator,
-            credential: credential,
-            refreshWindow: .init(interval: 30, maximumAttempts: 2)
-        )
+        let interceptor = AuthenticationInterceptor(authenticator: authenticator,
+                                                    credential: credential,
+                                                    refreshWindow: .init(interval: 30, maximumAttempts: 2))
 
         let session = Session()
         let urlRequest = URLRequest.makeHTTPBinRequest(path: "/status/401")
@@ -657,7 +642,7 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
 
-        if case .requestRetryFailed(_, let originalError) = response?.result.failure {
+        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
             XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
             XCTAssertEqual(originalError.asAFError?.responseCode, 401)
         }

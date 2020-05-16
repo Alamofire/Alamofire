@@ -158,7 +158,6 @@ public enum AuthenticationError: Error {
 /// The `AuthenticationInterceptor` class manages the queuing and threading complexity of authenticating requests.
 /// It relies on an `Authenticator` type to handle the actual `URLRequest` authentication and `Credential` refresh.
 public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor where AuthenticatorType: Authenticator {
-
     // MARK: Typealiases
 
     /// Type of credential used to authenticate requests.
@@ -239,14 +238,12 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
     ///   - authenticator: The `Authenticator` type.
     ///   - credential:    The `Credential` if it exists. `nil` by default.
     ///   - refreshWindow: The `RefreshWindow` used to identify excessive refresh calls. `RefreshWindow()` by default.
-    public init(
-        authenticator: AuthenticatorType,
-        credential: Credential? = nil,
-        refreshWindow: RefreshWindow? = RefreshWindow())
-    {
+    public init(authenticator: AuthenticatorType,
+                credential: Credential? = nil,
+                refreshWindow: RefreshWindow? = RefreshWindow()) {
         self.authenticator = authenticator
-        self.mutableState.credential = credential
-        self.mutableState.refreshWindow = refreshWindow
+        mutableState.credential = credential
+        mutableState.refreshWindow = refreshWindow
     }
 
     // MARK: Adapt
@@ -278,12 +275,12 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
         }
 
         switch adaptResult {
-        case .adapt(let credential):
+        case let .adapt(credential):
             var authenticatedRequest = urlRequest
             authenticator.apply(credential, to: &authenticatedRequest)
             completion(.success(authenticatedRequest))
 
-        case .doNotAdapt(let adaptError):
+        case let .doNotAdapt(adaptError):
             completion(.failure(adaptError))
 
         case .adaptDeferred:
@@ -344,10 +341,10 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
         authenticator.refresh(credential, for: session) { result in
             self.$mutableState.write { mutableState in
                 switch result {
-                case .success(let credential):
+                case let .success(credential):
                     self.handleRefreshSuccess(credential, insideLock: &mutableState)
 
-                case .failure(let error):
+                case let .failure(error):
                     self.handleRefreshFailure(error, insideLock: &mutableState)
                 }
             }
