@@ -1589,7 +1589,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         let createTask = expectation(description: "should create task twice")
         createTask.expectedFulfillmentCount = 2
         var tasksCreated = 0
-        monitor.requestDidCreateTask = { _, _ in
+        monitor.requestDidCreateTask = { [unowned session] _, _ in
             tasksCreated += 1
             createTask.fulfill()
             // Cancel after the second task is created to ensure proper lifetime events.

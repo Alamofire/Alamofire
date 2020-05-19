@@ -952,7 +952,7 @@ extension DataStreamRequest {
     /// - Returns:  The `DataStreamRequest`.
     @discardableResult
     public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Handler<Data, Never>) -> Self {
-        $streamMutableState.write { state in
+        $streamMutableState.write { [unowned self] state in
             let capture = (queue, { data in
                 self.capturingError {
                     try stream(.init(event: .stream(.success(data)), token: .init(self)))
@@ -977,7 +977,7 @@ extension DataStreamRequest {
     public func responseStream<Serializer: DataStreamSerializer>(using serializer: Serializer,
                                                                  on queue: DispatchQueue = .main,
                                                                  stream: @escaping Handler<Serializer.SerializedObject, AFError>) -> Self {
-        let parser = { (data: Data) in
+        let parser = { [unowned self] (data: Data) in
             self.serializationQueue.async {
                 // Start work on serialization queue.
                 let result = Result { try serializer.serialize(data) }
@@ -1011,7 +1011,7 @@ extension DataStreamRequest {
     @discardableResult
     public func responseStreamString(on queue: DispatchQueue = .main,
                                      stream: @escaping Handler<String, Never>) -> Self {
-        let parser = { (data: Data) in
+        let parser = { [unowned self] (data: Data) in
             self.serializationQueue.async {
                 // Start work on serialization queue.
                 let string = String(decoding: data, as: UTF8.self)

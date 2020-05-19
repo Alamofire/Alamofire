@@ -863,21 +863,21 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
-        var stream: DataStreamRequest.Stream<HTTPBinResponse, AFError>?
+        var error: AFError?
 
         // When
         let request = AF.streamRequest(URLRequest.makeHTTPBinRequest())
         var token: AnyCancellable? = request
             .publishDecodable(type: HTTPBinResponse.self)
             .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                  receiveValue: { stream = $0; responseReceived.fulfill() })
+                  receiveValue: { error = $0.completion?.error; responseReceived.fulfill() })
         token = nil
 
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertNotNil(stream?.completion?.error)
-        XCTAssertTrue(stream?.completion?.error?.isExplicitlyCancelledError == true)
+        XCTAssertNotNil(error)
+        XCTAssertTrue(error?.isExplicitlyCancelledError == true)
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(token)
     }
@@ -887,7 +887,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
-        var stream: DataStreamRequest.Stream<HTTPBinResponse, AFError>?
+        var error: AFError?
 
         // When
         let request = AF.streamRequest(URLRequest.makeHTTPBinRequest())
@@ -895,15 +895,15 @@ final class DataStreamRequestCombineTests: CombineTestCase {
             request
                 .publishDecodable(type: HTTPBinResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { stream = $0; responseReceived.fulfill() })
+                      receiveValue: { error = $0.completion?.error; responseReceived.fulfill() })
         }
         request.cancel()
 
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertNotNil(stream?.completion?.error)
-        XCTAssertTrue(stream?.completion?.error?.isExplicitlyCancelledError == true)
+        XCTAssertNotNil(error)
+        XCTAssertTrue(error?.isExplicitlyCancelledError == true)
         XCTAssertTrue(request.isCancelled)
     }
 
