@@ -673,7 +673,7 @@ extension AFError: LocalizedError {
         case let .downloadedFileMoveFailed(error, source, destination):
             return "Moving downloaded file from: \(source) to: \(destination) failed with error: \(error.localizedDescription)"
         case let .sessionTaskFailed(error):
-            return "URLSessionTask failed with error: \(error.localizedDescription)"
+            return error.localizedDescription
         }
     }
 }
