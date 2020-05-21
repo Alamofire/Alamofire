@@ -78,6 +78,9 @@
 		31727422218BB9A50039FFCC /* HTTPBin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727421218BB9A50039FFCC /* HTTPBin.swift */; };
 		31727423218BB9A50039FFCC /* HTTPBin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727421218BB9A50039FFCC /* HTTPBin.swift */; };
 		31727424218BB9A50039FFCC /* HTTPBin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727421218BB9A50039FFCC /* HTTPBin.swift */; };
+		31762DCA247738FA0025C704 /* LeaksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31762DC9247738FA0025C704 /* LeaksTests.swift */; };
+		31762DCB247738FA0025C704 /* LeaksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31762DC9247738FA0025C704 /* LeaksTests.swift */; };
+		31762DCC247738FA0025C704 /* LeaksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31762DC9247738FA0025C704 /* LeaksTests.swift */; };
 		317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
 		317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
 		317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
@@ -391,6 +394,7 @@
 		31727417218BAEC90039FFCC /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		3172741C218BB1790039FFCC /* ParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoder.swift; sourceTree = "<group>"; };
 		31727421218BB9A50039FFCC /* HTTPBin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPBin.swift; sourceTree = "<group>"; };
+		31762DC9247738FA0025C704 /* LeaksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaksTests.swift; sourceTree = "<group>"; };
 		318DD40E2439780500963291 /* Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Combine.swift; sourceTree = "<group>"; };
 		3191B5741F5F53A6003960A8 /* Protected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protected.swift; sourceTree = "<group>"; };
 		31991790209CDA7F00103A19 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
@@ -907,6 +911,7 @@
 			children = (
 				4C256A501B096C2C0065714F /* BaseTestCase.swift */,
 				31727421218BB9A50039FFCC /* HTTPBin.swift */,
+				31762DC9247738FA0025C704 /* LeaksTests.swift */,
 				31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */,
 				4C256A4E1B09656A0065714F /* Core */,
 				4C7C8D201B9D0D7300948136 /* Extensions */,
@@ -1379,6 +1384,7 @@
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
 				3111CE9120A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
 				31BADE502439A8D1007D2AB9 /* CombineTests.swift in Sources */,
+				31762DCC247738FA0025C704 /* LeaksTests.swift in Sources */,
 				31425AC3241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				4CF627171BA7CC240011A099 /* ParameterEncodingTests.swift in Sources */,
 			);
@@ -1546,6 +1552,7 @@
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
 				3111CE8F20A7EC26008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
 				31BADE4E2439A8D1007D2AB9 /* CombineTests.swift in Sources */,
+				31762DCA247738FA0025C704 /* LeaksTests.swift in Sources */,
 				31425AC1241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */,
 			);
@@ -1587,6 +1594,7 @@
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
 				3111CE9020A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
 				31BADE4F2439A8D1007D2AB9 /* CombineTests.swift in Sources */,
+				31762DCB247738FA0025C704 /* LeaksTests.swift in Sources */,
 				31425AC2241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				4C256A541B096C770065714F /* BaseTestCase.swift in Sources */,
 			);
