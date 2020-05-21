@@ -29,7 +29,7 @@ final class LeaksTests: XCTestCase {
                 }
                 let process = Process()
                 process.launchPath = "/usr/bin/leaks"
-                process.arguments = [ "\(getpid())" ]
+                process.arguments = ["\(getpid())"]
                 process.standardOutput = out
                 process.standardError = out
                 process.launch()
