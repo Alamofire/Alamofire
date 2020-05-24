@@ -309,14 +309,12 @@ open class RetryPolicy: RequestInterceptor {
                     for session: Session,
                     dueTo error: Error,
                     completion: @escaping (RetryResult) -> Void) {
-        if
-            request.retryCount < retryLimit,
-            Self.shouldRetry(request: request, dueTo: error,
-                             retryableHTTPMethods: retryableHTTPMethods,
-                             retryableHTTPStatusCodes: retryableHTTPStatusCodes,
-                             retryableURLErrorCodes: retryableURLErrorCodes) {
-            let timeDelay = Self.exponentialBackoffDelay(count: request.retryCount, base: exponentialBackoffBase, scale: exponentialBackoffScale)
-            completion(.retryWithDelay(timeDelay))
+        if request.retryCount < retryLimit, shouldRetry(request: request, dueTo: error) {
+            if let timeDelay = delayForRetrying(request: request, dueTo: error) {
+                completion(.retryWithDelay(timeDelay))
+            } else {
+                completion(.retry)
+            }
         } else {
             completion(.doNotRetry)
         }
@@ -325,118 +323,34 @@ open class RetryPolicy: RequestInterceptor {
     // MARK: - ShouldRetry
 
     /// - Parameters:
-    ///     - request:                  `Request` that failed due to the provided `Error`.
-    ///     - error:                    `Error` encountered while executing the `Request`.
-    ///     - retryableHTTPMethods:     HTTP methods that should be retried. `RetryPolicy.defaultRetryableHTTPMethods` by default.
-    ///     - retryableHTTPStatusCodes: HTTP status codes that should be retried. `RetryPolicy.defaultRetryableHTTPStatusCodes` by default.
-    ///     - retryableURLErrorCodes:   URL error codes that should be retried. `RetryPolicy.defaultRetryableURLErrorCodes` by default.
-    /// - Returns: `true` if `request` HTTP method is contained in the provided methods and `request` response or `error` contain any of the provided statuses and codes.
-    public static func shouldRetry(request: Request,
-                                   dueTo error: Error,
-                                   retryableHTTPMethods: Set<HTTPMethod> = RetryPolicy.defaultRetryableHTTPMethods,
-                                   retryableHTTPStatusCodes: Set<Int> = RetryPolicy.defaultRetryableHTTPStatusCodes,
-                                   retryableURLErrorCodes: Set<URLError.Code> = RetryPolicy.defaultRetryableURLErrorCodes) -> Bool {
-        Self.shouldRetry(basedOn: request.request?.method, retryableHTTPMethods: retryableHTTPMethods)
-            && Self.shouldRetry(basedOnHTTPStatusCodeFrom: request.response, andURLErrorCodeFrom: error,
-                                retryableHTTPStatusCodes: retryableHTTPStatusCodes, retryableURLErrorCodes: retryableURLErrorCodes)
-    }
-
-    /// - Parameters:
-    ///     - httpMethod:           `Error` encountered while executing the `Request`.
-    ///     - retryableHTTPMethods: HTTP methods that should be retried. `RetryPolicy.defaultRetryableHTTPMethods` by default.
-    /// - Returns: `true` if `httpMethod` is contained in the provided methods.
-    public static func shouldRetry(basedOn httpMethod: HTTPMethod?, retryableHTTPMethods: Set<HTTPMethod> = RetryPolicy.defaultRetryableHTTPMethods) -> Bool {
-        guard let httpMethod = httpMethod else {
+    ///     - request: `Request` that failed due to the provided `Error`.
+    ///     - error:    `Error` encountered while executing the `Request`.
+    /// - Returns: `true` if `request` HTTP method is contained in the retryable HTTP methods and `request` response or `error` contain any of the retryable statuses and codes.
+    open func shouldRetry(request: Request, dueTo error: Error) -> Bool {
+        guard let httpMethod = request.request?.method, retryableHTTPMethods.contains(httpMethod) else {
             return false
         }
-        return retryableHTTPMethods.contains(httpMethod)
-    }
-
-    /// - Parameters:
-    ///     - error:                    `Error` encountered while executing the `Request`.
-    ///     - retryableHTTPStatusCodes: HTTP status codes that should be retried. `RetryPolicy.defaultRetryableHTTPStatusCodes` by default.
-    ///     - retryableURLErrorCodes:   URL error codes that should be retried. `RetryPolicy.defaultRetryableURLErrorCodes` by default.
-    /// - Returns: `true` if `error` contains any of the provided statuses and codes.
-    /// - Note: `error` is `URLError` or `AFError` otherwise it fallbacks to `asAFError?.underlyingError`.
-    public static func shouldRetry(dueTo error: Error,
-                                   retryableHTTPStatusCodes: Set<Int> = RetryPolicy.defaultRetryableHTTPStatusCodes,
-                                   retryableURLErrorCodes: Set<URLError.Code> = RetryPolicy.defaultRetryableURLErrorCodes) -> Bool {
-        Self.shouldRetry(basedOnURLErrorCodeFrom: error, retryableURLErrorCodes: retryableURLErrorCodes)
-            || (error as? AFError).map { Self.shouldRetry(basedOnHTTPStatusCodeFrom: $0, retryableHTTPStatusCodes: retryableHTTPStatusCodes) } ?? false
-    }
-
-    /// - Parameters:
-    ///     - error:                    `AFError` encountered while executing the `Request`.
-    ///     - retryableHTTPStatusCodes: HTTP status codes that should be retried. `RetryPolicy.defaultRetryableHTTPStatusCodes` by default.
-    /// - Returns: `true` if `error` contains any of the provided statuses.
-    public static func shouldRetry(basedOnHTTPStatusCodeFrom error: AFError, retryableHTTPStatusCodes: Set<Int> = RetryPolicy.defaultRetryableHTTPStatusCodes) -> Bool {
-        guard let statusCode = error.responseCode else {
-            return false
-        }
-        return retryableHTTPStatusCodes.contains(statusCode)
-    }
-
-    /// - Parameters:
-    ///     - error:                    `Error` encountered while executing the `Request`.
-    ///     - retryableURLErrorCodes:   URL error codes that should be retried. `RetryPolicy.defaultRetryableURLErrorCodes` by default.
-    /// - Returns: `true` if `error` contains any of the provided codes.
-    /// - Note: `error` is `URLError` otherwise it fallbacks to `asAFError?.underlyingError`.
-    public static func shouldRetry(basedOnURLErrorCodeFrom error: Error, retryableURLErrorCodes: Set<URLError.Code> = RetryPolicy.defaultRetryableURLErrorCodes) -> Bool {
-        let errorCode = (error as? URLError)?.code
-        let afErrorCode = (error.asAFError?.underlyingError as? URLError)?.code
-        guard let code = errorCode ?? afErrorCode else {
-            return false
-        }
-        return retryableURLErrorCodes.contains(code)
-    }
-
-    /// - Parameters:
-    ///     - response:                 `HTTPURLResponse` of the `Request` that failed due to the provided `Error`.
-    ///     - error:                    `Error` encountered while executing the `Request`.
-    ///     - retryableHTTPStatusCodes: HTTP status codes that should be retried. `RetryPolicy.defaultRetryableHTTPStatusCodes` by default.
-    ///     - retryableURLErrorCodes:   URL error codes that should be retried. `RetryPolicy.defaultRetryableURLErrorCodes` by default.
-    /// - Returns: `true` if `response` or `error` contain any of the provided statuses and codes.
-    public static func shouldRetry(basedOnHTTPStatusCodeFrom response: HTTPURLResponse?, andURLErrorCodeFrom error: Error,
-                                   retryableHTTPStatusCodes: Set<Int> = RetryPolicy.defaultRetryableHTTPStatusCodes,
-                                   retryableURLErrorCodes: Set<URLError.Code> = RetryPolicy.defaultRetryableURLErrorCodes) -> Bool {
-        if let statusCode = response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
+        if let statusCode = request.response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
             return true
         } else {
-            return shouldRetry(basedOnURLErrorCodeFrom: error, retryableURLErrorCodes: retryableURLErrorCodes)
+            let errorCode = (error as? URLError)?.code
+            let afErrorCode = (error.asAFError?.underlyingError as? URLError)?.code
+            guard let code = errorCode ?? afErrorCode else {
+                return false
+            }
+            return retryableURLErrorCodes.contains(code)
         }
     }
 
     // MARK: - DelayForRetrying
 
     /// - Parameters:
-    ///     - count:    The exponent of the exponential backoff. Usually represents a retry counter. The greater it is the greater the delay.
-    ///     - base:     The base of the exponential backoff. `RetryPolicy.defaultExponentialBackoffBase` by default. Must be greater than or equal to 2.
-    ///     - scale:    The scale of the exponential backoff. `RetryPolicy.defaultExponentialBackoffScale` by default.
-    ///
-    /// - Returns: A calculated exponential delay.
-    public static func exponentialBackoffDelay(count: Int, base: UInt = RetryPolicy.defaultExponentialBackoffBase, scale: Double = RetryPolicy.defaultExponentialBackoffScale) -> TimeInterval {
-        precondition(base >= 2, "The `exponentialBackoffBase` must be a minimum of 2.")
-        return pow(Double(base), Double(count)) * scale
-    }
-}
-
-/// A retry policy that divides retry logic into two closures with different responsibility.
-/// It can be easily customized using static `shouldRetry` family of functions from `RetryPolicy`.
-open class ConditionalRetryPolicy: ConditionalRetrier {
-    /// Creates `ConditionalRetryPolicy` instance with the specified parameters.
-    /// - Parameters:
-    ///     - shouldRetry:      Closure that decides when to retry. Throws an error to abort retrying.
-    ///                         Uses `RetryPolicy.defaultRetryLimit` and `RetryPolicy.shouldRetry(request:dueTo:)` by default.
-    ///     - delayForRetrying: Closure that provides optional retry delay (in seconds). Throws an error to abort retrying.
-    ///                         Uses `RetryPolicy.exponentialBackoffDelay(count:)` by default.
-    /// - Note: Default parameters create an instance that behaves exactly like the default `RetryPolicy()` instance.
-    override public init(shouldRetry: @escaping ShouldRetry = { request, _, error in
-        request.retryCount < RetryPolicy.defaultRetryLimit && RetryPolicy.shouldRetry(request: request, dueTo: error)
-    },
-                         delayForRetrying: @escaping DelayForRetrying = { request, _, _ in
-        RetryPolicy.exponentialBackoffDelay(count: request.retryCount)
-        }) {
-        super.init(shouldRetry: shouldRetry, delayForRetrying: delayForRetrying)
+    ///     - request: `Request` that failed due to the provided `Error`.
+    ///     - error:    `Error` encountered while executing the `Request`.
+    /// - Returns: A  delay in seconds or nil to retry without a delay.
+    open func delayForRetrying(request: Request, dueTo error: Error) -> TimeInterval? {
+        precondition(exponentialBackoffBase >= 2, "The `exponentialBackoffBase` must be a minimum of 2.")
+        return pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale
     }
 }
 
