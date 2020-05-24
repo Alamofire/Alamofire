@@ -25,6 +25,48 @@
 import Alamofire
 import XCTest
 
+final class HTTPMethodDependingParameterEncoderTests: BaseTestCase {
+    
+    func testThatItUsesTheDesiredParameterEncoderForAGivenHTTPMethod() throws {
+        // Given
+        struct DesiredParameterEncoder: ParameterEncoder {
+            static var wasCalled: Bool = false
+            
+            func encode<Parameters>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest where Parameters : Encodable {
+                Self.wasCalled = true
+                return request
+            }
+        }
+        
+        struct DefaultParameterEncoder: ParameterEncoder {
+            static var wasCalled: Bool = false
+            
+            func encode<Parameters>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest where Parameters : Encodable {
+                Self.wasCalled = true
+                return request
+            }
+        }
+        
+        let request = URLRequest.makeHTTPBinRequest(method: .trace)
+        
+        let httpMethodDependingParameterEncoder = HTTPMethodDependingParameterEncoder { httpMethod in
+            switch httpMethod {
+            case .trace:
+                return DesiredParameterEncoder()
+            default:
+                return DefaultParameterEncoder()
+            }
+        }
+        
+        // When
+        let _ = try httpMethodDependingParameterEncoder.encode(HTTPBinParameters.default, into: request)
+        
+        // Then
+        XCTAssertTrue(DesiredParameterEncoder.wasCalled)
+        XCTAssertFalse(DefaultParameterEncoder.wasCalled)
+    }
+}
+
 final class JSONParameterEncoderTests: BaseTestCase {
     func testThatDataIsProperlyEncodedAndProperContentTypeIsSet() throws {
         // Given

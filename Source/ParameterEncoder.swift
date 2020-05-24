@@ -38,6 +38,45 @@ public protocol ParameterEncoder {
     func encode<Parameters: Encodable>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest
 }
 
+/// A `ParameterEncoder` that uses different parameter encoders for different http methods.
+///
+/// `Content-Type` header is set accordingly by the provided encoders.
+open class HTTPMethodDependingParameterEncoder: ParameterEncoder {
+    
+    /// - Returns: an instance using `init(getHeadDeleteMethodsParameterEncoder:defaultParameterEncoder)` with default parameters.
+    public static var `default`: HTTPMethodDependingParameterEncoder { .init() }
+
+    /// A closure that returns the desired `ParameterEncoder` for a given `HTTPMethod`.
+    public let parameterEncoderFor: (HTTPMethod) -> ParameterEncoder
+    
+    /// Creates an instance with the provided escaping closure that returns the desired `ParameterEncoder` for a given `HTTPMethod`.
+    public init(parameterEncoderFor: @escaping (HTTPMethod) -> ParameterEncoder) {
+        self.parameterEncoderFor = parameterEncoderFor
+    }
+    
+    /// Creates an instance with the provided parameter encoders.
+    ///
+    /// - Parameter getHeadDeleteMethodsParameterEncoder: `ParameterEncoder` for `.get`, `.head`, and `.delete` requests. `URLEncodedFormParameterEncoder.default` by default.
+    /// - Parameter defaultParameterEncoder:              `ParameterEncoder`  for all requests other than `.get`, `.head`, and `.delete`.  `JSONParameterEncoder.default` by default.
+    public convenience init(getHeadDeleteMethodsParameterEncoder: ParameterEncoder = URLEncodedFormParameterEncoder.default, defaultParameterEncoder: ParameterEncoder = JSONParameterEncoder.default) {
+        self.init { httpMethod in
+            switch httpMethod {
+            case .get, .head, .delete:
+                return getHeadDeleteMethodsParameterEncoder
+            default:
+                return defaultParameterEncoder
+            }
+        }
+    }
+    
+    open func encode<Parameters>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest where Parameters : Encodable {
+        guard let method = request.method else {
+            throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.httpMethod(rawValue: "nil")))
+        }
+        return try self.parameterEncoderFor(method).encode(parameters, into: request)
+    }
+}
+
 /// A `ParameterEncoder` that encodes types as JSON body data.
 ///
 /// If no `Content-Type` header is already set on the provided `URLRequest`s, it's set to `application/json`.
