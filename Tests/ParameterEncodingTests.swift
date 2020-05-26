@@ -200,7 +200,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
 
             // Then
-            XCTAssertEqual(urlRequest.url?.query, "foo%5B%5D=a&foo%5B%5D=1&foo%5B%5D=1")
+            XCTAssertEqual(urlRequest.url?.query, "foo%5B0%5D=a&foo%5B1%5D=1&foo%5B2%5D=1")
         } catch {
             XCTFail("Test encountered unexpected error: \(error)")
         }
@@ -261,7 +261,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
 
             // Then
-            let expectedQuery = "foo%5Bbar%5D%5Bbaz%5D%5B%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1"
+            let expectedQuery = "foo%5Bbar%5D%5Bbaz%5D%5B0%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B1%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B2%5D=1"
             XCTAssertEqual(urlRequest.url?.query, expectedQuery)
         } catch {
             XCTFail("Test encountered unexpected error: \(error)")
