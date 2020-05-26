@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.2.x` Releases - [5.2.0](#520)
+- `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521)
 - `5.1.x` Releases - [5.1.0](#510)
 - `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
 - `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
@@ -42,6 +42,17 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.2.1](https://github.com/Alamofire/Alamofire/releases/tag/5.2.1)
+Released on 2020-05-25. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/71?closed=1).
+
+#### Updated
+- Usage of `.background` `DispatchQoS` to `.utility` to avoid low-power issues.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3207](https://github.com/Alamofire/Alamofire/pull/3207).
+
+#### Fixed
+- Various memory leaks.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3199](https://github.com/Alamofire/Alamofire/pull/3199).
 
 ## [5.2.0](https://github.com/Alamofire/Alamofire/releases/tag/5.2.0)
 Released on 2020-05-16. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/70?closed=1).
