@@ -41,12 +41,12 @@ class ProxyURLProtocol: URLProtocol {
             return configuration
         }()
 
-        let session = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        let session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
 
         return session
     }()
 
-    var activeTask: URLSessionTask?
+    weak var activeTask: URLSessionTask?
 
     // MARK: Class Request Methods
 

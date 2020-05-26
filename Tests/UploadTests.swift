@@ -754,7 +754,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
             responseHandler.fulfill()
         }
 
-        eventMonitor.requestDidResumeTask = { _, _ in
+        eventMonitor.requestDidResumeTask = { [unowned request] _, _ in
             request.cancel()
             didResumeTask.fulfill()
         }
