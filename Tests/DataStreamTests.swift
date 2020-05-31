@@ -787,8 +787,7 @@ final class DataStreamLifetimeEvents: BaseTestCase {
         let parseMonitor = Monitor()
         let session = Session(eventMonitors: [eventMonitor, parseMonitor])
 
-        // Disable event test until Firewalk supports HTTPS.
-        //  let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
+        let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didReceiveData = expectation(description: "didReceiveData should fire")
         let willCacheResponse = expectation(description: "willCacheResponse should fire")
@@ -807,8 +806,7 @@ final class DataStreamLifetimeEvents: BaseTestCase {
 
         var dataReceived = false
 
-        // Disable event test until Firewalk supports HTTPS.
-        //  eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
+        eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
         eventMonitor.dataTaskDidReceiveData = { _, _, _ in
             guard !dataReceived else { return }
