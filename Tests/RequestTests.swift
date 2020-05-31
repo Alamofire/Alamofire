@@ -901,14 +901,6 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
                 expectation.fulfill()
             }
         }
-        // Trigger the overwrite behavior.
-        request.cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            request.cURLDescription {
-                secondComponents = self.cURLCommandComponents(from: $0)
-                expectation.fulfill()
-            }
-        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
