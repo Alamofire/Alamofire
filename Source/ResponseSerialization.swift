@@ -952,14 +952,16 @@ extension DataStreamRequest {
     /// - Returns:  The `DataStreamRequest`.
     @discardableResult
     public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Handler<Data, Never>) -> Self {
-        $streamMutableState.write { [unowned self] state in
-            let capture = (queue, { data in
+        let parser = { [unowned self] (data: Data) in
+            queue.async {
                 self.capturingError {
                     try stream(.init(event: .stream(.success(data)), token: .init(self)))
                 }
-            })
-            state.streams.append(capture)
+                self.$streamMutableState.write { $0.numberOfExecutingStreams -= 1 }
+            }
         }
+
+        $streamMutableState.write { $0.streams.append(parser) }
         appendStreamCompletion(on: queue, stream: stream)
 
         return self
@@ -983,19 +985,23 @@ extension DataStreamRequest {
                 let result = Result { try serializer.serialize(data) }
                     .mapError { $0.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: $0))) }
                 // End work on serialization queue.
-                queue.async {
+                self.underlyingQueue.async {
                     self.eventMonitor?.request(self, didParseStream: result)
                     if result.isFailure, self.automaticallyCancelOnStreamError {
-                        queue.async { self.cancel() }
+                        self.cancel()
                     }
-                    self.capturingError {
-                        try stream(.init(event: .stream(result), token: .init(self)))
+
+                    queue.async {
+                        self.capturingError {
+                            try stream(.init(event: .stream(result), token: .init(self)))
+                        }
+                        self.$streamMutableState.write { $0.numberOfExecutingStreams -= 1 }
                     }
                 }
             }
         }
 
-        $streamMutableState.write { $0.streams.append((queue, parser)) }
+        $streamMutableState.write { $0.streams.append(parser) }
         appendStreamCompletion(on: queue, stream: stream)
 
         return self
@@ -1016,15 +1022,20 @@ extension DataStreamRequest {
                 // Start work on serialization queue.
                 let string = String(decoding: data, as: UTF8.self)
                 // End work on serialization queue.
-                queue.async {
-                    self.capturingError {
-                        try stream(.init(event: .stream(.success(string)), token: .init(self)))
+                self.underlyingQueue.async {
+                    self.eventMonitor?.request(self, didParseStream: .success(string))
+
+                    queue.async {
+                        self.capturingError {
+                            try stream(.init(event: .stream(.success(string)), token: .init(self)))
+                        }
+                        self.$streamMutableState.write { $0.numberOfExecutingStreams -= 1 }
                     }
                 }
             }
         }
 
-        $streamMutableState.write { $0.streams.append((queue, parser)) }
+        $streamMutableState.write { $0.streams.append(parser) }
         appendStreamCompletion(on: queue, stream: stream)
 
         return self
