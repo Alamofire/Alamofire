@@ -370,7 +370,8 @@ final class DataRequestCombineTests: CombineTestCase {
 
         // Then
         XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
+                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(token)
     }
@@ -396,7 +397,8 @@ final class DataRequestCombineTests: CombineTestCase {
 
         // Then
         XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
+                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
         XCTAssertTrue(request.isCancelled)
     }
 
@@ -435,6 +437,7 @@ final class DataRequestCombineTests: CombineTestCase {
         // Given
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
+        let customValue = "CustomValue"
         var firstResponse: DataResponse<HTTPBinResponse, AFError>?
         var secondResponse: DataResponse<HTTPBinResponse, AFError>?
 
@@ -444,7 +447,7 @@ final class DataRequestCombineTests: CombineTestCase {
                 .publishDecodable(type: HTTPBinResponse.self)
                 .flatMap { response -> DataResponsePublisher<HTTPBinResponse> in
                     firstResponse = response
-                    let request = URLRequest.makeHTTPBinRequest(headers: ["X-Custom": response.value?.url ?? "None"])
+                    let request = URLRequest.makeHTTPBinRequest(headers: ["X-Custom": customValue])
                     return AF.request(request)
                         .publishDecodable(type: HTTPBinResponse.self)
                 }
@@ -459,7 +462,7 @@ final class DataRequestCombineTests: CombineTestCase {
         // Then
         XCTAssertTrue(firstResponse?.result.isSuccess == true)
         XCTAssertTrue(secondResponse?.result.isSuccess == true)
-        XCTAssertEqual(secondResponse?.value?.headers["X-Custom"], "https://httpbin.org/get")
+        XCTAssertEqual(secondResponse?.value?.headers["X-Custom"], customValue)
     }
 }
 
@@ -486,7 +489,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               responseReceived.fulfill()
                           }
-                      })
+                })
         }
 
         waitForExpectations(timeout: timeout)
@@ -609,7 +612,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               publishedResponseReceived.fulfill()
                           }
-                })
+            })
         }
 
         waitForExpectations(timeout: timeout)
@@ -635,7 +638,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                       receiveValue: { received in
                           result = received
                           responseReceived.fulfill()
-                 })
+                })
         }
 
         waitForExpectations(timeout: timeout)
@@ -746,7 +749,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                                case .complete:
                                    responseReceived.fulfill()
                                }
-                           })
+            })
         }
 
         let stateAfterSubscription = request.state
@@ -816,7 +819,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                     case .complete:
                         responseReceived.fulfill()
                     }
-                    })
+                })
         }
 
         waitForExpectations(timeout: timeout)
@@ -877,7 +880,8 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // Then
         XCTAssertNotNil(error)
-        XCTAssertTrue(error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(error?.isExplicitlyCancelledError == true,
+                      "error is not explicitly cancelled but \(error?.localizedDescription ?? "None")")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(token)
     }
@@ -903,7 +907,8 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // Then
         XCTAssertNotNil(error)
-        XCTAssertTrue(error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(error?.isExplicitlyCancelledError == true,
+                      "error is not explicitly cancelled but \(error?.localizedDescription ?? "None")")
         XCTAssertTrue(request.isCancelled)
     }
 
@@ -928,7 +933,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           firstCompletion = first
                           secondCompletion = second
                           responseReceived.fulfill()
-                      })
+                })
         }
 
         waitForExpectations(timeout: timeout)
@@ -953,8 +958,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                 .compactMap { $0.completion }
                 .flatMap { completion -> DataStreamPublisher<HTTPBinResponse> in
                     firstCompletion = completion
-                    let request = URLRequest.makeHTTPBinRequest(headers: ["X-Custom": completion.response?.url?.absoluteString ?? "None"])
-                    return AF.streamRequest(request)
+                    return AF.streamRequest(URLRequest.makeHTTPBinRequest())
                         .publishDecodable(type: HTTPBinResponse.self)
                 }
                 .compactMap { $0.completion }
@@ -1288,7 +1292,8 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // Then
         XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
+                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(token)
     }
@@ -1314,7 +1319,8 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // Then
         XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
+                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
         XCTAssertTrue(request.isCancelled)
     }
 
@@ -1353,6 +1359,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         // Given
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
+        let customValue = "CustomValue"
         var firstResponse: DownloadResponse<HTTPBinResponse, AFError>?
         var secondResponse: DownloadResponse<HTTPBinResponse, AFError>?
 
@@ -1362,7 +1369,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
                 .publishDecodable(type: HTTPBinResponse.self)
                 .flatMap { response -> DownloadResponsePublisher<HTTPBinResponse> in
                     firstResponse = response
-                    let request = URLRequest.makeHTTPBinRequest(headers: ["X-Custom": response.value?.url ?? "None"])
+                    let request = URLRequest.makeHTTPBinRequest(headers: ["X-Custom": customValue])
                     return AF.download(request)
                         .publishDecodable(type: HTTPBinResponse.self)
                 }
@@ -1377,7 +1384,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         // Then
         XCTAssertTrue(firstResponse?.result.isSuccess == true)
         XCTAssertTrue(secondResponse?.result.isSuccess == true)
-        XCTAssertEqual(secondResponse?.value?.headers["X-Custom"], "https://httpbin.org/get")
+        XCTAssertEqual(secondResponse?.value?.headers["X-Custom"], customValue)
     }
 }
 

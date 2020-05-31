@@ -84,9 +84,11 @@ class CacheTestCase: BaseTestCase {
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
             #if targetEnvironment(macCatalyst)
-            return URLCache(memoryCapacity: capacity, diskCapacity: capacity)
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            return URLCache(memoryCapacity: capacity, diskCapacity: capacity, directory: directory)
             #else
-            return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
+            let directory = (NSTemporaryDirectory() as NSString).appendingPathComponent(UUID().uuidString)
+            return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: directory)
             #endif
         }()
 
