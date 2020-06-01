@@ -310,11 +310,7 @@ open class RetryPolicy: RequestInterceptor {
                     dueTo error: Error,
                     completion: @escaping (RetryResult) -> Void) {
         if request.retryCount < retryLimit, shouldRetry(request: request, dueTo: error) {
-            if let timeDelay = delayForRetrying(request: request, dueTo: error) {
-                completion(.retryWithDelay(timeDelay))
-            } else {
-                completion(.retry)
-            }
+            completion(.retryWithDelay(pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale))
         } else {
             completion(.doNotRetry)
         }
@@ -340,17 +336,6 @@ open class RetryPolicy: RequestInterceptor {
             }
             return retryableURLErrorCodes.contains(code)
         }
-    }
-
-    // MARK: - DelayForRetrying
-
-    /// - Parameters:
-    ///     - request: `Request` that failed due to the provided `Error`.
-    ///     - error:    `Error` encountered while executing the `Request`.
-    /// - Returns: A  delay in seconds or nil to retry without a delay.
-    open func delayForRetrying(request: Request, dueTo error: Error) -> TimeInterval? {
-        precondition(exponentialBackoffBase >= 2, "The `exponentialBackoffBase` must be a minimum of 2.")
-        return pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale
     }
 }
 

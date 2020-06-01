@@ -151,45 +151,6 @@ open class Retrier: RequestInterceptor {
 
 // MARK: -
 
-/// A throwing closure that returns `Bool` to decide when to retry. Throws an error to abort retrying.
-public typealias ShouldRetry = (Request, Session, Error) throws -> Bool
-
-/// A throwing closure that returns `TimeInterval?` (in seconds) to provide an optional retry delay. Throws an error to abort retrying.
-public typealias DelayForRetrying = (Request, Session, Error) throws -> TimeInterval?
-
-/// `RequestRetrier` that divides retry logic into two closures with different responsibility.
-/// `ShouldRetry` closure to decide when to retry and `DelayForRetrying` closure to provide an optional retry delay. Both can abort retrying by throwing an error.
-open class ConditionalRetrier: RequestRetrier {
-    private let shouldRetry: ShouldRetry
-    private let delayForRetrying: DelayForRetrying
-
-    public init(shouldRetry: @escaping ShouldRetry, delayForRetrying: @escaping DelayForRetrying) {
-        self.shouldRetry = shouldRetry
-        self.delayForRetrying = delayForRetrying
-    }
-
-    open func retry(_ request: Request,
-                    for session: Session,
-                    dueTo error: Error,
-                    completion: @escaping (RetryResult) -> Void) {
-        do {
-            guard try shouldRetry(request, session, error) else {
-                completion(.doNotRetry)
-                return
-            }
-            if let retryDelay = try delayForRetrying(request, session, error) {
-                completion(.retryWithDelay(retryDelay))
-            } else {
-                completion(.retry)
-            }
-        } catch {
-            completion(.doNotRetryWithError(error))
-        }
-    }
-}
-
-// MARK: -
-
 /// `RequestInterceptor` which can use multiple `RequestAdapter` and `RequestRetrier` values.
 open class Interceptor: RequestInterceptor {
     /// All `RequestAdapter`s associated with the instance. These adapters will be run until one fails.
