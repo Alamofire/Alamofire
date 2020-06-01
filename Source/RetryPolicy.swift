@@ -1,7 +1,7 @@
 //
 //  RetryPolicy.swift
 //
-//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2019-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -316,24 +316,24 @@ open class RetryPolicy: RequestInterceptor {
         }
     }
 
-    // MARK: - ShouldRetry
-
+    /// Determines whether or not to retry the provided `Request`.
+    ///
     /// - Parameters:
     ///     - request: `Request` that failed due to the provided `Error`.
-    ///     - error:    `Error` encountered while executing the `Request`.
-    /// - Returns: `true` if `request` HTTP method is contained in the retryable HTTP methods and `request` response or `error` contain any of the retryable statuses and codes.
+    ///     - error:   `Error` encountered while executing the `Request`.
+    ///
+    /// - Returns:     `Bool` determining whether or not to retry the `Request`.
     open func shouldRetry(request: Request, dueTo error: Error) -> Bool {
-        guard let httpMethod = request.request?.method, retryableHTTPMethods.contains(httpMethod) else {
-            return false
-        }
+        guard let httpMethod = request.request?.method, retryableHTTPMethods.contains(httpMethod) else { return false }
+        
         if let statusCode = request.response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
             return true
         } else {
             let errorCode = (error as? URLError)?.code
             let afErrorCode = (error.asAFError?.underlyingError as? URLError)?.code
-            guard let code = errorCode ?? afErrorCode else {
-                return false
-            }
+
+            guard let code = errorCode ?? afErrorCode else { return false }
+
             return retryableURLErrorCodes.contains(code)
         }
     }
