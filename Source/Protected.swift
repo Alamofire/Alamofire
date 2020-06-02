@@ -109,7 +109,6 @@ final class UnfairLock: Lock {
 
 /// A thread-safe wrapper around a value.
 @propertyWrapper
-@dynamicMemberLookup
 final class Protected<T> {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     private let lock = UnfairLock()
@@ -151,11 +150,6 @@ final class Protected<T> {
     @discardableResult
     func write<U>(_ closure: (inout T) -> U) -> U {
         lock.around { closure(&self.value) }
-    }
-
-    subscript<Property>(dynamicMember keyPath: WritableKeyPath<T, Property>) -> Property {
-        get { lock.around { value[keyPath: keyPath] } }
-        set { lock.around { value[keyPath: keyPath] = newValue } }
     }
 }
 
