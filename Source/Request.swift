@@ -1154,6 +1154,8 @@ public final class DataStreamRequest: Request {
         /// Number of currently executing streams. Used to ensure completions are only fired after all streams are
         /// enqueued.
         var numberOfExecutingStreams = 0
+        /// Completion calls enqueued while streams are still executing.
+        var enqueuedCompletionEvents: [() -> Void] = []
     }
 
     @Protected
@@ -1286,7 +1288,17 @@ public final class DataStreamRequest: Request {
         appendResponseSerializer {
             self.underlyingQueue.async {
                 self.responseSerializerDidComplete {
-                    self.enqueueCompletion(on: queue, stream: stream)
+                    self.$streamMutableState.write { state in
+                        guard state.numberOfExecutingStreams == 0 else {
+                            state.enqueuedCompletionEvents.append {
+                                self.enqueueCompletion(on: queue, stream: stream)
+                            }
+
+                            return
+                        }
+
+                        self.enqueueCompletion(on: queue, stream: stream)
+                    }
                 }
             }
         }
@@ -1294,22 +1306,15 @@ public final class DataStreamRequest: Request {
 
     func enqueueCompletion<Success, Failure>(on queue: DispatchQueue,
                                              stream: @escaping Handler<Success, Failure>) {
-        $streamMutableState.read { state in
-            guard state.numberOfExecutingStreams == 0 else {
-                underlyingQueue.async { self.enqueueCompletion(on: queue, stream: stream) }
-                return
-            }
-
-            queue.async {
-                do {
-                    let completion = Completion(request: self.request,
-                                                response: self.response,
-                                                metrics: self.metrics,
-                                                error: self.error)
-                    try stream(.init(event: .complete(completion), token: .init(self)))
-                } catch {
-                    // Ignore error, as errors on Completion can't be handled anyway.
-                }
+        queue.async {
+            do {
+                let completion = Completion(request: self.request,
+                                            response: self.response,
+                                            metrics: self.metrics,
+                                            error: self.error)
+                try stream(.init(event: .complete(completion), token: .init(self)))
+            } catch {
+                // Ignore error, as errors on Completion can't be handled anyway.
             }
         }
     }

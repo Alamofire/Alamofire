@@ -957,7 +957,8 @@ extension DataStreamRequest {
                 self.capturingError {
                     try stream(.init(event: .stream(.success(data)), token: .init(self)))
                 }
-                self.$streamMutableState.write { $0.numberOfExecutingStreams -= 1 }
+
+                self.updateAndCompleteIfPossible()
             }
         }
 
@@ -987,6 +988,7 @@ extension DataStreamRequest {
                 // End work on serialization queue.
                 self.underlyingQueue.async {
                     self.eventMonitor?.request(self, didParseStream: result)
+
                     if result.isFailure, self.automaticallyCancelOnStreamError {
                         self.cancel()
                     }
@@ -995,7 +997,8 @@ extension DataStreamRequest {
                         self.capturingError {
                             try stream(.init(event: .stream(result), token: .init(self)))
                         }
-                        self.$streamMutableState.write { $0.numberOfExecutingStreams -= 1 }
+
+                        self.updateAndCompleteIfPossible()
                     }
                 }
             }
@@ -1029,7 +1032,8 @@ extension DataStreamRequest {
                         self.capturingError {
                             try stream(.init(event: .stream(.success(string)), token: .init(self)))
                         }
-                        self.$streamMutableState.write { $0.numberOfExecutingStreams -= 1 }
+
+                        self.updateAndCompleteIfPossible()
                     }
                 }
             }
@@ -1039,6 +1043,18 @@ extension DataStreamRequest {
         appendStreamCompletion(on: queue, stream: stream)
 
         return self
+    }
+
+    private func updateAndCompleteIfPossible() {
+        $streamMutableState.write { state in
+            state.numberOfExecutingStreams -= 1
+
+            guard state.numberOfExecutingStreams == 0, !state.enqueuedCompletionEvents.isEmpty else { return }
+
+            let completionEvents = state.enqueuedCompletionEvents
+            self.underlyingQueue.async { completionEvents.forEach { $0() } }
+            state.enqueuedCompletionEvents.removeAll()
+        }
     }
 
     /// Adds a `StreamHandler` which parses incoming `Data` using the provided `DataDecoder`.

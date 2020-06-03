@@ -698,47 +698,156 @@ final class DataStreamIntegrationTests: BaseTestCase {
         XCTAssertNil(decodingError)
     }
 
-    func testThatDataStreamWorksCorrectlyWithMultipleQueues() {
+    func testThatDataStreamWorksCorrectlyWithMultipleSerialQueues() {
         // Given
-        let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
-        let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
+        let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
+        let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
-        var response: HTTPURLResponse?
-        var decodedResponse: HTTPBinResponse?
-        var decodingError: AFError?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        var firstResponse: HTTPURLResponse?
+        var firstDecodedResponse: HTTPBinResponse?
+        var firstDecodingError: AFError?
+        var firstStreamOnMain = false
+        var firstCompleteOnMain = false
+        let firstStream = expectation(description: "first stream")
+        let firstDidReceive = expectation(description: "first stream did receive")
+        let firstDidComplete = expectation(description: "first stream complete")
+        var secondResponse: HTTPURLResponse?
+        var secondDecodedResponse: HTTPBinResponse?
+        var secondDecodingError: AFError?
+        var secondStreamOnMain = false
+        var secondCompleteOnMain = false
+        let secondStream = expectation(description: "second stream")
+        let secondDidReceive = expectation(description: "second stream did receive")
+        let secondDidComplete = expectation(description: "second stream complete")
 
         // When
         session.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
             .responseStreamDecodable(of: HTTPBinResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    firstStreamOnMain = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        decodedResponse = value
+                        firstDecodedResponse = value
                     case let .failure(error):
-                        decodingError = error
+                        firstDecodingError = error
                     }
-                    didReceive.fulfill()
+                    firstStream.fulfill()
+                    firstDidReceive.fulfill()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    firstCompleteOnMain = Thread.isMainThread
+                    firstResponse = completion.response
+                    firstDidComplete.fulfill()
+                }
+            }
+            .responseStreamDecodable(of: HTTPBinResponse.self) { stream in
+                switch stream.event {
+                case let .stream(result):
+                    secondStreamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(value):
+                        secondDecodedResponse = value
+                    case let .failure(error):
+                        secondDecodingError = error
+                    }
+                    secondStream.fulfill()
+                    secondDidReceive.fulfill()
+                case let .complete(completion):
+                    secondCompleteOnMain = Thread.isMainThread
+                    secondResponse = completion.response
+                    secondDidComplete.fulfill()
                 }
             }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        wait(for: [firstStream, secondStream], timeout: timeout, enforceOrder: true)
+        // Cannot test order of completion events, as one may have been enqueued while the other executed directly.
+        wait(for: [firstDidReceive, firstDidComplete], timeout: timeout, enforceOrder: true)
+        wait(for: [secondDidReceive, secondDidComplete], timeout: timeout, enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertNotNil(decodedResponse)
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertNil(decodingError)
+        XCTAssertTrue(firstStreamOnMain)
+        XCTAssertTrue(firstCompleteOnMain)
+        XCTAssertNotNil(firstDecodedResponse)
+        XCTAssertEqual(firstResponse?.statusCode, 200)
+        XCTAssertNil(firstDecodingError)
+        XCTAssertTrue(secondStreamOnMain)
+        XCTAssertTrue(secondCompleteOnMain)
+        XCTAssertNotNil(secondDecodedResponse)
+        XCTAssertEqual(secondResponse?.statusCode, 200)
+        XCTAssertNil(secondDecodingError)
+    }
+
+    func testThatDataStreamWorksCorrectlyWithMultipleConcurrentQueues() {
+        // Given
+        let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
+        let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
+        let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
+        var firstResponse: HTTPURLResponse?
+        var firstDecodedResponse: HTTPBinResponse?
+        var firstDecodingError: AFError?
+        var firstStreamOnMain = false
+        var firstCompleteOnMain = false
+        let firstDidReceive = expectation(description: "first stream did receive")
+        let firstDidComplete = expectation(description: "first stream complete")
+        var secondResponse: HTTPURLResponse?
+        var secondDecodedResponse: HTTPBinResponse?
+        var secondDecodingError: AFError?
+        var secondStreamOnMain = false
+        var secondCompleteOnMain = false
+        let secondDidReceive = expectation(description: "second stream did receive")
+        let secondDidComplete = expectation(description: "second stream complete")
+
+        // When
+        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+            .responseStreamDecodable(of: HTTPBinResponse.self) { stream in
+                switch stream.event {
+                case let .stream(result):
+                    firstStreamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(value):
+                        firstDecodedResponse = value
+                    case let .failure(error):
+                        firstDecodingError = error
+                    }
+                    firstDidReceive.fulfill()
+                case let .complete(completion):
+                    firstCompleteOnMain = Thread.isMainThread
+                    firstResponse = completion.response
+                    firstDidComplete.fulfill()
+                }
+            }
+            .responseStreamDecodable(of: HTTPBinResponse.self) { stream in
+                switch stream.event {
+                case let .stream(result):
+                    secondStreamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(value):
+                        secondDecodedResponse = value
+                    case let .failure(error):
+                        secondDecodingError = error
+                    }
+                    secondDidReceive.fulfill()
+                case let .complete(completion):
+                    secondCompleteOnMain = Thread.isMainThread
+                    secondResponse = completion.response
+                    secondDidComplete.fulfill()
+                }
+            }
+
+        wait(for: [firstDidReceive, firstDidComplete], timeout: timeout, enforceOrder: true)
+        wait(for: [secondDidReceive, secondDidComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertTrue(firstStreamOnMain)
+        XCTAssertTrue(firstCompleteOnMain)
+        XCTAssertNotNil(firstDecodedResponse)
+        XCTAssertEqual(firstResponse?.statusCode, 200)
+        XCTAssertNil(firstDecodingError)
+        XCTAssertTrue(secondStreamOnMain)
+        XCTAssertTrue(secondCompleteOnMain)
+        XCTAssertNotNil(secondDecodedResponse)
+        XCTAssertEqual(secondResponse?.statusCode, 200)
+        XCTAssertNil(secondDecodingError)
     }
 
     func testThatDataStreamCanAuthenticate() {
