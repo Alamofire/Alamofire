@@ -411,12 +411,12 @@ final class SessionTestCase: BaseTestCase {
 
         // When
         let request = session.request(urlRequest)
-            .resume()
-            .cancel()
             .response { resp in
                 response = resp
                 expectation.fulfill()
             }
+            .resume()
+            .cancel()
 
         waitForExpectations(timeout: timeout, handler: nil)
 
