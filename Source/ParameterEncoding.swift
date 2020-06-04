@@ -94,6 +94,15 @@ public struct URLEncoding: ParameterEncoding {
                 return key
             }
         }
+        
+        func encode(key: String, index: Int) -> String {
+            switch self {
+            case .brackets:
+                return "\(key)[\(index)]"
+            case .noBrackets:
+                return key
+            }
+        }
     }
 
     /// Configures how `Bool` parameters are encoded.
@@ -193,8 +202,8 @@ public struct URLEncoding: ParameterEncoding {
                 components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
             }
         } else if let array = value as? [Any] {
-            for value in array {
-                components += queryComponents(fromKey: arrayEncoding.encode(key: key), value: value)
+            for (index, value) in array.enumerated() {
+                components += queryComponents(fromKey: arrayEncoding.encode(key: key, index: index), value: value)
             }
         } else if let value = value as? NSNumber {
             if value.isBool {
