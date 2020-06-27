@@ -325,7 +325,7 @@ open class RetryPolicy: RequestInterceptor {
     /// - Returns:     `Bool` determining whether or not to retry the `Request`.
     open func shouldRetry(request: Request, dueTo error: Error) -> Bool {
         guard let httpMethod = request.request?.method, retryableHTTPMethods.contains(httpMethod) else { return false }
-        
+
         if let statusCode = request.response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
             return true
         } else {
