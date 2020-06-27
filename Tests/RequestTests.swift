@@ -786,6 +786,52 @@ class RequestDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(request.description, "GET https://httpbin.org/get (\(response?.statusCode ?? -1))")
     }
+    func testRequestParametersDescruotion()  {
+        // Given
+        let urlString = "https://httpbin.org/get?"
+        let parameters = ["key": "value"]
+        
+        let manager = Session(startRequestsImmediately: false)
+        let request = manager.request(urlString, parameters: parameters)
+        
+        let expectation = self.expectation(description: "Request description should update: \(urlString)")
+        
+        var response: HTTPURLResponse?
+        
+        // When
+        request.response { resp in
+            response = resp.response
+            
+            expectation.fulfill()
+        }.resume()
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        // Then
+        XCTAssertEqual(request.description, "GET https://httpbin.org/get?key=value (\(response?.statusCode ?? -1))")
+    }
+    func testDefaultRequestParametersDescruotion()  {
+        // Given
+        let urlString = "https://httpbin.org/get?"
+        let parameters = ["key": "value"]
+        
+        
+        let request = AF.request(urlString, parameters: parameters)
+        
+        let expectation = self.expectation(description: "Request description should update: \(urlString)")
+        
+        var response: HTTPURLResponse?
+        
+        // When
+        request.response { resp in
+            response = resp.response
+            
+            expectation.fulfill()
+        }.resume()
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        // Then
+        XCTAssertEqual(request.description, "GET https://httpbin.org/get?key=value (\(response?.statusCode ?? -1))")
+    }
 }
 
 // MARK: -
