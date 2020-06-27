@@ -26,198 +26,199 @@ import Alamofire
 import Foundation
 import XCTest
 
-final class RedirectHandlerTestCase: BaseTestCase {
-    // MARK: - Properties
-
-    private var redirectURLString: String { "https://www.apple.com/" }
-    private var urlString: String { "https://httpbin.org/redirect-to?url=\(redirectURLString)" }
-
-    // MARK: - Tests - Per Request
-
-    func testThatRequestRedirectHandlerCanFollowRedirects() {
-        // Given
-        let session = Session()
-
-        var response: DataResponse<Data?, AFError>?
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-
-        // When
-        session.request(urlString).redirect(using: Redirector.follow).response { resp in
-            response = resp
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-    }
-
-    func testThatRequestRedirectHandlerCanNotFollowRedirects() {
-        // Given
-        let session = Session()
-
-        var response: DataResponse<Data?, AFError>?
-        let expectation = self.expectation(description: "Request should NOT redirect to \(redirectURLString)")
-
-        // When
-        session.request(urlString).redirect(using: Redirector.doNotFollow).response { resp in
-            response = resp
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, urlString)
-        XCTAssertEqual(response?.response?.statusCode, 302)
-    }
-
-    func testThatRequestRedirectHandlerCanModifyRedirects() {
-        // Given
-        let session = Session()
-        let redirectURLString = "https://www.nike.com"
-        let redirectURLRequest = URLRequest(url: URL(string: redirectURLString)!)
-
-        var response: DataResponse<Data?, AFError>?
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-
-        // When
-        let redirector = Redirector(behavior: .modify { _, _, _ in redirectURLRequest })
-
-        session.request(urlString).redirect(using: redirector).response { resp in
-            response = resp
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-    }
-
-    // MARK: - Tests - Per Session
-
-    func testThatSessionRedirectHandlerCanFollowRedirects() {
-        // Given
-        let session = Session(redirectHandler: Redirector.follow)
-
-        var response: DataResponse<Data?, AFError>?
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-
-        // When
-        session.request(urlString).response { resp in
-            response = resp
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-    }
-
-    func testThatSessionRedirectHandlerCanNotFollowRedirects() {
-        // Given
-        let session = Session(redirectHandler: Redirector.doNotFollow)
-
-        var response: DataResponse<Data?, AFError>?
-        let expectation = self.expectation(description: "Request should NOT redirect to \(redirectURLString)")
-
-        // When
-        session.request(urlString).response { resp in
-            response = resp
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, urlString)
-        XCTAssertEqual(response?.response?.statusCode, 302)
-    }
-
-    func testThatSessionRedirectHandlerCanModifyRedirects() {
-        // Given
-        let redirectURLString = "https://www.nike.com"
-        let redirectURLRequest = URLRequest(url: URL(string: redirectURLString)!)
-
-        let redirector = Redirector(behavior: .modify { _, _, _ in redirectURLRequest })
-        let session = Session(redirectHandler: redirector)
-
-        var response: DataResponse<Data?, AFError>?
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-
-        // When
-        session.request(urlString).response { resp in
-            response = resp
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-    }
-
-    // MARK: - Tests - Per Request Prioritization
-
-    func testThatRequestRedirectHandlerIsPrioritizedOverSessionRedirectHandler() {
-        // Given
-        let session = Session(redirectHandler: Redirector.doNotFollow)
-
-        var response: DataResponse<Data?, AFError>?
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-
-        // When
-        session.request(urlString).redirect(using: Redirector.follow).response { resp in
-            response = resp
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-    }
-}
+// Disabled due to HTTPBin issue: https://github.com/postmanlabs/httpbin/issues/617
+// final class RedirectHandlerTestCase: BaseTestCase {
+//    // MARK: - Properties
+//
+//    private var redirectURLString: String { "https://www.apple.com/" }
+//    private var urlString: String { "https://httpbin.org/redirect-to?url=\(redirectURLString)" }
+//
+//    // MARK: - Tests - Per Request
+//
+//    func testThatRequestRedirectHandlerCanFollowRedirects() {
+//        // Given
+//        let session = Session()
+//
+//        var response: DataResponse<Data?, AFError>?
+//        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+//
+//        // When
+//        session.request(urlString).redirect(using: Redirector.follow).response { resp in
+//            response = resp
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: timeout, handler: nil)
+//
+//        // Then
+//        XCTAssertNotNil(response?.request)
+//        XCTAssertNotNil(response?.response)
+//        XCTAssertNotNil(response?.data)
+//        XCTAssertNil(response?.error)
+//
+//        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
+//        XCTAssertEqual(response?.response?.statusCode, 200)
+//    }
+//
+//    func testThatRequestRedirectHandlerCanNotFollowRedirects() {
+//        // Given
+//        let session = Session()
+//
+//        var response: DataResponse<Data?, AFError>?
+//        let expectation = self.expectation(description: "Request should NOT redirect to \(redirectURLString)")
+//
+//        // When
+//        session.request(urlString).redirect(using: Redirector.doNotFollow).response { resp in
+//            response = resp
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: timeout, handler: nil)
+//
+//        // Then
+//        XCTAssertNotNil(response?.request)
+//        XCTAssertNotNil(response?.response)
+//        XCTAssertNil(response?.data)
+//        XCTAssertNil(response?.error)
+//
+//        XCTAssertEqual(response?.response?.url?.absoluteString, urlString)
+//        XCTAssertEqual(response?.response?.statusCode, 302)
+//    }
+//
+//    func testThatRequestRedirectHandlerCanModifyRedirects() {
+//        // Given
+//        let session = Session()
+//        let redirectURLString = "https://www.nike.com"
+//        let redirectURLRequest = URLRequest(url: URL(string: redirectURLString)!)
+//
+//        var response: DataResponse<Data?, AFError>?
+//        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+//
+//        // When
+//        let redirector = Redirector(behavior: .modify { _, _, _ in redirectURLRequest })
+//
+//        session.request(urlString).redirect(using: redirector).response { resp in
+//            response = resp
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: timeout, handler: nil)
+//
+//        // Then
+//        XCTAssertNotNil(response?.request)
+//        XCTAssertNotNil(response?.response)
+//        XCTAssertNotNil(response?.data)
+//        XCTAssertNil(response?.error)
+//
+//        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
+//        XCTAssertEqual(response?.response?.statusCode, 200)
+//    }
+//
+//    // MARK: - Tests - Per Session
+//
+//    func testThatSessionRedirectHandlerCanFollowRedirects() {
+//        // Given
+//        let session = Session(redirectHandler: Redirector.follow)
+//
+//        var response: DataResponse<Data?, AFError>?
+//        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+//
+//        // When
+//        session.request(urlString).response { resp in
+//            response = resp
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: timeout, handler: nil)
+//
+//        // Then
+//        XCTAssertNotNil(response?.request)
+//        XCTAssertNotNil(response?.response)
+//        XCTAssertNotNil(response?.data)
+//        XCTAssertNil(response?.error)
+//
+//        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
+//        XCTAssertEqual(response?.response?.statusCode, 200)
+//    }
+//
+//    func testThatSessionRedirectHandlerCanNotFollowRedirects() {
+//        // Given
+//        let session = Session(redirectHandler: Redirector.doNotFollow)
+//
+//        var response: DataResponse<Data?, AFError>?
+//        let expectation = self.expectation(description: "Request should NOT redirect to \(redirectURLString)")
+//
+//        // When
+//        session.request(urlString).response { resp in
+//            response = resp
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: timeout, handler: nil)
+//
+//        // Then
+//        XCTAssertNotNil(response?.request)
+//        XCTAssertNotNil(response?.response)
+//        XCTAssertNil(response?.data)
+//        XCTAssertNil(response?.error)
+//
+//        XCTAssertEqual(response?.response?.url?.absoluteString, urlString)
+//        XCTAssertEqual(response?.response?.statusCode, 302)
+//    }
+//
+//    func testThatSessionRedirectHandlerCanModifyRedirects() {
+//        // Given
+//        let redirectURLString = "https://www.nike.com"
+//        let redirectURLRequest = URLRequest(url: URL(string: redirectURLString)!)
+//
+//        let redirector = Redirector(behavior: .modify { _, _, _ in redirectURLRequest })
+//        let session = Session(redirectHandler: redirector)
+//
+//        var response: DataResponse<Data?, AFError>?
+//        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+//
+//        // When
+//        session.request(urlString).response { resp in
+//            response = resp
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: timeout, handler: nil)
+//
+//        // Then
+//        XCTAssertNotNil(response?.request)
+//        XCTAssertNotNil(response?.response)
+//        XCTAssertNotNil(response?.data)
+//        XCTAssertNil(response?.error)
+//
+//        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
+//        XCTAssertEqual(response?.response?.statusCode, 200)
+//    }
+//
+//    // MARK: - Tests - Per Request Prioritization
+//
+//    func testThatRequestRedirectHandlerIsPrioritizedOverSessionRedirectHandler() {
+//        // Given
+//        let session = Session(redirectHandler: Redirector.doNotFollow)
+//
+//        var response: DataResponse<Data?, AFError>?
+//        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+//
+//        // When
+//        session.request(urlString).redirect(using: Redirector.follow).response { resp in
+//            response = resp
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: timeout, handler: nil)
+//
+//        // Then
+//        XCTAssertNotNil(response?.request)
+//        XCTAssertNotNil(response?.response)
+//        XCTAssertNotNil(response?.data)
+//        XCTAssertNil(response?.error)
+//
+//        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
+//        XCTAssertEqual(response?.response?.statusCode, 200)
+//    }
+// }
