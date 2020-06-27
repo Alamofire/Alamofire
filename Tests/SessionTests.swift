@@ -275,7 +275,11 @@ final class SessionTestCase: BaseTestCase {
 
             let osName: String = {
                 #if os(iOS)
+                #if targetEnvironment(macCatalyst)
+                return "macOS(Catalyst)"
+                #else
                 return "iOS"
+                #endif
                 #elseif os(watchOS)
                 return "watchOS"
                 #elseif os(tvOS)
