@@ -1122,3 +1122,54 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
             .filter { $0 != "" && $0 != "\\" }
     }
 }
+
+final class RequestURLTestCase: BaseTestCase {
+    
+    func testRequestParametersURL()  {
+        // Given
+        let urlString = "https://httpbin.org/get?"
+        let parameters = ["key": "value"]
+        
+        let manager = Session(startRequestsImmediately: false)
+        let request = manager.request(urlString, parameters: parameters, encoder:URLEncodedFormParameterEncoder.default)
+        
+        let expectation = self.expectation(description: "Request URL should splice done")
+        
+        var response: HTTPURLResponse?
+        
+        // When
+        request.response { resp in
+            response = resp.response
+            
+            expectation.fulfill()
+        }.resume()
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        // Then
+        XCTAssertEqual(request.request?.url?.absoluteString, "https://httpbin.org/get?key=value")
+        XCTAssertEqual(response?.url?.absoluteString, "https://httpbin.org/get?key=value")
+    }
+    func testDefaultRequestParametersURL()  {
+        // Given
+        let urlString = "https://httpbin.org/get?"
+        let parameters = ["key": "value"]
+        
+        let request = AF.request(urlString, parameters: parameters, encoding: URLEncoding.default)
+        
+        let expectation = self.expectation(description: "Request URL should splice done")
+        
+        var response: HTTPURLResponse?
+        
+        // When
+        request.response { resp in
+            response = resp.response
+            
+            expectation.fulfill()
+        }.resume()
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        // Then
+        XCTAssertEqual(request.request?.url?.absoluteString, "https://httpbin.org/get?key=value")
+        XCTAssertEqual(response?.url?.absoluteString, "https://httpbin.org/get?key=value")
+    }
+}

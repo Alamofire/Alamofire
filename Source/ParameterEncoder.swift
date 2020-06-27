@@ -162,7 +162,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
             let query: String = try Result<String, Error> { try encoder.encode(parameters) }
                 .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.get()
-            let newQueryString = [components.percentEncodedQuery, query].compactMap { $0 }.joinedWithAmpersands()
+            let newQueryString = (components.percentEncodedQuery.map { $0.isEmpty ? $0 : $0 + "&" } ?? "") + query
             components.percentEncodedQuery = newQueryString.isEmpty ? nil : newQueryString
 
             guard let newURL = components.url else {
