@@ -368,8 +368,9 @@ extension HTTPHeader {
     /// Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 13.0.0) Alamofire/5.0.0`
     public static let defaultUserAgent: HTTPHeader = {
         let info = Bundle.main.infoDictionary
+        let firstArgument = ProcessInfo.processInfo.arguments.first?.split(separator: "/").last as String.SubSequence?
         let executable = (info?[kCFBundleExecutableKey as String] as? String) ??
-            (ProcessInfo.processInfo.arguments.first?.split(separator: "/").last.map(String.init)) ??
+            (firstArgument.map(String.init)) ??
             "Unknown"
         let bundle = info?[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
         let appVersion = info?["CFBundleShortVersionString"] as? String ?? "Unknown"
