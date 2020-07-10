@@ -614,7 +614,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let redirector = Redirector(behavior: .modify { _, _, _ in
             didRedirect.fulfill()
             return URLRequest.makeHTTPBinRequest(path: "stream/1")
-            })
+        })
         let didReceive = expectation(description: "stream should receive")
         let didComplete = expectation(description: "stream should complete")
 
@@ -660,7 +660,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let cacher = ResponseCacher(behavior: .modify { _, _ in
             cached.fulfill()
             return nil
-            })
+        })
         let didReceive = expectation(description: "stream did receive")
         let didComplete = expectation(description: "stream complete")
 
