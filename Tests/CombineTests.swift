@@ -283,7 +283,7 @@ final class DataRequestCombineTests: CombineTestCase {
                           receivedOnMain = Thread.isMainThread
                           response = $0
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -341,7 +341,7 @@ final class DataRequestCombineTests: CombineTestCase {
                           receivedOnMain = Thread.isMainThread
                           response = $0
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -489,7 +489,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               responseReceived.fulfill()
                           }
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -518,7 +518,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               responseReceived.fulfill()
                           }
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -546,7 +546,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               responseReceived.fulfill()
                           }
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -574,7 +574,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               responseReceived.fulfill()
                           }
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -612,7 +612,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               publishedResponseReceived.fulfill()
                           }
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -638,7 +638,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                       receiveValue: { received in
                           result = received
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -663,7 +663,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                       receiveValue: { received in
                           result = received
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -689,7 +689,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                       receiveValue: { received in
                           response = received
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -749,7 +749,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                                case .complete:
                                    responseReceived.fulfill()
                                }
-            })
+                           })
         }
 
         let stateAfterSubscription = request.state
@@ -785,7 +785,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               responseReceived.fulfill()
                           }
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -851,7 +851,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               responseReceived.fulfill()
                           }
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -933,7 +933,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           firstCompletion = first
                           secondCompletion = second
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -1205,7 +1205,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
                           receivedOnMain = Thread.isMainThread
                           response = $0
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -1263,7 +1263,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
                           receivedOnMain = Thread.isMainThread
                           response = $0
                           responseReceived.fulfill()
-                })
+                      })
         }
 
         waitForExpectations(timeout: timeout)
