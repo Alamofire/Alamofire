@@ -93,16 +93,19 @@ public struct HTTPHeaders {
         headers.remove(at: index)
     }
 
-    /// Sort the current instance by header name.
+    /// Sort the current instance by header name, case insensitively.
     public mutating func sort() {
-        headers.sort { $0.name < $1.name }
+        headers.sort { $0.name.lowercased() < $1.name.lowercased() }
     }
 
     /// Returns an instance sorted by header name.
     ///
     /// - Returns: A copy of the current instance sorted by name.
     public func sorted() -> HTTPHeaders {
-        HTTPHeaders(headers.sorted { $0.name < $1.name })
+        var headers = self
+        headers.sort()
+
+        return headers
     }
 
     /// Case-insensitively find a header's value by name.
