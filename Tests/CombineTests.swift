@@ -612,7 +612,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                           case .complete:
                               publishedResponseReceived.fulfill()
                           }
-            })
+                })
         }
 
         waitForExpectations(timeout: timeout)
