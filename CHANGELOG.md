@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521)
+- `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
 - `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
 - `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
@@ -42,6 +42,25 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.2.2](https://github.com/Alamofire/Alamofire/releases/tag/5.2.2)
+Released on 2020-07-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/72?closed=1).
+
+#### Added
+- `macOS(Catalyst)` `User-Agent` string.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3236](https://github.com/Alamofire/Alamofire/pull/3236).
+
+#### Updated
+- `debugDescription` of `DataRequest` and `DownloadRequest` to better handle non-text and long content, with better formatting.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3256](https://github.com/Alamofire/Alamofire/pull/3256).
+- Code to use `switch` instead of `if else` statement.
+  - Updated by [dirtmelon](https://github.com/dirtmelon) in Pull Request [#3214](https://github.com/Alamofire/Alamofire/pull/3214).
+
+#### Fixed
+- Linking on some Apple OS versions when using Swift Package Manager.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3259](https://github.com/Alamofire/Alamofire/pull/3259).
+- Reliability issues with `DataStreamRequest`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3216](https://github.com/Alamofire/Alamofire/pull/3216).
 
 ## [5.2.1](https://github.com/Alamofire/Alamofire/releases/tag/5.2.1)
 Released on 2020-05-25. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/71?closed=1).
