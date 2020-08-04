@@ -168,8 +168,10 @@ extension DetailViewController {
         }
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch Sections(rawValue: (indexPath as NSIndexPath).section)! {
+    override func tableView(_ tableView: UITableView,
+                            cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        switch Sections(rawValue: indexPath.section)! {
             case .headers:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "Header")!
                 let field = headers.keys.sorted(by: <)[indexPath.row]
