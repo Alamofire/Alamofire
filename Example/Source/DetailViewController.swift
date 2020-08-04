@@ -218,7 +218,7 @@ extension DetailViewController {
     override func tableView(_ tableView: UITableView,
                             heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        switch Sections(rawValue: (indexPath as NSIndexPath).section)! {
+        switch Sections(rawValue: indexPath.section)! {
             case .body:
                 return 300
             
