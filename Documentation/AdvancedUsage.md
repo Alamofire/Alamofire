@@ -1,67 +1,74 @@
-- [Advanced Usage](#advanced-usage)
-  * [`Session`](#session)
-	+ [Creating Custom `Session` Instances](#creating-custom-session-instances)
-	  - [Creating a `Session` With a `URLSessionConfiguration`](#creating-a-session-with-a-urlsessionconfiguration)
-	+ [`SessionDelegate`](#sessiondelegate)
-	+ [`startRequestsImmediately`](#startrequestsimmediately)
-	+ [A `Session`’s `DispatchQueue`s](#a-sessions-dispatchqueues)
-	+ [Adding a `RequestInterceptor`](#adding-a-requestinterceptor)
-	+ [Adding a `ServerTrustManager`](#adding-a-servertrustmanager)
-	+ [Adding a `RedirectHandler`](#adding-a-redirecthandler)
-	+ [Adding a `CachedResponseHandler`](#adding-a-cachedresponsehandler)
-	+ [Adding `EventMonitor`s](#adding-eventmonitors)
-	+ [Creating Instances From `URLSession`s](#creating-instances-from-urlsessions)
-  * [Requests](#requests)
-	+ [The Request Pipeline](#the-request-pipeline)
-	+ [`Request`](#request)
-	  - [State](#state)
-	  - [Progress](#progress)
-	  - [Handling Redirects](#handling-redirects)
-	  - [Customizing Caching](#customizing-caching)
-	  - [Credentials](#credentials)
-	  - [A `Request`’s `URLRequest`s](#a-requests-urlrequests)
-	  - [`URLSessionTask`s](#urlsessiontasks)
-	  - [Response](#response)
-	  - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
-	+ [`DataRequest`](#datarequest)
-	  - [Additional State](#additional-state)
-	  - [Validation](#validation)
-	+ [`UploadRequest`](#uploadrequest)
-	  - [Additional State](#additional-state-1)
-	+ [`DownloadRequest`](#downloadrequest)
-	  - [Additional State](#additional-state-2)
-	  - [Cancellation](#cancellation)
-	  - [Validation](#validation-1)
-  * [Adapting and Retrying Requests with `RequestInterceptor`](#adapting-and-retrying-requests-with-requestinterceptor)
-	+ [`RequestAdapter`](#requestadapter)
-	+ [`RequestRetrier`](#requestretrier)
-  * [Security](#security)
-	+ [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
-	  - [`ServerTrustEvaluting`](#servertrustevaluting)
-	  - [`ServerTrustManager`](#servertrustmanager)
-		* [Subclassing Server Trust Policy Manager](#subclassing-server-trust-policy-manager)
-	+ [App Transport Security](#app-transport-security)
-	  - [Using Self-Signed Certificates with Local Networking](#using-self-signed-certificates-with-local-networking)
-  * [Customizing Caching and Redirect Handling](#customizing-caching-and-redirect-handling)
-	+ [`CachedResponseHandler`](#cachedresponsehandler)
-	+ [`RedirectHandler`](#redirecthandler)
-  * [Using `EventMonitor`s](#using-eventmonitors)
-	+ [Logging](#logging)
-  * [Making Requests](#making-requests)
-	+ [`URLConvertible`](#urlconvertible)
-	+ [`URLRequestConvertible`](#urlrequestconvertible)
-	+ [Routing Requests](#routing-requests)
-  * [Response Handling](#response-handling)
-	+ [Handling Responses Without Serialization](#handling-responses-without-serialization)
-	+ [`ResponseSerializer`](#responseserializer)
-	  - [`DataResponseSerializer`](#dataresponseserializer)
-	  - [`StringResponseSerializer`](#stringresponseserializer)
-	  - [`JSONResponseSerializer`](#jsonresponseserializer)
-	  - [`DecodableResponseSerializer`](#decodableresponseserializer)
-	+ [Customizing Response Handlers](#customizing-response-handlers)
-	  - [Response Transforms](#response-transforms)
-	  - [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
-  * [Network Reachability](#network-reachability)
+* [`Session`](#session)
+  + [Creating Custom `Session` Instances](#creating-custom-session-instances)
+    - [Creating a `Session` With a `URLSessionConfiguration`](#creating-a-session-with-a-urlsessionconfiguration)
+  + [`SessionDelegate`](#sessiondelegate)
+  + [`startRequestsImmediately`](#startrequestsimmediately)
+  + [A `Session`’s `DispatchQueue`s](#a-sessions-dispatchqueues)
+  + [Adding a `RequestInterceptor`](#adding-a-requestinterceptor)
+  + [Adding a `ServerTrustManager`](#adding-a-servertrustmanager)
+  + [Adding a `RedirectHandler`](#adding-a-redirecthandler)
+  + [Adding a `CachedResponseHandler`](#adding-a-cachedresponsehandler)
+  + [Adding `EventMonitor`s](#adding-eventmonitors)
+  + [Creating Instances From `URLSession`s](#creating-instances-from-urlsessions)
+* [Requests](#requests)
+  + [The Request Pipeline](#the-request-pipeline)
+  + [`Request`](#request)
+    - [State](#state)
+    - [Progress](#progress)
+    - [Handling Redirects](#handling-redirects)
+    - [Customizing Caching](#customizing-caching)
+    - [Credentials](#credentials)
+    - [A `Request`’s `URLRequest`s](#a-requests-urlrequests)
+    - [`URLSessionTask`s](#urlsessiontasks)
+    - [Response](#response)
+    - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
+  + [`DataRequest`](#datarequest)
+    - [Additional State](#additional-state)
+    - [Validation](#validation)
+  + [`DataStreamRequest`](#datastreamrequest)
+    - [Additional State](#additional-state)
+    - [Validation](#validation)
+  + [`UploadRequest`](#uploadrequest)
+    - [Additional State](#additional-state-1)
+  + [`DownloadRequest`](#downloadrequest)
+    - [Additional State](#additional-state-2)
+    - [Cancellation](#cancellation)
+    - [Validation](#validation-1)
+* [Adapting and Retrying Requests with `RequestInterceptor`](#adapting-and-retrying-requests-with-requestinterceptor)
+  + [`RequestAdapter`](#requestadapter)
+  + [`RequestRetrier`](#requestretrier)
+  + [Using Multiple `RequestInterceptor`s](#using-multiple-requestinterceptors)
+  + [`AuthenticationInterceptor`](#authenticationinterceptor)
+* [Security](#security)
+  + [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
+    - [`ServerTrustEvaluting`](#servertrustevaluting)
+    - [`ServerTrustManager`](#servertrustmanager)
+* [Subclassing Server Trust Policy Manager](#subclassing-server-trust-policy-manager)
+  + [App Transport Security](#app-transport-security)
+    - [Using Self-Signed Certificates with Local Networking](#using-self-signed-certificates-with-local-networking)
+* [Customizing Caching and Redirect Handling](#customizing-caching-and-redirect-handling)
+  + [`CachedResponseHandler`](#cachedresponsehandler)
+  + [`RedirectHandler`](#redirecthandler)
+* [Using `EventMonitor`s](#using-eventmonitors)
+  + [Logging](#logging)
+* [Making Requests](#making-requests)
+  + [`URLConvertible`](#urlconvertible)
+  + [`URLRequestConvertible`](#urlrequestconvertible)
+  + [Routing Requests](#routing-requests)
+* [Response Handling](#response-handling)
+  + [Handling Responses Without Serialization](#handling-responses-without-serialization)
+  + [`ResponseSerializer`](#responseserializer)
+    - [`DataResponseSerializer`](#dataresponseserializer)
+    - [`StringResponseSerializer`](#stringresponseserializer)
+    - [`JSONResponseSerializer`](#jsonresponseserializer)
+    - [`DecodableResponseSerializer`](#decodableresponseserializer)
+  + [Customizing Response Handlers](#customizing-response-handlers)
+    - [Response Transforms](#response-transforms)
+    - [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
+  + [Using Alamofire with Combine](#using-alamofire-with-combine)
+    - [`DownloadResponsePublisher`](#downloadresponsepublisher)
+    - [`DataStreamPublisher`](#datastreampublisher)
+* [Network Reachability](#network-reachability)
 
 # Advanced Usage
 
@@ -125,7 +132,7 @@ let session = Session(configuration: configuration)
 A `SessionDelegate` instance encapsulates all handling of the various `URLSessionDelegate` and related protocols callbacks. `SessionDelegate` also acts as the `SessionStateDelegate` for every `Request` produced by Alamofire, allowing the `Request` to indirectly import state from the `Session` instance that created them. `SessionDelegate` can be customized with a specific `FileManager` instance, which will be used for any disk access, like accessing files to be uploaded by `UploadRequest`s or files downloaded by `DownloadRequest`s.
 
 ```swift
-let delelgate = SessionDelegate(fileManager: .default)
+let delegate = SessionDelegate(fileManager: .default)
 ```
 
 ### `startRequestsImmediately`
@@ -222,7 +229,7 @@ Each request performed by Alamofire is encapsulated by particular class, `DataRe
 Once a `Request` subclass has been created with it’s initial parameters or `URLRequestConvertible` value, it is passed through the series of steps making up Alamofire’s request pipeline. For a successful request, these include:
 
 1. Initial parameters, like HTTP method, headers, and parameters are encapsulated into an internal `URLRequestConvertible` value. If a `URLRequestConvertible` value is passed directly, that value is used unchanged.
-2. `asURLRequest()` is called on the the `URLRequestConvertible` value, creating the first `URLRequest` value. This value is passed to the `Request` and stored in `requests`.
+2. `asURLRequest()` is called on the the `URLRequestConvertible` value, creating the first `URLRequest` value. This value is passed to the `Request` and stored in `requests`. If the `URLRequestConvertible` value was created from the parameters passed to a `Session` method, any provided `RequestModifier` is called when the `URLRequest` is created.
 3. If there are any `Session` or `Request` `RequestAdapter`s or `RequestInterceptor`s, they’re called using the previously created `URLRequest`. The adapted `URLRequest` is then passed to the `Request` and stored in `request`s as well.
 4. `Session` calls the `Request` to create the `URLSessionTask` to perform the network request based on the `URLRequest`.
 5. Once the `URLSessionTask` is complete and `URLSessionTaskMetrics` have been gathered, the `Request` executes its `Validator`s. 
@@ -372,17 +379,39 @@ AF.request(...)
 `DataRequest`s have a few properties in addition to those provided by `Request`. These include `data`, which is the accumulated `Data` from the server response, and `convertible`, which is the `URLRequestConvertible` the `DataRequest` was created with, containing the original parameters creating the instance.
 
 #### Validation
-`DataRequest`s do not validate responses by default. Instead, a call to `validate()` must be added to the in order to verify various properties are valid. 
+`DataRequest`s do not validate responses by default. Instead, a call to `validate()` must be added to the request in order to verify various properties are valid. 
 
 ```swift
 public typealias Validation = (URLRequest?, HTTPURLResponse, Data?) -> Result<Void, Error>
 ```
 
-By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request `Accept` value. Validation can be further customized by passing a `Validation` closure:
+By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request's `Accept` value. Validation can be further customized by passing a `Validation` closure:
 
 ```swift
 AF.request(...)
     .validate { request, response, data in
+        ...
+    }
+```
+
+### `DataStreamRequest`
+`DataStreamRequest` is a subclass of `Request` which encapsulates a `URLSessionDataTask` and streams `Data` from an HTTP connection over time.
+
+#### Additional State
+`DataStreamRequest` contains no additional public state.
+
+#### Validation
+`DataStreamRequest`s do not validate responses by default. Instead, a call to `validate()` must be added to the request in order to verify various properties are valid. 
+
+```swift
+public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse) -> Result<Void, Error>
+```
+
+By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request's `Accept` value. Validation can be further customized by passing a `Validation` closure:
+
+```swift
+AF.request(...)
+    .validate { request, response in
         ...
     }
 ```
@@ -496,13 +525,108 @@ open func retry(_ request: Request, for session: Session, dueTo error: Error, co
 }
 ```
 
+### Using Multiple `RequestInterceptor`s
+
+Alamofire supports the use of multiple `RequestInterceptor`s at both the `Session` and `Request` levels through the use of the `Interceptor` type. `Interceptor`s can be composed of adapter and retrier closures, a single combination of a `RequestAdapter` and `RequestRetrier`, or a combination of arrays of `RequestAdapter`s, `RequestRetrier`s, and `RequestInterceptor`s.
+
+```swift
+let adapter = // Some RequestAdapter
+let retrier = // Some RequestRetrier
+let interceptor = // Some RequestInterceptor
+
+let adapterAndRetrier = Interceptor(adapter: adapter, retrier: retrier)
+let composite = Interceptor(interceptors: [adapterAndRetrier, interceptor])
+```
+
+When composed of multiple `RequestAdapter`s, `Interceptor` will call each `RequestAdapter` in succession. If they all succeed, the final `URLRequest` out of the chain of `RequestAdapter`s will be used to perform the request. If one fails, adaptation stops and the `Request` fails with the error returned. Similarly, when composed of multiple `RequestRetrier`s, retries are executed in the same order as the retriers were added to the instance, until either all of them complete or one of them fails with an error.
+
+### `AuthenticationInterceptor`
+Alamofire's `AuthenticationInterceptor` class is a `RequestInterceptor` designed to handle the queueing and threading complexity involved with authenticating requests.
+It leverages an injected `Authenticator` protocol that manages the lifecycle of the matching `AuthenticationCredential`.
+Here is a simple example of how an `OAuthAuthenticator` class could be implemented along with an `OAuthCredential`.
+
+**`OAuthCredential`**
+
+```swift
+struct OAuthCredential: AuthenticationCredential {
+    let accessToken: String
+    let refreshToken: String
+    let userID: String
+    let expiration: Date
+
+    // Require refresh if within 5 minutes of expiration
+    var requiresRefresh: Bool { Date(timeIntervalSinceNow: 60 * 5) > expiration }
+}
+```
+
+**`OAuthAuthenticator`**
+
+```swift
+class OAuthAuthenticator: Authenticator {
+    func apply(_ credential: OAuthCredential, to urlRequest: inout URLRequest) {
+        urlRequest.headers.add(.authorization(bearerToken: credential.accessToken))
+    }
+
+    func refresh(_ credential: OAuthCredential,
+                 for session: Session,
+                 completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
+        // Refresh the credential using the refresh token...then call completion with the new credential.
+        //
+        // The new credential will automatically be stored within the `AuthenticationInterceptor`. Future requests will
+        // be authenticated using the `apply(_:to:)` method using the new credential.
+    }
+
+    func didRequest(_ urlRequest: URLRequest,
+                    with response: HTTPURLResponse,
+                    failDueToAuthenticationError error: Error) -> Bool {
+        // If authentication server CANNOT invalidate credentials, return `false`
+        return false
+
+        // If authentication server CAN invalidate credentials, then inspect the response matching against what the
+        // authentication server returns as an authentication failure. This is generally a 401 along with a custom
+        // header value.
+        // return response.statusCode == 401
+    }
+
+    func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: OAuthCredential) -> Bool {
+        // If authentication server CANNOT invalidate credentials, return `true`
+        return true
+
+        // If authentication server CAN invalidate credentials, then compare the "Authorization" header value in the
+        // `URLRequest` against the Bearer token generated with the access token of the `Credential`.
+        // let bearerToken = HTTPHeader.authorization(bearerToken: credential.accessToken).value
+        // return urlRequest.headers["Authorization"] == bearerToken
+    }
+}
+```
+
+**Usage**
+
+```swift
+// Generally load from keychain if it exists
+let credential = OAuthCredential(accessToken: "a0",
+                                 refreshToken: "r0",
+                                 userID: "u0",
+                                 expiration: Date(timeIntervalSinceNow: 60 * 60))
+
+// Create the interceptor
+let authenticator = OAuthAuthenticator()
+let interceptor = AuthenticationInterceptor(authenticator: authenticator,
+                                            credential: credential)
+
+// Execute requests with the interceptor
+let session = Session()
+let urlRequest = URLRequest(url: URL(string: "https://api.example.com/example/user")!)
+session.request(urlRequest, interceptor: interceptor)
+```
+
 ## Security
 Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire receives the same automatic TLS certificate and certificate chain validation as `URLSession`. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by Alamofire’s `ServerTrustEvaluating` protocol.
 
 ### Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`
 
-#### `ServerTrustEvaluting`
-The `ServerTrustEvaluting` protocol provides a way to perform any sort of server trust evaluation. It has a single requirement:
+#### `ServerTrustEvaluating`
+The `ServerTrustEvaluating` protocol provides a way to perform any sort of server trust evaluation. It has a single requirement:
 
 ```swift
 func evaluate(_ trust: SecTrust, forHost host: String) throws
@@ -517,7 +641,7 @@ Alamofire includes many different types of trust evaluators, providing composabl
 * `PinnedCertificatesTrustEvaluator`: Uses the provided certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates. This evaluator can also accept self-signed certificates.
 * `PublicKeysTrustEvaluator`: Uses the provided public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
 * `CompositeTrustEvaluator`: Evaluates an array of `ServerTrustEvaluating` values, only succeeding if all of them are successful. This type can be used to combine, for example, the `RevocationTrustEvaluator` and the `PinnedCertificatesTrustEvaluator`.
-* `DisabledEvaluator`: This evaluator should only be used in debug scenarios as it disables all evaluation which in turn will always consider any server trust as valid. This evaluator should **never** be used in production environments!
+* `DisabledTrustEvaluator`: This evaluator should only be used in debug scenarios as it disables all evaluation which in turn will always consider any server trust as valid. This evaluator should **never** be used in production environments!
 
 #### `ServerTrustManager`
 The `ServerTrustManager` is responsible for storing an internal mapping of `ServerTrustEvaluating` values to a particular host. This allows Alamofire to evaluate each host with different evaluators. 
@@ -525,9 +649,9 @@ The `ServerTrustManager` is responsible for storing an internal mapping of `Serv
 ```swift
 let evaluators: [String: ServerTrustEvaluating] = [
     // By default, certificates included in the app bundle are pinned automatically.
-    "cert.example.com": PinnedCertificatesTrustEvalutor(),
+    "cert.example.com": PinnedCertificatesTrustEvaluator(),
     // By default, public keys from certificates included in the app bundle are used automatically.
-    "keys.example.com": PublicKeysTrustEvalutor(),
+    "keys.example.com": PublicKeysTrustEvaluator(),
 ]
 
 let manager = ServerTrustManager(evaluators: serverTrustPolicies)
@@ -691,7 +815,7 @@ AF.request(urlComponents)
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLConvertible` as a convenient way to map domain-specific models to server resources.
 
 ### `URLRequestConvertible`
-Types adopting the `URLRequestConvertible` protocol can be used to construct `URLRequest`s. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly. Alamofire uses `URLRequestConvertible` as the foundation of all requests flowing through the request pipeline. Using `URLRequest`s directly the recommended way to customize `URLRequest` creation outside of the `ParamterEncoder`s that Alamofire provides.
+Types adopting the `URLRequestConvertible` protocol can be used to construct `URLRequest`s. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly. Alamofire uses `URLRequestConvertible` as the foundation of all requests flowing through the request pipeline. Using `URLRequest`s directly the recommended way to customize `URLRequest` creation outside of the `ParameterEncoder`s that Alamofire provides.
 
 ```swift
 let url = URL(string: "https://httpbin.org/post")!
@@ -917,6 +1041,117 @@ struct CommaDelimitedSerializer: ResponseSerializer {
 Note that the `SerializedObject` `associatedtype` requirement is met by the return type of the `serialize` method. In more complex serializers, this return type itself can be generic, allowing the serialization of generic types, as seen by the `DecodableResponseSerializer`.
 
 To make the `CommaDelimitedSerializer` more useful, additional behaviors could be added, like allowing the customization of empty HTTP methods and response codes by passing them through to the underlying `StringResponseSerializer`.
+
+### Streaming Response Handlers
+`DataStreamRequest` uses its own unique response handler type to process incoming `Data` as part of a stream. In addition to the provided handlers, custom serialization can be performed through the use of the `DataStreamSerializer` protocol.
+
+```swift
+public protocol DataStreamSerializer {
+    /// Type produced from the serialized `Data`.
+    associatedtype SerializedObject
+
+    /// Serializes incoming `Data` into a `SerializedObject` value.
+    ///
+    /// - Parameter data: `Data` to be serialized.
+    ///
+    /// - Throws: Any error produced during serialization.
+    func serialize(_ data: Data) throws -> SerializedObject
+}
+```
+
+Any custom `DataStreamSerializer` can be used to process streaming `Data` by using the `responseStream` method:
+
+```swift
+AF.streamRequest(...).responseStream(using: CustomSerializer()) { stream in 
+    // Process stream.
+}
+```
+
+Alamofire includes `DecodableStreamSerializer`, a `DataStreamSerializer` which can parse `Decodable` types from incoming `Data`. It can be customized with both a `DataDecoder` instance and a `DataPreprocessor` and used through the `responseStreamDecodable` method: 
+
+```swift
+AF.streamRequest(...).responseDecodable(of: DecodableType.self) { stream in 
+    // Process stream.
+}
+```
+
+Or by using it directly in the previously mentioned `streamResponse` method:
+
+```swift
+AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableType>(decoder: JSONDecoder())) { stream in 
+    // Process stream.
+}
+```
+
+## Using Alamofire with Combine
+On systems supporting the Combine framework, Alamofire offers the ability to publish responses using a custom `Publisher` type. These publishers work much like Alamofire's response handlers. They are chained onto requests and like response handlers, should come after other API like `validate()`. For example:
+
+```swift
+AF.request(...).publishDecodable(type: DecodableType.self)
+```
+
+This code produces a `DataResponsePublisher<DecodableType>` value which will publish a `DataResponse<DecodableType, AFError>` value. Like all Alamofire `Publisher`s, `DataResponsePublisher` is fully lazy, meaning that will only add the response handler and `resume` the request once a downstream `Subscriber` has made demand for values. It only provides one value and cannot be retried. 
+
+> To properly handle retry when using Alamofire's `Publisher`s, use Alamofire's built in retry mechanisms, as explained [above](#adapting-and-retrying-requests-with-requestinterceptor).
+
+Additionally, `DataResponsePublisher` provides the ability to transform the outgoing `DataResponse<Success, Failure>` into a `Result<Success, Failure>` value or a `Success` value with `Failure` error. For example:
+
+```swift
+let publisher = AF.request(...).publishDecodable(type: DecodableType.self)
+let resultPublisher = publisher.result() // Provides an AnyPublisher<Result<DecodableType, AFError>, Never>.
+let valuePublisher = publisher.value() // Provides an AnyPublisher<DecodableType, AFError>.
+```
+
+As with any `Publisher`, `DataResponsePublisher` can be used with various Combine APIs, allow Alamofire to support easy simultaneous requests for the first time.
+
+```swift
+// All usage of cancellable Combine API must have its token stored to maintain the subscription.
+var tokens: Set<AnyCancellable> = []
+
+...
+
+let first = AF.request(...).publishDecodable(type: First.self)
+let second = AF.request(...).publishDecodable(type: Second.self)
+let both = Publishers.CombineLatest(first, second)
+both.sink { first, second in // DataResponse<First, AFError>, DataResponse<Second, AFError>
+    debugPrint(first)
+    debugPrint(second)
+}
+.store(in: &tokens)
+```
+
+Sequential requests are also possible:
+
+```swift
+// All usage of cancellable Combine API must have its token stored to maintain the subscription.
+var tokens: Set<AnyCancellable> = []
+
+...
+
+AF.request(...)
+    .publishDecodable(type: First.self)
+    .value()
+    .flatMap {
+        AF.request(...) // Use First value to create second request.
+            .publishDecodable(type: Second.self)
+    }
+    .sink { second in // DataResponse<Second, AFError>
+        debugPrint(second)
+    }
+    .store(in: &tokens)
+```
+
+Once subscribed, this chain of transformations will make the first request and then create a publisher for a second, finishing when the second request has finished.
+
+> As with all Combine usage, care must be taken to ensure that subscriptions are not cancelled early by maintaining the lifetime of the `AnyCancellable` tokens returned by functions like `sink`. If a request is cancelled prematurely, the response's error will be set to `AFError.explicitlyCancelled`.
+
+#### `DownloadResponsePublisher`
+Alamofire also offers a `Publisher` for `DownloadRequest`s, `DownloadResponsePublisher`. Its behavior and capabilities are the same as `DataResponsePublisher`.
+
+Like most `DownloadRequest`'s response handlers, `DownloadResponsePublisher` reads `Data` from disk to perform serialization, which can impact system performance if reading a large amount of `Data`. It's recommended you use `publishUnserialized()` to receive just the `URL?` that the file was downloaded to and perform your own read from disk for large files.
+
+#### `DataStreamPublisher`
+`DataStreamPublisher` is a `Publisher` for `DataStreamRequest`s. Like `DataStreamRequest` itself, and unlike Alamofire's other `Publisher`s, `DataStreamPublisher` can return multiple values serialized from `Data` received from the network, as well as a final completion event. For more information on how `DataStreamRequest` works, please see our [detailed usage documentation](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#streaming-data-from-a-server).
 
 ## Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.

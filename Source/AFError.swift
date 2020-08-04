@@ -215,7 +215,7 @@ public enum AFError: Error {
 extension Error {
     /// Returns the instance cast as an `AFError`.
     public var asAFError: AFError? {
-        return self as? AFError
+        self as? AFError
     }
 
     /// Returns the instance cast as an `AFError`. If casting fails, a `fatalError` with the specified `message` is thrown.
@@ -228,7 +228,7 @@ extension Error {
 
     /// Casts the instance as `AFError` or returns `defaultAFError`
     func asAFError(or defaultAFError: @autoclosure () -> AFError) -> AFError {
-        return self as? AFError ?? defaultAFError()
+        self as? AFError ?? defaultAFError()
     }
 }
 

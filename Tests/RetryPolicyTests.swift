@@ -31,10 +31,10 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     final class StubRequest: DataRequest {
         let urlRequest: URLRequest
-        override var request: URLRequest? { return urlRequest }
+        override var request: URLRequest? { urlRequest }
 
         let mockedResponse: HTTPURLResponse?
-        override var response: HTTPURLResponse? { return mockedResponse }
+        override var response: HTTPURLResponse? { mockedResponse }
 
         init(_ url: URL, method: HTTPMethod, response: HTTPURLResponse?, session: Session) {
             mockedResponse = response
@@ -43,7 +43,8 @@ class BaseRetryPolicyTestCase: BaseTestCase {
                                                      method: method,
                                                      parameters: nil,
                                                      encoding: URLEncoding.default,
-                                                     headers: nil)
+                                                     headers: nil,
+                                                     requestModifier: nil)
 
             urlRequest = try! request.asURLRequest()
 
@@ -60,7 +61,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     let idempotentMethods: Set<HTTPMethod> = [.get, .head, .put, .delete, .options, .trace]
     let nonIdempotentMethods: Set<HTTPMethod> = [.post, .patch, .connect]
-    var methods: Set<HTTPMethod> { return idempotentMethods.union(nonIdempotentMethods) }
+    var methods: Set<HTTPMethod> { idempotentMethods.union(nonIdempotentMethods) }
 
     let session = Session(rootQueue: .main, startRequestsImmediately: false)
 
@@ -75,6 +76,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     lazy var unknownError = AFError.sessionTaskFailed(error: unknown)
 
     let retryableStatusCodes: Set<Int> = [408, 500, 502, 503, 504]
+    let statusCodes = Set(100...599)
 
     let retryableErrorCodes: Set<URLError.Code> = [.backgroundSessionInUseByAnotherProcess,
                                                    .backgroundSessionWasDisconnected,
@@ -127,7 +129,23 @@ class BaseRetryPolicyTestCase: BaseTestCase {
                                                       .zeroByteResource]
 
     var errorCodes: Set<URLError.Code> {
-        return retryableErrorCodes.union(nonRetryableErrorCodes)
+        retryableErrorCodes.union(nonRetryableErrorCodes)
+    }
+
+    // MARK: Test Helpers
+
+    func request(method: HTTPMethod = .get, statusCode: Int? = nil) -> Request {
+        var response: HTTPURLResponse?
+
+        if let statusCode = statusCode {
+            response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)
+        }
+
+        return StubRequest(url, method: method, response: response, session: session)
+    }
+
+    func urlError(with code: URLError.Code) -> URLError {
+        NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
     }
 }
 
@@ -206,7 +224,6 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     func testThatRetryPolicyRetriesRequestsWithRetryableStatusCodes() {
         // Given
         let retryPolicy = RetryPolicy()
-        let statusCodes = Set(100...599)
         var results: [Int: RetryResult] = [:]
 
         // When
@@ -373,18 +390,6 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
             XCTAssertNil(results[4]?.delay)
             XCTAssertNil(results[4]?.error)
         }
-    }
-
-    // MARK: Test Helpers
-
-    func request(method: HTTPMethod = .get, statusCode: Int? = nil) -> Request {
-        var response: HTTPURLResponse?
-
-        if let statusCode = statusCode {
-            response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)
-        }
-
-        return StubRequest(url, method: method, response: response, session: session)
     }
 }
 

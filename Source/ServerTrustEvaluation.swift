@@ -334,8 +334,21 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 
 /// Disables all evaluation which in turn will always consider any server trust as valid.
 ///
+/// - Note: Instead of disabling server trust evaluation, it's a better idea to configure systems to properly trust test
+///         certificates, as outlined in [this Apple tech note](https://developer.apple.com/library/archive/qa/qa1948/_index.html).
+///
 /// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
-public final class DisabledEvaluator: ServerTrustEvaluating {
+@available(*, deprecated, renamed: "DisabledTrustEvaluator", message: "DisabledEvaluator has been renamed DisabledTrustEvaluator.")
+public typealias DisabledEvaluator = DisabledTrustEvaluator
+
+/// Disables all evaluation which in turn will always consider any server trust as valid.
+///
+///
+/// - Note: Instead of disabling server trust evaluation, it's a better idea to configure systems to properly trust test
+///         certificates, as outlined in [this Apple tech note](https://developer.apple.com/library/archive/qa/qa1948/_index.html).
+///
+/// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
+public final class DisabledTrustEvaluator: ServerTrustEvaluating {
     /// Creates an instance.
     public init() {}
 
@@ -367,7 +380,7 @@ extension Bundle: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType: Bundle {
     /// Returns all valid `cer`, `crt`, and `der` certificates in the bundle.
     var certificates: [SecCertificate] {
-        return paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).compactMap { path in
+        paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).compactMap { path in
             guard
                 let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
                 let certificate = SecCertificateCreateWithData(nil, certificateData) else { return nil }
@@ -378,7 +391,7 @@ public extension AlamofireExtension where ExtendedType: Bundle {
 
     /// Returns all public keys for the valid certificates in the bundle.
     var publicKeys: [SecKey] {
-        return certificates.af.publicKeys
+        certificates.af.publicKeys
     }
 
     /// Returns all pathnames for the resources identified by the provided file extensions.
@@ -387,7 +400,7 @@ public extension AlamofireExtension where ExtendedType: Bundle {
     ///
     /// - Returns:         All pathnames for the given filename extensions.
     func paths(forResourcesOfTypes types: [String]) -> [String] {
-        return Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
+        Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
     }
 }
 
@@ -479,29 +492,29 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
                                                                                                certificates: certificates))
         }
 
-        // Reenable system anchor certificates.
-        let systemStatus = SecTrustSetAnchorCertificatesOnly(type, true)
-        guard systemStatus.af.isSuccess else {
-            throw AFError.serverTrustEvaluationFailed(reason: .settingAnchorCertificatesFailed(status: systemStatus,
+        // Trust only the set anchor certs.
+        let onlyStatus = SecTrustSetAnchorCertificatesOnly(type, true)
+        guard onlyStatus.af.isSuccess else {
+            throw AFError.serverTrustEvaluationFailed(reason: .settingAnchorCertificatesFailed(status: onlyStatus,
                                                                                                certificates: certificates))
         }
     }
 
     /// The public keys contained in `self`.
     var publicKeys: [SecKey] {
-        return certificates.af.publicKeys
+        certificates.af.publicKeys
     }
 
     /// The `SecCertificate`s contained i `self`.
     var certificates: [SecCertificate] {
-        return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
+        (0..<SecTrustGetCertificateCount(type)).compactMap { index in
             SecTrustGetCertificateAtIndex(type, index)
         }
     }
 
     /// The `Data` values for all certificates contained in `self`.
     var certificateData: [Data] {
-        return certificates.af.data
+        certificates.af.data
     }
 
     /// Validates `self` after applying `SecPolicy.af.default`. This evaluation does not validate the hostname.
@@ -545,7 +558,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
     ///
     /// - Returns:            The `SecPolicy`.
     static func hostname(_ hostname: String) -> SecPolicy {
-        return SecPolicyCreateSSL(true, hostname as CFString)
+        SecPolicyCreateSSL(true, hostname as CFString)
     }
 
     /// Creates a `SecPolicy` which checks the revocation of certificates.
@@ -568,12 +581,12 @@ extension Array: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == [SecCertificate] {
     /// All `Data` values for the contained `SecCertificate`s.
     var data: [Data] {
-        return type.map { SecCertificateCopyData($0) as Data }
+        type.map { SecCertificateCopyData($0) as Data }
     }
 
     /// All public `SecKey` values for the contained `SecCertificate`s.
     var publicKeys: [SecKey] {
-        return type.compactMap { $0.af.publicKey }
+        type.compactMap { $0.af.publicKey }
     }
 }
 
@@ -594,13 +607,13 @@ public extension AlamofireExtension where ExtendedType == SecCertificate {
 extension OSStatus: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == OSStatus {
     /// Returns whether `self` is `errSecSuccess`.
-    var isSuccess: Bool { return type == errSecSuccess }
+    var isSuccess: Bool { type == errSecSuccess }
 }
 
 extension SecTrustResultType: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == SecTrustResultType {
     /// Returns whether `self is `.unspecified` or `.proceed`.
     var isSuccess: Bool {
-        return (type == .unspecified || type == .proceed)
+        (type == .unspecified || type == .proceed)
     }
 }

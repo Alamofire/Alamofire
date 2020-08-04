@@ -151,12 +151,15 @@ class ServerTrustPolicyTestCase: BaseTestCase {
 // MARK: - SecTrust Extension
 
 extension SecTrust {
+    enum TrustError: Error { case invalid }
+
     /// Evaluates `self` and returns `true` if the evaluation succeeds with a value of `.unspecified` or `.proceed`.
     var isValid: Bool {
-        var result = SecTrustResultType.invalid
-        let status = SecTrustEvaluate(self, &result)
-
-        return (status == errSecSuccess) ? (result == .unspecified || result == .proceed) : false
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+            return Result { try af.evaluate() }.isSuccess
+        } else {
+            return Result { try af.validate { _, _ in TrustError.invalid } }.isSuccess
+        }
     }
 }
 
@@ -1306,7 +1309,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = DisabledEvaluator()
+        let serverTrustPolicy = DisabledTrustEvaluator()
 
         // When
         let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
@@ -1319,7 +1322,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = DisabledEvaluator()
+        let serverTrustPolicy = DisabledTrustEvaluator()
 
         // When
         let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }

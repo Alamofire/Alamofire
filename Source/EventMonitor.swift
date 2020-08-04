@@ -164,6 +164,27 @@ public protocol EventMonitor {
     /// Event called when a `DataRequest` calls a `ResponseSerializer` and creates a generic `DataResponse<Value, AFError>`.
     func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>)
 
+    // MARK: DataStreamRequest Events
+
+    /// Event called when a `DataStreamRequest` calls a `Validation` closure.
+    ///
+    /// - Parameters:
+    ///   - request:    `DataStreamRequest` which is calling the `Validation`.
+    ///   - urlRequest: `URLRequest` of the request being validated.
+    ///   - response:   `HTTPURLResponse` of the request being validated.
+    ///   - result:      Produced `ValidationResult`.
+    func request(_ request: DataStreamRequest,
+                 didValidateRequest urlRequest: URLRequest?,
+                 response: HTTPURLResponse,
+                 withResult result: Request.ValidationResult)
+
+    /// Event called when a `DataStreamSerializer` produces a value from streamed `Data`.
+    ///
+    /// - Parameters:
+    ///   - request: `DataStreamRequest` for which the value was serialized.
+    ///   - result:  `Result` of the serialization attempt.
+    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
+
     // MARK: UploadRequest Events
 
     /// Event called when an `UploadRequest` creates its `Uploadable` value, indicating the type of upload it represents.
@@ -201,7 +222,7 @@ public protocol EventMonitor {
 
 extension EventMonitor {
     /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. `.main` by default.
-    public var queue: DispatchQueue { return .main }
+    public var queue: DispatchQueue { .main }
 
     // MARK: Default Implementations
 
@@ -268,6 +289,11 @@ extension EventMonitor {
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {}
     public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
+    public func request(_ request: DataStreamRequest,
+                        didValidateRequest urlRequest: URLRequest?,
+                        response: HTTPURLResponse,
+                        withResult result: Request.ValidationResult) {}
+    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {}
     public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {}
     public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {}
@@ -284,7 +310,7 @@ extension EventMonitor {
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
 public final class CompositeEventMonitor: EventMonitor {
-    public let queue = DispatchQueue(label: "org.alamofire.compositeEventMonitor", qos: .background)
+    public let queue = DispatchQueue(label: "org.alamofire.compositeEventMonitor", qos: .utility)
 
     let monitors: [EventMonitor]
 
@@ -486,6 +512,21 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 
+    public func request(_ request: DataStreamRequest,
+                        didValidateRequest urlRequest: URLRequest?,
+                        response: HTTPURLResponse,
+                        withResult result: Request.ValidationResult) {
+        performEvent { $0.request(request,
+                                  didValidateRequest: urlRequest,
+                                  response: response,
+                                  withResult: result)
+        }
+    }
+
+    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+        performEvent { $0.request(request, didParseStream: result) }
+    }
+
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {
         performEvent { $0.request(request, didCreateUploadable: uploadable) }
     }
@@ -627,6 +668,9 @@ open class ClosureEventMonitor: EventMonitor {
 
     /// Closure called on the `request(_:didParseResponse:)` event.
     open var requestDidParseResponse: ((DataRequest, DataResponse<Data?, AFError>) -> Void)?
+
+    /// Closure called on the `request(_:didValidateRequest:response:withResult:)` event.
+    open var requestDidValidateRequestResponseWithResult: ((DataStreamRequest, URLRequest?, HTTPURLResponse, Request.ValidationResult) -> Void)?
 
     /// Closure called on the `request(_:didCreateUploadable:)` event.
     open var requestDidCreateUploadable: ((UploadRequest, UploadRequest.Uploadable) -> Void)?
@@ -804,6 +848,10 @@ open class ClosureEventMonitor: EventMonitor {
 
     open func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {
         requestDidParseResponse?(request, response)
+    }
+
+    public func request(_ request: DataStreamRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, withResult result: Request.ValidationResult) {
+        requestDidValidateRequestResponseWithResult?(request, urlRequest, response, result)
     }
 
     open func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {

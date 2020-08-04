@@ -229,6 +229,32 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "a=a")
     }
 
+    func testEncoderCanEncodeDecimal() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let decimal: Decimal = 1.0
+        let parameters = ["a": decimal]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a=1")
+    }
+
+    func testEncoderCanEncodeDecimalWithHighPrecision() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let decimal: Decimal = 1.123456
+        let parameters = ["a": decimal]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a=1.123456")
+    }
+
     func testEncoderCanEncodeDouble() {
         // Given
         let encoder = URLEncodedFormEncoder()

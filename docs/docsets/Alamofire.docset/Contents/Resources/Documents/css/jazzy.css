@@ -111,7 +111,6 @@ pre code {
   @media (min-width: 768px) {
     .content-wrapper {
       flex-direction: row; } }
-
 .header {
   display: flex;
   padding: 8px;
@@ -157,7 +156,6 @@ pre code {
       word-wrap: normal;
       background: #fbfbfb;
       border-right: 1px solid #ddd; } }
-
 .nav-groups {
   list-style-type: none;
   padding-left: 0; }
@@ -188,7 +186,6 @@ pre code {
       order: 2;
       flex: 1;
       padding-bottom: 60px; } }
-
 .section {
   padding: 0 32px;
   border-bottom: 1px solid #ddd; }
@@ -248,8 +245,10 @@ pre code {
     content: "";
     display: block; }
   .item .token, .item .direct-link {
+    display: inline-block;
+    text-indent: -20px;
     padding-left: 3px;
-    margin-left: 0px;
+    margin-left: 20px;
     font-size: 1rem; }
   .item .declaration-note {
     font-size: .85em;

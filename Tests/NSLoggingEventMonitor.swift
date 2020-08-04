@@ -26,7 +26,7 @@ import Alamofire
 import Foundation
 
 public final class NSLoggingEventMonitor: EventMonitor {
-    public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .background)
+    public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .utility)
 
     public init() {}
 
@@ -186,6 +186,14 @@ public final class NSLoggingEventMonitor: EventMonitor {
 
     public func request(_ request: DataRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, data: Data?, withResult result: Request.ValidationResult) {
         NSLog("Request: \(request), didValidateRequestWithResult: \(result)")
+    }
+
+    public func request(_ request: DataStreamRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, withResult result: Request.ValidationResult) {
+        NSLog("Request: \(request), didValidateRequestWithResult: \(result)")
+    }
+
+    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+        NSLog("Request: \(request), didParseStreamWithResult: \(result)")
     }
 
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {

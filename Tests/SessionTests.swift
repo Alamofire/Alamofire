@@ -275,7 +275,11 @@ final class SessionTestCase: BaseTestCase {
 
             let osName: String = {
                 #if os(iOS)
+                #if targetEnvironment(macCatalyst)
+                return "macOS(Catalyst)"
+                #else
                 return "iOS"
+                #endif
                 #elseif os(watchOS)
                 return "watchOS"
                 #elseif os(tvOS)
@@ -292,18 +296,11 @@ final class SessionTestCase: BaseTestCase {
             return "\(osName) \(versionString)"
         }()
 
-        let alamofireVersion: String = {
-            guard
-                let afInfo = Bundle(for: Session.self).infoDictionary,
-                let build = afInfo["CFBundleShortVersionString"]
-            else { return "Unknown" }
-
-            return "Alamofire/\(build)"
-        }()
+        let alamofireVersion = "Alamofire/\(Alamofire.version)"
 
         XCTAssertTrue(userAgent?.contains(alamofireVersion) == true)
         XCTAssertTrue(userAgent?.contains(osNameVersion) == true)
-        XCTAssertTrue(userAgent?.contains("Unknown/Unknown") == true)
+        XCTAssertTrue(userAgent?.contains("xctest/Unknown") == true)
     }
 
     // MARK: Tests - Supported Accept-Encodings
@@ -418,12 +415,12 @@ final class SessionTestCase: BaseTestCase {
 
         // When
         let request = session.request(urlRequest)
-            .resume()
-            .cancel()
             .response { resp in
                 response = resp
                 expectation.fulfill()
             }
+            .resume()
+            .cancel()
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -1596,7 +1593,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         let createTask = expectation(description: "should create task twice")
         createTask.expectedFulfillmentCount = 2
         var tasksCreated = 0
-        monitor.requestDidCreateTask = { _, _ in
+        monitor.requestDidCreateTask = { [unowned session] _, _ in
             tasksCreated += 1
             createTask.fulfill()
             // Cancel after the second task is created to ensure proper lifetime events.

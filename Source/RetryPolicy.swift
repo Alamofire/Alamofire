@@ -1,7 +1,7 @@
 //
 //  RetryPolicy.swift
 //
-//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2019-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -309,29 +309,32 @@ open class RetryPolicy: RequestInterceptor {
                     for session: Session,
                     dueTo error: Error,
                     completion: @escaping (RetryResult) -> Void) {
-        if
-            request.retryCount < retryLimit,
-            let httpMethod = request.request?.method,
-            retryableHTTPMethods.contains(httpMethod),
-            shouldRetry(response: request.response, error: error) {
-            let timeDelay = pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale
-            completion(.retryWithDelay(timeDelay))
+        if request.retryCount < retryLimit, shouldRetry(request: request, dueTo: error) {
+            completion(.retryWithDelay(pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale))
         } else {
             completion(.doNotRetry)
         }
     }
 
-    private func shouldRetry(response: HTTPURLResponse?, error: Error) -> Bool {
-        if let statusCode = response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
+    /// Determines whether or not to retry the provided `Request`.
+    ///
+    /// - Parameters:
+    ///     - request: `Request` that failed due to the provided `Error`.
+    ///     - error:   `Error` encountered while executing the `Request`.
+    ///
+    /// - Returns:     `Bool` determining whether or not to retry the `Request`.
+    open func shouldRetry(request: Request, dueTo error: Error) -> Bool {
+        guard let httpMethod = request.request?.method, retryableHTTPMethods.contains(httpMethod) else { return false }
+
+        if let statusCode = request.response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
             return true
         } else {
             let errorCode = (error as? URLError)?.code
             let afErrorCode = (error.asAFError?.underlyingError as? URLError)?.code
-            if let code = errorCode ?? afErrorCode, retryableURLErrorCodes.contains(code) {
-                return true
-            } else {
-                return false
-            }
+
+            guard let code = errorCode ?? afErrorCode else { return false }
+
+            return retryableURLErrorCodes.contains(code)
         }
     }
 }
