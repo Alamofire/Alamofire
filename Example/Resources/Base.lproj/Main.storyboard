@@ -21,7 +21,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8fS-aE-onr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-87" y="-664"/>
+            <point key="canvasLocation" x="-39" y="-687"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="Nki-YV-4Qg">
@@ -35,7 +35,7 @@
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cZU-Oi-B1e" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-932" y="-318"/>
+            <point key="canvasLocation" x="-828" y="-321"/>
         </scene>
         <!--Master-->
         <scene sceneID="smW-Zh-WAh">
@@ -272,7 +272,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </imageView>
             </objects>
-            <point key="canvasLocation" x="684" y="-664"/>
+            <point key="canvasLocation" x="729" y="-687"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="r7l-gg-dq7">
@@ -288,7 +288,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SLD-UC-DBI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-87" y="177"/>
+            <point key="canvasLocation" x="-39" y="132"/>
         </scene>
         <!--Detail View Controller-->
         <scene sceneID="Vi6-fp-rZb">
@@ -355,11 +355,11 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vwc-ms-sMM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="684" y="177"/>
+            <point key="canvasLocation" x="729" y="132"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="dIb-AI-lAm"/>
+        <segue reference="1CM-sC-jmU"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.79647636413574219" green="0.17503035068511963" blue="0.091383159160614014" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
     <resources>

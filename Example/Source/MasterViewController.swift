@@ -80,7 +80,7 @@ class MasterViewController: UITableViewController {
                         let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory,
                                                                                        in: .userDomainMask)
                         return AF.download("https://httpbin.org/stream/1", to: destination)
-
+                    
                     default:
                         return nil
                 }
