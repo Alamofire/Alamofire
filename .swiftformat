@@ -1,0 +1,27 @@
+# file options
+
+--symlinks ignore
+--swiftversion 5.1
+
+# rules
+--enable isEmpty
+--disable andOperator
+
+# format options
+
+--closingparen same-line
+--commas inline
+--comments indent
+--decimalgrouping 3,5
+--exponentcase lowercase
+--exponentgrouping disabled
+--fractiongrouping disabled
+--ifdef no-indent
+--importgrouping testable-top
+--operatorfunc no-space
+--nospaceoperators ..<, ...
+--selfrequired validate
+--stripunusedargs closure-only
+--wraparguments after-first
+--wrapcollections after-first
+--wrapparameters after-first

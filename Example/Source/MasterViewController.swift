@@ -1,7 +1,7 @@
 //
 //  MasterViewController.swift
 //
-//  Copyright (c) 2014 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,11 @@ import Alamofire
 import UIKit
 
 class MasterViewController: UITableViewController {
-
     // MARK: - Properties
 
-    @IBOutlet weak var titleImageView: UIImageView!
+    @IBOutlet var titleImageView: UIImageView!
 
-    var detailViewController: DetailViewController? = nil
+    var detailViewController: DetailViewController?
     var objects = NSMutableArray()
 
     private var reachability: NetworkReachabilityManager!
@@ -44,6 +43,7 @@ class MasterViewController: UITableViewController {
         navigationItem.titleView = titleImageView
         clearsSelectionOnViewWillAppear = true
 
+        reachability = NetworkReachabilityManager.default
         monitorReachability()
     }
 
@@ -52,29 +52,26 @@ class MasterViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if
             let navigationController = segue.destination as? UINavigationController,
-            let detailViewController = navigationController.topViewController as? DetailViewController
-        {
+            let detailViewController = navigationController.topViewController as? DetailViewController {
             func requestForSegue(_ segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return Alamofire.request("https://httpbin.org/get")
+                    return AF.request("https://httpbin.org/get")
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
-                    return Alamofire.request("https://httpbin.org/post", method: .post)
+                    return AF.request("https://httpbin.org/post", method: .post)
                 case "PUT":
                     detailViewController.segueIdentifier = "PUT"
-                    return Alamofire.request("https://httpbin.org/put", method: .put)
+                    return AF.request("https://httpbin.org/put", method: .put)
                 case "DELETE":
                     detailViewController.segueIdentifier = "DELETE"
-                    return Alamofire.request("https://httpbin.org/delete", method: .delete)
+                    return AF.request("https://httpbin.org/delete", method: .delete)
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
-                    let destination = DownloadRequest.suggestedDownloadDestination(
-                        for: .cachesDirectory,
-                        in: .userDomainMask
-                    )
-                    return Alamofire.download("https://httpbin.org/stream/1", to: destination)
+                    let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory,
+                                                                                   in: .userDomainMask)
+                    return AF.download("https://httpbin.org/stream/1", to: destination)
                 default:
                     return nil
                 }
@@ -90,7 +87,7 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 3 && indexPath.row == 0 {
-            print("Reachability Status: \(reachability.networkReachabilityStatus)")
+            print("Reachability Status: \(reachability.status)")
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
@@ -98,12 +95,8 @@ class MasterViewController: UITableViewController {
     // MARK: - Private - Reachability
 
     private func monitorReachability() {
-        reachability = NetworkReachabilityManager(host: "www.apple.com")
-
-        reachability.listener = { status in
+        reachability.startListening { status in
             print("Reachability Status Changed: \(status)")
         }
-
-        reachability.startListening()
     }
 }

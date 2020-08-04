@@ -1,7 +1,7 @@
 //
 //  BaseTestCase.swift
 //
-//  Copyright (c) 2014 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,10 @@ import Foundation
 import XCTest
 
 class BaseTestCase: XCTestCase {
-    let timeout: TimeInterval = 5.0
+    let timeout: TimeInterval = 10
 
-    static var testDirectoryURL: URL { return FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
-    var testDirectoryURL: URL { return BaseTestCase.testDirectoryURL }
+    static var testDirectoryURL: URL { FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
+    var testDirectoryURL: URL { BaseTestCase.testDirectoryURL }
 
     override func setUp() {
         super.setUp()
@@ -42,5 +42,21 @@ class BaseTestCase: XCTestCase {
     func url(forResource fileName: String, withExtension ext: String) -> URL {
         let bundle = Bundle(for: BaseTestCase.self)
         return bundle.url(forResource: fileName, withExtension: ext)!
+    }
+
+    /// Runs assertions on a particular `DispatchQueue`.
+    ///
+    /// - Parameters:
+    ///   - queue: The `DispatchQueue` on which to run the assertions.
+    ///   - assertions: Closure containing assertions to run
+    func assert(on queue: DispatchQueue, assertions: @escaping () -> Void) {
+        let expect = expectation(description: "all assertions are complete")
+
+        queue.async {
+            assertions()
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
     }
 }

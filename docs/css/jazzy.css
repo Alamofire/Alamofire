@@ -63,6 +63,10 @@ a {
   a:hover, a:focus {
     outline: 0;
     text-decoration: underline; }
+  a.discouraged {
+    text-decoration: line-through; }
+    a.discouraged:hover, a.discouraged:focus {
+      text-decoration: underline line-through; }
 
 table {
   background: #fff;
@@ -90,10 +94,10 @@ pre {
 code {
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace; }
 
-p > code, li > code {
+.item-container p > code, .item-container li > code, .top-matter p > code, .top-matter li > code {
   background: #f7f7f7;
   padding: .2em; }
-  p > code:before, p > code:after, li > code:before, li > code:after {
+  .item-container p > code:before, .item-container p > code:after, .item-container li > code:before, .item-container li > code:after, .top-matter p > code:before, .top-matter p > code:after, .top-matter li > code:before, .top-matter li > code:after {
     letter-spacing: -.2em;
     content: "\00a0"; }
 
@@ -107,7 +111,6 @@ pre code {
   @media (min-width: 768px) {
     .content-wrapper {
       flex-direction: row; } }
-
 .header {
   display: flex;
   padding: 8px;
@@ -153,7 +156,6 @@ pre code {
       word-wrap: normal;
       background: #fbfbfb;
       border-right: 1px solid #ddd; } }
-
 .nav-groups {
   list-style-type: none;
   padding-left: 0; }
@@ -184,7 +186,6 @@ pre code {
       order: 2;
       flex: 1;
       padding-bottom: 60px; } }
-
 .section {
   padding: 0 32px;
   border-bottom: 1px solid #ddd; }
@@ -197,6 +198,8 @@ pre code {
 .section-name {
   color: #666;
   display: block; }
+  .section-name p {
+    margin-bottom: inherit; }
 
 .declaration .highlight {
   overflow-x: initial;
@@ -215,6 +218,22 @@ pre code {
   content: "";
   display: block; }
 
+.section-name-container {
+  position: relative; }
+  .section-name-container .section-name-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 0; }
+  .section-name-container .section-name {
+    position: relative;
+    pointer-events: none;
+    z-index: 1; }
+    .section-name-container .section-name a {
+      pointer-events: auto; }
+
 .item-container {
   padding: 0; }
 
@@ -225,9 +244,11 @@ pre code {
   .item a[name]:before {
     content: "";
     display: block; }
-  .item .token {
+  .item .token, .item .direct-link {
+    display: inline-block;
+    text-indent: -20px;
     padding-left: 3px;
-    margin-left: 0px;
+    margin-left: 20px;
     font-size: 1rem; }
   .item .declaration-note {
     font-size: .85em;
@@ -287,9 +308,9 @@ pre code {
   .language .aside-title {
     color: #4183c4; }
 
-.aside-warning {
+.aside-warning, .aside-deprecated, .aside-unavailable {
   border-left: 5px solid #ff6666; }
-  .aside-warning .aside-title {
+  .aside-warning .aside-title, .aside-deprecated .aside-title, .aside-unavailable .aside-title {
     color: #ff0000; }
 
 .graybox {
@@ -325,6 +346,7 @@ pre code {
 
 html.dash .header, html.dash .breadcrumbs, html.dash .navigation {
   display: none; }
+
 html.dash .height-container {
   display: block; }
 
@@ -338,14 +360,17 @@ form[role=search] input {
   border-radius: 1em; }
   .loading form[role=search] input {
     background: white url(../img/spinner.gif) center right 4px no-repeat; }
+
 form[role=search] .tt-menu {
   margin: 0;
   min-width: 300px;
   background: #fbfbfb;
   color: #333;
   border: 1px solid #ddd; }
+
 form[role=search] .tt-highlight {
   font-weight: bold; }
+
 form[role=search] .tt-suggestion {
   font: 16px/1.7 "Helvetica Neue", Helvetica, Arial, sans-serif;
   padding: 0 8px; }
@@ -358,11 +383,13 @@ form[role=search] .tt-suggestion {
     font-weight: normal;
     font-size: 0.9em;
     padding-left: 16px; }
+
 form[role=search] .tt-suggestion:hover,
 form[role=search] .tt-suggestion.tt-cursor {
   cursor: pointer;
   background-color: #4183c4;
   color: #fff; }
+
 form[role=search] .tt-suggestion:hover .doc-parent-name,
 form[role=search] .tt-suggestion.tt-cursor .doc-parent-name {
   color: #fff; }

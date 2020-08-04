@@ -2,8 +2,15 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
+#### 5.x Releases
+- `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
+- `5.1.x` Releases - [5.1.0](#510)
+- `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
+- `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
+- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
+
 #### 4.x Releases
-- `4.9.x` Releases - [4.9.0](#490)
+- `4.9.x` Releases - [4.9.0](#490) | [4.9.1](#491)
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481) | [4.8.2](#482)
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
 - `4.6.x` Releases - [4.6.0](#460)
@@ -36,6 +43,447 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [5.2.2](https://github.com/Alamofire/Alamofire/releases/tag/5.2.2)
+Released on 2020-07-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/72?closed=1).
+
+#### Added
+- `macOS(Catalyst)` `User-Agent` string.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3236](https://github.com/Alamofire/Alamofire/pull/3236).
+
+#### Updated
+- `debugDescription` of `DataRequest` and `DownloadRequest` to better handle non-text and long content, with better formatting.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3256](https://github.com/Alamofire/Alamofire/pull/3256).
+- Code to use `switch` instead of `if else` statement.
+  - Updated by [dirtmelon](https://github.com/dirtmelon) in Pull Request [#3214](https://github.com/Alamofire/Alamofire/pull/3214).
+
+#### Fixed
+- Linking on some Apple OS versions when using Swift Package Manager.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3259](https://github.com/Alamofire/Alamofire/pull/3259).
+- Reliability issues with `DataStreamRequest`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3216](https://github.com/Alamofire/Alamofire/pull/3216).
+
+## [5.2.1](https://github.com/Alamofire/Alamofire/releases/tag/5.2.1)
+Released on 2020-05-25. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/71?closed=1).
+
+#### Updated
+- Usage of `.background` `DispatchQoS` to `.utility` to avoid low-power issues.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3207](https://github.com/Alamofire/Alamofire/pull/3207).
+
+#### Fixed
+- Various memory leaks.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3199](https://github.com/Alamofire/Alamofire/pull/3199).
+
+## [5.2.0](https://github.com/Alamofire/Alamofire/releases/tag/5.2.0)
+Released on 2020-05-16. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/70?closed=1).
+
+#### Added
+- Combine support! `DataResponsePublisher`, `DownloadResponsePublisher`, and `DataStreamPublisher` to stream Alamofire responses.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3160](https://github.com/Alamofire/Alamofire/pull/3160).
+- `AuthenticationInterceptor`, for easier adaptation and retry of requests with credentials.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#3164](https://github.com/Alamofire/Alamofire/pull/3164).
+
+#### Updated
+- Response handlers to take all serializer parameters.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3188](https://github.com/Alamofire/Alamofire/pull/3188).
+- `DisabledEvaluator` to `DisabledTrustEvaluator`, deprecating the previous name.
+  - Updated by [Florian Petit](https://github.com/MrCloud) in Pull Request [#3162](https://github.com/Alamofire/Alamofire/pull/3162).
+- `Interceptor` to be initialized with multiple `RequestInterceptor`s, in addition to `RequestAdapter`s and `RequestRetrier`s.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3155](https://github.com/Alamofire/Alamofire/pull/3155).
+
+#### Fixed
+- Minor documentation issues.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3187](https://github.com/Alamofire/Alamofire/pull/3187).
+- Encoding of `Decimal` values in `URLEncodedFormEncoder`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3185](https://github.com/Alamofire/Alamofire/pull/3185).
+- Thread-safety issue in `Session`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3179](https://github.com/Alamofire/Alamofire/pull/3179).
+- Memory leak in `NetworkReachabilityManager`.
+  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Reqeust [#3180](https://github.com/Alamofire/Alamofire/pull/3180).
+
+---
+
+## [5.1.0](https://github.com/Alamofire/Alamofire/releases/tag/5.1.0)
+Released on 2020-04-04. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/64?closed=1).
+
+#### Added
+- `RequestModifier` closure to request APIs, allowing mutation of created `URLRequest`s.
+  - Added by  [Jon Shier](https://github.com/jshier) in Pull Request [#3137](https://github.com/Alamofire/Alamofire/pull/3137).
+- `DataStreamRequest`, for streaming HTTP responses.
+  - Added by  [Jon Shier](https://github.com/jshier) in Pull Request [#3074](https://github.com/Alamofire/Alamofire/pull/3074).
+
+#### Updated
+- Various framework internals to make porting to Linux easier.
+  - Updated by  [Jon Shier](https://github.com/jshier) in Pull Request [#3115](https://github.com/Alamofire/Alamofire/pull/3115).
+- Project to require Swift 5.1.
+  - Updated by  [Jon Shier](https://github.com/jshier) in Pull Request [#3066](https://github.com/Alamofire/Alamofire/pull/3066).
+  
+#### Fixed
+- Typo in `ServerTrustEvaluating` documentation.
+  - Fixed by [Lucas Tavares](https://github.com/tavares1) in Pull Request [#3138](https://github.com/Alamofire/Alamofire/pull/3138).
+
+---
+
+## [5.0.5](https://github.com/Alamofire/Alamofire/releases/tag/5.0.5)
+Released on 2020-03-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/69?closed=1).
+
+#### Fixed
+- `Request` casting issue on retry that could lead to incomplete retry of `UploadRequest`s.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3127](https://github.com/Alamofire/Alamofire/pull/3127).
+- Rare scenario where `finish()` could be called multiple times, leading to duplicate response handler calls.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3116](https://github.com/Alamofire/Alamofire/pull/3116).
+
+## [5.0.4](https://github.com/Alamofire/Alamofire/releases/tag/5.0.4)
+Released on 2020-03-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/68?closed=1).
+
+#### Fixed
+- Incompatibility with bitcode on watchOS.
+  - Fixed by [Roman Podymov](https://github.com/RomanPodymov) in Pull Request [#3112](https://github.com/Alamofire/Alamofire/pull/3112).
+
+## [5.0.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.3)
+Released on 2020-03-14. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/67?closed=1).
+
+#### Added
+- SwiftPM testing support.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3102](https://github.com/Alamofire/Alamofire/pull/3102).
+- Documentation around the prohibition of background `URLSessionConfiguration`s in Alamofire 5.
+  - Added by [Teameh](https://github.com/teameh) in Pull Request [#3094](https://github.com/Alamofire/Alamofire/pull/3094).
+
+#### Fixed
+- watchOS memory leaks due to missing `didFinishCollecting` event.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3110](https://github.com/Alamofire/Alamofire/pull/3110).
+- `RetryPolicy`'s handling of `AFError`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3103](https://github.com/Alamofire/Alamofire/pull/3103).
+- `DownloadRequest` cancellation reliability.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3102](https://github.com/Alamofire/Alamofire/pull/3102).
+- `-no_compact_unwind` linker warning on watchOS by disabling the warning.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#3083](https://github.com/Alamofire/Alamofire/pull/3083).
+- SwiftPM package snippet in README.
+  - Fixed by [Eddie Seay](https://github.com/eseay) in Pull Request [#3081](https://github.com/Alamofire/Alamofire/pull/3081).
+- Various documentation issues.
+  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Requests [#3105](https://github.com/Alamofire/Alamofire/pull/3105) and  [#3097](https://github.com/Alamofire/Alamofire/pull/3097).
+  - Fixed by [Josip Ćavar](https://github.com/jcavar) in Pull Request [#3095](https://github.com/Alamofire/Alamofire/pull/3095).
+  - Fixed by [Teameh](https://github.com/dirtmelon) in Pull Request [#3093](https://github.com/Alamofire/Alamofire/pull/3093).
+  - Fixed by [Michael Clifford](https://github.com/michaeldclifford) in Pull Request [#3087](https://github.com/Alamofire/Alamofire/pull/3087).
+
+## [5.0.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.2)
+Released on 2020-02-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/66?closed=1).
+
+#### Fixed
+- Swift 5 support for `AlamofireExtension`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3077](https://github.com/Alamofire/Alamofire/pull/3077).
+
+## [5.0.1](https://github.com/Alamofire/Alamofire/releases/tag/5.0.1)
+Released on 2020-02-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/64?closed=1).
+
+#### Updated
+- `AlamofireExtension` to have public properties and initializer, and conform to `@dynamicMemberLookup`.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3075](https://github.com/Alamofire/Alamofire/pull/3075).
+
+## [5.0.0](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0)
+Released on 2020-02-14. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/63?closed=1).
+
+#### Added
+- Support for `NSURLAuthenticationMethodClientCertificate` when handling auth challenges using `URLCredential`s.
+  - Added by [刘富东](https://github.com/liuwin7) in Pull Request [#2993](https://github.com/Alamofire/Alamofire/pull/2993).
+- Migration Guide for Alamofire 5.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3061](https://github.com/Alamofire/Alamofire/pull/3061).
+
+#### Updated
+- Advanced Usage documentation for Alamofire 5.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3062](https://github.com/Alamofire/Alamofire/pull/3062).
+- `AF` namespace to be a reference to `Session.default`.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3059](https://github.com/Alamofire/Alamofire/pull/3059).
+
+#### Fixed
+- Runtime crashes due to overzealous state checking in `SessionDelegate` by reducing the severity of the assertions.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3010](https://github.com/Alamofire/Alamofire/pull/3010).
+- Unwanted `public` attribute on `_URLEncodedFormEncoder`.
+  - Fixed by [Mattt](https://github.com/mattt) in Pull Request [#3053](https://github.com/Alamofire/Alamofire/pull/3053).
+
+---
+
+## [5.0.0-rc.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.3)
+Released on 2019-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/62?closed=1). **Note:** Alamofire 5 is now API stable.
+
+#### Updated
+- Automatic `resume()` behavior to be called after the first response handler is added instead of immediately after task creation.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2965](https://github.com/Alamofire/Alamofire/pull/2965).
+
+#### Fixed
+- Incorrect header convenience method in Usage documentation.
+  - Fixed by [Sebastian](https://github.com/Buesing-Sebastian) in Pull Request [#2952](https://github.com/Alamofire/Alamofire/pull/2952).
+- Unstable parameter ordering in `URLEncodedFormEncoder`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2961](https://github.com/Alamofire/Alamofire/pull/2961).
+- Xcode build issues and precompiled binary build issues by removing the dynamic bundle identifier.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2966](https://github.com/Alamofire/Alamofire/pull/2966).
+- Build warnings for deprecated `SecTrust` API when building for Catalyst.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2977](https://github.com/Alamofire/Alamofire/pull/2977).
+- Regression from Alamofire 4 causing Alamofire to reject NTLM and Negotiate authentication methods.
+  - Fixed by [Adrian Kashivskyy](https://github.com/akashivskyy) in Pull Request [#2975](https://github.com/Alamofire/Alamofire/pull/2975).
+
+## [5.0.0-rc.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.2)
+Released on 2019-09-08. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/59?closed=1). **Note:** Alamofire 5 is now API stable.
+
+#### Fixed
+- Single remaining use of `Error` instead of generic `Failure` constraint in `DataResponse` API.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2937](https://github.com/Alamofire/Alamofire/pull/2937).
+
+## [5.0.0-rc.1](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.1)
+Released on 2019-09-04. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/58?closed=1). **Note:** Alamofire 5 is now API stable.
+
+#### Added
+- `cancelAllRequests` method on `Session` to cancel all in flight requests.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2890](https://github.com/Alamofire/Alamofire/pull/2890).
+- Ability to inject `FileManager` instance into `UploadRequest`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2898](https://github.com/Alamofire/Alamofire/pull/2898).
+- `DataPreprocessor` protocol and implementations, allowing the preprocessing of data before serialization.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2903](https://github.com/Alamofire/Alamofire/pull/2903).
+- Internal `URLRequest` validation and error. `GET` requests with body data will now produce an error.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2905](https://github.com/Alamofire/Alamofire/pull/2905).
+- Generic `Failure` constraint to `DataResponse` and `DownloadResponse`, making them `DataResponse<Success, Failure: Error>` and `DownloadResponse<Success, Failure: Error>`.
+  - Added by [philtre](https://github.com/philtre) in Pull Request [#2893](https://github.com/Alamofire/Alamofire/pull/2893).
+- Precondition to ensure `Session` can't be used with background `URLSessionConfiguration`s. Alamofire will explicitly support such functionality at some point in the future.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2917](https://github.com/Alamofire/Alamofire/pull/2917).
+- SwiftFormat configuration and updated styling.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2918](https://github.com/Alamofire/Alamofire/pull/2918).
+- `AFDataResponse<Success>` and `AFDownloadResponse<Success>` typealiases to help deal with the doubly generic responses.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2921](https://github.com/Alamofire/Alamofire/pull/2921).
+
+#### Updated
+
+- All internal `Result` usage to use the fully qualified type instead of `AFResult`.
+  - Updated by [philtre](https://github.com/philtre) in Pull Request [#2891](https://github.com/Alamofire/Alamofire/pull/2891).
+- `DataRequest` and `DownloadRequest` functional API, renaming `flatMap` to `tryMap`.
+  - Updated by [philtre](https://github.com/philtre) in Pull Request [#2892](https://github.com/Alamofire/Alamofire/pull/2892).
+- `HTTPMethod` to be a struct rather than an enum.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2901](https://github.com/Alamofire/Alamofire/pull/2901).
+- All errors produced by Alamofire to be `AFError` by default. All responses will now start with an `AFError` `Failure` type.
+  - Updated by [philtre](https://github.com/philtre) in Pull Request [#2893](https://github.com/Alamofire/Alamofire/pull/2893).
+- `NetworkReachabilityManager` to simplify and modernize its API.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2915](https://github.com/Alamofire/Alamofire/pull/2915).
+- `Usage.md` documentation to be fully up-to-date with Alamofire 5.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2895](https://github.com/Alamofire/Alamofire/pull/2895).
+- Bundle identifiers to include the platform name, fixing ITMS-90806.
+  - Updated by [Jonathan](https://github.com/JonMo) in Pull Request [#2928](https://github.com/Alamofire/Alamofire/pull/2928).
+
+#### Fixed
+- Thread-safety issue with serialization queue usage.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2885](https://github.com/Alamofire/Alamofire/pull/2885).
+
+## [5.0.0-beta.7](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.7)
+Released on 2019-07-29. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/57?closed=1). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- `URLEncodedFormEncoder.DataEncoding` and `URLEncodedFormEncoder.KeyEncoding` to customize the encoding of `Data` and `CodingKeys` in `URLEncodedFormEncoder`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2858](https://github.com/Alamofire/Alamofire/pull/2858).
+- Asynchronous `cURLDescription` method to produce `cURL` commands for `Request`s which are in the process of creating their initial `URLRequest`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2863](https://github.com/Alamofire/Alamofire/pull/2863).
+
+#### Updated
+- All inline API documentation. 
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2845](https://github.com/Alamofire/Alamofire/pull/2845).
+- Handling of response serializers appended after a `Request` has completed. This no longer produces an error but will instead trigger the normal `Request` lifetime methods.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2862](https://github.com/Alamofire/Alamofire/pull/2862).
+
+#### Fixed
+- Empty parameters being encoded as an empty `String` instead of `nil` by `URLEncodedFormEncoder`.
+  - Fixed by [David Barry](https://github.com/DavidBarry) in Pull Request [#2818](https://github.com/Alamofire/Alamofire/pull/2818).
+- Handling of `os_unfair_lock` to prevent rare crash.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2836](https://github.com/Alamofire/Alamofire/pull/2836).
+
+## [5.0.0-beta.6](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.6)
+Released on 2019-04-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/56?closed=1). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Updated
+- `ServerTrustEvaluation` logic by simplifying public key equality checks for `SecKey` types.
+  - Updated by [Aleksandar Vacić](https://github.com/radianttap) in Pull Request [#2800](https://github.com/Alamofire/Alamofire/pull/2800).
+- `Request.State` access to lock access and task updates using internal locking API.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2814](https://github.com/Alamofire/Alamofire/pull/2814).
+
+#### Fixed
+- Issues in `DownloadRequest` where some events were being duplicated and some were missing.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2807](https://github.com/Alamofire/Alamofire/pull/2807).
+- Issue with AppStore submissions where the pre-release version in the bundle short versions string was being rejected when built with Carthage or as a submodule.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2808](https://github.com/Alamofire/Alamofire/pull/2808).
+- Issue where response serializer completions were not called when appended to a completed `Request`.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2810](https://github.com/Alamofire/Alamofire/pull/2810).
+
+## [5.0.0-beta.5](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.5)
+Released on 2019-04-12. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/55). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- `Request.didResumeTaskNotification`, `Request.didSuspendTaskNotification`, `Request.didCancelTaskNotification`, and `Request.didCompleteTaskNotification` notifications.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2803](https://github.com/Alamofire/Alamofire/pull/2803).
+- Separate `URLSessionTask` lifetime events to `EventMonitor`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2796](https://github.com/Alamofire/Alamofire/pull/2796).
+
+#### Updated
+- `SessionStateProvider` to no longer be `public` and renamed the file it lives in.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2801](https://github.com/Alamofire/Alamofire/pull/2801).
+- `MultipartUpload` to no longer be `public`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2805](https://github.com/Alamofire/Alamofire/pull/2805).
+- `Request`, `DataRequest`, `UploadRequest`, and `DownloadRequest` to longer be `open`, as Alamofire does not support subclassing these types.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2804](https://github.com/Alamofire/Alamofire/pull/2804).
+- Names of the notifications posted by `Request` to include `Notification`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2803](https://github.com/Alamofire/Alamofire/pull/2803).
+- `httpHeaders` extensions on `URLRequest`, `HTTPURLResponse`,  and `URLSessionConfiguration` to be `headers` instead.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2802](https://github.com/Alamofire/Alamofire/pull/2802).
+
+#### Fixed
+- Issue in `Request` where calling `cancel()` inside a response serializer would result in the serializer running again.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2778](https://github.com/Alamofire/Alamofire/pull/2778).
+- Issue in `Session` where the delegate `precondition` would be triggered when running with a swizzled `URLSessionDelegate`.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2783](https://github.com/Alamofire/Alamofire/pull/2783).
+- Compiler error in the example app.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2786](https://github.com/Alamofire/Alamofire/pull/2786).
+- Issues `Request` where certain lifetime events could be triggered more than once by repeatedly calling `resume()`, `suspend()`, or `cancel()`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2796](https://github.com/Alamofire/Alamofire/pull/2796) in Regards to Issue [#2759](https://github.com/Alamofire/Alamofire/issues/2759).
+- Framework version string to be compatible with TestFlight and AppStore releases.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2799](https://github.com/Alamofire/Alamofire/pull/2799) in Regards to Issue [#2797](https://github.com/Alamofire/Alamofire/issues/2797).
+
+## [5.0.0-beta.4](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.4)
+Released on 2019-03-29. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.4). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- The `AlamofireExtended` protocol and used it to namespace all public extensions.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2758](https://github.com/Alamofire/Alamofire/pull/2758).
+- The ability to retry requests after encountering response serialization errors.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2716](https://github.com/Alamofire/Alamofire/pull/2716).
+
+#### Updated
+- The `switch` and `DispatchQueue` logic throughout codebase to simplify usage patterns.
+  - Updated by [Joan Disho](https://github.com/jdisho) and [Christian Noon](https://github.com/cnoon) in Pull Requests [#2691](https://github.com/Alamofire/Alamofire/pull/2691) and [#2765](https://github.com/Alamofire/Alamofire/pull/2765).
+- The `MultipartFormData` data APIs by condensing them using optional parameters.
+  - Updated by [Ernesto Rivera](https://github.com/rivera-ernesto) in Pull Request [#2766](https://github.com/Alamofire/Alamofire/pull/2766).
+- The upload APIs for `MultipartFormData` to support custom boundaries.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2764](https://github.com/Alamofire/Alamofire/pull/2764).
+- The Xcode project, source code, SPM package, and podspec to support Swift 5 only.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2771](https://github.com/Alamofire/Alamofire/pull/2771).
+- The Alamofire `Result` type to be a new `AFResult` typealias on the new `Swift.Result` type in Swift 5 and removed all public extensions.
+  - Updated by [Dave Camp](https://github.com/AtomicCat), [Eric Jensen](https://github.com/ejensen), and [Christian Noon](https://github.com/cnoon) in Pull Requests [#2769](https://github.com/Alamofire/Alamofire/pull/2769) and [#2774](https://github.com/Alamofire/Alamofire/pull/2774).
+
+#### Fixed
+- Issue in `RequestInterceptor` closures where callback arguments were not marked as `@escaping`.
+  - Fixed by [Scott Talbot](https://github.com/cysp) in Pull Request [#2747](https://github.com/Alamofire/Alamofire/pull/2747).
+- Issue in response serializers where `emptyResponseAllowed` logic was not working as expected.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2772](https://github.com/Alamofire/Alamofire/pull/2772) in Regards to Issue [#2770](https://github.com/Alamofire/Alamofire/issues/2770).
+
+## [5.0.0-beta.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.3)
+Released on 2019-01-07. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.3). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- The `EmptyResponse` protocol, to allow any type to provides values to stand in for an empty response.
+  - Added by [James Van Noord](https://github.com/jvannoord) in Pull Request [#2664](https://github.com/Alamofire/Alamofire/pull/2664).
+- Request and response bodies to `Request`'s `debugDescription`.
+  - Added by [rain2540](https://github.com/rain2540) in Pull Request [#2700](https://github.com/Alamofire/Alamofire/pull/2700).
+
+#### Updated
+- `Package.swift` for Swift 5 support, moving Swift 4.2 support to `Package@swift-4.2.swift`.
+  - Updated by [Mattt](https://github.com/mattt) in Pull Requests [#2737](https://github.com/Alamofire/Alamofire/pull/2737) and [#2736](https://github.com/Alamofire/Alamofire/pull/2736).
+- Use of `Array` to `Range` in `Request`'s default `acceptableResponseCodes`.
+  - Updated by [StevenArmandLee](https://github.com/StevenArmandLee) in Pull Request [#2720](https://github.com/Alamofire/Alamofire/pull/2720).
+- `RetryPolicy` to allow subclasses to override `retry(_:, for: Session, dueTo:, completion:)`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2713](https://github.com/Alamofire/Alamofire/pull/2713).
+- Alamofire's `didResume` notification to `didFinish`, which is now called when a `Request` finished, not when tasks resume.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2728](https://github.com/Alamofire/Alamofire/pull/2728).
+
+#### Fixed
+- `Request`s not finishing when their controlling `Session` is `deinit`d or invalidated.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2728](https://github.com/Alamofire/Alamofire/pull/2728).
+- Memory leak when using `validate()` due to reference cycle from implicit `self` capture when using an `@autoclosure`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2728](https://github.com/Alamofire/Alamofire/pull/2728).
+- Crash when using `requestDidParseAnyResponse` when using `ClosureEventMonitor`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2740](https://github.com/Alamofire/Alamofire/pull/2740).
+- `RetryPolicy` to properly conform to `RequestInterceptor`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2739](https://github.com/Alamofire/Alamofire/pull/2739).
+- Typos in documentation.
+  - Fixed by [Łukasz Mróz](https://github.com/sunshinejr), [Jacob Wood](https://github.com/jacoblukewood), [Paulo Henrique](https://github.com/Cardoso222), and [Todd Lahtinen](https://github.com/toddlahtinen0) in Pull Requests [#2715](https://github.com/Alamofire/Alamofire/pull/2715), [#2725](https://github.com/Alamofire/Alamofire/pull/2725), [#2729](https://github.com/Alamofire/Alamofire/pull/2729), and [#2697](https://github.com/Alamofire/Alamofire/pull/2697).
+
+## [5.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.2)
+Released on 2019-01-07. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.2). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- Support for controlling redirect behavior per `Session` and per `Request` using the `RedirectHandler` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2699](https://github.com/Alamofire/Alamofire/pull/2699).
+- Support for controlling cached response behavior per `Session` and per `Request` using the `CachedResponseHandler` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2701](https://github.com/Alamofire/Alamofire/pull/2701).
+- Support for controlling retry behavior per `Session` and per `Request` using the `RequestInterceptor` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704) in regards to Issue [#2241](https://github.com/Alamofire/Alamofire/issues/2241).
+- The `Adapter`, `Retrier`, and `Interceptor` types to provide fine grained control of retry behavior.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704).
+- Support for exponential backoff retry policies through the new `RetryPolicy` and `ConnectionLostRetryPolicy` types.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704).
+
+#### Updated
+- The `RequestRetrier` protocol to take a `RetryResult` in the `completion` closure allowing custom retry errors to be thrown.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704).
+- The `Hashable` implementation on `Request` to use new `hash(into:)` API.
+  - Updated by [Jeff Kelley](https://github.com/SlaunchaMan) in Pull Request [#2696](https://github.com/Alamofire/Alamofire/pull/2696).
+
+## [5.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.1)
+Released on 2018-12-06. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0.beta-1). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- Support for `Decodable` response serialization with `responseDecodable`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Requests [#2265](https://github.com/Alamofire/Alamofire/pull/2265) and [#2657](https://github.com/Alamofire/Alamofire/pull/2657).
+- Support for Brotli `Content-Encoding` in Alamofire's default headers.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2346](https://github.com/Alamofire/Alamofire/pull/2346).
+- `HTTPHeaders` type and convenience APIs.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2629](https://github.com/Alamofire/Alamofire/pull/2629).
+- Support for `Encodable` parameter types with `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2637](https://github.com/Alamofire/Alamofire/pull/2637).
+- Customizable empty response handling in response serializers.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2639](https://github.com/Alamofire/Alamofire/pull/2639).
+- `EventMonitor` protocol, to tap in to internal Alamofire lifetime events.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+- `ServerTrustFailureReason` to `AFError`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2608](https://github.com/Alamofire/Alamofire/pull/2608).
+- Asynchronous request creation.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+
+#### Updated
+- `ResponseSerializer` and associated protocols' requirements and implementations.
+  - Updated by  [Jon Shier](https://github.com/jshier) in Pull Requests [#2265](https://github.com/Alamofire/Alamofire/pull/2265)  and [#2639](https://github.com/Alamofire/Alamofire/pull/2639).
+- `RequestAdapter` to allow for asynchronous adaptation.
+  - Updated by  [Jon Shier](https://github.com/jshier) in Pull Request [#2628](https://github.com/Alamofire/Alamofire/pull/2628) .
+- `SessionManager` to `Session`, with rewritten implementation and API.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+- `Request`, `DataRequest`, `UploadRequest`, and `DownloadRequest` with rewritten implementation and API.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+- Top level `request` API to be inside a real `AF` namespace enum rather than unnecessary `Alamofire.` usage.
+   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2585](https://github.com/Alamofire/Alamofire/pull/2585).
+
+#### Removed
+- Support for iOS < 10, macOS < 10.12, tvOS < 10, watchOS < 3.
+  - Removed by [Jon Shier](https://github.com/jshier) in Pull Requests [#2254](https://github.com/Alamofire/Alamofire/pull/2254) and [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+- Support for `PropertyListSerialization` and `responsePropertyList`.
+  - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2265](https://github.com/Alamofire/Alamofire/pull/2265).
+- Support for `URLSessionStreamTask`.
+  - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+- Closure override and customization API.
+  - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+- `Timeline` type, as Alamofire now gathers `URLSessionTaskMetrics` for every request.
+  - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+
+---
+
+## [4.9.1](https://github.com/Alamofire/Alamofire/releases/tag/4.9.1)
+Released on 2019-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/61?closed=1).
+
+#### Added
+- Support for GitHub Actions for CI.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2979](https://github.com/Alamofire/Alamofire/pull/2979).
+
+#### Updated
+- `DataResponse` and `DownloadResponse` `debugDescription` to include more useful information.
+  - Updated by [rain2540](https://github.com/rain2540) in Pull Request [#2976](https://github.com/Alamofire/Alamofire/pull/2976).
+
+#### Fixed
+- Dynamic bundle identifier causing issues with Xcode and precompiled binaries by removing the dynamic behavior.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2967](https://github.com/Alamofire/Alamofire/pull/2967).
+- Compiler warnings when building for Catalyst by updating the usage of deprecated API.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2979](https://github.com/Alamofire/Alamofire/pull/2979).
+
 ## [4.9.0](https://github.com/Alamofire/Alamofire/releases/tag/4.9.0)
 Released on 2019-09-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.9.0).
 
@@ -48,7 +496,7 @@ Released on 2019-09-03. All issues associated with this milestone can be found u
   - Updated by [Jonathan](https://github.com/JonMo) in Pull Request [#2930](https://github.com/Alamofire/Alamofire/pull/2930).
 
 #### Fixed
-- NetworkReachabilityManager behavior regression from 4.8.1.
+- `NetworkReachabilityManager` behavior regression from 4.8.1.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2931](https://github.com/Alamofire/Alamofire/pull/2931).
 - Memory leak when using `validate()`.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2931](https://github.com/Alamofire/Alamofire/pull/2931).
@@ -77,15 +525,13 @@ Released on 2019-01-15. All issues associated with this milestone can be found u
 Released on 2018-11-24. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.0).
 
 #### Added
-- Support for CocoaPod's `swift_versions` attribute.
-  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2648](https://github.com/Alamofire/Alamofire/pull/2648).
 - Optional encoding completion callback queue for multipart upload.
   - Added by [jaltreuter](https://github.com/jaltreuter) in Pull Request [#2620](https://github.com/Alamofire/Alamofire/pull/2620).
 - Versioned Swift package manifests.
   - Added by [Wanbok Choi (Wayne)](https://github.com/wanbok) in Pull Request [#2621](https://github.com/Alamofire/Alamofire/pull/2621) and [Jon Shier](https://github.com/jshier) in Pull Request [#2648](https://github.com/Alamofire/Alamofire/pull/2648).
 
 #### Updated
-- Project Swift version to 4. 
+- Project Swift version to 4.
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2648](https://github.com/Alamofire/Alamofire/pull/2648).
 - Various `Result` methods to be `throw`/`rethrows`.
   - Updated by [Stéphane Copin](https://github.com/stephanecopin) in Pull Request [#2488](https://github.com/Alamofire/Alamofire/pull/2488).
@@ -154,9 +600,9 @@ Released on 2017-12-3. All issues associated with this milestone can be found us
   - Added by [Jon Shier](https://github.com/jshier) in Pull Request
   [#2361](https://github.com/Alamofire/Alamofire/pull/2361).
 - Separation of Usage and Advanced Usage docs from README.
-  - Added by [Jon Shier](https://github.com/jshier) in Pull Request 
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request
   [#2360](https://github.com/Alamofire/Alamofire/pull/2360).
-  
+
 #### Updated
 - Travis CI and Ruby dependencies.
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests
@@ -164,7 +610,7 @@ Released on 2017-12-3. All issues associated with this milestone can be found us
 - Swift Package Manager instructions.
   - Updated by [Ryosuke Hayashi](https://github.com/hayashikun) in Pull Request
   [#2341](https://github.com/Alamofire/Alamofire/pull/2341).
-  
+
 #### Fixed
 - `#session-manager` link in Advanced Usage docs.
   - Fixed by [Naeem Shaikh](https://github.com/naeemshaikh90) in Pull Request
@@ -314,7 +760,7 @@ Released on 2017-02-26. All issues associated with this milestone can be found u
 - Typo in the README in the Swift Package Manager section.
   - Fixed by [Sebastian Limbach](https://github.com/bastilimbach) in Pull Request
   [#1918](https://github.com/Alamofire/Alamofire/pull/1918).
-- Issue in the "Modifying the Session Configuration" example code of the README where the 
+- Issue in the "Modifying the Session Configuration" example code of the README where the
   `defaultHTTPHeaders` property was called incorrectly.
   - Fixed by [Artur Antonov](https://github.com/goingreen) in Pull Request
   [#1927](https://github.com/Alamofire/Alamofire/pull/1927).
@@ -324,7 +770,7 @@ Released on 2017-02-26. All issues associated with this milestone can be found u
 - Issue in the README where the POST request with parameters example was using the wrong method.
   - Fixed by [Pablo Bartolome](https://github.com/pbartolome) in Pull Request
   [#1984](https://github.com/Alamofire/Alamofire/pull/1984).
-- Issue where `taskDidComplete` override closure was not calling task delegate leading to 
+- Issue where `taskDidComplete` override closure was not calling task delegate leading to
   potential memory leaks.
   - Fixed by [Jon Shier](https://github.com/jshier) in regards to Issue
   [#1938](https://github.com/Alamofire/Alamofire/pull/1938).
@@ -655,7 +1101,7 @@ Released on 2016-09-11. All issues associated with this milestone can be found u
 - `BaseTestCase` to delete contents of common directories at the start of each test.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#1457](https://github.com/Alamofire/Alamofire/pull/1457).
-- Response handler extensions by moving them into `DataRequest` and added equivalents 
+- Response handler extensions by moving them into `DataRequest` and added equivalents
   for `DownloadRequest`.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#1457](https://github.com/Alamofire/Alamofire/pull/1457).
@@ -762,8 +1208,8 @@ Released on 2016-08-28. All issues associated with this milestone can be found u
 #### Updated
 - All source, test and example logic as well as project settings to compile against
   the Xcode 8 beta releases.
-  - Updated by [Kevin Harwood](https://github.com/kcharwood), 
-    [Jon Shier](https://github.com/jshier) and 
+  - Updated by [Kevin Harwood](https://github.com/kcharwood),
+    [Jon Shier](https://github.com/jshier) and
     [Christian Noon](https://github.com/cnoon).
 - Deployment targets to iOS 9.0, macOS 10.11, tvOS 9.0 and watchOS 2.0.
   - Updated by [Christian Noon](https://github.com/cnoon).
@@ -828,8 +1274,8 @@ Released on 2016-09-07. All issues associated with this milestone can be found u
   [#1452](https://github.com/Alamofire/Alamofire/issues/1452).
 - All source, test and example logic as well as project settings to compile against
   Xcode 7 and 8 against Swift 2.2 or 2.3 respectively.
-  - Updated by [Kevin Harwood](https://github.com/kcharwood), 
-    [Jon Shier](https://github.com/jshier) and 
+  - Updated by [Kevin Harwood](https://github.com/kcharwood),
+    [Jon Shier](https://github.com/jshier) and
     [Christian Noon](https://github.com/cnoon).
 - The Travis CI yaml file to support both Xcode 7.3 and 8 simultaneously.
   - Updated by [Christian Noon](https://github.com/cnoon).
@@ -934,7 +1380,7 @@ Released on 2016-05-08. All issues associated with this milestone can be found u
 - The `SesionDelegate` to no longer be `final` to allow subclassing.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#1172](https://github.com/Alamofire/Alamofire/issues/1172) in regards to Issue
-  [#1145](https://github.com/Alamofire/Alamofire/issues/1145).  
+  [#1145](https://github.com/Alamofire/Alamofire/issues/1145).
 - The `SessionDelegate` subscript public to allow full control when subclassing.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#1172](https://github.com/Alamofire/Alamofire/issues/1172).
@@ -1068,7 +1514,7 @@ Released on 2016-02-07. All issues associated with this milestone can be found u
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.2.0).
 
 #### Added
-- Notifications that post when an `NSURLSessionTask` changes state to allow support for the 
+- Notifications that post when an `NSURLSessionTask` changes state to allow support for the
   network activity indicator.
   - Added by [Christian Noon](https://github.com/cnoon).
 - `Timeline` struct to capture timings throughout the lifecycle of a `Request`.
@@ -1141,7 +1587,7 @@ Released on 2015-12-16. All issues associated with this milestone can be found u
   [#955](https://github.com/Alamofire/Alamofire/pull/955).
 - `ParameterEncoding` to early out when passed an empty parameters dictionary.
   - Updated by [Anthony Miller](https://github.com/AnthonyMDev) in Pull Request
-  [#954](https://github.com/Alamofire/Alamofire/pull/954).  
+  [#954](https://github.com/Alamofire/Alamofire/pull/954).
 - The `certificatesInBundle` to support `cer`, `crt` and `der` extensions.
   - Updated by [Jacob Jennings](https://github.com/jacobjennings) in Pull Request
   [#956](https://github.com/Alamofire/Alamofire/pull/956).
@@ -1348,7 +1794,7 @@ conforms to `ErrorType`.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#791](https://github.com/Alamofire/Alamofire/pull/791).
 - All response serializers to use the new `Response` type.
-  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request  - 
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request  -
   [#792](https://github.com/Alamofire/Alamofire/pull/792).
 - The designated initializer for a `Manager` to accept a `SessionDelegate` parameter
 allowing dependency injection for better background session support.
@@ -1375,7 +1821,7 @@ Released on 2015-09-20. All issues associated with this milestone can be found u
   [#206](https://github.com/Alamofire/Alamofire/issues/206).
 
 ## [2.0.1](https://github.com/Alamofire/Alamofire/releases/tag/2.0.1)
-Released on 2015-09-16. All issues associated with this milestone can be found using this 
+Released on 2015-09-16. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.1).
 
 #### Updated
@@ -1394,7 +1840,7 @@ Released on 2015-09-16. All issues associated with this milestone can be found u
   [#721](https://github.com/Alamofire/Alamofire/pull/721).
 
 ## [2.0.0](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0)
-Released on 2015-09-09. All issues associated with this milestone can be found using this 
+Released on 2015-09-09. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0).
 
 #### Added
@@ -1405,7 +1851,7 @@ Released on 2015-09-09. All issues associated with this milestone can be found u
 ---
 
 ## [2.0.0-beta.4](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.4)
-Released on 2015-09-06. All issues associated with this milestone can be found using this 
+Released on 2015-09-06. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.4).
 
 #### Added
@@ -1475,7 +1921,7 @@ conformance that could cause unwanted URL request referencing.
   - Removed by [Christian Noon](https://github.com/cnoon).
 
 ## [2.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.2)
-Released on 2015-08-24. All issues associated with this milestone can be found using this 
+Released on 2015-08-24. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.2).
 
 #### Added
@@ -1531,7 +1977,7 @@ in the test suite.
   [#693](https://github.com/Alamofire/Alamofire/issues/693).
 
 ## [2.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.1)
-Released on 2015-08-10. All issues associated with this milestone can be found using this 
+Released on 2015-08-10. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.1).
 
 #### Added
@@ -1633,7 +2079,7 @@ better support `.Custom` encoding.
 ---
 
 ## [1.3.1](https://github.com/Alamofire/Alamofire/releases/tag/1.3.1)
-Released on 2015-08-10. All issues associated with this milestone can be found using this 
+Released on 2015-08-10. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.3.1).
 
 #### Fixed
@@ -1643,7 +2089,7 @@ task override closure was set.
   [#622](https://github.com/Alamofire/Alamofire/issues/622).
 
 ## [1.3.0](https://github.com/Alamofire/Alamofire/releases/tag/1.3.0)
-Released on 2015-07-24. All issues associated with this milestone can be found using this 
+Released on 2015-07-24. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.3.0).
 
 #### Added
@@ -1774,7 +2220,7 @@ much more powerful form of response serialization.
 ---
 
 ## [1.2.3](https://github.com/Alamofire/Alamofire/releases/tag/1.2.3)
-Released on 2015-06-12. All issues associated with this milestone can be found using this 
+Released on 2015-06-12. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.2.3).
 
 #### Added
@@ -1837,7 +2283,7 @@ Released on 2015-06-12. All issues associated with this milestone can be found u
   [#516](https://github.com/Alamofire/Alamofire/pull/516).
 
 ## [1.2.2](https://github.com/Alamofire/Alamofire/releases/tag/1.2.2)
-Released on 2015-05-13. All issues associated with this milestone can be found using this 
+Released on 2015-05-13. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.2.2).
 
 #### Added
@@ -1932,7 +2378,7 @@ Released on 2015-04-09.
 test.
   - Added by [Mattt Thompson](https://github.com/mattt) in regards to Issue
   [#370](https://github.com/Alamofire/Alamofire/pull/370).
-- New `backgroundCompletionHandler` property to the `Manager` called when the 
+- New `backgroundCompletionHandler` property to the `Manager` called when the
 session background tasks finish.
   - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#317](https://github.com/Alamofire/Alamofire/pull/317).
@@ -1959,9 +2405,9 @@ per the HTTP/1.1 specification.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#317](https://github.com/Alamofire/Alamofire/pull/317).
 - `SessionDelegate` class to `final`.
-  - Updated by [Mattt Thompson](https://github.com/mattt).  
+  - Updated by [Mattt Thompson](https://github.com/mattt).
 - `SessionDelegate` header documentation for method override properties.
-  - Updated by [Mattt Thompson](https://github.com/mattt).  
+  - Updated by [Mattt Thompson](https://github.com/mattt).
 - Xcode project to set `APPLICATION_EXTENSION_API_ONLY` to `YES` for OS X target.
   - Updated by [Mattt Thompson](https://github.com/mattt).
 
@@ -2010,7 +2456,7 @@ Released on 2015-03-26.
 - Ono XML response serializer example in the README.
   - Updated by [Mattt Thompson](https://github.com/mattt).
 - Travis-CI settings to only build the master branch.
-  - Updated by [Mattt Thompson](https://github.com/mattt).  
+  - Updated by [Mattt Thompson](https://github.com/mattt).
 - Code signing identities for the frameworks and targets to better support Carthage.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#400](https://github.com/Alamofire/Alamofire/pull/400).
@@ -2073,7 +2519,7 @@ Embedded Frameworks.
 - Spec validation error with CocoaPods 0.36.0.beta-1 by disabling -b flags in `cURL`
 debug on OSX.
   - Fixed by [Mattt Thompson](https://github.com/mattt).
-- Travis-CI build issue by adding suppport for an `iOS Example` scheme. 
+- Travis-CI build issue by adding suppport for an `iOS Example` scheme.
   - Fixed by [Yasuharu Ozaki](https://github.com/yasuoza) in Pull Request
   [#322](https://github.com/Alamofire/Alamofire/pull/322).
 
@@ -2225,7 +2671,7 @@ Released on 2014-10-20.
 - Response handler threading issue by adding a `subdelegateQueue` to the `SessionDelegate`.
   - Fixed by [Essan Parto](https://github.com/parto) in Pull Request
   [#171](https://github.com/Alamofire/Alamofire/pull/171).
-- Challenge issue where basic auth credentials were not being unwrapped. 
+- Challenge issue where basic auth credentials were not being unwrapped.
   - Fixed by [Mattt Thompson](https://github.com/mattt).
 
 ## [1.0.0](https://github.com/Alamofire/Alamofire/releases/tag/1.0.0)
