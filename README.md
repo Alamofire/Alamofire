@@ -7,6 +7,7 @@
 [![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](https://twitter.com/AlamofireSF)
 [![Gitter](https://badges.gitter.im/Alamofire/Alamofire.svg)](https://gitter.im/Alamofire/Alamofire?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Open Source Helpers](https://www.codetriage.com/alamofire/alamofire/badges/users.svg)](https://www.codetriage.com/alamofire/alamofire)
+[![Try it with iPad](https://raw.githubusercontent.com/bow-swift/bow-art/master/badges/nef-playgrounds-badge.svg)](https://badge.bow-swift.io/recipe?name=Alamofire&description=Elegant%20HTTP%20Networking%20in%20Swift&url=https://github.com/Alamofire/Alamofire&owner=Alamofire&avatar=https://avatars3.githubusercontent.com/u/7774181?v=4&tag=5.2.2)
 
 Alamofire is an HTTP networking library written in Swift.
 
