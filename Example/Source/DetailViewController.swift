@@ -25,15 +25,10 @@
 import Alamofire
 import UIKit
 
-
 class DetailViewController: UITableViewController {
-
     enum Sections: Int {
         case headers, body
     }
-
-
-    // MARK: - Properties
 
     var request: Request? {
         didSet {
@@ -58,8 +53,7 @@ class DetailViewController: UITableViewController {
         return formatter
     }()
 
-
-    // MARK: - View Lifecycle
+    // MARK: View Lifecycle
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -71,8 +65,7 @@ class DetailViewController: UITableViewController {
         refresh()
     }
 
-
-    // MARK: - IBActions
+    // MARK: IBActions
 
     @IBAction func refresh() {
         guard let request = request else {
@@ -95,14 +88,12 @@ class DetailViewController: UITableViewController {
 
             if let segueIdentifier = self.segueIdentifier {
                 switch segueIdentifier {
-                    case "GET", "POST", "PUT", "DELETE":
-                        if case let .success(value) = result { self.body = value }
-
-                    case "DOWNLOAD":
-                        self.body = self.downloadedBodyString()
-
-                    default:
-                        break
+                case "GET", "POST", "PUT", "DELETE":
+                    if case let .success(value) = result { self.body = value }
+                case "DOWNLOAD":
+                    self.body = self.downloadedBodyString()
+                default:
+                    break
                 }
             }
 
@@ -120,9 +111,6 @@ class DetailViewController: UITableViewController {
             }
         }
     }
-
-
-    // MARK: - Private
 
     private func downloadedBodyString() -> String {
         let fileManager = FileManager.default
@@ -148,90 +136,70 @@ class DetailViewController: UITableViewController {
 
         return ""
     }
-
 }
-
 
 // MARK: - UITableViewDataSource
 
 extension DetailViewController {
-
-    override func tableView(_ tableView: UITableView,
-                            numberOfRowsInSection section: Int) -> Int
-    {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Sections(rawValue: section)! {
-            case .headers:
-                return headers.count
-
-            case .body:
-                return body == nil ? 0 : 1
+        case .headers:
+            return headers.count
+        case .body:
+            return body == nil ? 0 : 1
         }
     }
 
-    override func tableView(_ tableView: UITableView,
-                            cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
-        switch Sections(rawValue: indexPath.section)! {
-            case .headers:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "Header")!
-                let field = headers.keys.sorted(by: <)[indexPath.row]
-                let value = headers[field]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch Sections(rawValue: (indexPath as NSIndexPath).section)! {
+        case .headers:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Header")!
+            let field = headers.keys.sorted(by: <)[indexPath.row]
+            let value = headers[field]
 
-                cell.textLabel?.text = field
-                cell.detailTextLabel?.text = value
+            cell.textLabel?.text = field
+            cell.detailTextLabel?.text = value
 
-                return cell
+            return cell
+        case .body:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Body")!
+            cell.textLabel?.text = body
 
-            case .body:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "Body")!
-                cell.textLabel?.text = body
-
-                return cell
+            return cell
         }
     }
-
 }
-
 
 // MARK: - UITableViewDelegate
 
 extension DetailViewController {
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         2
     }
 
-    override func tableView(_ tableView: UITableView,
-                            titleForHeaderInSection section: Int) -> String?
-    {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if self.tableView(tableView, numberOfRowsInSection: section) == 0 {
             return ""
         }
 
         switch Sections(rawValue: section)! {
-            case .headers:
-                return "Headers"
-
-            case .body:
-                return "Body"
+        case .headers:
+            return "Headers"
+        case .body:
+            return "Body"
         }
     }
 
-    override func tableView(_ tableView: UITableView,
-                            heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        switch Sections(rawValue: indexPath.section)! {
-            case .body:
-                return 300
-
-            default:
-                return tableView.rowHeight
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch Sections(rawValue: (indexPath as NSIndexPath).section)! {
+        case .body:
+            return 300
+        default:
+            return tableView.rowHeight
         }
     }
 
-    override func tableView(_ tableView: UITableView,
-                            titleForFooterInSection section: Int) -> String?
-    {
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if Sections(rawValue: section) == .body, let elapsedTime = elapsedTime {
             let elapsedTimeText = DetailViewController.numberFormatter.string(from: elapsedTime as NSNumber) ?? "???"
             return "Elapsed Time: \(elapsedTimeText) sec"
@@ -239,5 +207,4 @@ extension DetailViewController {
 
         return ""
     }
-
 }

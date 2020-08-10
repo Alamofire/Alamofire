@@ -25,9 +25,7 @@
 import Alamofire
 import UIKit
 
-
 class MasterViewController: UITableViewController {
-
     // MARK: - Properties
 
     @IBOutlet var titleImageView: UIImageView!
@@ -35,7 +33,6 @@ class MasterViewController: UITableViewController {
     var detailViewController: DetailViewController?
 
     private var reachability: NetworkReachabilityManager!
-
 
     // MARK: - View Lifecycle
 
@@ -49,40 +46,33 @@ class MasterViewController: UITableViewController {
         monitorReachability()
     }
 
-
     // MARK: - UIStoryboardSegue
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if
             let navigationController = segue.destination as? UINavigationController,
             let detailViewController = navigationController.topViewController as? DetailViewController {
-
             func requestForSegue(_ segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier! {
-                    case "GET":
-                        detailViewController.segueIdentifier = "GET"
-                        return AF.request("https://httpbin.org/get")
-
-                    case "POST":
-                        detailViewController.segueIdentifier = "POST"
-                        return AF.request("https://httpbin.org/post", method: .post)
-
-                    case "PUT":
-                        detailViewController.segueIdentifier = "PUT"
-                        return AF.request("https://httpbin.org/put", method: .put)
-
-                    case "DELETE":
-                        detailViewController.segueIdentifier = "DELETE"
-                        return AF.request("https://httpbin.org/delete", method: .delete)
-
-                    case "DOWNLOAD":
-                        detailViewController.segueIdentifier = "DOWNLOAD"
-                        let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory,
-                                                                                       in: .userDomainMask)
-                        return AF.download("https://httpbin.org/stream/1", to: destination)
-                    
-                    default:
-                        return nil
+                case "GET":
+                    detailViewController.segueIdentifier = "GET"
+                    return AF.request("https://httpbin.org/get")
+                case "POST":
+                    detailViewController.segueIdentifier = "POST"
+                    return AF.request("https://httpbin.org/post", method: .post)
+                case "PUT":
+                    detailViewController.segueIdentifier = "PUT"
+                    return AF.request("https://httpbin.org/put", method: .put)
+                case "DELETE":
+                    detailViewController.segueIdentifier = "DELETE"
+                    return AF.request("https://httpbin.org/delete", method: .delete)
+                case "DOWNLOAD":
+                    detailViewController.segueIdentifier = "DOWNLOAD"
+                    let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory,
+                                                                                   in: .userDomainMask)
+                    return AF.download("https://httpbin.org/stream/1", to: destination)
+                default:
+                    return nil
                 }
             }
 
@@ -92,18 +82,14 @@ class MasterViewController: UITableViewController {
         }
     }
 
-
     // MARK: - UITableViewDelegate
 
-    override func tableView(_ tableView: UITableView,
-                            didSelectRowAt indexPath: IndexPath)
-    {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 3 && indexPath.row == 0 {
             print("Reachability Status: \(reachability.status)")
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
-
 
     // MARK: - Private - Reachability
 
@@ -112,5 +98,4 @@ class MasterViewController: UITableViewController {
             print("Reachability Status Changed: \(status)")
         }
     }
-
 }
