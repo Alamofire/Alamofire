@@ -140,7 +140,7 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 
 - Select the top `Alamofire.framework` for iOS and the bottom one for macOS.
 
-    > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as either `Alamofire iOS`, `Alamofire macOS`, `Alamofire tvOS`, or `Alamofire watchOS`.
+    > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as `Alamofire iOS`, `Alamofire macOS`, `Alamofire tvOS`, or `Alamofire watchOS`.
 
 - And that's it!
 
