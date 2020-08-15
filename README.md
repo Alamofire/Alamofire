@@ -53,7 +53,7 @@ Alamofire is an HTTP networking library written in Swift.
 
 In order to keep Alamofire focused specifically on core networking implementations, additional component libraries have been created by the [Alamofire Software Foundation](https://github.com/Alamofire/Foundation) to bring additional functionality to the Alamofire ecosystem.
 
-- [AlamofireImage](https://github.com/Alamofire/AlamofireImage) - An image library including image response serializers, `UIImage` and `UIImageView` extensions, custom image filters, an auto-purging in-memory cache and a priority-based image downloading system.
+- [AlamofireImage](https://github.com/Alamofire/AlamofireImage) - An image library including image response serializers, `UIImage` and `UIImageView` extensions, custom image filters, an auto-purging in-memory cache, and a priority-based image downloading system.
 - [AlamofireNetworkActivityIndicator](https://github.com/Alamofire/AlamofireNetworkActivityIndicator) - Controls the visibility of the network activity indicator on iOS using Alamofire. It contains configurable delay timers to help mitigate flicker and can support `URLSession` instances not managed by Alamofire.
 
 ## Requirements
@@ -140,7 +140,7 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 
 - Select the top `Alamofire.framework` for iOS and the bottom one for macOS.
 
-    > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as either `Alamofire iOS`, `Alamofire macOS`, `Alamofire tvOS` or `Alamofire watchOS`.
+    > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as `Alamofire iOS`, `Alamofire macOS`, `Alamofire tvOS`, or `Alamofire watchOS`.
 
 - And that's it!
 
@@ -150,7 +150,7 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 
 The following radars have some effect on the current implementation of Alamofire.
 
-- [`rdar://21349340`](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
+- [`rdar://21349340`](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in the test case
 - `rdar://26870455` - Background URL Session Configurations do not work in the simulator
 - `rdar://26849668` - Some URLProtocol APIs do not properly handle `URLRequest`
 - `FB7624529` - `urlSession(_:task:didFinishCollecting:)` never called on watchOS
@@ -185,7 +185,7 @@ If you believe you have identified a security vulnerability with Alamofire, you 
 ## Donations
 
 The [ASF](https://github.com/Alamofire/Foundation#members) is looking to raise money to officially stay registered as a federal non-profit organization.
-Registering will allow us members to gain some legal protections and also allow us to put donations to use, tax-free.
+Registering will allow Foundation members to gain some legal protections and also allow us to put donations to use, tax-free.
 Donating to the ASF will enable us to:
 
 - Pay our yearly legal fees to keep the non-profit in good status
