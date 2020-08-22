@@ -352,7 +352,11 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatPublishedDataRequestCanBeCancelledAutomatically() {
+    func testThatPublishedDataRequestCanBeCancelledAutomatically() throws {
+        if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
+            throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
+        }
+        
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
@@ -862,7 +866,11 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatPublishedDataStreamRequestCanBeCancelledAutomatically() {
+    func testThatPublishedDataStreamRequestCanBeCancelledAutomatically() throws {
+        if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
+            throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
+        }
+        
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
@@ -1274,7 +1282,11 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatPublishedDownloadRequestCanBeCancelledAutomatically() {
+    func testThatPublishedDownloadRequestCanBeCancelledAutomatically() throws {
+        if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
+            throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
+        }
+
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
