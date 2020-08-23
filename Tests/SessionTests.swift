@@ -1473,11 +1473,90 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .finished)
         XCTAssertEqual(response?.result.isSuccess, true)
     }
+
+    // MARK: Invalid Requests
+
+    func testThatGETRequestsWithBodyDataAreConsideredInvalid() {
+        // Given
+        let session = Session()
+        var request = URLRequest.makeHTTPBinRequest()
+        request.httpBody = Data("invalid".utf8)
+        let expect = expectation(description: "request should complete")
+        var response: DataResponse<HTTPBinResponse, AFError>?
+
+        // When
+        session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
+            response = resp
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isBodyDataInGETRequest, true)
+    }
+
+    func testThatAdaptedGETRequestsWithBodyDataAreConsideredInvalid() {
+        // Given
+        struct InvalidAdapter: RequestInterceptor {
+            func adapt(_ urlRequest: URLRequest,
+                       for session: Session,
+                       completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                var request = urlRequest
+                request.httpBody = Data("invalid".utf8)
+
+                completion(.success(request))
+            }
+        }
+        let session = Session(interceptor: InvalidAdapter())
+        let request = URLRequest.makeHTTPBinRequest()
+        let expect = expectation(description: "request should complete")
+        var response: DataResponse<HTTPBinResponse, AFError>?
+
+        // When
+        session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
+            response = resp
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isRequestAdaptationError, true)
+        XCTAssertEqual(response?.error?.underlyingError?.asAFError?.isBodyDataInGETRequest, true)
+    }
 }
 
 // MARK: -
 
-final class SessionCancellationTestCase: BaseTestCase {
+final class SessionMassActionTestCase: BaseTestCase {
+    func testThatRequestsCanHaveMassActionsPerformed() {
+        // Given
+        let count = 10
+        let createdTasks = expectation(description: "all tasks created")
+        createdTasks.expectedFulfillmentCount = count
+        let massActions = expectation(description: "cancel all requests should be called")
+        let monitor = ClosureEventMonitor()
+        monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
+        let session = Session(eventMonitors: [monitor])
+        let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
+        var requests: [DataRequest] = []
+
+        // When
+        requests = (0..<count).map { _ in session.request(request) }
+
+        wait(for: [createdTasks], timeout: timeout)
+
+        session.withAllRequests { $0.forEach { $0.suspend() }; massActions.fulfill() }
+
+        wait(for: [massActions], timeout: timeout)
+
+        // Then
+        XCTAssertTrue(requests.allSatisfy { $0.isSuspended })
+    }
+
     func testThatAutomaticallyResumedRequestsCanBeMassCancelled() {
         // Given
         let count = 100
@@ -1620,58 +1699,6 @@ final class SessionCancellationTestCase: BaseTestCase {
             XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
         }
-    }
-
-    func testThatGETRequestsWithBodyDataAreConsideredInvalid() {
-        // Given
-        let session = Session()
-        var request = URLRequest.makeHTTPBinRequest()
-        request.httpBody = Data("invalid".utf8)
-        let expect = expectation(description: "request should complete")
-        var response: DataResponse<HTTPBinResponse, AFError>?
-
-        // When
-        session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
-            response = resp
-            expect.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout)
-
-        // Then
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.isBodyDataInGETRequest, true)
-    }
-
-    func testThatAdaptedGETRequestsWithBodyDataAreConsideredInvalid() {
-        // Given
-        struct InvalidAdapter: RequestInterceptor {
-            func adapt(_ urlRequest: URLRequest,
-                       for session: Session,
-                       completion: @escaping (Result<URLRequest, Error>) -> Void) {
-                var request = urlRequest
-                request.httpBody = Data("invalid".utf8)
-
-                completion(.success(request))
-            }
-        }
-        let session = Session(interceptor: InvalidAdapter())
-        let request = URLRequest.makeHTTPBinRequest()
-        let expect = expectation(description: "request should complete")
-        var response: DataResponse<HTTPBinResponse, AFError>?
-
-        // When
-        session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
-            response = resp
-            expect.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout)
-
-        // Then
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.isRequestAdaptationError, true)
-        XCTAssertEqual(response?.error?.underlyingError?.asAFError?.isBodyDataInGETRequest, true)
     }
 }
 

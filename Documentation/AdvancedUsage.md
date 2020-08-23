@@ -202,6 +202,27 @@ monitor.requestDidCompleteTaskWithError = { (request, task, error) in
 let session = Session(eventMonitors: [monitor])
 ```
 
+### Operating on All Requests
+Although use should be rare, `Session` provides the `withAllRequests` method to operate on all currently active `Request`s. This work is performed on the `Session`'s `rootQueue`, so it's important to keep it quick. If the work may take some time, creating a separate queue to process the `Set` of `Request`s should be used.
+
+```swift
+let session = ... // Some Session.
+session.withAllRequests { requests in 
+    requests.forEach { $0.suspend() }
+}
+```
+
+Additionally, `Session` offers a convenience method to cancel all `Request`s and call a completion handler when complete.
+
+```swift
+let session = ... // Some Session.
+session.cancelAllRequests(completingOn: .main) { // completingOn uses .main by default.
+    print("Cancelled all requests.")
+}
+```
+
+> Note: These actions are performed asynchronously, so requests may be created or have finished by the time it's actually run, so it should not be assumed the action will be performed on a particular set of `Request`s.
+
 ### Creating Instances From `URLSession`s
 In addition to the `convenience` initializer mentioned previously, `Session`s can be initialized directly from `URLSession`s. However, there are several requirements to keep in mind when using this initializer, so using the convenience initializer is recommended. These include:
 
