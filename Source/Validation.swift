@@ -83,7 +83,7 @@ extension Request {
         -> ValidationResult
         where S.Iterator.Element == Int {
         if acceptableStatusCodes.contains(response.statusCode) {
-            return .success(Void())
+            return .success(())
         } else {
             let reason: ErrorReason = .unacceptableStatusCode(code: response.statusCode)
             return .failure(AFError.responseValidationFailed(reason: reason))
@@ -97,7 +97,7 @@ extension Request {
                                            data: Data?)
         -> ValidationResult
         where S.Iterator.Element == String {
-        guard let data = data, !data.isEmpty else { return .success(Void()) }
+        guard let data = data, !data.isEmpty else { return .success(()) }
 
         return validate(contentType: acceptableContentTypes, response: response)
     }
@@ -112,7 +112,7 @@ extension Request {
         else {
             for contentType in acceptableContentTypes {
                 if let mimeType = MIMEType(contentType), mimeType.isWildcard {
-                    return .success(Void())
+                    return .success(())
                 }
             }
 
@@ -126,7 +126,7 @@ extension Request {
 
         for contentType in acceptableContentTypes {
             if let acceptableMIMEType = MIMEType(contentType), acceptableMIMEType.matches(responseMIMEType) {
-                return .success(Void())
+                return .success(())
             }
         }
 

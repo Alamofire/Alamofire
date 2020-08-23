@@ -356,7 +356,7 @@ final class DataRequestCombineTests: CombineTestCase {
         if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
             throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
         }
-        
+
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
@@ -870,7 +870,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
             throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
         }
-        
+
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
