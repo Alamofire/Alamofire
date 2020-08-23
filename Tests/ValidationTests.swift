@@ -723,7 +723,7 @@ extension DataRequest {
     func validateDataExists() -> Self {
         validate { _, _, data in
             guard data != nil else { return .failure(ValidationError.missingData) }
-            return .success(Void())
+            return .success(())
         }
     }
 
@@ -741,7 +741,7 @@ extension DownloadRequest {
 
             do {
                 _ = try Data(contentsOf: validFileURL)
-                return .success(Void())
+                return .success(())
             } catch {
                 return .failure(ValidationError.fileReadFailed)
             }
@@ -770,7 +770,7 @@ final class CustomValidationTestCase: BaseTestCase {
         AF.request(urlString)
             .validate { _, _, data in
                 guard data != nil else { return .failure(ValidationError.missingData) }
-                return .success(Void())
+                return .success(())
             }
             .response { resp in
                 requestError = resp.error
@@ -783,7 +783,7 @@ final class CustomValidationTestCase: BaseTestCase {
 
                 do {
                     _ = try Data(contentsOf: fileURL)
-                    return .success(Void())
+                    return .success(())
                 } catch {
                     return .failure(ValidationError.fileReadFailed)
                 }
