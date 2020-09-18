@@ -518,6 +518,32 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTFail("Content-Type header value should not be nil")
         }
     }
+    
+    func testThatUploadingMultipartFormDataWithNotExistFileShouldFail() {
+        // Given
+        let urlString = "https://httpbin.org/post"
+        let imageURL = URL(string: "file://not_exists_file.jpg")!
+
+        let expectation = self.expectation(description: "multipart form data upload with wrong file should fail")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        let request = AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(imageURL, withName: "upload_file")
+        },
+                                to: urlString,
+                                usingThreshold: 0).response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        let uploadable = request.uploadable
+        XCTAssertNil(uploadable)
+        XCTAssertTrue(response?.result.isSuccess == false)
+    }
 
     #if os(macOS)
     func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
