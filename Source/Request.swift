@@ -92,8 +92,12 @@ public class Request {
         var redirectHandler: RedirectHandler?
         /// `CachedResponseHandler` provided to handle response caching.
         var cachedResponseHandler: CachedResponseHandler?
-        /// Closure called when the `Request` is able to create a cURL description of itself.
-        var cURLHandler: ((String) -> Void)?
+        /// Queue and closure called when the `Request` is able to create a cURL description of itself.
+        var cURLHandler: (queue: DispatchQueue, handler: (String) -> Void)?
+        /// Queue and closure called when the `Request` creates a `URLRequest`.
+        var urlRequestHandler: (queue: DispatchQueue, handler: (URLRequest) -> Void)?
+        /// Queue and closure called when the `Request` creates a `URLSessionTask`.
+        var urlSessionTaskHandler: (queue: DispatchQueue, handler: (URLSessionTask) -> Void)?
         /// Response serialization closures that handle response parsing.
         var responseSerializers: [() -> Void] = []
         /// Response serialization completion closures executed once all response serializers are complete.
@@ -337,6 +341,10 @@ public class Request {
     func didCreateURLRequest(_ request: URLRequest) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
+        $mutableState.read { state in
+            state.urlRequestHandler?.queue.async { state.urlRequestHandler?.handler(request) }
+        }
+
         eventMonitor?.request(self, didCreateURLRequest: request)
 
         callCURLHandlerIfNecessary()
@@ -347,7 +355,8 @@ public class Request {
         $mutableState.write { mutableState in
             guard let cURLHandler = mutableState.cURLHandler else { return }
 
-            self.underlyingQueue.async { cURLHandler(self.cURLDescription()) }
+            cURLHandler.queue.async { cURLHandler.handler(self.cURLDescription()) }
+
             mutableState.cURLHandler = nil
         }
     }
@@ -358,7 +367,13 @@ public class Request {
     func didCreateTask(_ task: URLSessionTask) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        $mutableState.write { $0.tasks.append(task) }
+        $mutableState.write { state in
+            state.tasks.append(task)
+
+            guard let urlSessionTaskHandler = state.urlSessionTaskHandler else { return }
+
+            urlSessionTaskHandler.queue.async { urlSessionTaskHandler.handler(task) }
+        }
 
         eventMonitor?.request(self, didCreateTask: task)
     }
@@ -812,11 +827,36 @@ public class Request {
         return self
     }
 
+    // MARK: - Lifetime APIs
+
     /// Sets a handler to be called when the cURL description of the request is available.
     ///
     /// - Note: When waiting for a `Request`'s `URLRequest` to be created, only the last `handler` will be called.
     ///
-    /// - Parameter handler: Closure to be called when the cURL description is available.
+    /// - Parameters:
+    ///   - queue:   `DispatchQueue` on which `handler` will be called.
+    ///   - handler: Closure to be called when the cURL description is available.
+    ///
+    /// - Returns:           The instance.
+    @discardableResult
+    public func cURLDescription(on queue: DispatchQueue, calling handler: @escaping (String) -> Void) -> Self {
+        $mutableState.write { mutableState in
+            if mutableState.requests.last != nil {
+                queue.async { handler(self.cURLDescription()) }
+            } else {
+                mutableState.cURLHandler = (queue, handler)
+            }
+        }
+
+        return self
+    }
+
+    /// Sets a handler to be called when the cURL description of the request is available.
+    ///
+    /// - Note: When waiting for a `Request`'s `URLRequest` to be created, only the last `handler` will be called.
+    ///
+    /// - Parameter handler: Closure to be called when the cURL description is available. Called on the instance's
+    ///                      `underlyingQueue` by default.
     ///
     /// - Returns:           The instance.
     @discardableResult
@@ -825,8 +865,54 @@ public class Request {
             if mutableState.requests.last != nil {
                 underlyingQueue.async { handler(self.cURLDescription()) }
             } else {
-                mutableState.cURLHandler = handler
+                mutableState.cURLHandler = (underlyingQueue, handler)
             }
+        }
+
+        return self
+    }
+
+    /// Sets a closure to called whenever Alamofire creates a `URLRequest` for this instance.
+    ///
+    /// - Note: This closure will be called multiple times if the instance adapts incoming `URLRequest`s or is retried.
+    ///
+    /// - Parameters:
+    ///   - queue:   `DispatchQueue` on which `handler` will be called. `.main` by default.
+    ///   - handler: Closure to be called when a `URLRequest` is available.
+    ///
+    /// - Returns:   The instance.
+    @discardableResult
+    public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @escaping (URLRequest) -> Void) -> Self {
+        $mutableState.write { state in
+            if let request = state.requests.last {
+                queue.async { handler(request) }
+            }
+
+            state.urlRequestHandler = (queue, handler)
+        }
+
+        return self
+    }
+
+    /// Sets a closure to be called whenever the instance creates a `URLSessionTask`.
+    ///
+    /// - Note: This API should only be used to provide `URLSessionTask`s to existing API, like `NSFileProvider`. It
+    ///         **SHOULD NOT** be used to interact with tasks directly, as that may be break Alamofire features.
+    ///         Additionally, this closure may be called multiple times if the instance is retried.
+    ///
+    /// - Parameters:
+    ///   - queue:   `DispatchQueue` on which `handler` will be called. `.main` by default.
+    ///   - handler: Closure to be called when the `URLSessionTask` is available.
+    ///
+    /// - Returns:   The instance.
+    @discardableResult
+    public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @escaping (URLSessionTask) -> Void) -> Self {
+        $mutableState.write { state in
+            if let task = state.tasks.last {
+                queue.async { handler(task) }
+            }
+
+            state.urlSessionTaskHandler = (queue, handler)
         }
 
         return self

@@ -1,7 +1,7 @@
 //
 //  RequestTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -861,6 +861,29 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.last, "\"\(urlString)\"")
     }
 
+    func testGETRequestCURLDescriptionOnMainQueue() {
+        // Given
+        let url = URL.makeHTTPBinURL()
+        let expectation = self.expectation(description: "request should complete")
+        var isMainThread = false
+        var components: [String]?
+
+        // When
+        manager.request(url).cURLDescription(on: .main) {
+            components = self.cURLCommandComponents(from: $0)
+            isMainThread = Thread.isMainThread
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(isMainThread)
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(url)\"")
+    }
+
     func testGETRequestCURLDescriptionSynchronous() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -1120,5 +1143,41 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     private func cURLCommandComponents(from cURLString: String) -> [String] {
         cURLString.components(separatedBy: .whitespacesAndNewlines)
             .filter { $0 != "" && $0 != "\\" }
+    }
+}
+
+final class RequestLifetimeTests: BaseTestCase {
+    func testThatRequestProvidesURLRequestWhenCreated() {
+        // Given
+        let didReceiveRequest = expectation(description: "did receive task")
+        let didComplete = expectation(description: "request did complete")
+        var request: URLRequest?
+
+        // When
+        AF.request(URLRequest.makeHTTPBinRequest())
+            .onURLRequestCreation { request = $0; didReceiveRequest.fulfill() }
+            .responseDecodable(of: HTTPBinResponse.self) { _ in didComplete.fulfill() }
+
+        wait(for: [didReceiveRequest, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertNotNil(request)
+    }
+
+    func testThatRequestProvidesTaskWhenCreated() {
+        // Given
+        let didReceiveTask = expectation(description: "did receive task")
+        let didComplete = expectation(description: "request did complete")
+        var task: URLSessionTask?
+
+        // When
+        AF.request(URLRequest.makeHTTPBinRequest())
+            .onURLSessionTaskCreation { task = $0; didReceiveTask.fulfill() }
+            .responseDecodable(of: HTTPBinResponse.self) { _ in didComplete.fulfill() }
+
+        wait(for: [didReceiveTask, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertNotNil(task)
     }
 }
