@@ -306,14 +306,14 @@ final class DataRequestCombineTests: CombineTestCase {
             AF.request(URLRequest.makeHTTPBinRequest())
                 .publishDecodable(type: HTTPBinResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
-                    dispatchPrecondition(condition: .onQueue(queue))
-                    completionReceived.fulfill()
-                },
+                          dispatchPrecondition(condition: .onQueue(queue))
+                          completionReceived.fulfill()
+                      },
                       receiveValue: {
-                    dispatchPrecondition(condition: .onQueue(queue))
-                    response = $0
-                    responseReceived.fulfill()
-                })
+                          dispatchPrecondition(condition: .onQueue(queue))
+                          response = $0
+                          responseReceived.fulfill()
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -812,18 +812,18 @@ final class DataStreamRequestCombineTests: CombineTestCase {
             AF.streamRequest(URLRequest.makeHTTPBinRequest())
                 .publishDecodable(type: HTTPBinResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
-                    dispatchPrecondition(condition: .onQueue(queue))
-                    completionReceived.fulfill()
-                },
+                          dispatchPrecondition(condition: .onQueue(queue))
+                          completionReceived.fulfill()
+                      },
                       receiveValue: { stream in
-                    dispatchPrecondition(condition: .onQueue(queue))
-                    switch stream.event {
-                    case let .stream(value):
-                        result = value
-                    case .complete:
-                        responseReceived.fulfill()
-                    }
-                })
+                          dispatchPrecondition(condition: .onQueue(queue))
+                          switch stream.event {
+                          case let .stream(value):
+                              result = value
+                          case .complete:
+                              responseReceived.fulfill()
+                          }
+                      })
         }
 
         waitForExpectations(timeout: timeout)
@@ -1236,14 +1236,14 @@ final class DownloadRequestCombineTests: CombineTestCase {
             AF.download(URLRequest.makeHTTPBinRequest())
                 .publishDecodable(type: HTTPBinResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
-                    dispatchPrecondition(condition: .onQueue(queue))
-                    completionReceived.fulfill()
-                },
+                          dispatchPrecondition(condition: .onQueue(queue))
+                          completionReceived.fulfill()
+                      },
                       receiveValue: {
-                    dispatchPrecondition(condition: .onQueue(queue))
-                    response = $0
-                    responseReceived.fulfill()
-                })
+                          dispatchPrecondition(condition: .onQueue(queue))
+                          response = $0
+                          responseReceived.fulfill()
+                      })
         }
 
         waitForExpectations(timeout: timeout)
