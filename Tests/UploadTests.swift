@@ -280,9 +280,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(uploadData, withName: "upload_data")
-            formData = multipartFormData
-        },
+                      multipartFormData.append(uploadData, withName: "upload_data")
+                      formData = multipartFormData
+                  },
                   to: urlString)
             .response { resp in
                 response = resp
@@ -351,9 +351,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(frenchData, withName: "french")
-            multipartFormData.append(japaneseData, withName: "japanese")
-        },
+                      multipartFormData.append(frenchData, withName: "french")
+                      multipartFormData.append(japaneseData, withName: "japanese")
+                  },
                   to: urlString)
             .response { resp in
                 response = resp
@@ -388,9 +388,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         let request = AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(frenchData, withName: "french")
-            multipartFormData.append(japaneseData, withName: "japanese")
-        },
+                                    multipartFormData.append(frenchData, withName: "french")
+                                    multipartFormData.append(japaneseData, withName: "japanese")
+                                },
                                 to: urlString)
             .response { resp in
                 response = resp
@@ -420,9 +420,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         let request = AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(uploadData, withName: "upload_data")
-            formData = multipartFormData
-        },
+                                    multipartFormData.append(uploadData, withName: "upload_data")
+                                    formData = multipartFormData
+                                },
                                 to: urlString)
             .response { resp in
                 response = resp
@@ -458,9 +458,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         let request = AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(frenchData, withName: "french")
-            multipartFormData.append(japaneseData, withName: "japanese")
-        },
+                                    multipartFormData.append(frenchData, withName: "french")
+                                    multipartFormData.append(japaneseData, withName: "japanese")
+                                },
                                 to: urlString,
                                 usingThreshold: 0).response { resp in
             response = resp
@@ -490,9 +490,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         let request = AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(uploadData, withName: "upload_data")
-            formData = multipartFormData
-        },
+                                    multipartFormData.append(uploadData, withName: "upload_data")
+                                    formData = multipartFormData
+                                },
                                 to: urlString,
                                 usingThreshold: 0).response { resp in
             response = resp
@@ -519,6 +519,31 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
+    func testThatUploadingMultipartFormDataWithNonexistentFileThrowsAnError() {
+        // Given
+        let urlString = URL.makeHTTPBinURL(path: "post")
+        let imageURL = URL(fileURLWithPath: "does_not_exist.jpg")
+
+        let expectation = self.expectation(description: "multipart form data upload from nonexistent file should fail")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        let request = AF.upload(multipartFormData: { multipartFormData in
+                                    multipartFormData.append(imageURL, withName: "upload_file")
+                                },
+                                to: urlString,
+                                usingThreshold: 0).response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNil(request.uploadable)
+        XCTAssertTrue(response?.result.isSuccess == false)
+    }
+
     #if os(macOS)
     func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
@@ -542,9 +567,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         let upload = manager.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(french, withName: "french")
-            multipartFormData.append(japanese, withName: "japanese")
-        },
+                                        multipartFormData.append(french, withName: "french")
+                                        multipartFormData.append(japanese, withName: "japanese")
+                                    },
                                     to: urlString)
             .response { defaultResponse in
                 request = defaultResponse.request
@@ -589,9 +614,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         // When
         AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(loremData1, withName: "lorem1")
-            multipartFormData.append(loremData2, withName: "lorem2")
-        },
+                      multipartFormData.append(loremData1, withName: "lorem1")
+                      multipartFormData.append(loremData2, withName: "lorem2")
+                  },
                   to: urlString,
                   usingThreshold: streamFromDisk ? 0 : 100_000_000)
             .uploadProgress { progress in

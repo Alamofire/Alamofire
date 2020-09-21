@@ -67,6 +67,7 @@ final class MultipartUpload {
             } catch {
                 // Cleanup after attempted write if it fails.
                 try? fileManager.removeItem(at: fileURL)
+                throw error
             }
 
             uploadable = .file(fileURL, shouldRemove: true)
