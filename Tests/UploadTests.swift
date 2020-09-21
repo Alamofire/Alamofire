@@ -519,6 +519,31 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
+    func testThatUploadingMultipartFormDataWithNonexistentFileThrowsAnError() {
+        // Given
+        let urlString = URL.makeHTTPBinURL(path: "post")
+        let imageURL = URL(fileURLWithPath: "does_not_exist.jpg")
+
+        let expectation = self.expectation(description: "multipart form data upload from nonexistent file should fail")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        let request = AF.upload(multipartFormData: { multipartFormData in
+                                    multipartFormData.append(imageURL, withName: "upload_file")
+                                },
+                                to: urlString,
+                                usingThreshold: 0).response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNil(request.uploadable)
+        XCTAssertTrue(response?.result.isSuccess == false)
+    }
+
     #if os(macOS)
     func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
