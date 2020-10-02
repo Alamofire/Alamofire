@@ -111,7 +111,6 @@ pre code {
   @media (min-width: 768px) {
     .content-wrapper {
       flex-direction: row; } }
-
 .header {
   display: flex;
   padding: 8px;
@@ -157,7 +156,6 @@ pre code {
       word-wrap: normal;
       background: #fbfbfb;
       border-right: 1px solid #ddd; } }
-
 .nav-groups {
   list-style-type: none;
   padding-left: 0; }
@@ -188,7 +186,6 @@ pre code {
       order: 2;
       flex: 1;
       padding-bottom: 60px; } }
-
 .section {
   padding: 0 32px;
   border-bottom: 1px solid #ddd; }

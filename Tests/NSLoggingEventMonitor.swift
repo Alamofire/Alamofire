@@ -26,7 +26,7 @@ import Alamofire
 import Foundation
 
 public final class NSLoggingEventMonitor: EventMonitor {
-    public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .background)
+    public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .utility)
 
     public init() {}
 

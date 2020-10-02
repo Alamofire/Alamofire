@@ -421,7 +421,7 @@ The default Alamofire `Session` provides a default set of headers for every `Req
 - `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC 7231 §5.3.5](https://tools.ietf.org/html/rfc7231#section-5.3.5).
 - `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 13.0.0) Alamofire/5.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
 
-If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated, and the configuration applied to a new `Session` instance. Use `URLSessionConfiguration.af.default` to customize your configuration while keeping Alamofire's default headers.
+If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `headers` property updated, and the configuration applied to a new `Session` instance. Use `URLSessionConfiguration.af.default` to customize your configuration while keeping Alamofire's default headers.
 
 ### Response Validation
 
@@ -485,22 +485,34 @@ func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue =
 
 // Response Data Handler - Serialized into Data
 func responseData(queue: DispatchQueue = .main,
+                  dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                  emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
+                  emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods,
                   completionHandler: @escaping (AFDataResponse<Data>) -> Void) -> Self
 
 // Response String Handler - Serialized into String
 func responseString(queue: DispatchQueue = .main,
+                    dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                     encoding: String.Encoding? = nil,
+                    emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
+                    emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods,
                     completionHandler: @escaping (AFDataResponse<String>) -> Void) -> Self
 
 // Response JSON Handler - Serialized into Any Using JSONSerialization
 func responseJSON(queue: DispatchQueue = .main,
+                  dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
+                  emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
+                  emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                   options: JSONSerialization.ReadingOptions = .allowFragments,
                   completionHandler: @escaping (AFDataResponse<Any>) -> Void) -> Self
 
 // Response Decodable Handler - Serialized into Decodable Type
 func responseDecodable<T: Decodable>(of type: T.Type = T.self,
                                      queue: DispatchQueue = .main,
+                                     dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
                                      decoder: DataDecoder = JSONDecoder(),
+                                     emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
+                                     emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods,
                                      completionHandler: @escaping (AFDataResponse<T>) -> Void) -> Self
 ```
 

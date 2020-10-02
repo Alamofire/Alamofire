@@ -1,6 +1,13 @@
 {
   "warnings": [
     {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Combine.swift",
+      "line": 242,
+      "symbol": "DataStreamPublisher",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
       "line": 290,
       "symbol": "EventMonitor.request(_:didParseResponse:)",
@@ -40,20 +47,6 @@
       "line": 91,
       "symbol": "GoogleXSSIPreprocessor.init()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
-      "line": 817,
-      "symbol": "DecodableStreamSerializer.decoder",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
-      "line": 818,
-      "symbol": "DecodableStreamSerializer.dataPreprocessor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
@@ -163,7 +156,7 @@
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/URLEncodedFormEncoder.swift",
-      "line": 827,
+      "line": 830,
       "symbol": "_URLEncodedFormEncoder.UnkeyedContainer",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
@@ -173,13 +166,6 @@
       "line": 34,
       "symbol": "URLRequest.validate()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Validation.swift",
-      "line": 195,
-      "symbol": "DataStreamRequest.Validation",
-      "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     }
   ],

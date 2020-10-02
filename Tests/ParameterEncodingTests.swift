@@ -291,19 +291,19 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             let encoding = URLEncoding(boolEncoding: .literal)
             let parameters: [String: Any] = [// Must still encode to numbers
                 "a": 1,
-                                             "b": 0,
-                                             "c": 1.0,
-                                             "d": 0.0,
-                                             "e": NSNumber(value: 1),
-                                             "f": NSNumber(value: 0),
-                                             "g": NSNumber(value: 1.0),
-                                             "h": NSNumber(value: 0.0),
-                                             
+                "b": 0,
+                "c": 1.0,
+                "d": 0.0,
+                "e": NSNumber(value: 1),
+                "f": NSNumber(value: 0),
+                "g": NSNumber(value: 1.0),
+                "h": NSNumber(value: 0.0),
+
                 // Must encode to literals
                 "i": true,
-                                             "j": false,
-                                             "k": NSNumber(value: true),
-                                             "l": NSNumber(value: false)]
+                "j": false,
+                "k": NSNumber(value: true),
+                "l": NSNumber(value: false)]
 
             // When
             let urlRequest = try encoding.encode(self.urlRequest, with: parameters)

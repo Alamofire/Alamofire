@@ -33,6 +33,10 @@ open class Session {
 
     /// Underlying `URLSession` used to create `URLSessionTasks` for this instance, and for which this instance's
     /// `delegate` handles `URLSessionDelegate` callbacks.
+    ///
+    /// - Note: This instance should **NOT** be used to interact with the underlying `URLSessionTask`s. Doing so will
+    ///         break internal Alamofire logic that tracks those tasks.
+    ///
     public let session: URLSession
     /// Instance's `SessionDelegate`, which handles the `URLSessionDelegate` methods and `Request` interaction.
     public let delegate: SessionDelegate
@@ -199,7 +203,22 @@ open class Session {
         session.invalidateAndCancel()
     }
 
-    // MARK: - Cancellation
+    // MARK: - All Requests API
+
+    /// Perform an action on all active `Request`s.
+    ///
+    /// - Note: The provided `action` closure is performed asynchronously, meaning that some `Request`s may complete and
+    ///         be unavailable by time it runs. Additionally, this action is performed on the instances's `rootQueue`,
+    ///         so care should be taken that actions are fast. Once the work on the `Request`s is complete, any
+    ///         additional work should be performed on another queue.
+    ///
+    /// - Parameters:
+    ///   - action:     Closure to perform with all `Request`s.
+    public func withAllRequests(perform action: @escaping (Set<Request>) -> Void) {
+        rootQueue.async {
+            action(self.activeRequests)
+        }
+    }
 
     /// Cancel all active `Request`s, optionally calling a completion handler when complete.
     ///
@@ -211,9 +230,11 @@ open class Session {
     ///   - queue:      `DispatchQueue` on which the completion handler is run. `.main` by default.
     ///   - completion: Closure to be called when all `Request`s have been cancelled.
     public func cancelAllRequests(completingOnQueue queue: DispatchQueue = .main, completion: (() -> Void)? = nil) {
-        rootQueue.async {
-            self.activeRequests.forEach { $0.cancel() }
-            queue.async { completion?() }
+        withAllRequests { requests in
+            requests.forEach { $0.cancel() }
+            queue.async {
+                completion?()
+            }
         }
     }
 
@@ -964,75 +985,67 @@ open class Session {
 
     // MARK: Perform
 
-    /// Perform `Request`.
-    ///
-    /// - Note: Called during retry.
+    /// Starts performing the provided `Request`.
     ///
     /// - Parameter request: The `Request` to perform.
     func perform(_ request: Request) {
-        // Leaf types must come first, otherwise they will cast as their superclass.
-        switch request {
-        case let r as UploadRequest: perform(r) // UploadRequest must come before DataRequest due to subtype relationship.
-        case let r as DataRequest: perform(r)
-        case let r as DownloadRequest: perform(r)
-        case let r as DataStreamRequest: perform(r)
-        default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
-        }
-    }
-
-    func perform(_ request: DataRequest) {
-        requestQueue.async {
+        rootQueue.async {
             guard !request.isCancelled else { return }
 
             self.activeRequests.insert(request)
 
-            self.performSetupOperations(for: request, convertible: request.convertible)
-        }
-    }
-
-    func perform(_ request: DataStreamRequest) {
-        requestQueue.async {
-            guard !request.isCancelled else { return }
-
-            self.activeRequests.insert(request)
-
-            self.performSetupOperations(for: request, convertible: request.convertible)
-        }
-    }
-
-    func perform(_ request: UploadRequest) {
-        requestQueue.async {
-            guard !request.isCancelled else { return }
-
-            self.activeRequests.insert(request)
-
-            do {
-                let uploadable = try request.upload.createUploadable()
-                self.rootQueue.async { request.didCreateUploadable(uploadable) }
-
-                self.performSetupOperations(for: request, convertible: request.convertible)
-            } catch {
-                self.rootQueue.async { request.didFailToCreateUploadable(with: error.asAFError(or: .createUploadableFailed(error: error))) }
+            self.requestQueue.async {
+                // Leaf types must come first, otherwise they will cast as their superclass.
+                switch request {
+                case let r as UploadRequest: self.performUploadRequest(r) // UploadRequest must come before DataRequest due to subtype relationship.
+                case let r as DataRequest: self.performDataRequest(r)
+                case let r as DownloadRequest: self.performDownloadRequest(r)
+                case let r as DataStreamRequest: self.performDataStreamRequest(r)
+                default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
+                }
             }
         }
     }
 
-    func perform(_ request: DownloadRequest) {
-        requestQueue.async {
-            guard !request.isCancelled else { return }
+    func performDataRequest(_ request: DataRequest) {
+        dispatchPrecondition(condition: .onQueue(requestQueue))
 
-            self.activeRequests.insert(request)
+        performSetupOperations(for: request, convertible: request.convertible)
+    }
 
-            switch request.downloadable {
-            case let .request(convertible):
-                self.performSetupOperations(for: request, convertible: convertible)
-            case let .resumeData(resumeData):
-                self.rootQueue.async { self.didReceiveResumeData(resumeData, for: request) }
-            }
+    func performDataStreamRequest(_ request: DataStreamRequest) {
+        dispatchPrecondition(condition: .onQueue(requestQueue))
+
+        performSetupOperations(for: request, convertible: request.convertible)
+    }
+
+    func performUploadRequest(_ request: UploadRequest) {
+        dispatchPrecondition(condition: .onQueue(requestQueue))
+
+        do {
+            let uploadable = try request.upload.createUploadable()
+            rootQueue.async { request.didCreateUploadable(uploadable) }
+
+            performSetupOperations(for: request, convertible: request.convertible)
+        } catch {
+            rootQueue.async { request.didFailToCreateUploadable(with: error.asAFError(or: .createUploadableFailed(error: error))) }
+        }
+    }
+
+    func performDownloadRequest(_ request: DownloadRequest) {
+        dispatchPrecondition(condition: .onQueue(requestQueue))
+
+        switch request.downloadable {
+        case let .request(convertible):
+            performSetupOperations(for: request, convertible: convertible)
+        case let .resumeData(resumeData):
+            rootQueue.async { self.didReceiveResumeData(resumeData, for: request) }
         }
     }
 
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
+        dispatchPrecondition(condition: .onQueue(requestQueue))
+
         let initialRequest: URLRequest
 
         do {
@@ -1070,6 +1083,8 @@ open class Session {
     // MARK: - Task Handling
 
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
         request.didCreateURLRequest(urlRequest)
 
         guard !request.isCancelled else { return }
@@ -1082,6 +1097,8 @@ open class Session {
     }
 
     func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
         guard !request.isCancelled else { return }
 
         let task = request.task(forResumeData: data, using: session)
@@ -1092,6 +1109,8 @@ open class Session {
     }
 
     func updateStatesForTask(_ task: URLSessionTask, request: Request) {
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
         request.withState { state in
             switch state {
             case .initialized, .finished:

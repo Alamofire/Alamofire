@@ -1309,7 +1309,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = DisabledEvaluator()
+        let serverTrustPolicy = DisabledTrustEvaluator()
 
         // When
         let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
@@ -1322,7 +1322,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = DisabledEvaluator()
+        let serverTrustPolicy = DisabledTrustEvaluator()
 
         // When
         let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }

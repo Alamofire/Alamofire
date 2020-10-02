@@ -216,9 +216,8 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
                              diskPath: UUID().uuidString)
         }
         #else
-        cache = URLCache(memoryCapacity: capacity,
-                         diskCapacity: capacity,
-                         diskPath: UUID().uuidString)
+        let directory = (NSTemporaryDirectory() as NSString).appendingPathComponent(UUID().uuidString)
+        cache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: directory)
         #endif
 
         configuration.urlCache = cache

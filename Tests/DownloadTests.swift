@@ -487,7 +487,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
             responseHandler.fulfill()
         }
 
-        eventMonitor.requestDidResumeTask = { _, _ in
+        eventMonitor.requestDidResumeTask = { [unowned request] _, _ in
             request.cancel()
             didResumeTask.fulfill()
         }
@@ -515,7 +515,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = AF.download(urlString)
-        download.downloadProgress { progress in
+        download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
@@ -549,7 +549,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = AF.download(urlString)
-        download.downloadProgress { progress in
+        download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
@@ -585,7 +585,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = AF.download(urlString)
-        download.downloadProgress { progress in
+        download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
@@ -622,7 +622,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = AF.download(urlString)
-        download.downloadProgress { progress in
+        download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
@@ -682,7 +682,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = AF.download(urlString)
-        download.downloadProgress { progress in
+        download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {

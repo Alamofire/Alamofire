@@ -6,6 +6,7 @@
 # rules
 --enable isEmpty
 --disable andOperator
+--disable wrapMultilineStatementBraces
 
 # format options
 

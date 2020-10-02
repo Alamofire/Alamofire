@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
+- `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
 - `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
 - `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
@@ -39,6 +40,65 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [5.2.2](https://github.com/Alamofire/Alamofire/releases/tag/5.2.2)
+Released on 2020-07-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/72?closed=1).
+
+#### Added
+- `macOS(Catalyst)` `User-Agent` string.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3236](https://github.com/Alamofire/Alamofire/pull/3236).
+
+#### Updated
+- `debugDescription` of `DataRequest` and `DownloadRequest` to better handle non-text and long content, with better formatting.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3256](https://github.com/Alamofire/Alamofire/pull/3256).
+- Code to use `switch` instead of `if else` statement.
+  - Updated by [dirtmelon](https://github.com/dirtmelon) in Pull Request [#3214](https://github.com/Alamofire/Alamofire/pull/3214).
+
+#### Fixed
+- Linking on some Apple OS versions when using Swift Package Manager.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3259](https://github.com/Alamofire/Alamofire/pull/3259).
+- Reliability issues with `DataStreamRequest`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3216](https://github.com/Alamofire/Alamofire/pull/3216).
+
+## [5.2.1](https://github.com/Alamofire/Alamofire/releases/tag/5.2.1)
+Released on 2020-05-25. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/71?closed=1).
+
+#### Updated
+- Usage of `.background` `DispatchQoS` to `.utility` to avoid low-power issues.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3207](https://github.com/Alamofire/Alamofire/pull/3207).
+
+#### Fixed
+- Various memory leaks.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3199](https://github.com/Alamofire/Alamofire/pull/3199).
+
+## [5.2.0](https://github.com/Alamofire/Alamofire/releases/tag/5.2.0)
+Released on 2020-05-16. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/70?closed=1).
+
+#### Added
+- Combine support! `DataResponsePublisher`, `DownloadResponsePublisher`, and `DataStreamPublisher` to stream Alamofire responses.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3160](https://github.com/Alamofire/Alamofire/pull/3160).
+- `AuthenticationInterceptor`, for easier adaptation and retry of requests with credentials.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#3164](https://github.com/Alamofire/Alamofire/pull/3164).
+
+#### Updated
+- Response handlers to take all serializer parameters.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3188](https://github.com/Alamofire/Alamofire/pull/3188).
+- `DisabledEvaluator` to `DisabledTrustEvaluator`, deprecating the previous name.
+  - Updated by [Florian Petit](https://github.com/MrCloud) in Pull Request [#3162](https://github.com/Alamofire/Alamofire/pull/3162).
+- `Interceptor` to be initialized with multiple `RequestInterceptor`s, in addition to `RequestAdapter`s and `RequestRetrier`s.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3155](https://github.com/Alamofire/Alamofire/pull/3155).
+
+#### Fixed
+- Minor documentation issues.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3187](https://github.com/Alamofire/Alamofire/pull/3187).
+- Encoding of `Decimal` values in `URLEncodedFormEncoder`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3185](https://github.com/Alamofire/Alamofire/pull/3185).
+- Thread-safety issue in `Session`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3179](https://github.com/Alamofire/Alamofire/pull/3179).
+- Memory leak in `NetworkReachabilityManager`.
+  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Reqeust [#3180](https://github.com/Alamofire/Alamofire/pull/3180).
 
 ---
 

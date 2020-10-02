@@ -46,7 +46,7 @@ class ProxyURLProtocol: URLProtocol {
         return session
     }()
 
-    var activeTask: URLSessionTask?
+    weak var activeTask: URLSessionTask?
 
     // MARK: Class Request Methods
 
