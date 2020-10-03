@@ -585,7 +585,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertEqual(response?.resumeData, download.resumeData)
     }
 
-    func testThatCancelledDownloadCanBeResumedWithResumeData() {
+    func _testThatCancelledDownloadCanBeResumedWithResumeData() {
         // Given
         let expectation1 = expectation(description: "Download should be cancelled")
         var cancelled = false
