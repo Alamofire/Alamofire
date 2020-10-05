@@ -1188,13 +1188,12 @@ class RequestInvalidURLTestCase: BaseTestCase {
     #if !SWIFT_PACKAGE
     func testThatDataRequestWithFileURLThrowsError() {
         // Given
-        let fileUrlString = url(forResource: "valid_data", withExtension: "json").absoluteString
-        
-        let expectation = self.expectation(description: "Request should fail with error")
+        let fileURL = url(forResource: "valid_data", withExtension: "json")
+        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(fileUrlString)
+        AF.request(fileURL)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -1203,23 +1202,17 @@ class RequestInvalidURLTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
-        XCTAssertEqual(response?.result.isFailure, true)
     }
     
     func testThatDownloadRequestWithFileURLThrowsError() {
         // Given
-        let fileUrlString = url(forResource: "unicorn", withExtension: "png").absoluteString
-
-        let expectation = self.expectation(description: "Request should fail with error")
+        let fileURL = url(forResource: "valid_data", withExtension: "json")
+        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(fileUrlString)
+        AF.download(fileURL)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -1228,19 +1221,13 @@ class RequestInvalidURLTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.fileURL)
-        XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
-        XCTAssertEqual(response?.result.isFailure, true)
     }
     
     func testThatDataStreamRequestWithFileURLThrowsError() {
         // Given
-        let fileURL = url(forResource: "unicorn", withExtension: "png").absoluteString
-
-        let expectation = self.expectation(description: "Request should fail with error")
+        let fileURL = url(forResource: "valid_data", withExtension: "json")
+        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
         var response: DataStreamRequest.Completion?
 
         // When
@@ -1255,9 +1242,6 @@ class RequestInvalidURLTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
     }
     #endif
