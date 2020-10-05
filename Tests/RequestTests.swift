@@ -1181,3 +1181,68 @@ final class RequestLifetimeTests: BaseTestCase {
         XCTAssertNotNil(task)
     }
 }
+
+// MARK: -
+
+class RequestInvalidURLTestCase: BaseTestCase {
+    #if !SWIFT_PACKAGE
+    func testThatDataRequestWithFileURLThrowsError() {
+        // Given
+        let fileURL = url(forResource: "valid_data", withExtension: "json")
+        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        AF.request(fileURL)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+    }
+    
+    func testThatDownloadRequestWithFileURLThrowsError() {
+        // Given
+        let fileURL = url(forResource: "valid_data", withExtension: "json")
+        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
+        var response: DownloadResponse<URL?, AFError>?
+
+        // When
+        AF.download(fileURL)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+    }
+    
+    func testThatDataStreamRequestWithFileURLThrowsError() {
+        // Given
+        let fileURL = url(forResource: "valid_data", withExtension: "json")
+        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
+        var response: DataStreamRequest.Completion?
+
+        // When
+        AF.streamRequest(fileURL)
+            .responseStream { stream in
+                guard case let .complete(completion) = stream.event else { return }
+                
+                response = completion
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+    }
+    #endif
+}
