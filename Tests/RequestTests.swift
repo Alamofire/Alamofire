@@ -1204,7 +1204,7 @@ class RequestInvalidURLTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
     }
-    
+
     func testThatDownloadRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
@@ -1223,7 +1223,7 @@ class RequestInvalidURLTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
     }
-    
+
     func testThatDataStreamRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
@@ -1234,7 +1234,7 @@ class RequestInvalidURLTestCase: BaseTestCase {
         AF.streamRequest(fileURL)
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
-                
+
                 response = completion
                 expectation.fulfill()
             }
