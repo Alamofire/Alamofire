@@ -58,7 +58,7 @@ Most APIs have changed in Alamofire 5, so this list is not complete. While most 
 - Alamofire now vends its extensions of Swift and Foundation types through an `af` namespace.
 - Serializers updated with more configuration options, including allowed empty response methods and codes, as well as the `DataPreprocessor` protocol, to prepare the received `Data` for serialization.
 - **`RetryPolicy`:** A `RequestRetrier` to retry requests which failed due to system errors, such as network connectivity. Configurable with custom debounce settings and defaults to an extensive set of errors to make your requests more reliable.
-- **`CachedResponseHandler `:** New protocol that provides control over whether a response is cached or not. The `ResponseCacher` type is provided as an easy to use implementation of the protocol.
+- **`CachedResponseHandler`:** New protocol that provides control over whether a response is cached or not. The `ResponseCacher` type is provided as an easy to use implementation of the protocol.
 - **`RedirectHandler`:** New protocol that provides control over a request’s redirect behavior. The `Redirector` type is provided as an easy to use implementation of the protocol.
 - **`ParameterEncoder`:** New protocol that provides support for encoding `Encodable` values into `URLRequest`s. `JSONParameterEncoder` and `URLEncodedFormParameterEncoder` are included with Alamofire.
 - **`URLEncodedFormEncoder`:** An `Encoder` that produced `URLEncodedForm` strings.

@@ -309,11 +309,11 @@ AF.request(...)
 Importantly, not all `Request` subclasses are able to report their progress accurately, or may have other dependencies to do so.
 
 - For upload progress, progress can be determined in the following ways:
-	- By the length of the `Data` object provided as the upload body to an `UploadRequest`.
-	- By the length of a file on disk provided as the upload body of an `UploadRequest`.
-	- By the value of the `Content-Length` header on the request, if it has been manually set.
+    - By the length of the `Data` object provided as the upload body to an `UploadRequest`.
+    - By the length of a file on disk provided as the upload body of an `UploadRequest`.
+    - By the value of the `Content-Length` header on the request, if it has been manually set.
 - For download progress, there is a single requirement:
-	- The server response must contain a `Content-Length` header.
+    - The server response must contain a `Content-Length` header.
 Unfortunately there may be other, undocumented requirements for progress reporting from `URLSession` which prevents accurate progress reporting.
 
 #### Handling Redirects
@@ -370,11 +370,38 @@ AF.request(...)
     }
 ```
 
-#### A `Request`’s `URLRequest`s
+#### Lifetime Values
+Alamofire creates a variety of underlying values throughout the lifetime of a `Request`. Most of these are internal implementation details, but the creation of `URLRequest`s and `URLSessionTask`s are exposed to allow for direct interaction with other APIs.
+
+##### A `Request`’s `URLRequest`s
 Each network request issued by a `Request` is ultimately encapsulated in a `URLRequest` value created from the various parameters passed to one of the `Session` request methods. `Request` will keep a copy of these `URLRequest`s in its `requests` array property. These values include both the initial `URLRequest` created from the passed parameters, as well any `URLRequest`s created by `RequestInterceptor`s. That array does not, however, include the `URLRequest`s performed by the `URLSessionTask`s issued on behalf of the `Request`. To inspect those values, the `tasks` property gives access to all of the `URLSessionTasks` performed by the `Request`.
 
-#### `URLSessionTask`s
-In many ways, the various `Request` subclasses act as a wrapper for a `URLSessionTask`, presenting particular API for interacting with particular types of tasks. These tasks are made visible on the `Request` instance through the `tasks` array property. This includes both the initial task created for the `Request`, as well as any subsequent tasks created as part of the retry process, with one task per retry.
+In addition to accumulating these values, every `Request` has an `onURLRequestCreation` method which calls a closure whenever a `URLRequest` is created for the `Request`. This `URLRequest` is the product of the initial parameters passed to the `Session`'s `request` method, as well as changes applied by any `RequestInterceptor`s. It will be called multiple times if the `Request` is retried and only one closure can be set at a time. `URLRequest` values cannot be modified in this closure; if you need to modify `URLRequest`s before they're issued, use a `RequestInterceptor` or compose your requests using the `URLRequestConvertible` protocol before passing them to Alamofire.
+
+```swift
+AF.request(...)
+    .onURLRequestCreation { request in
+        print(request)
+    }
+    .responseDecodable(of: SomeType.self) { response in
+        debugPrint(response)
+    }
+```
+
+##### `URLSessionTask`s
+In many ways, the various `Request` subclasses act as a wrapper for a `URLSessionTask` and present specific API for interacting with the different types of tasks. These tasks are made visible on the `Request` instance through the `tasks` array property. This includes both the initial task created for the `Request`, as well as any subsequent tasks created as part of the retry process, with one task per retry.
+
+In addition to accumulating these values, every `Request` has an `onURLSessionTaskCreation` method which calls a closure whenever a `URLSessionTask` is created for the `Request`. This clsoure will be called multiple times if the `Request` is retried and only one closure can be set at a time. The provided `URLSessionTask` *SHOULD **NOT*** be used to interact with the `task`'s lifetime, which should only be done by the `Request` itself. Instead, you can use this method to provide the `Request`'s active `task` to other APIs, like `NSFileProvider`. 
+
+```swift
+AF.request(...)
+    .onURLSessionTaskCreation { task in
+        print(task)
+    }
+    .responseDecodable(of: SomeType.self) { response in
+        debugPrint(response)
+    }
+```
 
 #### Response
 Each `Request` may have an `HTTPURLResponse` value available once the request is complete. This value is only available if the request wasn’t cancelled and didn’t fail to make the network request. Additionally, if the request is retried, only the *last* response is available. Intermediate responses can be derived from the `URLSessionTask`s in the `tasks` property.
@@ -391,7 +418,7 @@ AF.request(...)
     }
 ```
 
-> Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.
+> Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS < 7 is currently disabled.
 
 ### `DataRequest`
 `DataRequest` is a subclass of `Request` which encapsulates a `URLSessionDataTask` downloading a server response into `Data` stored in memory. Therefore, it’s important to realize that extremely large downloads may adversely affect system performance. For those types of downloads, using `DownloadRequest` to save the data to disk is recommended.
