@@ -288,6 +288,8 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
 
     // MARK: - Tests - Retry
 
+    #if !os(Linux)
+    // SR-13648: https://bugs.swift.org/browse/SR-13648
     func testThatInterceptorDoesNotRetryWithoutResponse() {
         // Given
         let credential = OAuthCredential()
@@ -321,6 +323,7 @@ class AuthenticationInterceptorTestCase: BaseTestCase {
 
         XCTAssertEqual(request.retryCount, 0)
     }
+    #endif
 
     func testThatInterceptorDoesNotRetryWhenRequestDoesNotFailDueToAuthError() {
         // Given

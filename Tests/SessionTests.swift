@@ -87,6 +87,8 @@ final class SessionTestCase: BaseTestCase {
         }
     }
 
+    #if !os(Linux)
+    // SR-13648: https://bugs.swift.org/browse/SR-13648
     private class RequestHandler: RequestInterceptor {
         var adaptCalledCount = 0
         var adaptedCount = 0
@@ -157,6 +159,7 @@ final class SessionTestCase: BaseTestCase {
             }
         }
     }
+    #endif
 
     private class UploadHandler: RequestInterceptor {
         var adaptCalledCount = 0
@@ -823,6 +826,7 @@ final class SessionTestCase: BaseTestCase {
 
     // MARK: Tests - Request Retrier
 
+    #if !os(Linux)
     func testThatSessionCallsRequestRetrierWhenRequestEncountersError() {
         // Given
         let handler = RequestHandler()
@@ -964,7 +968,8 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
     }
-
+    #endif
+    
     func testThatSessionCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
         // Given
         let handler = UploadHandler()
@@ -997,6 +1002,7 @@ final class SessionTestCase: BaseTestCase {
         }
     }
 
+    #if !os(Linux)
     func testThatSessionCallsAdapterWhenRequestIsRetried() {
         // Given
         let handler = RequestHandler()
@@ -1389,6 +1395,8 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         }
     }
+    #endif
+    
 
     // MARK: Tests - Session Invalidation
 
@@ -1418,6 +1426,7 @@ final class SessionTestCase: BaseTestCase {
 
     // MARK: Tests - Request Cancellation
 
+    #if !os(Linux)
     func testThatSessionOnlyCallsResponseSerializerCompletionWhenCancellingInsideCompletion() {
         // Given
         let handler = RequestHandler()
@@ -1455,7 +1464,8 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
     }
-
+    #endif
+    
     // MARK: Tests - Request State
 
     func testThatSessionSetsRequestStateWhenStartRequestsImmediatelyIsTrue() {
