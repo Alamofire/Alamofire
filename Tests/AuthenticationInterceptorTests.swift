@@ -456,7 +456,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     }
 
     // Produces double lock reported in https://github.com/Alamofire/Alamofire/issues/3294#issuecomment-703241558
-    func testThatInterceptorNeedingImmediateRefreshWithSynchronouslyRefreshRefreshesRequestThatFailedWithOutdatedCredential() {
+    func testThatInterceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnCallingQueue() {
         // Given
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator(shouldRefreshAsynchronously: false)
