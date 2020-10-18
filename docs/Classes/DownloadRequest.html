@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.2.2 Docs
+          Alamofire 5.3.0 Docs
         </a>
          (97% documented)
       </p>
@@ -1112,7 +1112,7 @@ or suspended.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="n">publishResponse</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></span><span class="p">,</span> <span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span> <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span>
     <span class="k">where</span> <span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span> <span class="o">==</span> <span class="kt">T</span></code></pre>
 
@@ -1177,7 +1177,7 @@ or suspended.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="n">publishResponse</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a></span><span class="p">,</span> <span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span> <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span>
     <span class="k">where</span> <span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span> <span class="o">==</span> <span class="kt">T</span></code></pre>
 
@@ -1242,7 +1242,7 @@ response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">publishData</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
                         <span class="nv">preprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
                         <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
@@ -1336,7 +1336,7 @@ response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">publishString</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
                           <span class="nv">preprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
                           <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1445,7 +1445,7 @@ response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="n">publishDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">T</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
                                            <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
                                            <span class="nv">preprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
@@ -1564,7 +1564,7 @@ response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">publishUnserialized</span><span class="p">(</span><span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a></span><span class="o">&lt;</span><span class="kt">URL</span><span class="p">?</span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -2497,7 +2497,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-07-17)</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-10-17)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

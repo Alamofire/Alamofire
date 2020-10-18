@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.2.2 Docs
+          Alamofire 5.3.0 Docs
         </a>
          (97% documented)
       </p>
@@ -855,7 +855,7 @@ to stop the stream at any time.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="n">publishStream</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
                                                             <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DataStreamPublisher.html">DataStreamPublisher</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span></code></pre>
 
@@ -920,7 +920,7 @@ unserialized.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">publishData</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DataStreamPublisher.html">DataStreamPublisher</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -972,7 +972,7 @@ unserialized.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">publishString</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DataStreamPublisher.html">DataStreamPublisher</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -1024,7 +1024,7 @@ parameters to serialize stream <code>Data</code> values into the provided type.<
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="n">publishDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">T</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
                                            <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
                                            <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
@@ -1596,7 +1596,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-07-17)</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-10-17)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

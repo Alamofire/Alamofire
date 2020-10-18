@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.2.2 Docs
+          Alamofire 5.3.0 Docs
         </a>
          (97% documented)
       </p>
@@ -625,7 +625,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -652,7 +652,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -679,7 +679,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">paths</span><span class="p">(</span><span class="n">forResourcesOfTypes</span> <span class="nv">types</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">paths</span><span class="p">(</span><span class="n">forResourcesOfTypes</span> <span class="nv">types</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -747,8 +747,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(iOS 12, OSX 10.14, tvOS 12, watchOS 5, *)</span>
-<span class="kd">func</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">afterApplying</span> <span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">afterApplying</span> <span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -800,10 +800,10 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:﹚")</span>
-<span class="kd">@available(OSX, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(afterApplying:﹚")</span>
+<span class="kd">@available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(afterApplying:﹚")</span>
 <span class="kd">@available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:﹚")</span>
 <span class="kd">@available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate(afterApplying:﹚")</span>
-<span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">,</span> <span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">,</span> <span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -866,7 +866,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">apply</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">SecTrust</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">apply</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">SecTrust</span></code></pre>
 
                         </div>
                       </div>
@@ -922,8 +922,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(iOS 12, OSX 10.14, tvOS 12, watchOS 5, *)</span>
-<span class="kd">func</span> <span class="nf">evaluate</span><span class="p">()</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">evaluate</span><span class="p">()</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -956,10 +956,10 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate(﹚")</span>
-<span class="kd">@available(OSX, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(﹚")</span>
+<span class="kd">@available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(﹚")</span>
 <span class="kd">@available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate(﹚")</span>
 <span class="kd">@available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate(﹚")</span>
-<span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -1011,7 +1011,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setAnchorCertificates</span><span class="p">(</span><span class="n">_</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">])</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">setAnchorCertificates</span><span class="p">(</span><span class="n">_</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">])</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -1057,7 +1057,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1084,7 +1084,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1111,7 +1111,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">certificateData</span><span class="p">:</span> <span class="p">[</span><span class="kt">Data</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">certificateData</span><span class="p">:</span> <span class="p">[</span><span class="kt">Data</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1143,7 +1143,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">performDefaultValidation</span><span class="p">(</span><span class="n">forHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">performDefaultValidation</span><span class="p">(</span><span class="n">forHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -1195,7 +1195,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">performValidation</span><span class="p">(</span><span class="n">forHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">performValidation</span><span class="p">(</span><span class="n">forHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -1254,7 +1254,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">SecPolicy</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">SecPolicy</span></code></pre>
 
                         </div>
                       </div>
@@ -1281,7 +1281,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">hostname</span><span class="p">(</span><span class="n">_</span> <span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SecPolicy</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">hostname</span><span class="p">(</span><span class="n">_</span> <span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SecPolicy</span></code></pre>
 
                         </div>
                       </div>
@@ -1337,7 +1337,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">revocation</span><span class="p">(</span><span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></span><span class="o">.</span><span class="kt">Options</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">SecPolicy</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">revocation</span><span class="p">(</span><span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></span><span class="o">.</span><span class="kt">Options</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">SecPolicy</span></code></pre>
 
                         </div>
                       </div>
@@ -1400,7 +1400,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">data</span><span class="p">:</span> <span class="p">[</span><span class="kt">Data</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">data</span><span class="p">:</span> <span class="p">[</span><span class="kt">Data</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1427,7 +1427,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1467,7 +1467,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKey</span><span class="p">:</span> <span class="kt">SecKey</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">publicKey</span><span class="p">:</span> <span class="kt">SecKey</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1507,7 +1507,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isSuccess</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isSuccess</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1547,7 +1547,7 @@ hostname validation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isSuccess</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isSuccess</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1603,7 +1603,7 @@ hostname validation.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-07-17)</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-10-17)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
