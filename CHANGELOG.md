@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
+- `5.3.x` Releases - [5.3.0](#530)
 - `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
 - `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
@@ -40,6 +41,37 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [5.3.0](https://github.com/Alamofire/Alamofire/releases/tag/5.3.0)
+Released on 2020-10-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/73?closed=1).
+
+#### Added
+- Closure callback APIs for the production of `URLRequest`s and `URLSessionTask`s.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3219](https://github.com/Alamofire/Alamofire/pull/3219).
+- `URLSessionTaskMetrics` gathering on watchOS 7+.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3321](https://github.com/Alamofire/Alamofire/pull/3321).
+
+#### Updated
+- Project settings, GitHub Actions, tests, and formatting for newer Xcodes.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3278](https://github.com/Alamofire/Alamofire/pull/3278), [#3284](https://github.com/Alamofire/Alamofire/pull/3284), [#3285](https://github.com/Alamofire/Alamofire/pull/3285), [#3309](https://github.com/Alamofire/Alamofire/pull/3309), and  [#3320](https://github.com/Alamofire/Alamofire/pull/3320).
+- Use of `URLRequest.headers` extension property in `URLEncoding`.
+  - Updated by [tomisacat](https://github.com/tomisacat) in Pull Request [#3264](https://github.com/Alamofire/Alamofire/pull/3264).
+- iOS example app.
+  - Updated by [rain2540](https://github.com/rain2540) in Pull Request [#3268](https://github.com/Alamofire/Alamofire/pull/3268).
+- Various documentation.
+  - Updated by [Jaydeep Vora](https://github.com/jaydeep-vora), [Minhyuk Kim](https://github.com/mininny), and [Tieda](https://github.com/weitieda) in Pull Requests [#3274](https://github.com/Alamofire/Alamofire/pull/3274), [#3292](https://github.com/Alamofire/Alamofire/pull/3292), and [#3317](https://github.com/Alamofire/Alamofire/pull/3317).
+
+#### Fixed
+- Double lock crash in `AuthenticationInterceptor` caused by synchronous `refresh` implementations.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3322](https://github.com/Alamofire/Alamofire/pull/3322).
+- Crash when requesting `file://` `URL`s by producing validation error.
+  - Fixed by [hyotak.yun](https://github.com/devtak) in Pull Request [#3318](https://github.com/Alamofire/Alamofire/pull/3318).
+- Missing rethrow of error produced when writing temporary multipart files fails.
+  - Fixed by [sudo.park](https://github.com/sudopark) in Pull Request [#3306](https://github.com/Alamofire/Alamofire/pull/3306).
+- Objective-C module conflicts in Xcode 12 by removing Obj-C module support.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3308](https://github.com/Alamofire/Alamofire/pull/3308).
 
 ---
 
