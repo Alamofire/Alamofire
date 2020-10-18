@@ -24,24 +24,24 @@
 
 import Foundation
 
-public extension Request {
+extension Request {
     /// Posted when a `Request` is resumed. The `Notification` contains the resumed `Request`.
-    static let didResumeNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResume")
+    public static let didResumeNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResume")
     /// Posted when a `Request` is suspended. The `Notification` contains the suspended `Request`.
-    static let didSuspendNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspend")
+    public static let didSuspendNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspend")
     /// Posted when a `Request` is cancelled. The `Notification` contains the cancelled `Request`.
-    static let didCancelNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancel")
+    public static let didCancelNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancel")
     /// Posted when a `Request` is finished. The `Notification` contains the completed `Request`.
-    static let didFinishNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinish")
+    public static let didFinishNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinish")
 
     /// Posted when a `URLSessionTask` is resumed. The `Notification` contains the `Request` associated with the `URLSessionTask`.
-    static let didResumeTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResumeTask")
+    public static let didResumeTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResumeTask")
     /// Posted when a `URLSessionTask` is suspended. The `Notification` contains the `Request` associated with the `URLSessionTask`.
-    static let didSuspendTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspendTask")
+    public static let didSuspendTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspendTask")
     /// Posted when a `URLSessionTask` is cancelled. The `Notification` contains the `Request` associated with the `URLSessionTask`.
-    static let didCancelTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancelTask")
+    public static let didCancelTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancelTask")
     /// Posted when a `URLSessionTask` is completed. The `Notification` contains the `Request` associated with the `URLSessionTask`.
-    static let didCompleteTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCompleteTask")
+    public static let didCompleteTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCompleteTask")
 }
 
 // MARK: -

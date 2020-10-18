@@ -27,7 +27,7 @@ import Foundation
 import XCTest
 
 #if !SWIFT_PACKAGE
-private struct TestCertificates {
+private enum TestCertificates {
     static let rootCA = TestCertificates.certificate(filename: "expired.badssl.com-root-ca")
     static let intermediateCA1 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-1")
     static let intermediateCA2 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-2")

@@ -27,7 +27,7 @@ import Foundation
 import XCTest
 
 #if !SWIFT_PACKAGE
-private struct TestCertificates {
+private enum TestCertificates {
     // Root Certificates
     static let rootCA = TestCertificates.certificate(filename: "alamofire-root-ca")
 
