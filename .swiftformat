@@ -16,6 +16,7 @@
 --decimalgrouping 3,5
 --exponentcase lowercase
 --exponentgrouping disabled
+--extensionacl on-declarations
 --fractiongrouping disabled
 --ifdef no-indent
 --importgrouping testable-top

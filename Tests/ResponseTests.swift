@@ -668,7 +668,7 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
 
         guard let error = response?.error as? TestError,
-            case let .error(underlyingError) = error
+              case let .error(underlyingError) = error
         else { XCTFail(); return }
 
         XCTAssertEqual(underlyingError.asAFError?.isSessionTaskError, true)

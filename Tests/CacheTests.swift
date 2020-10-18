@@ -47,7 +47,7 @@ import XCTest
 class CacheTestCase: BaseTestCase {
     // MARK: -
 
-    struct CacheControl {
+    enum CacheControl {
         static let publicControl = "public"
         static let privateControl = "private"
         static let maxAgeNonExpired = "max-age=3600"

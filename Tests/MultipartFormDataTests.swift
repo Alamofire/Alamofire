@@ -30,7 +30,7 @@ struct EncodingCharacters {
     static let crlf = "\r\n"
 }
 
-struct BoundaryGenerator {
+enum BoundaryGenerator {
     enum BoundaryType {
         case initial, encapsulated, final
     }

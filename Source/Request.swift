@@ -946,8 +946,8 @@ extension Request: CustomStringConvertible {
     /// created, as well as the response status code, if a response has been received.
     public var description: String {
         guard let request = performedRequests.last ?? lastRequest,
-            let url = request.url,
-            let method = request.httpMethod else { return "No request created yet." }
+              let url = request.url,
+              let method = request.httpMethod else { return "No request created yet." }
 
         let requestDescription = "\(method) \(url.absoluteString)"
 

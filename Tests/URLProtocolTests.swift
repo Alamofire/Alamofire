@@ -29,7 +29,7 @@ import XCTest
 class ProxyURLProtocol: URLProtocol {
     // MARK: Properties
 
-    struct PropertyKeys {
+    enum PropertyKeys {
         static let handledByForwarderURLProtocol = "HandledByProxyURLProtocol"
     }
 
