@@ -32,11 +32,6 @@ extension URLRequest {
     }
 
     public func validate() throws {
-        if let url = url, url.isFileURL {
-            // This should become another urlRequestValidationFailed error in Alamofire 6.
-            throw AFError.invalidURL(url: url)
-        }
-
         if method == .get, let bodyData = httpBody {
             throw AFError.urlRequestValidationFailed(reason: .bodyDataInGETRequest(bodyData))
         }

@@ -1184,12 +1184,12 @@ final class RequestLifetimeTests: BaseTestCase {
 
 // MARK: -
 
-class RequestInvalidURLTestCase: BaseTestCase {
-    #if !SWIFT_PACKAGE
+#if !SWIFT_PACKAGE
+final class RequestInvalidURLTestCase: BaseTestCase {
     func testThatDataRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
+        let expectation = self.expectation(description: "Request should succeed.")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -1202,13 +1202,13 @@ class RequestInvalidURLTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
     }
 
     func testThatDownloadRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
+        let expectation = self.expectation(description: "Request should succeed.")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -1221,13 +1221,13 @@ class RequestInvalidURLTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
     }
 
     func testThatDataStreamRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = self.expectation(description: "Request should fail with invalid URL error.")
+        let expectation = self.expectation(description: "Request should succeed.")
         var response: DataStreamRequest.Completion?
 
         // When
@@ -1242,7 +1242,7 @@ class RequestInvalidURLTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertNil(response?.response)
     }
-    #endif
 }
+#endif
