@@ -1459,8 +1459,11 @@ public class DownloadRequest: Request {
 
     /// A closure executed once a `DownloadRequest` has successfully completed in order to determine where to move the
     /// temporary file written to during the download process. The closure takes two arguments: the temporary file URL
-    /// and the URL response, and returns a two arguments: the file URL where the temporary file should be moved and
+    /// and the `HTTPURLResponse`, and returns two values: the file URL where the temporary file should be moved and
     /// the options defining how the file should be moved.
+    ///
+    /// - Note: Downloads from a local `file://` `URL`s do not use the `Destination` closure, as those downloads do not
+    ///         return an `HTTPURLResponse`. Instead the file is merely moved within the temporary directory.
     public typealias Destination = (_ temporaryURL: URL,
                                     _ response: HTTPURLResponse) -> (destinationURL: URL, options: Options)
 
