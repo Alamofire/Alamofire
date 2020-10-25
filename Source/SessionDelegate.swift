@@ -298,11 +298,13 @@ extension SessionDelegate: URLSessionDownloadDelegate {
             return
         }
 
-        guard let response = request.response else {
-            fatalError("URLSessionDownloadTask finished downloading with no response.")
+        let (destination, options): (URL, DownloadRequest.Options)
+        if let response = request.response {
+            (destination, options) = request.destination(location, response)
+        } else {
+            // If there's no response this is likely a local file download, so generate the temporary URL directly.
+            (destination, options) = (DownloadRequest.defaultDestinationURL(location), [])
         }
-
-        let (destination, options) = (request.destination)(location, response)
 
         eventMonitor?.request(request, didCreateDestinationURL: destination)
 

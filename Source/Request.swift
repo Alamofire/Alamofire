@@ -1489,10 +1489,16 @@ public class DownloadRequest: Request {
     /// with this destination must be additionally moved if they should survive the system reclamation of temporary
     /// space.
     static let defaultDestination: Destination = { url, _ in
+        (defaultDestinationURL(url), [])
+    }
+
+    /// Default `URL` creation closure. Creates a `URL` in the temporary directory with `Alamofire_` prepended to the
+    /// provided file name.
+    static let defaultDestinationURL: (URL) -> URL = { url in
         let filename = "Alamofire_\(url.lastPathComponent)"
         let destination = url.deletingLastPathComponent().appendingPathComponent(filename)
 
-        return (destination, [])
+        return destination
     }
 
     // MARK: Downloadable
