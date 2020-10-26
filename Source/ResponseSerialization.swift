@@ -394,6 +394,43 @@ extension DownloadRequest {
     }
 }
 
+// MARK: - URL
+
+/// A `DownloadResponseSerializerProtocol` that performs only `Error` checking and ensures that a downloaded `fileURL`
+/// is present.
+public struct URLResponseSerializer: DownloadResponseSerializerProtocol {
+    /// Creates an instance.
+    public init() {}
+
+    public func serializeDownload(request: URLRequest?,
+                                  response: HTTPURLResponse?,
+                                  fileURL: URL?,
+                                  error: Error?) throws -> URL {
+        guard error == nil else { throw error! }
+
+        guard let url = fileURL else {
+            throw AFError.responseSerializationFailed(reason: .inputFileNil)
+        }
+
+        return url
+    }
+}
+
+extension DownloadRequest {
+    /// Adds a handler using a `URLResponseSerializer` to be called once the request is finished.
+    ///
+    /// - Parameters:
+    ///   - queue:             The queue on which the completion handler is called. `.main` by default.
+    ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
+    /// - Returns:             The request.
+    @discardableResult
+    public func responseURL(queue: DispatchQueue = .main,
+                            completionHandler: @escaping (AFDownloadResponse<URL>) -> Void) -> Self {
+        response(queue: queue, responseSerializer: URLResponseSerializer(), completionHandler: completionHandler)
+    }
+}
+
 // MARK: - Data
 
 /// A `ResponseSerializer` that performs minimal response checking and returns any response `Data` as-is. By default, a

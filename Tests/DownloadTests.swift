@@ -112,6 +112,32 @@ class DownloadResponseTestCase: BaseTestCase {
         }
     }
 
+    func testDownloadRequestResponseURLProducesURL() throws {
+        // Given
+        let request = URLRequest.makeHTTPBinRequest()
+        let expectation = self.expectation(description: "Download request should download data")
+        var response: DownloadResponse<URL, AFError>?
+
+        // When
+        AF.download(request)
+            .responseURL { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.fileURL)
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNil(response?.error)
+
+        let url = try XCTUnwrap(response?.value)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
+    }
+
     func testCancelledDownloadRequest() {
         // Given
         let fileURL = randomCachesFileURL
@@ -585,6 +611,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertEqual(response?.resumeData, download.resumeData)
     }
 
+    // Disabled until we can find another source which supports resume ranges.
     func _testThatCancelledDownloadCanBeResumedWithResumeData() {
         // Given
         let expectation1 = expectation(description: "Download should be cancelled")
