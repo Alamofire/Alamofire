@@ -503,17 +503,29 @@ extension DownloadRequest {
         DownloadResponsePublisher(self, queue: queue, serializer: serializer)
     }
 
-    /// Creates a `DataResponsePublisher` for this instance and uses a `DataResponseSerializer` to serialize the
+    /// Creates a `DownloadResponsePublisher` for this instance and uses a `URLResponseSerializer` to serialize the
+    /// response.
+    ///
+    /// - Parameter queue: `DispatchQueue` on which the `DownloadResponse` will be published. `.main` by default.
+    ///
+    /// - Returns:         The `DownloadResponsePublisher`.
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishURL(queue: DispatchQueue = .main) -> DownloadResponsePublisher<URL> {
+        publishResponse(using: URLResponseSerializer(), on: queue)
+    }
+
+    /// Creates a `DownloadResponsePublisher` for this instance and uses a `DataResponseSerializer` to serialize the
     /// response.
     ///
     /// - Parameters:
-    ///   - queue:               `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///   - queue:               `DispatchQueue` on which the `DownloadResponse` will be published. `.main` by default.
     ///   - preprocessor:        `DataPreprocessor` which filters the `Data` before serialization. `PassthroughPreprocessor()`
     ///                          by default.
     ///   - emptyResponseCodes:  `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
     ///                          default.
     ///   - emptyRequestMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless of
     ///                          status code. `[.head]` by default.
+    ///
     /// - Returns:               The `DownloadResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishData(queue: DispatchQueue = .main,

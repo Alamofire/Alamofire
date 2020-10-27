@@ -681,14 +681,14 @@ However, headers that must be part of all requests are often better handled as p
 In addition to fetching data into memory, Alamofire also provides the `Session.download`, `DownloadRequest`, and `DownloadResponse<Success, Failure: Error>` APIs to facilitate downloading to disk. While downloading into memory works great for small payloads like most JSON API responses, fetching larger assets like images and videos should be downloaded to disk to avoid memory issues with your application.
 
 ```swift
-AF.download("https://httpbin.org/image/png").responseData { response in
-    if let data = response.value {
-        let image = UIImage(data: data)
-    }
+AF.download("https://httpbin.org/image/png").responseURL { response in
+    // Read file from provided URL.
 }
 ```
 
-> `DownloadRequest` has most of the same `response` handlers that `DataRequest` does. However, since it downloads data to disk, serializing the response involves reading from disk, and may also involve reading large amounts of data into memory. It's important to keep these facts in mind when architecting your download handling.
+In addition to having the same response handlers that `DataRequest` does, `DownloadRequest` also includes `responseURL`. Unlike the other response handlers, this handler just returns the `URL` containing the location of the downloaded data and does not read the `Data` from disk.
+
+Other response handlers, like `responseDecodable`, involve reading the response `Data` from disk. This may involve reading large amounts of data into memory, so it's important to keep that in mind when using those handlers.
 
 #### Download File Destination
 

@@ -1091,6 +1091,27 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatDownloadRequestCanPublishURL() {
+        // Given
+        let responseReceived = expectation(description: "response should be received")
+        let completionReceived = expectation(description: "publisher should complete")
+        var response: DownloadResponse<URL, AFError>?
+
+        // When
+        store {
+            AF.download(URLRequest.makeHTTPBinRequest())
+                .publishURL()
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                      receiveValue: { response = $0; responseReceived.fulfill() })
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(response?.result.isSuccess == true)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDownloadRequestCanPublishWithMultipleHandlers() {
         // Given
         let handlerResponseReceived = expectation(description: "handler response should be received")

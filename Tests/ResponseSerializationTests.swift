@@ -458,6 +458,60 @@ final class DataResponseSerializationTestCase: BaseTestCase {
 
 // MARK: -
 
+final class URLResponseSerializerTests: BaseTestCase {
+    func testThatURLResponseSerializerProducesURLOnSuccess() {
+        // Given
+        let serializer = URLResponseSerializer()
+        let request = URLRequest.makeHTTPBinRequest()
+        let response = HTTPURLResponse(statusCode: 200)
+        let url = URL(fileURLWithPath: "/")
+
+        // When
+        let result = Result { try serializer.serializeDownload(request: request,
+                                                               response: response,
+                                                               fileURL: url,
+                                                               error: nil) }
+
+        // Then
+        XCTAssertEqual(result.success, url)
+    }
+
+    func testThatURLResponseSerializerProducesErrorFromIncomingErrors() {
+        // Given
+        let serializer = URLResponseSerializer()
+        let request = URLRequest.makeHTTPBinRequest()
+        let response = HTTPURLResponse(statusCode: 200)
+        let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 404))
+
+        // When
+        let result = Result { try serializer.serializeDownload(request: request,
+                                                               response: response,
+                                                               fileURL: nil,
+                                                               error: error) }
+
+        // Then
+        XCTAssertEqual(result.failure?.localizedDescription, error.localizedDescription)
+    }
+
+    func testThatURLResponseSerializerProducesInputFileNilErrorWhenNoURL() {
+        // Given
+        let serializer = URLResponseSerializer()
+        let request = URLRequest.makeHTTPBinRequest()
+        let response = HTTPURLResponse(statusCode: 200)
+
+        // When
+        let result = Result { try serializer.serializeDownload(request: request,
+                                                               response: response,
+                                                               fileURL: nil,
+                                                               error: nil) }
+
+        // Then
+        XCTAssertTrue(result.failure?.asAFError?.isInputFileNil == true)
+    }
+}
+
+// MARK: -
+
 // used by testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseConformingTypeAndEmptyResponseStatusCode
 extension Bool: EmptyResponse {
     public static func emptyValue() -> Bool {
