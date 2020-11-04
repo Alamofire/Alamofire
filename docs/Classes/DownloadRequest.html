@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.3.0 Docs
+          Alamofire 5.4.0 Docs
         </a>
          (97% documented)
       </p>
@@ -468,6 +468,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/URLEncoding/BoolEncoding.html">– BoolEncoding</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/URLResponseSerializer.html">URLResponseSerializer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -576,8 +579,14 @@
                       <div class="abstract">
                         <p>A closure executed once a <code>DownloadRequest</code> has successfully completed in order to determine where to move the
 temporary file written to during the download process. The closure takes two arguments: the temporary file URL
-and the URL response, and returns a two arguments: the file URL where the temporary file should be moved and
+and the <code>HTTPURLResponse</code>, and returns two values: the file URL where the temporary file should be moved and
 the options defining how the file should be moved.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Downloads from a local <code>file://</code> <code>URL</code>s do not use the <code>Destination</code> closure, as those downloads do not
+    return an <code>HTTPURLResponse</code>. Instead the file is merely moved within the temporary directory.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -1224,6 +1233,58 @@ or suspended.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire15DownloadRequestC10publishURL5queueAA0B17ResponsePublisherVy10Foundation0E0VGSo012OS_dispatch_F0C_tF"></a>
+                    <a name="//apple_ref/swift/Method/publishURL(queue:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC10publishURL5queueAA0B17ResponsePublisherVy10Foundation0E0VGSo012OS_dispatch_F0C_tF">publishURL(queue:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a></code> for this instance and uses a <code><a href="../Structs/URLResponseSerializer.html">URLResponseSerializer</a></code> to serialize the
+response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">publishURL</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a></span><span class="o">&lt;</span><span class="kt">URL</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which the <code><a href="../Structs/DownloadResponse.html">DownloadResponse</a></code> will be published. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire15DownloadRequestC11publishData5queue12preprocessor18emptyResponseCodes0hC7MethodsAA0bI9PublisherVy10Foundation0E0VGSo012OS_dispatch_F0C_AA0E12Preprocessor_pShySiGShyAA10HTTPMethodVGtF"></a>
                     <a name="//apple_ref/swift/Method/publishData(queue:preprocessor:emptyResponseCodes:emptyRequestMethods:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire15DownloadRequestC11publishData5queue12preprocessor18emptyResponseCodes0hC7MethodsAA0bI9PublisherVy10Foundation0E0VGSo012OS_dispatch_F0C_AA0E12Preprocessor_pShySiGShyAA10HTTPMethodVGtF">publishData(queue:<wbr>preprocessor:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>)</a>
@@ -1234,7 +1295,7 @@ or suspended.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Structs/DataResponsePublisher.html">DataResponsePublisher</a></code> for this instance and uses a <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code> to serialize the
+                        <p>Creates a <code><a href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a></code> for this instance and uses a <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code> to serialize the
 response.</p>
 
                       </div>
@@ -1262,7 +1323,7 @@ response.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>DispatchQueue</code> on which the <code><a href="../Structs/DataResponse.html">DataResponse</a></code> will be published. <code>.main</code> by default.</p>
+                                  <p><code>DispatchQueue</code> on which the <code><a href="../Structs/DownloadResponse.html">DownloadResponse</a></code> will be published. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1739,6 +1800,83 @@ response.</p>
                               <td>
                                 <div>
                                   <p>The code to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/URL"></a>
+                <a name="//apple_ref/swift/Section/URL" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/URL"></a>
+                  <h3 class="section-name"><p>URL</p>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire15DownloadRequestC11responseURL5queue17completionHandlerACXDSo012OS_dispatch_F0C_yAA0B8ResponseVy10Foundation0E0VAA7AFErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/responseURL(queue:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC11responseURL5queue17completionHandlerACXDSo012OS_dispatch_F0C_yAA0B8ResponseVy10Foundation0E0VAA7AFErrorOGctF">responseURL(queue:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler using a <code><a href="../Structs/URLResponseSerializer.html">URLResponseSerializer</a></code> to be called once the request is finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseURL</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                        <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a></span><span class="o">&lt;</span><span class="kt">URL</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is called. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure to be executed once the request has finished.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2497,7 +2635,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-10-17)</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-11-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
