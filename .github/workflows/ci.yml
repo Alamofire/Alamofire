@@ -38,7 +38,7 @@ jobs:
       - name: macOS (5.3)
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   macOS_Big_Sur_5_3:
-    name: Test macOS 10.15 (5.3)
+    name: Test macOS 11 (5.3)
     runs-on: macOS-11.0
     env: 
       DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
