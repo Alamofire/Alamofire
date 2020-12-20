@@ -18,8 +18,4 @@ Pod::Spec.new do |s|
   s.source_files = 'Source/*.swift'
 
   s.frameworks = 'CFNetwork'
-
-  s.pod_target_xcconfig = {
-    'SWIFT_INSTALL_OBJC_HEADER' => 'NO'
-  }
 end

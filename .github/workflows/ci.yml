@@ -28,11 +28,20 @@ jobs:
       - uses: actions/checkout@v2
       - name: macOS (5.2)
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
-  macOS_5_3:
-    name: Test macOS (5.3)
-    runs-on: macOS-latest
+  macOS_Catalina_5_3:
+    name: Test macOS 10.15 (5.3)
+    runs-on: macOS-10.15
     env: 
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v2
+      - name: macOS (5.3)
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
+  macOS_Big_Sur_5_3:
+    name: Test macOS 11 (5.3)
+    runs-on: macOS-11.0
+    env: 
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
       - name: macOS (5.3)
@@ -41,7 +50,7 @@ jobs:
     name: Test Catalyst 
     runs-on: macOS-latest
     env: 
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
       - name: Catalyst
@@ -50,10 +59,10 @@ jobs:
     name: Test iOS 
     runs-on: macOS-latest
     env: 
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
     strategy:
       matrix:
-        destination: ["OS=14.0,name=iPhone 11 Pro"] #, "OS=12.4,name=iPhone XS", "OS=11.4,name=iPhone X", "OS=10.3.1,name=iPhone SE"]
+        destination: ["OS=14.3,name=iPhone 12 Pro"] #, "OS=12.4,name=iPhone XS", "OS=11.4,name=iPhone X", "OS=10.3.1,name=iPhone SE"]
     steps:
       - uses: actions/checkout@v2
       - name: iOS - ${{ matrix.destination }}
@@ -62,10 +71,10 @@ jobs:
     name: Test tvOS 
     runs-on: macOS-latest
     env: 
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
     strategy:
       matrix:
-        destination: ["OS=14.0,name=Apple TV 4K"] #, "OS=11.4,name=Apple TV 4K", "OS=10.2,name=Apple TV 1080p"]
+        destination: ["OS=14.3,name=Apple TV 4K"] #, "OS=11.4,name=Apple TV 4K", "OS=10.2,name=Apple TV 1080p"]
     steps:
       - uses: actions/checkout@v2
       - name: tvOS - ${{ matrix.destination }}
@@ -74,10 +83,10 @@ jobs:
     name: Build watchOS
     runs-on: macOS-latest
     env: 
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
     strategy:
       matrix:
-        destination: ["OS=7.0,name=Apple Watch Series 5 - 44mm"] #, "OS=4.2,name=Apple Watch Series 3 - 42mm", "OS=3.2,name=Apple Watch Series 2 - 42mm"]
+        destination: ["OS=7.2,name=Apple Watch Series 6 - 44mm"] #, "OS=4.2,name=Apple Watch Series 3 - 42mm", "OS=3.2,name=Apple Watch Series 2 - 42mm"]
     steps:
       - uses: actions/checkout@v2
       - name: watchOS - ${{ matrix.destination }}
@@ -86,7 +95,7 @@ jobs:
     name: Test with SPM
     runs-on: macOS-latest    
     env: 
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
       - name: SPM Test
