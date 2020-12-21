@@ -918,4 +918,33 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
         XCTAssertEqual(encodingError?.asAFError?.isOutputStreamURLInvalid, true)
     }
+    
+    func testThatStreamBodyPartHasUnexpectedLength() {
+        // Given
+        let multipartFormData = MultipartFormData()
+        let data = Data("Lorem ipsum dolor sit amet.".utf8)
+        multipartFormData.append(data, withName: "data")
+
+        var encodingError: Error?
+        // When
+        do {
+            _ = try multipartFormData.encode()
+        } catch {
+            encodingError = error
+        }
+        
+        XCTAssertNil(encodingError, "encoding error should be nil")
+        
+        // When
+        do {
+            _ = try multipartFormData.encode()
+        } catch {
+            //Expect error
+            encodingError = error
+        }
+        
+        XCTAssertNotNil(encodingError, "encoding error should not be nil")
+        XCTAssertEqual(encodingError?.asAFError?.isUnexpctedInputStreamLength, true)
+    }
+
 }

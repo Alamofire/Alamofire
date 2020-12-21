@@ -104,6 +104,11 @@ extension AFError {
         if case let .multipartEncodingFailed(reason) = self, reason.isInputStreamReadFailed { return true }
         return false
     }
+    
+    var isUnexpctedInputStreamLength: Bool {
+        if case let .multipartEncodingFailed(reason) = self, reason.isUnexpctedInputStreamLength { return true }
+        return false
+    }
 
     // ResponseSerializationFailureReason
 
@@ -261,6 +266,11 @@ extension AFError.MultipartEncodingFailureReason {
 
     var isInputStreamReadFailed: Bool {
         if case .inputStreamReadFailed = self { return true }
+        return false
+    }
+    
+    var isUnexpctedInputStreamLength: Bool {
+        if case .unexpectedInputStreamLength = self { return true }
         return false
     }
 }

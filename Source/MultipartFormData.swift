@@ -418,6 +418,10 @@ open class MultipartFormData {
                 break
             }
         }
+        
+        if UInt64(encoded.count) != bodyPart.bodyContentLength {
+            throw AFError.multipartEncodingFailed(reason: .unexpectedInputStreamLength(bytesRead: UInt64(encoded.count), bytesExpected: bodyPart.bodyContentLength))
+        }
 
         return encoded
     }

@@ -55,6 +55,8 @@ public enum AFError: Error {
         case outputStreamWriteFailed(error: Error)
         /// The attempt to read an encoded body part `InputStream` failed with underlying system error.
         case inputStreamReadFailed(error: Error)
+        /// The data read from an body part `InputStream` has unexpected length.
+        case unexpectedInputStreamLength(bytesRead: UInt64, bytesExpected: UInt64)
     }
 
     /// The underlying reason the `.parameterEncodingFailed` error occurred.
@@ -474,7 +476,8 @@ extension AFError.MultipartEncodingFailureReason {
              let .bodyPartFileSizeQueryFailedWithError(url, _):
             return url
         case .outputStreamWriteFailed,
-             .inputStreamReadFailed:
+             .inputStreamReadFailed,
+             .unexpectedInputStreamLength:
             return nil
         }
     }
@@ -494,7 +497,8 @@ extension AFError.MultipartEncodingFailureReason {
              .bodyPartInputStreamCreationFailed,
              .outputStreamCreationFailed,
              .outputStreamFileAlreadyExists,
-             .outputStreamURLInvalid:
+             .outputStreamURLInvalid,
+             .unexpectedInputStreamLength:
             return nil
         }
     }
@@ -739,6 +743,8 @@ extension AFError.MultipartEncodingFailureReason {
             return "OutputStream write failed with error: \(error)"
         case let .inputStreamReadFailed(error):
             return "InputStream read failed with error: \(error)"
+        case let .unexpectedInputStreamLength(read, expected):
+            return "Input Stream has unexpected length: got \(read), expect \(expected)"
         }
     }
 }
