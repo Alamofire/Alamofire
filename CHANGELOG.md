@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.4.x` Releases - [5.4.0](#540)
+- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541)
 - `5.3.x` Releases - [5.3.0](#530)
 - `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
@@ -44,6 +44,13 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.4.1](https://github.com/Alamofire/Alamofire/releases/tag/5.4.1)
+Released on 2020-12-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/75?closed=1).
+
+#### Updated
+- Project and CocoaPods installation of Obj-C header.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3378](https://github.com/Alamofire/Alamofire/pull/3378).
 
 ## [5.4.0](https://github.com/Alamofire/Alamofire/releases/tag/5.4.0)
 Released on 2020-10-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/74?closed=1).
