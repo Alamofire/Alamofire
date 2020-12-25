@@ -76,6 +76,7 @@ struct Endpoint {
         case delay(interval: Int)
         case digestAuth(qop: String = "auth", username: String, password: String)
         case hiddenBasicAuth(username: String, password: String)
+        case largeImage
         case method(HTTPMethod)
         case payloads(count: Int)
         case status(Int)
@@ -96,6 +97,8 @@ struct Endpoint {
                 return "/digest-auth/\(qop)/\(username)/\(password)"
             case let .hiddenBasicAuth(username, password):
                 return "/hidden-basic-auth/\(username)/\(password)"
+            case .largeImage:
+                return "/image/large"
             case let .method(method):
                 return "/\(method.rawValue.lowercased())"
             case let .payloads(count):
@@ -134,6 +137,10 @@ struct Endpoint {
 
     static func hiddenBasicAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
         Endpoint(path: .hiddenBasicAuth(username: user, password: password), headers: [.authorization(username: user, password: password)])
+    }
+
+    static var largeImage: Endpoint {
+        Endpoint(path: .largeImage)
     }
 
     static func method(_ method: HTTPMethod) -> Endpoint {
@@ -227,6 +234,23 @@ extension Session {
         streamRequest(endpoint as URLRequestConvertible,
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                       interceptor: interceptor)
+    }
+
+    func download<Parameters: Encodable>(_ endpoint: Endpoint,
+                                         parameters: Parameters? = nil,
+                                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                         headers: HTTPHeaders? = nil,
+                                         interceptor: RequestInterceptor? = nil,
+                                         requestModifier: RequestModifier? = nil,
+                                         to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        download(endpoint as URLConvertible,
+                 method: endpoint.method,
+                 parameters: parameters,
+                 encoder: encoder,
+                 headers: headers,
+                 interceptor: interceptor,
+                 requestModifier: requestModifier,
+                 to: destination)
     }
 
     func download(_ endpoint: Endpoint,
