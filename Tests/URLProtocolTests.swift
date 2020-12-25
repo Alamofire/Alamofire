@@ -134,7 +134,7 @@ class URLProtocolTestCase: BaseTestCase {
 
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
-        let urlString = "https://httpbin.org/response-headers"
+        let urlString = "\(String.testURLString)/response-headers"
         let url = URL(string: urlString)!
 
         var urlRequest = URLRequest(url: url)
@@ -152,7 +152,7 @@ class URLProtocolTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)

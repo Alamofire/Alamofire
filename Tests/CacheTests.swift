@@ -32,19 +32,19 @@ import XCTest
 /// These tests work as follows:
 ///
 /// - Set up an `URLCache`
-/// - Set up an `Alamofire.SessionManager`
-/// - Execute requests for all `Cache-Control` header values to prime the `NSURLCache` with cached responses
+/// - Set up an `Alamofire.Session`
+/// - Execute requests for all `Cache-Control` header values to prime the `URLCache` with cached responses
 /// - Start up a new test
 /// - Execute another round of the same requests with a given `URLRequestCachePolicy`
 /// - Verify whether the response came from the cache or from the network
 ///     - This is determined by whether the cached response timestamp matches the new response timestamp
 ///
 /// An important thing to note is the difference in behavior between iOS and macOS. On iOS, a response with
-/// a `Cache-Control` header value of `no-store` is still written into the `NSURLCache` where on macOS, it is not.
+/// a `Cache-Control` header value of `no-store` is still written into the `URLCache` where on macOS, it is not.
 /// The different tests below reflect and demonstrate this behavior.
 ///
 /// For information about `Cache-Control` HTTP headers, please refer to RFC 2616 - Section 14.9.
-class CacheTestCase: BaseTestCase {
+final class CacheTestCase: BaseTestCase {
     // MARK: -
 
     enum CacheControl {
@@ -70,7 +70,7 @@ class CacheTestCase: BaseTestCase {
     var urlCache: URLCache!
     var manager: Session!
 
-    let urlString = "https://httpbin.org/response-headers"
+    let urlString = "\(String.testURLString)/response-headers"
     let requestTimeout: TimeInterval = 30
 
     var requests: [String: URLRequest] = [:]
@@ -153,12 +153,12 @@ class CacheTestCase: BaseTestCase {
 
         // Pause for 1 additional second to ensure all timestamps will be different
         dispatchGroup.enter()
-        serialQueue.asyncAfter(deadline: .now() + 1) {
+        serialQueue.asyncAfter(deadline: .now() + 1.5) {
             dispatchGroup.leave()
         }
 
         // Wait for our 1 second pause to complete
-        _ = dispatchGroup.wait(timeout: .now() + 1.25)
+        _ = dispatchGroup.wait(timeout: .now() + 1.75)
     }
 
     // MARK: - Request Helper Methods
@@ -209,7 +209,7 @@ class CacheTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         verifyResponse(response, forCacheControl: cacheControl, isCachedResponse: shouldReturnCachedResponse)
@@ -312,7 +312,7 @@ class CacheTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNil(response, "response should be nil")

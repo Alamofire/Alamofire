@@ -79,7 +79,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(error)
@@ -111,7 +111,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         if #available(iOS 10.1, macOS 10.12, tvOS 10.1, *) {
@@ -140,7 +140,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -178,7 +178,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         if #available(iOS 10.1, macOS 10.12, tvOS 10.1, *) {
@@ -210,7 +210,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -246,7 +246,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -285,7 +285,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -324,7 +324,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -359,7 +359,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -383,7 +383,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -407,7 +407,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         if #available(iOS 10.1, macOS 10.12.0, tvOS 10.1, *) {
@@ -437,7 +437,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -472,7 +472,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -496,7 +496,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -520,7 +520,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         if #available(iOS 10.1, macOS 10.12.0, tvOS 10.1, *) {
@@ -548,7 +548,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNil(error, "error should be nil")

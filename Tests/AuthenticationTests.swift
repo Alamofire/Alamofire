@@ -55,27 +55,24 @@ class AuthenticationTestCase: BaseTestCase {
 
 // MARK: -
 
-class BasicAuthenticationTestCase: AuthenticationTestCase {
-    override func setUp() {
-        super.setUp()
-        urlString = "https://httpbin.org/basic-auth/\(user)/\(password)"
-    }
-
-    func testHTTPBasicAuthenticationWithInvalidCredentials() {
+final class BasicAuthenticationTestCase: BaseTestCase {
+    func testHTTPBasicAuthenticationFailsWithInvalidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(urlString) 401")
+        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let endpoint = Endpoint.basicAuth()
+        let expectation = self.expectation(description: "\(endpoint.url) 401")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString)
+        session.request(endpoint)
             .authenticate(username: "invalid", password: "credentials")
             .response { resp in
                 response = resp
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -87,19 +84,55 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(urlString) 200")
+        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let user = "user", password = "password"
+        let endpoint = Endpoint.basicAuth(forUser: user, password: password)
+        let expectation = self.expectation(description: "\(endpoint.url) 200")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString)
+        session.request(endpoint)
             .authenticate(username: user, password: password)
             .response { resp in
                 response = resp
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertEqual(response?.response?.statusCode, 200)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+    }
+
+    func testHTTPBasicAuthenticationWithStoredCredentials() {
+        // Given
+        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let user = "user", password = "password"
+        let endpoint = Endpoint.basicAuth(forUser: user, password: password)
+        let expectation = self.expectation(description: "\(endpoint.url) 200")
+
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        let credential = URLCredential(user: user, password: password, persistence: .forSession)
+        URLCredentialStorage.shared.setDefaultCredential(credential,
+                                                         for: .init(host: .host,
+                                                                    port: .port,
+                                                                    protocol: .scheme,
+                                                                    realm: .host,
+                                                                    authenticationMethod: NSURLAuthenticationMethodHTTPBasic))
+        session.request(endpoint)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -111,20 +144,20 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHiddenHTTPBasicAuthentication() {
         // Given
-        let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
-        let expectation = self.expectation(description: "\(urlString) 200")
-        let headers: HTTPHeaders = [.authorization(username: user, password: password)]
+        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let endpoint = Endpoint.hiddenBasicAuth()
+        let expectation = self.expectation(description: "\(endpoint.url) 200")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString, headers: headers)
+        session.request(endpoint)
             .response { resp in
                 response = resp
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -142,7 +175,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     override func setUp() {
         super.setUp()
-        urlString = "https://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
+        urlString = "\(String.testURLString)/digest-auth/\(qop)/\(user)/\(password)"
     }
 
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
@@ -159,7 +192,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -183,7 +216,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)

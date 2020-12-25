@@ -27,12 +27,12 @@ import Foundation
 import XCTest
 
 class ParameterEncodingTestCase: BaseTestCase {
-    let urlRequest = URLRequest(url: URL(string: "https://example.com/")!)
+    let urlRequest = URLRequest.makeHTTPBinRequest()
 }
 
 // MARK: -
 
-class URLParameterEncodingTestCase: ParameterEncodingTestCase {
+final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
     let encoding = URLEncoding.default
@@ -741,7 +741,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     func testJSONParameterEncodeParametersRetainsCustomContentType() {
         do {
             // Given
-            var mutableURLRequest = URLRequest(url: URL(string: "https://example.com/")!)
+            var mutableURLRequest = URLRequest.makeHTTPBinRequest()
             mutableURLRequest.setValue("application/custom-json-type+json", forHTTPHeaderField: "Content-Type")
 
             let parameters = ["foo": "bar"]

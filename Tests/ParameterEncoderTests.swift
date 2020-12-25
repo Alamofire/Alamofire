@@ -32,7 +32,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let request = URLRequest.makeHTTPBinRequest()
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "application/json")
@@ -46,7 +46,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
         request.headers.update(.contentType("type"))
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "type")
@@ -61,7 +61,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let request = URLRequest.makeHTTPBinRequest()
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let expected = """
@@ -78,7 +78,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let request = URLRequest.makeHTTPBinRequest()
 
         // When
-        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        let encoded = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let expected = """
@@ -93,7 +93,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let request = URLRequest.makeHTTPBinRequest()
 
         // When
-        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        let encoded = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let expected = """
@@ -130,7 +130,7 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         let request = URLRequest.makeHTTPBinRequest(method: .post)
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "application/x-www-form-urlencoded; charset=utf-8")
@@ -144,7 +144,7 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         request.headers.update(.contentType("type"))
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "type")
@@ -171,7 +171,7 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         let request = URLRequest.makeHTTPBinRequest(method: .post)
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)

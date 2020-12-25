@@ -29,7 +29,7 @@ import XCTest
 final class CachedResponseHandlerTestCase: BaseTestCase {
     // MARK: Properties
 
-    private let urlString = "https://httpbin.org/get"
+    private let urlString = "\(String.testURLString)/get"
 
     // MARK: Tests - Per Request
 
@@ -46,7 +46,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -66,7 +66,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -93,7 +93,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -116,7 +116,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -136,7 +136,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -163,7 +163,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -186,7 +186,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
