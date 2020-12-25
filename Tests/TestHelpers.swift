@@ -64,7 +64,7 @@ struct Endpoint {
         func port(for scheme: Scheme) -> Int {
             switch self {
             case .localhost: return 8080
-            case .httpBin: return (scheme == .https) ? 443 : 80
+            case .httpBin: return scheme.port
             }
         }
     }
@@ -72,9 +72,15 @@ struct Endpoint {
     enum Path {
         case basicAuth(username: String, password: String)
         case bytes(count: Int)
+        case chunked(count: Int)
         case delay(interval: Int)
+        case digestAuth(qop: String = "auth", username: String, password: String)
         case hiddenBasicAuth(username: String, password: String)
         case method(HTTPMethod)
+        case payloads(count: Int)
+        case status(Int)
+        case stream(count: Int)
+        case xml
         
         var string: String {
             switch self {
@@ -82,12 +88,24 @@ struct Endpoint {
                 return "/basic-auth/\(username)/\(password)"
             case .bytes(let count):
                 return "/bytes/\(count)"
+            case let .chunked(count):
+                return "/chunked/\(count)"
             case .delay(let interval):
                 return "/delay/\(interval)"
+            case let .digestAuth(qop, username, password):
+                return "/digest-auth/\(qop)/\(username)/\(password)"
             case .hiddenBasicAuth(let username, let password):
                 return "/hidden-basic-auth/\(username)/\(password)"
             case .method(let method):
-                return method.rawValue.lowercased()
+                return "/\(method.rawValue.lowercased())"
+            case let .payloads(count):
+                return "/payloads/\(count)"
+            case let .status(code):
+                return "/status/\(code)"
+            case let .stream(count):
+                return "/stream/\(count)"
+            case .xml:
+                return "/xml"
             }
         }
     }
@@ -101,9 +119,17 @@ struct Endpoint {
     static func bytes(_ count: Int) -> Endpoint {
         Endpoint(path: .bytes(count: count))
     }
+    
+    static func chunked(_ count: Int) -> Endpoint {
+        Endpoint(path: .chunked(count: count))
+    }
 
     static func delay(_ interval: Int) -> Endpoint {
         Endpoint(path: .delay(interval: interval))
+    }
+    
+    static func digestAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
+        Endpoint(path: .digestAuth(username: user, password: password))
     }
     
     static func hiddenBasicAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
@@ -112,6 +138,22 @@ struct Endpoint {
     
     static func method(_ method: HTTPMethod) -> Endpoint {
         Endpoint(path: .method(method), method: method)
+    }
+    
+    static func payloads(_ count: Int) -> Endpoint {
+        Endpoint(path: .payloads(count: count))
+    }
+    
+    static func status(_ code: Int) -> Endpoint {
+        Endpoint(path: .status(code))
+    }
+    
+    static func stream(_ count: Int) -> Endpoint {
+        Endpoint(path: .stream(count: count))
+    }
+    
+    static var xml: Endpoint {
+        Endpoint(path: .xml, headers: [.contentType("application/xml")])
     }
 
     var scheme = Scheme.http
@@ -160,22 +202,37 @@ extension Endpoint: URLConvertible {
 }
 
 extension Session {
-    func request(endpoint: Endpoint, interceptor: RequestInterceptor? = nil) -> DataRequest {
-        request(endpoint, interceptor: interceptor)
+    func request<Parameters: Encodable>(_ endpoint: Endpoint,
+                                        parameters: Parameters? = nil,
+                                        encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                        headers: HTTPHeaders? = nil,
+                                        interceptor: RequestInterceptor? = nil,
+                                        requestModifier: RequestModifier? = nil) -> DataRequest {
+        request(endpoint as URLConvertible,
+                method: endpoint.method,
+                parameters: parameters,
+                encoder: encoder,
+                headers: headers,
+                interceptor: interceptor,
+                requestModifier: requestModifier)
     }
     
-    func streamRequest(endpoint: Endpoint,
+    func request(_ endpoint: Endpoint, interceptor: RequestInterceptor? = nil) -> DataRequest {
+        request(endpoint as URLRequestConvertible, interceptor: interceptor)
+    }
+    
+    func streamRequest(_ endpoint: Endpoint,
                        automaticallyCancelOnStreamError: Bool = false,
                        interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
-        streamRequest(endpoint,
+        streamRequest(endpoint as URLRequestConvertible,
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                       interceptor: interceptor)
     }
     
-    func download(endpoint: Endpoint,
+    func download(_ endpoint: Endpoint,
                   interceptor: RequestInterceptor? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint, interceptor: interceptor, to: destination)
+        download(endpoint as URLRequestConvertible, interceptor: interceptor, to: destination)
     }
 }
 

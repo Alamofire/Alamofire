@@ -37,7 +37,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/\(expectedSize)")).responseStream { stream in
+        AF.streamRequest(.bytes(expectedSize)).responseStream { stream in
             switch stream.event {
             case let .stream(result):
                 streamOnMain = Thread.isMainThread
@@ -75,7 +75,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "chunked/\(expectedSize)")).responseStream { stream in
+        AF.streamRequest(.chunked(expectedSize)).responseStream { stream in
             switch stream.event {
             case let .stream(result):
                 streamOnMain = Thread.isMainThread
@@ -115,7 +115,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "payloads/\(expectedSize)"))
+        AF.streamRequest(.payloads(expectedSize))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -156,7 +156,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "/bytes/\(expectedSize)")).responseStream { stream in
+        AF.streamRequest(.bytes(expectedSize)).responseStream { stream in
             switch stream.event {
             case let .stream(result):
                 streamOnMain = Thread.isMainThread
@@ -198,7 +198,7 @@ final class DataStreamTests: BaseTestCase {
         let secondCompletion = expectation(description: "second stream should complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/\(expectedSize)"))
+        AF.streamRequest(.bytes(expectedSize))
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -261,7 +261,7 @@ final class DataStreamTests: BaseTestCase {
         let secondCompletion = expectation(description: "second stream should complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        AF.streamRequest(.stream(1))
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -315,8 +315,7 @@ final class DataStreamTests: BaseTestCase {
         let expect = expectation(description: "stream complete")
 
         // When
-        let stream = AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "xml",
-                                                                    headers: [.contentType("application/xml")]))
+        let stream = AF.streamRequest(.xml)
             .responseStream { stream in
                 switch stream.event {
                 case .complete:
@@ -344,7 +343,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        session.streamRequest(.stream(1))
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
@@ -371,7 +370,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/50"), automaticallyCancelOnStreamError: true)
+        AF.streamRequest(.bytes(50), automaticallyCancelOnStreamError: true)
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .complete(completion):
@@ -400,7 +399,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/50"))
+        AF.streamRequest(.bytes(50))
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
@@ -429,7 +428,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "/bytes/1")).responseStream { stream in
+        session.streamRequest(.bytes(1)).responseStream { stream in
             switch stream.event {
             case .stream:
                 didReceive.fulfill()
@@ -459,7 +458,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "/bytes/1")).responseStream { stream in
+        session.streamRequest(.bytes(1)).responseStream { stream in
             switch stream.event {
             case .stream:
                 didReceive.fulfill()
@@ -494,7 +493,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        AF.streamRequest(.stream(1))
             .responseStreamString { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -531,7 +530,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        AF.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -572,7 +571,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        AF.streamRequest(.stream(1))
             .responseStream(using: serializer) { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -607,13 +606,14 @@ final class DataStreamSerializationTests: BaseTestCase {
 final class DataStreamIntegrationTests: BaseTestCase {
     func testThatDataStreamCanFailValidation() {
         // Given
-        let request = URLRequest.makeHTTPBinRequest(path: "status/401")
         var dataSeen = false
         var error: AFError?
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(request).validate().responseStream { stream in
+        AF.streamRequest(.status(401))
+            .validate()
+            .responseStream { stream in
             switch stream.event {
             case .stream:
                 dataSeen = true
@@ -659,7 +659,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "status/401"))
+        session.streamRequest(.status(401))
             .validate()
             .responseStream { stream in
                 switch stream.event {
@@ -702,7 +702,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "status/301"))
+        AF.streamRequest(.status(301))
             .redirect(using: redirector)
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
@@ -748,7 +748,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        AF.streamRequest(.stream(1))
             .cacheResponse(using: cacher)
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
@@ -804,7 +804,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let secondDidComplete = expectation(description: "second stream complete")
 
         // When
-        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        session.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -881,7 +881,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let secondDidComplete = expectation(description: "second stream complete")
 
         // When
-        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        session.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -935,6 +935,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
 
     func testThatDataStreamCanAuthenticate() {
         // Given
+        let user = "user", password = "password"
         var response: HTTPURLResponse?
         var streamOnMain = false
         var completeOnMain = false
@@ -942,8 +943,8 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "basic-auth/username/password"))
-            .authenticate(username: "username", password: "password")
+        AF.streamRequest(.basicAuth(forUser: user, password: password))
+            .authenticate(username: user, password: password)
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
@@ -1020,7 +1021,7 @@ final class DataStreamLifetimeEvents: BaseTestCase {
         parseMonitor.called = { didParse.fulfill() }
 
         // When
-        let request = session.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+        let request = session.streamRequest(.stream(1))
             .validate()
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {

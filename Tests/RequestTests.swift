@@ -103,7 +103,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(Endpoint.method(.post), method: .post, parameters: parameters)
+        AF.request(.method(.post), parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()

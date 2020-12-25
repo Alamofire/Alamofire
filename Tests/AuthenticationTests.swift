@@ -26,35 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-class AuthenticationTestCase: BaseTestCase {
-    let user = "user"
-    let password = "password"
-    var urlString = ""
-
-    var manager: Session!
-
-    override func setUp() {
-        super.setUp()
-
-        manager = Session(configuration: .default)
-
-        // Clear out credentials
-        let credentialStorage = URLCredentialStorage.shared
-
-        for (protectionSpace, credentials) in credentialStorage.allCredentials {
-            for (_, credential) in credentials {
-                credentialStorage.remove(credential, for: protectionSpace)
-            }
-        }
-
-        // Clear out cookies
-        let cookieStorage = HTTPCookieStorage.shared
-        cookieStorage.cookies?.forEach { cookieStorage.deleteCookie($0) }
-    }
-}
-
-// MARK: -
-
 final class BasicAuthenticationTestCase: BaseTestCase {
     func testHTTPBasicAuthenticationFailsWithInvalidCredentials() {
         // Given
@@ -121,10 +92,10 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         // When
         let credential = URLCredential(user: user, password: password, persistence: .forSession)
         URLCredentialStorage.shared.setDefaultCredential(credential,
-                                                         for: .init(host: .host,
-                                                                    port: .port,
-                                                                    protocol: .scheme,
-                                                                    realm: .host,
+                                                         for: .init(host: endpoint.host.rawValue,
+                                                                    port: endpoint.port,
+                                                                    protocol: endpoint.scheme.rawValue,
+                                                                    realm: endpoint.host.rawValue,
                                                                     authenticationMethod: NSURLAuthenticationMethodHTTPBasic))
         session.request(endpoint)
             .response { resp in
@@ -170,22 +141,17 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
 // MARK: -
 
-class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
-    let qop = "auth"
-
-    override func setUp() {
-        super.setUp()
-        urlString = "\(String.testURLString)/digest-auth/\(qop)/\(user)/\(password)"
-    }
-
+final class HTTPDigestAuthenticationTestCase: BaseTestCase {
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(urlString) 401")
+        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let endpoint = Endpoint.digestAuth()
+        let expectation = self.expectation(description: "\(endpoint.url) 401")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString)
+        session.request(endpoint)
             .authenticate(username: "invalid", password: "credentials")
             .response { resp in
                 response = resp
@@ -204,12 +170,15 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(urlString) 200")
+        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let user = "user", password = "password"
+        let endpoint = Endpoint.digestAuth(forUser: user, password: password)
+        let expectation = self.expectation(description: "\(endpoint.url) 200")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString)
+        session.request(endpoint)
             .authenticate(username: user, password: password)
             .response { resp in
                 response = resp
