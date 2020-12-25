@@ -95,7 +95,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
-    
+
     func testThatRequestWillPerformRedirectionFor307Response() {
         // Given
         let redirectURLString = URL.makeHTTPBinURL().absoluteString

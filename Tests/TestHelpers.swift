@@ -48,7 +48,7 @@ extension URL {
 struct Endpoint {
     enum Scheme: String {
         case http, https
-        
+
         var port: Int {
             switch self {
             case .http: return 80
@@ -56,11 +56,11 @@ struct Endpoint {
             }
         }
     }
-    
+
     enum Host: String {
         case localhost = "127.0.0.1"
         case httpBin = "httpbin.org"
-        
+
         func port(for scheme: Scheme) -> Int {
             switch self {
             case .localhost: return 8080
@@ -68,7 +68,7 @@ struct Endpoint {
             }
         }
     }
-    
+
     enum Path {
         case basicAuth(username: String, password: String)
         case bytes(count: Int)
@@ -81,22 +81,22 @@ struct Endpoint {
         case status(Int)
         case stream(count: Int)
         case xml
-        
+
         var string: String {
             switch self {
-            case .basicAuth(username: let username, password: let password):
+            case let .basicAuth(username: username, password: password):
                 return "/basic-auth/\(username)/\(password)"
-            case .bytes(let count):
+            case let .bytes(count):
                 return "/bytes/\(count)"
             case let .chunked(count):
                 return "/chunked/\(count)"
-            case .delay(let interval):
+            case let .delay(interval):
                 return "/delay/\(interval)"
             case let .digestAuth(qop, username, password):
                 return "/digest-auth/\(qop)/\(username)/\(password)"
-            case .hiddenBasicAuth(let username, let password):
+            case let .hiddenBasicAuth(username, password):
                 return "/hidden-basic-auth/\(username)/\(password)"
-            case .method(let method):
+            case let .method(method):
                 return "/\(method.rawValue.lowercased())"
             case let .payloads(count):
                 return "/payloads/\(count)"
@@ -109,17 +109,17 @@ struct Endpoint {
             }
         }
     }
-    
+
     static var get: Endpoint { method(.get) }
 
     static func basicAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
         Endpoint(path: .basicAuth(username: user, password: password))
     }
-    
+
     static func bytes(_ count: Int) -> Endpoint {
         Endpoint(path: .bytes(count: count))
     }
-    
+
     static func chunked(_ count: Int) -> Endpoint {
         Endpoint(path: .chunked(count: count))
     }
@@ -127,31 +127,31 @@ struct Endpoint {
     static func delay(_ interval: Int) -> Endpoint {
         Endpoint(path: .delay(interval: interval))
     }
-    
+
     static func digestAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
         Endpoint(path: .digestAuth(username: user, password: password))
     }
-    
+
     static func hiddenBasicAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
         Endpoint(path: .hiddenBasicAuth(username: user, password: password), headers: [.authorization(username: user, password: password)])
     }
-    
+
     static func method(_ method: HTTPMethod) -> Endpoint {
         Endpoint(path: .method(method), method: method)
     }
-    
+
     static func payloads(_ count: Int) -> Endpoint {
         Endpoint(path: .payloads(count: count))
     }
-    
+
     static func status(_ code: Int) -> Endpoint {
         Endpoint(path: .status(code))
     }
-    
+
     static func stream(_ count: Int) -> Endpoint {
         Endpoint(path: .stream(count: count))
     }
-    
+
     static var xml: Endpoint {
         Endpoint(path: .xml, headers: [.contentType("application/xml")])
     }
@@ -164,11 +164,11 @@ struct Endpoint {
     var headers: HTTPHeaders = .init()
     var timeout: TimeInterval = 60
     var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
-    
+
     func modifying<T>(_ keyPath: WritableKeyPath<Endpoint, T>, to value: T) -> Endpoint {
         var copy = self
         copy[keyPath: keyPath] = value
-        
+
         return copy
     }
 }
@@ -182,7 +182,7 @@ extension Endpoint: URLRequestConvertible {
         request.headers = headers
         request.timeoutInterval = timeout
         request.cachePolicy = cachePolicy
-        
+
         return request
     }
 }
@@ -196,7 +196,7 @@ extension Endpoint: URLConvertible {
         components.port = port
         components.host = host.rawValue
         components.path = path.string
-        
+
         return try components.asURL()
     }
 }
@@ -216,11 +216,11 @@ extension Session {
                 interceptor: interceptor,
                 requestModifier: requestModifier)
     }
-    
+
     func request(_ endpoint: Endpoint, interceptor: RequestInterceptor? = nil) -> DataRequest {
         request(endpoint as URLRequestConvertible, interceptor: interceptor)
     }
-    
+
     func streamRequest(_ endpoint: Endpoint,
                        automaticallyCancelOnStreamError: Bool = false,
                        interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
@@ -228,7 +228,7 @@ extension Session {
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                       interceptor: interceptor)
     }
-    
+
     func download(_ endpoint: Endpoint,
                   interceptor: RequestInterceptor? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {

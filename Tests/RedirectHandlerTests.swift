@@ -27,7 +27,7 @@ import Foundation
 import XCTest
 
 // Disabled due to HTTPBin issue: https://github.com/postmanlabs/httpbin/issues/617
-//final class RedirectHandlerTestCase: BaseTestCase {
+// final class RedirectHandlerTestCase: BaseTestCase {
 //    // MARK: - Properties
 //
 //    private var redirectURLString: String { URL.makeHTTPBinURL().absoluteString }
@@ -221,4 +221,4 @@ import XCTest
 //        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
 //        XCTAssertEqual(response?.response?.statusCode, 200)
 //    }
-//}
+// }

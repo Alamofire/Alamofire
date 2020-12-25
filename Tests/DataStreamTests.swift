@@ -614,14 +614,14 @@ final class DataStreamIntegrationTests: BaseTestCase {
         AF.streamRequest(.status(401))
             .validate()
             .responseStream { stream in
-            switch stream.event {
-            case .stream:
-                dataSeen = true
-            case let .complete(completion):
-                error = completion.error
-                didComplete.fulfill()
+                switch stream.event {
+                case .stream:
+                    dataSeen = true
+                case let .complete(completion):
+                    error = completion.error
+                    didComplete.fulfill()
+                }
             }
-        }
 
         waitForExpectations(timeout: timeout)
 

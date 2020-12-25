@@ -40,11 +40,11 @@ class BaseTestCase: XCTestCase {
         clearCredentials()
         clearCookies()
     }
-    
+
     func clearCookies(for storage: HTTPCookieStorage = .shared) {
         storage.cookies?.forEach { storage.deleteCookie($0) }
     }
-    
+
     func clearCredentials(for storage: URLCredentialStorage = .shared) {
         for (protectionSpace, credentials) in storage.allCredentials {
             for (_, credential) in credentials {
@@ -52,7 +52,7 @@ class BaseTestCase: XCTestCase {
             }
         }
     }
-    
+
     func url(forResource fileName: String, withExtension ext: String) -> URL {
         let bundle = Bundle(for: BaseTestCase.self)
         return bundle.url(forResource: fileName, withExtension: ext)!
