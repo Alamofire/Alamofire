@@ -246,7 +246,10 @@ extension Endpoint: URLConvertible {
         components.port = port
         components.host = host.rawValue
         components.path = path.string
-        components.queryItems = queryItems
+
+        if !queryItems.isEmpty {
+            components.queryItems = queryItems
+        }
 
         return try components.asURL()
     }

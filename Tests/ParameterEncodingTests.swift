@@ -649,7 +649,7 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
 // MARK: -
 
-class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
+final class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
     let encoding = JSONEncoding.default
