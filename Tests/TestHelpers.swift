@@ -70,6 +70,7 @@ struct Endpoint {
         case basicAuth(username: String, password: String)
         case bytes(count: Int)
         case chunked(count: Int)
+        case compression(Compression)
         case delay(interval: Int)
         case digestAuth(qop: String = "auth", username: String, password: String)
         case hiddenBasicAuth(username: String, password: String)
@@ -93,6 +94,8 @@ struct Endpoint {
                 return "/bytes/\(count)"
             case let .chunked(count):
                 return "/chunked/\(count)"
+            case let .compression(compression):
+                return "/\(compression.rawValue)"
             case let .delay(interval):
                 return "/delay/\(interval)"
             case let .digestAuth(qop, username, password):
@@ -128,6 +131,10 @@ struct Endpoint {
     enum Image: String {
         case jpeg
     }
+    
+    enum Compression: String {
+        case brotli, gzip, deflate
+    }
 
     static var get: Endpoint { method(.get) }
 
@@ -141,6 +148,10 @@ struct Endpoint {
 
     static func chunked(_ count: Int) -> Endpoint {
         Endpoint(path: .chunked(count: count))
+    }
+    
+    static func compression(_ compression: Compression) -> Endpoint {
+        Endpoint(path: .compression(compression))
     }
 
     static var `default`: Endpoint { .get }
@@ -375,10 +386,10 @@ extension Data {
 struct TestResponse: Decodable {
     let headers: [String: String]
     let origin: String
-    let url: String
+    let url: String?
     let data: String?
     let form: [String: String]?
-    let args: [String: String]
+    let args: [String: String]?
 }
 
 struct TestParameters: Encodable {

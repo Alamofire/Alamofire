@@ -307,28 +307,25 @@ final class SessionTestCase: BaseTestCase {
 
     func testDefaultAcceptEncodingSupportsAppropriateEncodingsOnAppropriateSystems() {
         // Given
-        let brotliURL = URL(string: "\(String.testURLString)/brotli")!
-        let gzipURL = URL(string: "\(String.testURLString)/gzip")!
-        let deflateURL = URL(string: "\(String.testURLString)/deflate")!
         let brotliExpectation = expectation(description: "brotli request should complete")
         let gzipExpectation = expectation(description: "gzip request should complete")
         let deflateExpectation = expectation(description: "deflate request should complete")
-        var brotliResponse: DataResponse<Any, AFError>?
-        var gzipResponse: DataResponse<Any, AFError>?
-        var deflateResponse: DataResponse<Any, AFError>?
+        var brotliResponse: DataResponse<TestResponse, AFError>?
+        var gzipResponse: DataResponse<TestResponse, AFError>?
+        var deflateResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(brotliURL).responseJSON { response in
+        AF.request(.compression(.brotli)).responseDecodable(of: TestResponse.self) { response in
             brotliResponse = response
             brotliExpectation.fulfill()
         }
 
-        AF.request(gzipURL).responseJSON { response in
+        AF.request(.compression(.gzip)).responseDecodable(of: TestResponse.self) { response in
             gzipResponse = response
             gzipExpectation.fulfill()
         }
 
-        AF.request(deflateURL).responseJSON { response in
+        AF.request(.compression(.deflate)).responseDecodable(of: TestResponse.self) { response in
             deflateResponse = response
             deflateExpectation.fulfill()
         }
