@@ -80,7 +80,7 @@ final class RetryResultTestCase: BaseTestCase {
 final class AdapterTestCase: BaseTestCase {
     func testThatAdapterCallsAdaptHandler() {
         // Given
-        let urlRequest = URLRequest.makeHTTPBinRequest()
+        let urlRequest = Endpoint().urlRequest
         let session = Session()
         var adapted = false
 
@@ -120,7 +120,7 @@ final class AdapterTestCase: BaseTestCase {
 
     func testThatAdapterCanBeImplementedAsynchronously() {
         // Given
-        let urlRequest = URLRequest.makeHTTPBinRequest()
+        let urlRequest = Endpoint().urlRequest
         let session = Session()
         var adapted = false
 
@@ -176,7 +176,7 @@ final class RetrierTestCase: BaseTestCase {
 
     func testThatRetrierCallsRequestAdapterDefaultImplementationInProtocolExtension() {
         // Given
-        let urlRequest = URLRequest.makeHTTPBinRequest()
+        let urlRequest = Endpoint().urlRequest
         let session = Session()
 
         let retrier = Retrier { _, _, _, completion in
@@ -282,7 +282,7 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanAdaptRequestWithNoAdapters() {
         // Given
-        let urlRequest = URLRequest.makeHTTPBinRequest()
+        let urlRequest = Endpoint().urlRequest
         let session = Session()
         let interceptor = Interceptor()
 
@@ -298,7 +298,7 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanAdaptRequestWithOneAdapter() {
         // Given
-        let urlRequest = URLRequest.makeHTTPBinRequest()
+        let urlRequest = Endpoint().urlRequest
         let session = Session()
 
         let adapter = Adapter { _, _, completion in completion(.failure(MockError())) }
@@ -316,7 +316,7 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanAdaptRequestWithMultipleAdapters() {
         // Given
-        let urlRequest = URLRequest.makeHTTPBinRequest()
+        let urlRequest = Endpoint().urlRequest
         let session = Session()
 
         let adapter1 = Adapter { urlRequest, _, completion in completion(.success(urlRequest)) }
@@ -335,7 +335,7 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanAdaptRequestAsynchronously() {
         // Given
-        let urlRequest = URLRequest.makeHTTPBinRequest()
+        let urlRequest = Endpoint().urlRequest
         let session = Session()
 
         let adapter = Adapter { _, _, completion in
@@ -520,7 +520,7 @@ final class InterceptorRequestTests: BaseTestCase {
     func testThatRetryPolicyRetriesRequestTimeout() {
         // Given
         let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
-        let urlRequest = URLRequest.makeHTTPBinRequest(path: "delay/1", timeout: 0.01)
+        let urlRequest = Endpoint.delay(1).modifying(\.timeout, to: 0.01)
         let expect = expectation(description: "request completed")
 
         // When
@@ -579,10 +579,11 @@ final class SingleRetrier: RequestInterceptor {
 
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         if hasRetried {
-            var request = URLRequest.makeHTTPBinRequest(path: "\(urlRequest.httpMethod?.lowercased() ?? "get")")
-            request.method = urlRequest.method
-            request.headers = urlRequest.headers
-            completion(.success(request))
+            let method = urlRequest.method ?? .get
+            let endpoint = Endpoint(path: .method(method),
+                                    method: method,
+                                    headers: urlRequest.headers)
+            completion(.success(endpoint.urlRequest))
         } else {
             completion(.success(urlRequest))
         }
