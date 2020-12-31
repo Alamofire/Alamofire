@@ -1182,7 +1182,7 @@ final class SessionTestCase: BaseTestCase {
         var json2Response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "image/jpeg"), interceptor: handler)
+        let request = session.request(.image(.jpeg), interceptor: handler)
             .validate()
             .responseJSON { response in
                 json1Response = response
@@ -1235,7 +1235,7 @@ final class SessionTestCase: BaseTestCase {
         var json2Response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "image/jpeg"), interceptor: handler)
+        let request = session.request(.image(.jpeg), interceptor: handler)
             .validate()
             .responseJSON { response in
                 json1Response = response
@@ -1290,7 +1290,7 @@ final class SessionTestCase: BaseTestCase {
         var json2Response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "image/jpeg"), interceptor: handler)
+        let request = session.request(.image(.jpeg), interceptor: handler)
             .validate()
             .responseJSON { response in
                 json1Response = response
@@ -1345,7 +1345,7 @@ final class SessionTestCase: BaseTestCase {
         var json2Response: DownloadResponse<Any, AFError>?
 
         // When
-        let request = session.download(URLRequest.makeHTTPBinRequest(path: "image/jpeg"), interceptor: handler)
+        let request = session.download(.image(.jpeg), interceptor: handler)
             .validate()
             .responseJSON { response in
                 json1Response = response
