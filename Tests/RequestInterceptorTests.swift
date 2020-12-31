@@ -101,9 +101,8 @@ final class AdapterTestCase: BaseTestCase {
 
     func testThatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         let adapter = Adapter { request, _, completion in
             completion(.success(request))
@@ -154,9 +153,8 @@ final class AdapterTestCase: BaseTestCase {
 final class RetrierTestCase: BaseTestCase {
     func testThatRetrierCallsRetryHandler() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
         var retried = false
 
         let retrier = Retrier { _, _, _, completion in
@@ -194,9 +192,8 @@ final class RetrierTestCase: BaseTestCase {
 
     func testThatRetrierCanBeImplementedAsynchronously() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
         var retried = false
 
         let retrier = Retrier { _, _, _, completion in
@@ -364,9 +361,8 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanRetryRequestWithNoRetriers() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         let interceptor = Interceptor()
 
@@ -381,9 +377,8 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanRetryRequestWithOneRetrier() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         let retrier = Retrier { _, _, _, completion in completion(.retry) }
         let interceptor = Interceptor(retriers: [retrier])
@@ -399,9 +394,8 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanRetryRequestWithMultipleRetriers() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         let retrier1 = Retrier { _, _, _, completion in completion(.doNotRetry) }
         let retrier2 = Retrier { _, _, _, completion in completion(.retry) }
@@ -418,9 +412,8 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorCanRetryRequestAsynchronously() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         let retrier = Retrier { _, _, _, completion in
             DispatchQueue.main.async {
@@ -447,9 +440,8 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorStopsIteratingThroughPendingRetriersWithRetryResult() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         var retrier2Called = false
 
@@ -469,9 +461,8 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorStopsIteratingThroughPendingRetriersWithRetryWithDelayResult() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         var retrier2Called = false
 
@@ -492,9 +483,8 @@ final class InterceptorTests: BaseTestCase {
 
     func testThatInterceptorStopsIteratingThroughPendingRetriersWithDoNotRetryResult() {
         // Given
-        let url = URL.makeHTTPBinURL()
         let session = Session(startRequestsImmediately: false)
-        let request = session.request(url)
+        let request = session.request(.default)
 
         var retrier2Called = false
 
