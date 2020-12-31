@@ -352,7 +352,7 @@ final class SessionTestCase: BaseTestCase {
         // Given
         let session = Session(startRequestsImmediately: false)
 
-        let url = URL.makeHTTPBinURL()
+        let url = Endpoint().url
         let urlRequest = URLRequest(url: url)
 
         let expectation = self.expectation(description: "\(url)")
@@ -378,7 +378,7 @@ final class SessionTestCase: BaseTestCase {
         // Given
         let session = Session(startRequestsImmediately: false)
 
-        let url = URL.makeHTTPBinURL()
+        let url = Endpoint().url
         let urlRequest = URLRequest(url: url)
 
         let expectation = self.expectation(description: "\(url)")
@@ -406,7 +406,7 @@ final class SessionTestCase: BaseTestCase {
         // Given
         let session = Session(startRequestsImmediately: false)
 
-        let url = URL.makeHTTPBinURL()
+        let url = Endpoint().url
         let urlRequest = URLRequest(url: url)
 
         let expectation = self.expectation(description: "\(url)")
@@ -435,7 +435,7 @@ final class SessionTestCase: BaseTestCase {
         // Given
         let session = Session(startRequestsImmediately: false)
 
-        let url = URL.makeHTTPBinURL()
+        let url = Endpoint().url
         let urlRequest = URLRequest(url: url)
 
         let expectation = self.expectation(description: "\(url)")
@@ -1643,7 +1643,7 @@ final class SessionMassActionTestCase: BaseTestCase {
             func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
                 if hasRetried {
                     var request = urlRequest
-                    request.url = URL.makeHTTPBinURL(path: "delay/1")
+                    request.url = Endpoint.delay(1).url
                     completion(.success(request))
                 } else {
                     completion(.success(urlRequest))
