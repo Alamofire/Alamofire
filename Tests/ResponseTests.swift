@@ -29,13 +29,12 @@ import XCTest
 final class ResponseTestCase: BaseTestCase {
     func testThatResponseReturnsSuccessResultWithValidData() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).response { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -81,13 +80,12 @@ final class ResponseTestCase: BaseTestCase {
 final class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsSuccessResultWithValidData() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<Data, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).responseData { resp in
             response = resp
             expectation.fulfill()
         }
@@ -134,13 +132,12 @@ final class ResponseDataTestCase: BaseTestCase {
 final class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsSuccessResultWithValidString() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<String, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).responseString { resp in
             response = resp
             expectation.fulfill()
         }
@@ -187,13 +184,12 @@ final class ResponseStringTestCase: BaseTestCase {
 final class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -236,13 +232,12 @@ final class ResponseJSONTestCase: BaseTestCase {
 
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -268,13 +263,12 @@ final class ResponseJSONTestCase: BaseTestCase {
 
     func testThatResponseJSONReturnsSuccessResultForPOSTRequest() {
         // Given
-        let urlString = "\(String.testURLString)/post"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(urlString, method: .post, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(.method(.post), parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -302,13 +296,13 @@ final class ResponseJSONTestCase: BaseTestCase {
 final class ResponseJSONDecodableTestCase: BaseTestCase {
     func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(urlString, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
+        AF.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
             response = resp
             expectation.fulfill()
         }
@@ -320,19 +314,19 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.success?.url, "\(String.testURLString)/get")
+        XCTAssertEqual(response?.result.success?.url, url.absoluteString)
         XCTAssertNotNil(response?.metrics)
     }
 
     func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(urlString, parameters: [:]).responseDecodable(of: TestResponse.self) {
+        AF.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) {
             response = $0
             expectation.fulfill()
         }
@@ -344,7 +338,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.success?.url, "\(String.testURLString)/get")
+        XCTAssertEqual(response?.result.success?.url, url.absoluteString)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -379,13 +373,12 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
 final class ResponseMapTestCase: BaseTestCase {
     func testThatMapTransformsSuccessValue() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<String, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.map { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
                 ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
@@ -436,13 +429,12 @@ final class ResponseMapTestCase: BaseTestCase {
 final class ResponseTryMapTestCase: BaseTestCase {
     func testThatTryMapTransformsSuccessValue() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<String, Error>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.tryMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the tryMap function
                 ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
@@ -466,13 +458,12 @@ final class ResponseTryMapTestCase: BaseTestCase {
         // Given
         struct TransformError: Error {}
 
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<String, Error>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        AF.request(.default, parameters: ["foo": "bar"]).responseData { resp in
             response = resp.tryMap { _ in
                 throw TransformError()
             }
@@ -568,13 +559,12 @@ final class ResponseMapErrorTestCase: BaseTestCase {
 
     func testThatMapErrorPreservesSuccessValue() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<Data, TestError>?
 
         // When
-        AF.request(urlString).responseData { resp in
+        AF.request(.default).responseData { resp in
             response = resp.mapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -595,13 +585,12 @@ final class ResponseMapErrorTestCase: BaseTestCase {
 final class ResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
-        let urlString = "\(String.testURLString)/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: DataResponse<Data, Error>?
 
         // When
-        AF.request(urlString).responseData { resp in
+        AF.request(.default).responseData { resp in
             response = resp.tryMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
