@@ -1475,7 +1475,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatGETRequestsWithBodyDataAreConsideredInvalid() {
         // Given
         let session = Session()
-        var request = Endpoint.default.urlRequest
+        var request = Endpoint().urlRequest
         request.httpBody = Data("invalid".utf8)
         let expect = expectation(description: "request should complete")
         var response: DataResponse<TestResponse, AFError>?

@@ -29,7 +29,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatDataIsProperlyEncodedAndProperContentTypeIsSet() throws {
         // Given
         let encoder = JSONParameterEncoder()
-        let request = Endpoint.default.urlRequest
+        let request = Endpoint().urlRequest
 
         // When
         let newRequest = try encoder.encode(TestParameters.default, into: request)
@@ -42,7 +42,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatDataIsProperlyEncodedButContentTypeIsNotSetIfRequestAlreadyHasAContentType() throws {
         // Given
         let encoder = JSONParameterEncoder()
-        var request = Endpoint.default.urlRequest
+        var request = Endpoint().urlRequest
         request.headers.update(.contentType("type"))
 
         // When
@@ -58,7 +58,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .prettyPrinted
         let encoder = JSONParameterEncoder(encoder: jsonEncoder)
-        let request = Endpoint.default.urlRequest
+        let request = Endpoint().urlRequest
 
         // When
         let newRequest = try encoder.encode(TestParameters.default, into: request)
@@ -75,7 +75,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatJSONEncoderDefaultWorks() throws {
         // Given
         let encoder = JSONParameterEncoder.default
-        let request = Endpoint.default.urlRequest
+        let request = Endpoint().urlRequest
 
         // When
         let encoded = try encoder.encode(TestParameters.default, into: request)
@@ -90,7 +90,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatJSONEncoderPrettyPrintedPrintsPretty() throws {
         // Given
         let encoder = JSONParameterEncoder.prettyPrinted
-        let request = Endpoint.default.urlRequest
+        let request = Endpoint().urlRequest
 
         // When
         let encoded = try encoder.encode(TestParameters.default, into: request)
@@ -110,7 +110,7 @@ final class SortedKeysJSONParameterEncoderTests: BaseTestCase {
         guard #available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *) else { return }
         // Given
         let encoder = JSONParameterEncoder.sortedKeys
-        let request = Endpoint.default.urlRequest
+        let request = Endpoint().urlRequest
 
         // When
         let encoded = try encoder.encode(["z": "z", "a": "a", "p": "p"], into: request)
