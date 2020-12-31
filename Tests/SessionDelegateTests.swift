@@ -1,7 +1,7 @@
 //
 //  SessionDelegateTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -26,21 +26,12 @@
 import Foundation
 import XCTest
 
-class SessionDelegateTestCase: BaseTestCase {
-    var manager: Session!
-
-    // MARK: - Setup and Teardown
-
-    override func setUp() {
-        super.setUp()
-        manager = Session(configuration: .ephemeral)
-    }
-
+final class SessionDelegateTestCase: BaseTestCase {
     // MARK: - Tests - Redirects
 
-    // Disabled due to HTTPBin issue: https://github.com/postmanlabs/httpbin/issues/617
-    func _testThatRequestWillPerformHTTPRedirectionByDefault() {
+    func testThatRequestWillPerformHTTPRedirectionByDefault() {
         // Given
+        let session = Session(configuration: .ephemeral)
         let redirectURLString = URL.makeHTTPBinURL().absoluteString
         let urlString = "\(String.testURLString)/redirect-to?url=\(redirectURLString)"
 
@@ -49,7 +40,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString)
+        session.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -67,9 +58,9 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
-    // Disabled due to HTTPBin issue: https://github.com/postmanlabs/httpbin/issues/617
-    func _testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
+    func testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
         // Given
+        let session = Session(configuration: .ephemeral)
         let redirectURLString = "\(String.testURLString)/get"
         let urlString = "\(String.testURLString)/redirect/5"
 
@@ -78,7 +69,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString)
+        session.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -98,6 +89,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatRequestWillPerformRedirectionFor307Response() {
         // Given
+        let session = Session(configuration: .ephemeral)
         let redirectURLString = URL.makeHTTPBinURL().absoluteString
         let urlString = "\(String.testURLString)/redirect-to?url=\(redirectURLString)&statusCode=307"
 
@@ -106,7 +98,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlString)
+        session.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -137,7 +129,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let expect = expectation(description: "request should complete")
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).response { response in
+        let request = session.request(.default).response { response in
             requestResponse = response
             expect.fulfill()
         }
@@ -191,7 +183,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let expect = expectation(description: "request should complete")
 
         // When
-        let request = session.download(URLRequest.makeHTTPBinRequest()).response { response in
+        let request = session.download(.default).response { response in
             requestResponse = response
             expect.fulfill()
         }

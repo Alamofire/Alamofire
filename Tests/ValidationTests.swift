@@ -549,8 +549,7 @@ final class MultipleValidationTestCase: BaseTestCase {
 final class AutomaticValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
-        var urlRequest = URLRequest.makeHTTPBinRequest(path: "ip")
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/json")])
 
         let expectation1 = expectation(description: "request should succeed and return ip")
         let expectation2 = expectation(description: "download should succeed and return ip")
@@ -578,7 +577,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
-        let request = URLRequest.makeHTTPBinRequest(path: "status/404")
+        let request = Endpoint.status(404)
 
         let expectation1 = expectation(description: "request should return 404 status code")
         let expectation2 = expectation(description: "download should return 404 status code")
@@ -615,8 +614,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
-        var urlRequest = URLRequest.makeHTTPBinRequest(path: "ip")
-        urlRequest.setValue("application/*", forHTTPHeaderField: "Accept")
+        let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/*")])
 
         let expectation1 = expectation(description: "request should succeed and return ip")
         let expectation2 = expectation(description: "download should succeed and return ip")
@@ -644,10 +642,10 @@ final class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
         // Given
-        var urlRequest = URLRequest.makeHTTPBinRequest(path: "xml")
+        var urlRequest = Endpoint.xml.urlRequest
 
         let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
-        urlRequest.setValue(headerValue, forHTTPHeaderField: "Accept")
+        urlRequest.headers["Accept"] = headerValue
 
         let expectation1 = expectation(description: "request should succeed and return xml")
         let expectation2 = expectation(description: "request should succeed and return xml")
@@ -675,8 +673,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
-        var urlRequest = URLRequest.makeHTTPBinRequest(path: "xml")
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        let urlRequest = Endpoint.xml.modifying(\.headers, to: [.accept("application/json")])
 
         let expectation1 = expectation(description: "request should succeed and return xml")
         let expectation2 = expectation(description: "download should succeed and return xml")

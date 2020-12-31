@@ -638,7 +638,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
 
             func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
                 if hasRetried {
-                    completion(.success(URLRequest.makeHTTPBinRequest(path: "bytes/1000")))
+                    completion(.success(Endpoint.bytes(1000).urlRequest))
                 } else {
                     completion(.success(urlRequest))
                 }
@@ -696,7 +696,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didRedirect = expectation(description: "stream redirected")
         let redirector = Redirector(behavior: .modify { _, _, _ in
             didRedirect.fulfill()
-            return URLRequest.makeHTTPBinRequest(path: "stream/1")
+            return Endpoint.stream(1).urlRequest
         })
         let didReceive = expectation(description: "stream should receive")
         let didComplete = expectation(description: "stream should complete")

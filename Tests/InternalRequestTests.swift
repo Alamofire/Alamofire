@@ -33,10 +33,11 @@ final class InternalRequestTests: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).response { resp in
+        let request = session.request(.get).response { resp in
             response = resp
             expect.fulfill()
         }
+
         for _ in 0..<100 {
             request.finish()
         }

@@ -76,6 +76,7 @@ struct Endpoint {
         case delay(interval: Int)
         case digestAuth(qop: String = "auth", username: String, password: String)
         case hiddenBasicAuth(username: String, password: String)
+        case ip
         case largeImage
         case method(HTTPMethod)
         case payloads(count: Int)
@@ -97,6 +98,8 @@ struct Endpoint {
                 return "/digest-auth/\(qop)/\(username)/\(password)"
             case let .hiddenBasicAuth(username, password):
                 return "/hidden-basic-auth/\(username)/\(password)"
+            case .ip:
+                return "/ip"
             case .largeImage:
                 return "/image/large"
             case let .method(method):
@@ -127,6 +130,8 @@ struct Endpoint {
         Endpoint(path: .chunked(count: count))
     }
 
+    static var `default`: Endpoint { .get }
+
     static func delay(_ interval: Int) -> Endpoint {
         Endpoint(path: .delay(interval: interval))
     }
@@ -137,6 +142,10 @@ struct Endpoint {
 
     static func hiddenBasicAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
         Endpoint(path: .hiddenBasicAuth(username: user, password: password), headers: [.authorization(username: user, password: password)])
+    }
+
+    static var ip: Endpoint {
+        Endpoint(path: .ip)
     }
 
     static var largeImage: Endpoint {
@@ -209,6 +218,21 @@ extension Endpoint: URLConvertible {
 }
 
 extension Session {
+    func request(_ endpoint: Endpoint,
+                 parameters: Parameters? = nil,
+                 encoding: ParameterEncoding = URLEncoding.default,
+                 headers: HTTPHeaders? = nil,
+                 interceptor: RequestInterceptor? = nil,
+                 requestModifier: RequestModifier? = nil) -> DataRequest {
+        request(endpoint as URLConvertible,
+                method: endpoint.method,
+                parameters: parameters,
+                encoding: encoding,
+                headers: headers,
+                interceptor: interceptor,
+                requestModifier: requestModifier)
+    }
+
     func request<Parameters: Encodable>(_ endpoint: Endpoint,
                                         parameters: Parameters? = nil,
                                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
@@ -258,9 +282,24 @@ extension Session {
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         download(endpoint as URLRequestConvertible, interceptor: interceptor, to: destination)
     }
+
+    func upload(_ data: Data,
+                to endpoint: Endpoint,
+                headers: HTTPHeaders? = nil,
+                interceptor: RequestInterceptor? = nil,
+                fileManager: FileManager = .default,
+                requestModifier: RequestModifier? = nil) -> UploadRequest {
+        upload(data, to: endpoint as URLConvertible,
+               method: endpoint.method,
+               headers: headers,
+               interceptor: interceptor,
+               fileManager: fileManager,
+               requestModifier: requestModifier)
+    }
 }
 
 extension URLRequest {
+    @available(*, deprecated)
     static func makeHTTPBinRequest(path: String = "get",
                                    method: HTTPMethod = .get,
                                    headers: HTTPHeaders = .init(),
