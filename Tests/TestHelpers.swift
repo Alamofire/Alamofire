@@ -39,6 +39,7 @@ extension String {
 
 extension URL {
     static let nonexistentDomain = URL(string: .nonexistentDomain)!
+    @available(*, deprecated)
     static func makeHTTPBinURL(path: String = "get") -> URL {
         let url = URL(string: .testURLString)!
         return url.appendingPathComponent(path)
@@ -265,6 +266,19 @@ extension Session {
     }
 
     func streamRequest(_ endpoint: Endpoint,
+                       headers: HTTPHeaders? = nil,
+                       automaticallyCancelOnStreamError: Bool = false,
+                       interceptor: RequestInterceptor? = nil,
+                       requestModifier: RequestModifier? = nil) -> DataStreamRequest {
+        streamRequest(endpoint as URLConvertible,
+                      method: endpoint.method,
+                      headers: headers,
+                      automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                      interceptor: interceptor,
+                      requestModifier: requestModifier)
+    }
+
+    func streamRequest(_ endpoint: Endpoint,
                        automaticallyCancelOnStreamError: Bool = false,
                        interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
         streamRequest(endpoint as URLRequestConvertible,
@@ -290,6 +304,23 @@ extension Session {
     }
 
     func download(_ endpoint: Endpoint,
+                  parameters: Parameters? = nil,
+                  encoding: ParameterEncoding = URLEncoding.default,
+                  headers: HTTPHeaders? = nil,
+                  interceptor: RequestInterceptor? = nil,
+                  requestModifier: RequestModifier? = nil,
+                  to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        download(endpoint as URLConvertible,
+                 method: endpoint.method,
+                 parameters: parameters,
+                 encoding: encoding,
+                 headers: headers,
+                 interceptor: interceptor,
+                 requestModifier: requestModifier,
+                 to: destination)
+    }
+
+    func download(_ endpoint: Endpoint,
                   interceptor: RequestInterceptor? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         download(endpoint as URLRequestConvertible, interceptor: interceptor, to: destination)
@@ -307,23 +338,6 @@ extension Session {
                interceptor: interceptor,
                fileManager: fileManager,
                requestModifier: requestModifier)
-    }
-}
-
-extension URLRequest {
-    @available(*, deprecated)
-    static func makeHTTPBinRequest(path: String = "get",
-                                   method: HTTPMethod = .get,
-                                   headers: HTTPHeaders = .init(),
-                                   timeout: TimeInterval = 60,
-                                   cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy) -> URLRequest {
-        var request = URLRequest(url: .makeHTTPBinURL(path: path))
-        request.httpMethod = method.rawValue
-        request.headers = headers
-        request.timeoutInterval = timeout
-        request.cachePolicy = cachePolicy
-
-        return request
     }
 }
 

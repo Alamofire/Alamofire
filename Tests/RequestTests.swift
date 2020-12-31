@@ -862,7 +862,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
     func testGETRequestCURLDescriptionOnMainQueue() {
         // Given
-        let url = URL.makeHTTPBinURL()
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should complete")
         var isMainThread = false
         var components: [String]?

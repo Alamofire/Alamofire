@@ -65,7 +65,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     let session = Session(rootQueue: .main, startRequestsImmediately: false)
 
-    let url = URL.makeHTTPBinURL()
+    let url = Endpoint().url
 
     let connectionLost = URLError(.networkConnectionLost)
     let resourceUnavailable = URLError(.resourceUnavailable)

@@ -32,7 +32,7 @@ final class SessionDelegateTestCase: BaseTestCase {
     func testThatRequestWillPerformHTTPRedirectionByDefault() {
         // Given
         let session = Session(configuration: .ephemeral)
-        let redirectURLString = URL.makeHTTPBinURL().absoluteString
+        let redirectURLString = Endpoint().url.absoluteString
         let urlString = "\(String.testURLString)/redirect-to?url=\(redirectURLString)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
@@ -90,7 +90,7 @@ final class SessionDelegateTestCase: BaseTestCase {
     func testThatRequestWillPerformRedirectionFor307Response() {
         // Given
         let session = Session(configuration: .ephemeral)
-        let redirectURLString = URL.makeHTTPBinURL().absoluteString
+        let redirectURLString = Endpoint().url.absoluteString
         let urlString = "\(String.testURLString)/redirect-to?url=\(redirectURLString)&statusCode=307"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
