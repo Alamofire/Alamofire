@@ -78,6 +78,8 @@ struct Endpoint {
         case largeImage
         case method(HTTPMethod)
         case payloads(count: Int)
+        case redirect(count: Int)
+        case redirectTo
         case responseHeaders
         case status(Int)
         case stream(count: Int)
@@ -107,6 +109,10 @@ struct Endpoint {
                 return "/\(method.rawValue.lowercased())"
             case let .payloads(count):
                 return "/payloads/\(count)"
+            case let .redirect(count):
+                return "/redirect/\(count)"
+            case .redirectTo:
+                return "/redirect-to"
             case .responseHeaders:
                 return "/response-headers"
             case let .status(code):
@@ -172,6 +178,17 @@ struct Endpoint {
         Endpoint(path: .payloads(count: count))
     }
 
+    static func redirect(_ count: Int) -> Endpoint {
+        Endpoint(path: .redirect(count: count))
+    }
+
+    static func redirectTo(_ url: String, code: Int? = nil) -> Endpoint {
+        var items = [URLQueryItem(name: "url", value: url)]
+        items = code.map { items + [.init(name: "statusCode", value: "\($0)")] } ?? items
+
+        return Endpoint(path: .redirectTo, queryItems: items)
+    }
+
     static var responseHeaders: Endpoint {
         Endpoint(path: .responseHeaders)
     }
@@ -195,6 +212,7 @@ struct Endpoint {
     var method: HTTPMethod = .get
     var headers: HTTPHeaders = .init()
     var timeout: TimeInterval = 60
+    var queryItems: [URLQueryItem] = []
     var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
 
     func modifying<T>(_ keyPath: WritableKeyPath<Endpoint, T>, to value: T) -> Endpoint {
@@ -228,6 +246,7 @@ extension Endpoint: URLConvertible {
         components.port = port
         components.host = host.rawValue
         components.path = path.string
+        components.queryItems = queryItems
 
         return try components.asURL()
     }

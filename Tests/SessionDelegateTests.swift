@@ -33,14 +33,13 @@ final class SessionDelegateTestCase: BaseTestCase {
         // Given
         let session = Session(configuration: .ephemeral)
         let redirectURLString = Endpoint().url.absoluteString
-        let urlString = "\(String.testURLString)/redirect-to?url=\(redirectURLString)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        session.request(urlString)
+        session.request(.redirectTo(redirectURLString))
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -61,15 +60,13 @@ final class SessionDelegateTestCase: BaseTestCase {
     func testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
         // Given
         let session = Session(configuration: .ephemeral)
-        let redirectURLString = "\(String.testURLString)/get"
-        let urlString = "\(String.testURLString)/redirect/5"
 
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+        let expectation = self.expectation(description: "Request should redirect")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        session.request(urlString)
+        session.request(.redirect(5))
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -82,8 +79,6 @@ final class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
-
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
@@ -91,14 +86,13 @@ final class SessionDelegateTestCase: BaseTestCase {
         // Given
         let session = Session(configuration: .ephemeral)
         let redirectURLString = Endpoint().url.absoluteString
-        let urlString = "\(String.testURLString)/redirect-to?url=\(redirectURLString)&statusCode=307"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        session.request(urlString)
+        session.request(.redirectTo(redirectURLString, code: 307))
             .response { resp in
                 response = resp
                 expectation.fulfill()
