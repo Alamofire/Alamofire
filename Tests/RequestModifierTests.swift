@@ -68,13 +68,14 @@ final class RequestModifierTests: BaseTestCase {
 
     func testThatUploadRequestsCanHaveCustomTimeoutValueSet() {
         // Given
+        let endpoint = Endpoint.delay(1).modifying(\.method, to: .post)
         let data = Data("data".utf8)
         let completed = expectation(description: "request completed")
         let modified = expectation(description: "request should be modified")
         var response: AFDataResponse<Data?>?
 
         // When
-        AF.upload(data, to: .delay(1)) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        AF.upload(data, to: endpoint) { $0.timeoutInterval = 0.01; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -85,6 +86,7 @@ final class RequestModifierTests: BaseTestCase {
 
     func testThatUploadRequestsCallRequestModifiersOnRetry() {
         // Given
+        let endpoint = Endpoint.delay(1).modifying(\.method, to: .post)
         let data = Data("data".utf8)
         let policy = RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0, retryableHTTPMethods: [.post])
         let inspector = InspectorInterceptor(policy)
@@ -95,7 +97,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDataResponse<Data?>?
 
         // When
-        session.upload(data, to: .delay(1)) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.01; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
