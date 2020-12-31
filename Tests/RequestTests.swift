@@ -251,7 +251,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var receivedResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request("\(String.testURLString)/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default)
+        AF.request(.method(.post), parameters: parameters, encoder: JSONParameterEncoder.default)
             .responseDecodable(of: TestResponse.self) { response in
                 receivedResponse = response
                 expect.fulfill()
@@ -270,7 +270,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var receivedResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request("\(String.testURLString)/get", method: .get, parameters: parameters)
+        AF.request(.method(.get), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { response in
                 receivedResponse = response
                 expect.fulfill()
@@ -289,7 +289,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var receivedResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request("\(String.testURLString)/post", method: .post, parameters: parameters)
+        AF.request(.method(.post), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { response in
                 receivedResponse = response
                 expect.fulfill()
@@ -765,11 +765,11 @@ final class RequestResponseTestCase: BaseTestCase {
 class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let manager = Session(startRequestsImmediately: false)
-        let request = manager.request(urlString)
+        let request = manager.request(url)
 
-        let expectation = self.expectation(description: "Request description should update: \(urlString)")
+        let expectation = self.expectation(description: "Request description should update: \(url)")
 
         var response: HTTPURLResponse?
 
@@ -783,7 +783,7 @@ class RequestDescriptionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(request.description, "GET \(String.testURLString)/get (\(response?.statusCode ?? -1))")
+        XCTAssertEqual(request.description, "GET \(url) (\(response?.statusCode ?? -1))")
     }
 }
 
@@ -842,12 +842,12 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
     func testGETRequestCURLDescription() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should complete")
         var components: [String]?
 
         // When
-        session.request(urlString).cURLDescription {
+        session.request(url).cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             expectation.fulfill()
         }
@@ -857,7 +857,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
     }
 
     func testGETRequestCURLDescriptionOnMainQueue() {
@@ -885,13 +885,13 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
     func testGETRequestCURLDescriptionSynchronous() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should complete")
         var components: [String]?
         var syncComponents: [String]?
 
         // When
-        let request = session.request(urlString)
+        let request = session.request(url)
         request.cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             syncComponents = self.cURLCommandComponents(from: request.cURLDescription())
@@ -903,19 +903,19 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
         XCTAssertEqual(components?.sorted(), syncComponents?.sorted())
     }
 
     func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should complete")
         var components: [String]?
         var secondComponents: [String]?
 
         // When
-        let request = session.request(urlString)
+        let request = session.request(url)
         request.cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             request.cURLDescription {
@@ -929,19 +929,19 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
         XCTAssertEqual(components?.sorted(), secondComponents?.sorted())
     }
 
     func testGETRequestWithCustomHeaderCURLDescription() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should complete")
         var cURLDescription: String?
 
         // When
         let headers: HTTPHeaders = ["X-Custom-Header": "{\"key\": \"value\"}"]
-        session.request(urlString, headers: headers).cURLDescription {
+        session.request(url, headers: headers).cURLDescription {
             cURLDescription = $0
             expectation.fulfill()
         }
@@ -954,14 +954,14 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
     func testGETRequestWithDuplicateHeadersDebugDescription() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let url = Endpoint().url
         let expectation = self.expectation(description: "request should complete")
         var cURLDescription: String?
         var components: [String]?
 
         // When
         let headers: HTTPHeaders = ["Accept-Language": "en-GB"]
-        sessionWithAcceptLanguageHeader.request(urlString, headers: headers).cURLDescription {
+        sessionWithAcceptLanguageHeader.request(url, headers: headers).cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             cURLDescription = $0
             expectation.fulfill()
@@ -972,7 +972,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
 
         let acceptLanguageCount = components?.filter { $0.contains("Accept-Language") }.count
         XCTAssertEqual(acceptLanguageCount, 1, "command should contain a single Accept-Language header")
@@ -982,12 +982,12 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
     func testPOSTRequestCURLDescription() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let expectation = self.expectation(description: "request should complete")
         var components: [String]?
 
         // When
-        session.request(urlString, method: .post).cURLDescription {
+        session.request(url, method: .post).cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             expectation.fulfill()
         }
@@ -997,12 +997,12 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components?[3..<5], ["-X", "POST"])
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
     }
 
     func testPOSTRequestWithJSONParametersCURLDescription() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let expectation = self.expectation(description: "request should complete")
         var cURLDescription: String?
         var components: [String]?
@@ -1012,7 +1012,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
                           "f'oo": "ba'r"]
 
         // When
-        session.request(urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default).cURLDescription {
+        session.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default).cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             cURLDescription = $0
             expectation.fulfill()
@@ -1030,12 +1030,12 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertNotNil(cURLDescription?.range(of: "\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\""))
         XCTAssertNotNil(cURLDescription?.range(of: "\\\"foo\\\":\\\"bar\\"))
 
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
     }
 
     func testPOSTRequestWithCookieCURLDescription() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
 
         let cookie = HTTPCookie(properties: [.domain: "\(String.host)",
                                              .path: "/post",
@@ -1046,7 +1046,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         var components: [String]?
 
         // When
-        cookieManager.request(urlString, method: .post).cURLDescription {
+        cookieManager.request(url, method: .post).cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             expectation.fulfill()
         }
@@ -1056,13 +1056,13 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components?[3..<5], ["-X", "POST"])
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
         XCTAssertEqual(components?[5..<6], ["-b"])
     }
 
     func testPOSTRequestWithCookiesDisabledCURLDescriptionHasNoCookies() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
 
         let properties = [HTTPCookiePropertyKey.domain: "\(String.host)",
                           HTTPCookiePropertyKey.path: "/post",
@@ -1075,7 +1075,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         var components: [String]?
 
         // When
-        sessionDisallowingCookies.request(urlString, method: .post).cURLDescription {
+        sessionDisallowingCookies.request(url, method: .post).cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             expectation.fulfill()
         }
@@ -1089,7 +1089,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
     func testMultipartFormDataRequestWithDuplicateHeadersCURLDescriptionHasOneContentTypeHeader() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let japaneseData = Data("日本語".utf8)
         let expectation = self.expectation(description: "multipart form data encoding should succeed")
         var cURLDescription: String?
@@ -1098,7 +1098,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // When
         sessionWithContentTypeHeader.upload(multipartFormData: { data in
             data.append(japaneseData, withName: "japanese")
-        }, to: urlString).cURLDescription {
+        }, to: url).cURLDescription {
             components = self.cURLCommandComponents(from: $0)
             cURLDescription = $0
             expectation.fulfill()
@@ -1109,7 +1109,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(url)\"")
 
         let contentTypeCount = components?.filter { $0.contains("Content-Type") }.count
         XCTAssertEqual(contentTypeCount, 1, "command should contain a single Content-Type header")
