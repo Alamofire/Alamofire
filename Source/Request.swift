@@ -149,7 +149,7 @@ public class Request {
     /// `Progress` of the download of any response data. Reset to `0` if the `Request` is retried.
     public let downloadProgress = Progress(totalUnitCount: 0)
     /// `ProgressHandler` called when `uploadProgress` is updated, on the provided `DispatchQueue`.
-    fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
+    private var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
         get { mutableState.uploadProgressHandler }
         set { mutableState.uploadProgressHandler = newValue }
     }
