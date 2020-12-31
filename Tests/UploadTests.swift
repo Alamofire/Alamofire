@@ -30,12 +30,12 @@ import XCTest
 final class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let requestURL = Endpoint.method(.post).url
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = AF.upload(imageURL, to: urlString).response { _ in
+        let request = AF.upload(imageURL, to: requestURL).response { _ in
             expectation.fulfill()
         }
 
@@ -44,19 +44,19 @@ final class UploadFileInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod, "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url, requestURL, "request URL should be equal")
         XCTAssertNotNil(request.response, "response should not be nil")
     }
 
     func testUploadClassMethodWithMethodURLHeadersAndFile() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let requestURL = Endpoint.method(.post).url
         let headers: HTTPHeaders = ["Authorization": "123456"]
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = AF.upload(imageURL, to: urlString, method: .post, headers: headers).response { _ in
+        let request = AF.upload(imageURL, to: requestURL, method: .post, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -65,7 +65,7 @@ final class UploadFileInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod, "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url, requestURL, "request URL should be equal")
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
@@ -77,14 +77,14 @@ final class UploadFileInitializationTestCase: BaseTestCase {
 
 // MARK: -
 
-class UploadDataInitializationTestCase: BaseTestCase {
+final class UploadDataInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndData() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = AF.upload(Data(), to: urlString).response { _ in
+        let request = AF.upload(Data(), to: url).response { _ in
             expectation.fulfill()
         }
 
@@ -93,18 +93,18 @@ class UploadDataInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url, url, "request URL should be equal")
         XCTAssertNotNil(request.response, "response should not be nil")
     }
 
     func testUploadClassMethodWithMethodURLHeadersAndData() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let headers: HTTPHeaders = ["Authorization": "123456"]
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = AF.upload(Data(), to: urlString, headers: headers).response { _ in
+        let request = AF.upload(Data(), to: url, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -113,7 +113,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod, "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url, url, "request URL should be equal")
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
@@ -128,13 +128,13 @@ class UploadDataInitializationTestCase: BaseTestCase {
 final class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndStream() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let requestURL = Endpoint.method(.post).url
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let imageStream = InputStream(url: imageURL)!
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = AF.upload(imageStream, to: urlString).response { _ in
+        let request = AF.upload(imageStream, to: requestURL).response { _ in
             expectation.fulfill()
         }
 
@@ -143,20 +143,20 @@ final class UploadStreamInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod, "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url, requestURL, "request URL should be equal")
         XCTAssertNotNil(request.response, "response should not be nil")
     }
 
     func testUploadClassMethodWithMethodURLHeadersAndStream() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let requestURL = Endpoint.method(.post).url
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let headers: HTTPHeaders = ["Authorization": "123456"]
         let imageStream = InputStream(url: imageURL)!
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = AF.upload(imageStream, to: urlString, headers: headers).response { _ in
+        let request = AF.upload(imageStream, to: requestURL, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -165,7 +165,7 @@ final class UploadStreamInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod, "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url, requestURL, "request URL should be equal")
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
@@ -180,14 +180,14 @@ final class UploadStreamInitializationTestCase: BaseTestCase {
 final class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequest() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let data = Data("Lorem ipsum dolor sit amet".utf8)
 
-        let expectation = self.expectation(description: "Upload request should succeed: \(urlString)")
+        let expectation = self.expectation(description: "Upload request should succeed: \(url)")
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.upload(data, to: urlString)
+        AF.upload(data, to: url)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -203,11 +203,11 @@ final class UploadDataTestCase: BaseTestCase {
 
     func testUploadDataRequestWithProgress() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 300)
         let data = Data(string.utf8)
 
-        let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")
+        let expectation = self.expectation(description: "Bytes upload progress should be reported: \(url)")
 
         var uploadProgressValues: [Double] = []
         var downloadProgressValues: [Double] = []
@@ -215,7 +215,7 @@ final class UploadDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.upload(data, to: urlString)
+        AF.upload(data, to: url)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
@@ -270,7 +270,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataSetsContentTypeHeader() {
         // Given
-        let urlString = "\(String.testURLString)/post"
+        let url = Endpoint.method(.post).url
         let uploadData = Data("upload_data".utf8)
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
@@ -283,7 +283,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                       multipartFormData.append(uploadData, withName: "upload_data")
                       formData = multipartFormData
                   },
-                  to: urlString)
+                  to: url)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -309,7 +309,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatCustomBoundaryCanBeSetWhenUploadingMultipartFormData() throws {
         // Given
-        let urlRequest = try URLRequest(url: "\(String.testURLString)/post", method: .post)
         let uploadData = Data("upload_data".utf8)
 
         let formData = MultipartFormData(fileManager: .default, boundary: "custom-test-boundary")
@@ -319,7 +318,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.upload(multipartFormData: formData, with: urlRequest).response { resp in
+        AF.upload(multipartFormData: formData, with: Endpoint.method(.post)).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -342,7 +341,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataSucceedsWithDefaultParameters() {
         // Given
-        let urlString = "\(String.testURLString)/post"
         let frenchData = Data("français".utf8)
         let japaneseData = Data("日本語".utf8)
 
@@ -354,7 +352,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                       multipartFormData.append(frenchData, withName: "french")
                       multipartFormData.append(japaneseData, withName: "japanese")
                   },
-                  to: urlString)
+                  to: Endpoint.method(.post))
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -379,7 +377,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
         // Given
-        let urlString = "\(String.testURLString)/post"
         let frenchData = Data("français".utf8)
         let japaneseData = Data("日本語".utf8)
 
@@ -391,7 +388,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                                     multipartFormData.append(frenchData, withName: "french")
                                     multipartFormData.append(japaneseData, withName: "japanese")
                                 },
-                                to: urlString)
+                                to: Endpoint.method(.post))
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -410,7 +407,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
         // Given
-        let urlString = "\(String.testURLString)/post"
         let uploadData = Data("upload_data".utf8)
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
@@ -423,7 +419,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                                     multipartFormData.append(uploadData, withName: "upload_data")
                                     formData = multipartFormData
                                 },
-                                to: urlString)
+                                to: Endpoint.method(.post))
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -449,7 +445,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataAboveMemoryThresholdStreamsFromDisk() {
         // Given
-        let urlString = "\(String.testURLString)/post"
         let frenchData = Data("français".utf8)
         let japaneseData = Data("日本語".utf8)
 
@@ -461,7 +456,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                                     multipartFormData.append(frenchData, withName: "french")
                                     multipartFormData.append(japaneseData, withName: "japanese")
                                 },
-                                to: urlString,
+                                to: Endpoint.method(.post),
                                 usingThreshold: 0).response { resp in
             response = resp
             expectation.fulfill()
@@ -481,7 +476,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataAboveMemoryThresholdSetsContentTypeHeader() {
         // Given
-        let urlString = "\(String.testURLString)/post"
         let uploadData = Data("upload_data".utf8)
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
@@ -493,7 +487,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                                     multipartFormData.append(uploadData, withName: "upload_data")
                                     formData = multipartFormData
                                 },
-                                to: urlString,
+                                to: Endpoint.method(.post),
                                 usingThreshold: 0).response { resp in
             response = resp
             expectation.fulfill()
@@ -521,7 +515,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataWithNonexistentFileThrowsAnError() {
         // Given
-        let urlString = URL.makeHTTPBinURL(path: "post")
         let imageURL = URL(fileURLWithPath: "does_not_exist.jpg")
 
         let expectation = self.expectation(description: "multipart form data upload from nonexistent file should fail")
@@ -531,7 +524,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let request = AF.upload(multipartFormData: { multipartFormData in
                                     multipartFormData.append(imageURL, withName: "upload_file")
                                 },
-                                to: urlString,
+                                to: Endpoint.method(.post),
                                 usingThreshold: 0).response { resp in
             response = resp
             expectation.fulfill()
@@ -554,7 +547,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
             return Session(configuration: configuration)
         }()
 
-        let urlString = "\(String.testURLString)/post"
         let french = Data("français".utf8)
         let japanese = Data("日本語".utf8)
 
@@ -570,7 +562,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                                         multipartFormData.append(french, withName: "french")
                                         multipartFormData.append(japanese, withName: "japanese")
                                     },
-                                    to: urlString)
+                                    to: Endpoint.method(.post))
             .response { defaultResponse in
                 request = defaultResponse.request
                 response = defaultResponse.response
@@ -599,7 +591,6 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
     private func executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: Bool) {
         // Given
-        let urlString = "\(String.testURLString)/post"
         let loremData1 = Data(String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                                      count: 100).utf8)
         let loremData2 = Data(String(repeating: "Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.",
@@ -617,7 +608,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                       multipartFormData.append(loremData1, withName: "lorem1")
                       multipartFormData.append(loremData2, withName: "lorem2")
                   },
-                  to: urlString,
+                  to: Endpoint.method(.post),
                   usingThreshold: streamFromDisk ? 0 : 100_000_000)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)

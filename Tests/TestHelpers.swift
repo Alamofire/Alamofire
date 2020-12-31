@@ -33,17 +33,13 @@ extension String {
     static let scheme = "http"
     static let host = "127.0.0.1"
     static let port = "\(Int.port)"
+    @available(*, deprecated)
     static let testURLString = "\(scheme)://\(host):\(port)"
     static let nonexistentDomain = "https://nonexistent-domain.org"
 }
 
 extension URL {
     static let nonexistentDomain = URL(string: .nonexistentDomain)!
-    @available(*, deprecated)
-    static func makeHTTPBinURL(path: String = "get") -> URL {
-        let url = URL(string: .testURLString)!
-        return url.appendingPathComponent(path)
-    }
 }
 
 struct Endpoint {

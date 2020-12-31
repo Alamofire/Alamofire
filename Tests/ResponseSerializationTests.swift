@@ -1317,7 +1317,7 @@ final class DataPreprocessorTests: BaseTestCase {
 
 extension HTTPURLResponse {
     convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {
-        let url = URL.makeHTTPBinURL()
+        let url = Endpoint().url
         self.init(url: url, statusCode: statusCode, httpVersion: String(kCFHTTPVersion1_1), headerFields: headers?.dictionary)!
     }
 }
