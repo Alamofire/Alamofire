@@ -669,10 +669,10 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 final class UploadRetryTests: BaseTestCase {
     func testThatDataUploadRetriesCorrectly() {
         // Given
-        let request = URLRequest.makeHTTPBinRequest(path: "delay/1",
-                                                    method: .post,
-                                                    headers: [.contentType("text/plain")],
-                                                    timeout: 0.1)
+        let endpoint = Endpoint(path: .delay(interval: 1),
+                                method: .post,
+                                headers: [.contentType("text/plain")],
+                                timeout: 0.1)
         let retrier = InspectorInterceptor(SingleRetrier())
         let didRetry = expectation(description: "request did retry")
         retrier.onRetry = { _ in didRetry.fulfill() }
@@ -683,7 +683,7 @@ final class UploadRetryTests: BaseTestCase {
         let completion = expectation(description: "upload should complete")
 
         // When
-        session.upload(data, with: request).responseDecodable(of: TestResponse.self) {
+        session.upload(data, with: endpoint).responseDecodable(of: TestResponse.self) {
             response = $0
             completion.fulfill()
         }
@@ -730,7 +730,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
 
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
-                                     with: URLRequest.makeHTTPBinRequest(path: "post", method: .post)).response { _ in
+                                     with: Endpoint.method(.post)).response { _ in
             responseHandler.fulfill()
         }
 
@@ -775,7 +775,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
 
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
-                                     with: URLRequest.makeHTTPBinRequest(path: "delay/5", method: .post)).response { _ in
+                                     with: Endpoint.delay(5).modifying(\.method, to: .post)).response { _ in
             responseHandler.fulfill()
         }
 
