@@ -512,7 +512,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            session.streamRequest(URLRequest.makeHTTPBinRequest())
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { stream in
@@ -540,7 +540,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishData()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { stream in
@@ -568,7 +568,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishString()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { stream in
@@ -598,7 +598,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .responseStreamDecodable(of: TestResponse.self) { stream in
                     switch stream.event {
                     case let .stream(value):
@@ -635,7 +635,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -660,7 +660,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "delay/1", timeout: 0.1))
+            AF.streamRequest(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
                 .publishDecodable(type: TestResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -686,7 +686,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -710,7 +710,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "delay/1", timeout: 0.1))
+            AF.streamRequest(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { completion in
@@ -739,7 +739,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         var result: Result<TestResponse, AFError>?
 
         // When
-        let request = AF.streamRequest(URLRequest.makeHTTPBinRequest())
+        let request = AF.streamRequest(.default)
         let publisher = request.publishDecodable(type: TestResponse.self)
 
         let stateAfterPublisher = request.state
@@ -777,7 +777,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -809,7 +809,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
@@ -843,7 +843,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -877,7 +877,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         var error: AFError?
 
         // When
-        let request = AF.streamRequest(URLRequest.makeHTTPBinRequest())
+        let request = AF.streamRequest(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
             .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -902,7 +902,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         var error: AFError?
 
         // When
-        let request = AF.streamRequest(URLRequest.makeHTTPBinRequest())
+        let request = AF.streamRequest(.default)
         store {
             request
                 .publishDecodable(type: TestResponse.self)
@@ -929,9 +929,9 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         var secondCompletion: DataStreamRequest.Completion?
 
         // When
-        let first = AF.streamRequest(URLRequest.makeHTTPBinRequest())
+        let first = AF.streamRequest(.default)
             .publishDecodable(type: TestResponse.self)
-        let second = AF.streamRequest(URLRequest.makeHTTPBinRequest())
+        let second = AF.streamRequest(.default)
             .publishDecodable(type: TestResponse.self)
 
         store {
@@ -961,12 +961,12 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(URLRequest.makeHTTPBinRequest())
+            AF.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .compactMap { $0.completion }
                 .flatMap { completion -> DataStreamPublisher<TestResponse> in
                     firstCompletion = completion
-                    return AF.streamRequest(URLRequest.makeHTTPBinRequest())
+                    return AF.streamRequest(.default)
                         .publishDecodable(type: TestResponse.self)
                 }
                 .compactMap { $0.completion }
@@ -993,7 +993,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1015,7 +1015,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            session.download(URLRequest.makeHTTPBinRequest())
+            session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1036,7 +1036,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishData()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1057,7 +1057,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishString()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1078,7 +1078,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishUnserialized()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1099,7 +1099,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishURL()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1122,7 +1122,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .responseDecodable(of: TestResponse.self) { handlerResponse = $0; handlerResponseReceived.fulfill() }
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1145,7 +1145,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1166,7 +1166,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest(path: "delay/1", timeout: 0.1))
+            AF.download(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { completion in
@@ -1195,7 +1195,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.download(URLRequest.makeHTTPBinRequest())
+        let request = AF.download(.default)
         let publisher = request.publishDecodable(type: TestResponse.self)
 
         let stateAfterPublisher = request.state
@@ -1226,7 +1226,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1254,7 +1254,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
@@ -1284,7 +1284,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1314,7 +1314,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.download(URLRequest.makeHTTPBinRequest())
+        let request = AF.download(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
             .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1339,7 +1339,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.download(URLRequest.makeHTTPBinRequest())
+        let request = AF.download(.default)
         store {
             request
                 .publishDecodable(type: TestResponse.self)
@@ -1366,9 +1366,9 @@ final class DownloadRequestCombineTests: CombineTestCase {
         var secondResponse: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let first = AF.download(URLRequest.makeHTTPBinRequest())
+        let first = AF.download(.default)
             .publishDecodable(type: TestResponse.self)
-        let second = AF.download(URLRequest.makeHTTPBinRequest())
+        let second = AF.download(.default)
             .publishDecodable(type: TestResponse.self)
 
         store {
@@ -1398,11 +1398,11 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(URLRequest.makeHTTPBinRequest())
+            AF.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .flatMap { response -> DownloadResponsePublisher<TestResponse> in
                     firstResponse = response
-                    let request = URLRequest.makeHTTPBinRequest(headers: ["X-Custom": customValue])
+                    let request = Endpoint(headers: ["X-Custom": customValue])
                     return AF.download(request)
                         .publishDecodable(type: TestResponse.self)
                 }
