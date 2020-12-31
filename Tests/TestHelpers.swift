@@ -25,16 +25,7 @@
 import Alamofire
 import Foundation
 
-extension Int {
-    static let port = 8080
-}
-
 extension String {
-    static let scheme = "http"
-    static let host = "127.0.0.1"
-    static let port = "\(Int.port)"
-    @available(*, deprecated)
-    static let testURLString = "\(scheme)://\(host):\(port)"
     static let nonexistentDomain = "https://nonexistent-domain.org"
 }
 
@@ -131,7 +122,7 @@ struct Endpoint {
     enum Image: String {
         case jpeg
     }
-    
+
     enum Compression: String {
         case brotli, gzip, deflate
     }
@@ -149,7 +140,7 @@ struct Endpoint {
     static func chunked(_ count: Int) -> Endpoint {
         Endpoint(path: .chunked(count: count))
     }
-    
+
     static func compression(_ compression: Compression) -> Endpoint {
         Endpoint(path: .compression(compression))
     }

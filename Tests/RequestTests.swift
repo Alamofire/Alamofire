@@ -1037,8 +1037,8 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Given
         let url = Endpoint.method(.post).url
 
-        let cookie = HTTPCookie(properties: [.domain: "\(String.host)",
-                                             .path: "/post",
+        let cookie = HTTPCookie(properties: [.domain: url.host as Any,
+                                             .path: url.path,
                                              .name: "foo",
                                              .value: "bar"])!
         let cookieManager = sessionWithCookie(cookie)
@@ -1064,12 +1064,10 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Given
         let url = Endpoint.method(.post).url
 
-        let properties = [HTTPCookiePropertyKey.domain: "\(String.host)",
-                          HTTPCookiePropertyKey.path: "/post",
-                          HTTPCookiePropertyKey.name: "foo",
-                          HTTPCookiePropertyKey.value: "bar"]
-
-        let cookie = HTTPCookie(properties: properties)!
+        let cookie = HTTPCookie(properties: [.domain: url.host as Any,
+                                             .path: url.path,
+                                             .name: "foo",
+                                             .value: "bar"])!
         sessionDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
         let expectation = self.expectation(description: "request should complete")
         var components: [String]?

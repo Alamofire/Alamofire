@@ -498,12 +498,13 @@ final class SessionTestCase: BaseTestCase {
     func testThatDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
+        let url = Endpoint().url.absoluteString.appending("/äëïöü")
         let expectation = self.expectation(description: "Request should fail with error")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        session.request("\(String.testURLString)/get/äëïöü").response { resp in
+        session.request(url).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -516,18 +517,19 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
-        XCTAssertEqual(response?.error?.urlConvertible as? String, "\(String.testURLString)/get/äëïöü")
+        XCTAssertEqual(response?.error?.urlConvertible as? String, url)
     }
 
     func testThatDownloadRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
+        let url = Endpoint().url.absoluteString.appending("/äëïöü")
         let expectation = self.expectation(description: "Download should fail with error")
 
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        session.download("\(String.testURLString)/get/äëïöü").response { resp in
+        session.download(url).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -541,18 +543,19 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
-        XCTAssertEqual(response?.error?.urlConvertible as? String, "\(String.testURLString)/get/äëïöü")
+        XCTAssertEqual(response?.error?.urlConvertible as? String, url)
     }
 
     func testThatUploadDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
+        let url = Endpoint().url.absoluteString.appending("/äëïöü")
         let expectation = self.expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        session.upload(Data(), to: "\(String.testURLString)/get/äëïöü").response { resp in
+        session.upload(Data(), to: url).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -565,18 +568,19 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
-        XCTAssertEqual(response?.error?.urlConvertible as? String, "\(String.testURLString)/get/äëïöü")
+        XCTAssertEqual(response?.error?.urlConvertible as? String, url)
     }
 
     func testThatUploadFileRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
+        let url = Endpoint().url.absoluteString.appending("/äëïöü")
         let expectation = self.expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        session.upload(URL(fileURLWithPath: "/invalid"), to: "\(String.testURLString)/get/äëïöü").response { resp in
+        session.upload(URL(fileURLWithPath: "/invalid"), to: url).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -589,18 +593,19 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
-        XCTAssertEqual(response?.error?.urlConvertible as? String, "\(String.testURLString)/get/äëïöü")
+        XCTAssertEqual(response?.error?.urlConvertible as? String, url)
     }
 
     func testThatUploadStreamRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
+        let url = Endpoint().url.absoluteString.appending("/äëïöü")
         let expectation = self.expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        session.upload(InputStream(data: Data()), to: "\(String.testURLString)/get/äëïöü").response { resp in
+        session.upload(InputStream(data: Data()), to: url).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -613,14 +618,14 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
-        XCTAssertEqual(response?.error?.urlConvertible as? String, "\(String.testURLString)/get/äëïöü")
+        XCTAssertEqual(response?.error?.urlConvertible as? String, url)
     }
 
     // MARK: Tests - Request Adapter
 
     func testThatSessionCallsRequestAdaptersWhenCreatingDataRequest() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let endpoint = Endpoint()
 
         let methodAdapter = HTTPMethodAdapter(method: .post)
         let headerAdapter = HeaderAdapter()
@@ -632,13 +637,13 @@ final class SessionTestCase: BaseTestCase {
         let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
-        let request1 = session.request(urlString)
+        let request1 = session.request(endpoint)
         waitForExpectations(timeout: timeout)
 
         let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.request(urlString, interceptor: headerAdapter)
+        let request2 = session.request(endpoint, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout)
 
         // Then
@@ -651,7 +656,7 @@ final class SessionTestCase: BaseTestCase {
 
     func testThatSessionCallsRequestAdaptersWhenCreatingDownloadRequest() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let endpoint = Endpoint()
 
         let methodAdapter = HTTPMethodAdapter(method: .post)
         let headerAdapter = HeaderAdapter()
@@ -663,13 +668,13 @@ final class SessionTestCase: BaseTestCase {
         let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
-        let request1 = session.download(urlString)
+        let request1 = session.download(endpoint)
         waitForExpectations(timeout: timeout)
 
         let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.download(urlString, interceptor: headerAdapter)
+        let request2 = session.download(endpoint, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout)
 
         // Then
@@ -683,7 +688,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatSessionCallsRequestAdaptersWhenCreatingUploadRequestWithData() {
         // Given
         let data = Data("data".utf8)
-        let urlString = "\(String.testURLString)/post"
+        let endpoint = Endpoint.method(.post)
 
         let methodAdapter = HTTPMethodAdapter(method: .get)
         let headerAdapter = HeaderAdapter()
@@ -695,13 +700,13 @@ final class SessionTestCase: BaseTestCase {
         let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
-        let request1 = session.upload(data, to: urlString)
+        let request1 = session.upload(data, to: endpoint)
         waitForExpectations(timeout: timeout)
 
         let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.upload(data, to: urlString, interceptor: headerAdapter)
+        let request2 = session.upload(data, to: endpoint, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout)
 
         // Then
@@ -715,7 +720,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatSessionCallsRequestAdaptersWhenCreatingUploadRequestWithFile() {
         // Given
         let fileURL = URL(fileURLWithPath: "/path/to/some/file.txt")
-        let urlString = "\(String.testURLString)/post"
+        let endpoint = Endpoint.method(.post)
 
         let methodAdapter = HTTPMethodAdapter(method: .get)
         let headerAdapter = HeaderAdapter()
@@ -727,13 +732,13 @@ final class SessionTestCase: BaseTestCase {
         let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
-        let request1 = session.upload(fileURL, to: urlString)
+        let request1 = session.upload(fileURL, to: endpoint)
         waitForExpectations(timeout: timeout)
 
         let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.upload(fileURL, to: urlString, interceptor: headerAdapter)
+        let request2 = session.upload(fileURL, to: endpoint, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout)
 
         // Then
@@ -747,7 +752,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatSessionCallsRequestAdaptersWhenCreatingUploadRequestWithInputStream() {
         // Given
         let inputStream = InputStream(data: Data("data".utf8))
-        let urlString = "\(String.testURLString)/post"
+        let endpoint = Endpoint.method(.post)
 
         let methodAdapter = HTTPMethodAdapter(method: .get)
         let headerAdapter = HeaderAdapter()
@@ -759,13 +764,13 @@ final class SessionTestCase: BaseTestCase {
         let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
-        let request1 = session.upload(inputStream, to: urlString)
+        let request1 = session.upload(inputStream, to: endpoint)
         waitForExpectations(timeout: timeout)
 
         let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.upload(inputStream, to: urlString, interceptor: headerAdapter)
+        let request2 = session.upload(inputStream, to: endpoint, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout)
 
         // Then
@@ -778,7 +783,7 @@ final class SessionTestCase: BaseTestCase {
 
     func testThatSessionReturnsRequestAdaptationErrorWhenRequestAdapterThrowsError() {
         // Given
-        let urlString = "\(String.testURLString)/get"
+        let endpoint = Endpoint()
 
         let methodAdapter = HTTPMethodAdapter(method: .post, throwsError: true)
         let headerAdapter = HeaderAdapter(throwsError: true)
@@ -790,13 +795,13 @@ final class SessionTestCase: BaseTestCase {
         let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidFailToAdaptURLRequestWithError = { _, _, _ in expectation1.fulfill() }
 
-        let request1 = session.request(urlString)
+        let request1 = session.request(endpoint)
         waitForExpectations(timeout: timeout)
 
         let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidFailToAdaptURLRequestWithError = { _, _, _ in expectation2.fulfill() }
 
-        let request2 = session.request(urlString, interceptor: headerAdapter)
+        let request2 = session.request(endpoint, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout)
 
         let requests = [request1, request2]
@@ -963,7 +968,7 @@ final class SessionTestCase: BaseTestCase {
         let uploadData = Data("upload data".utf8)
 
         // When
-        session.upload(uploadData, to: "\(String.testURLString)/post")
+        session.upload(uploadData, to: .method(.post))
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
