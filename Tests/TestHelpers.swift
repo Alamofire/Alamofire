@@ -78,6 +78,7 @@ struct Endpoint {
         case largeImage
         case method(HTTPMethod)
         case payloads(count: Int)
+        case responseHeaders
         case status(Int)
         case stream(count: Int)
         case xml
@@ -106,6 +107,8 @@ struct Endpoint {
                 return "/\(method.rawValue.lowercased())"
             case let .payloads(count):
                 return "/payloads/\(count)"
+            case .responseHeaders:
+                return "/response-headers"
             case let .status(code):
                 return "/status/\(code)"
             case let .stream(count):
@@ -167,6 +170,10 @@ struct Endpoint {
 
     static func payloads(_ count: Int) -> Endpoint {
         Endpoint(path: .payloads(count: count))
+    }
+
+    static var responseHeaders: Endpoint {
+        Endpoint(path: .responseHeaders)
     }
 
     static func status(_ code: Int) -> Endpoint {

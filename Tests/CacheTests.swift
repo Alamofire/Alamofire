@@ -70,9 +70,6 @@ final class CacheTestCase: BaseTestCase {
     var urlCache: URLCache!
     var manager: Session!
 
-    let urlString = "\(String.testURLString)/response-headers"
-    let requestTimeout: TimeInterval = 30
-
     var requests: [String: URLRequest] = [:]
     var timestamps: [String: String] = [:]
 
@@ -163,33 +160,21 @@ final class CacheTestCase: BaseTestCase {
 
     // MARK: - Request Helper Methods
 
-    func urlRequest(cacheControl: String, cachePolicy: URLRequest.CachePolicy) -> URLRequest {
-        let parameters = ["Cache-Control": cacheControl]
-        let url = URL(string: urlString)!
-
-        var urlRequest = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
-        urlRequest.httpMethod = HTTPMethod.get.rawValue
-
-        do {
-            return try URLEncoding.default.encode(urlRequest, with: parameters)
-        } catch {
-            return urlRequest
-        }
-    }
-
     @discardableResult
     func startRequest(cacheControl: String,
                       cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
                       queue: DispatchQueue = .main,
                       completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
         -> URLRequest {
-        let urlRequest = self.urlRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
+        var urlRequest = Endpoint(path: .responseHeaders,
+                                  timeout: 30,
+                                  cachePolicy: cachePolicy).urlRequest
+        urlRequest = (try? URLEncoding.default.encode(urlRequest, with: ["Cache-Control": cacheControl])) ?? urlRequest
         let request = manager.request(urlRequest)
 
-        request.response(queue: queue,
-                         completionHandler: { response in
-                             completion(response.request, response.response)
-                         })
+        request.response(queue: queue) { response in
+            completion(response.request, response.response)
+        }
 
         return urlRequest
     }
