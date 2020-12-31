@@ -76,6 +76,7 @@ struct Endpoint {
         case delay(interval: Int)
         case digestAuth(qop: String = "auth", username: String, password: String)
         case hiddenBasicAuth(username: String, password: String)
+        case image(Image)
         case ip
         case largeImage
         case method(HTTPMethod)
@@ -98,6 +99,8 @@ struct Endpoint {
                 return "/digest-auth/\(qop)/\(username)/\(password)"
             case let .hiddenBasicAuth(username, password):
                 return "/hidden-basic-auth/\(username)/\(password)"
+            case let .image(type):
+                return "/image/\(type.rawValue)"
             case .ip:
                 return "/ip"
             case .largeImage:
@@ -114,6 +117,10 @@ struct Endpoint {
                 return "/xml"
             }
         }
+    }
+
+    enum Image: String {
+        case jpeg
     }
 
     static var get: Endpoint { method(.get) }
@@ -141,7 +148,12 @@ struct Endpoint {
     }
 
     static func hiddenBasicAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
-        Endpoint(path: .hiddenBasicAuth(username: user, password: password), headers: [.authorization(username: user, password: password)])
+        Endpoint(path: .hiddenBasicAuth(username: user, password: password),
+                 headers: [.authorization(username: user, password: password)])
+    }
+
+    static func image(_ type: Image) -> Endpoint {
+        Endpoint(path: .image(type))
     }
 
     static var ip: Endpoint {

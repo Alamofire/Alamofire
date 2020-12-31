@@ -470,7 +470,7 @@ final class SessionTestCase: BaseTestCase {
         var session: Session? = Session(startRequestsImmediately: false, eventMonitors: [monitor])
 
         // When
-        let request = session?.request(URLRequest.makeHTTPBinRequest())
+        let request = session?.request(.default)
         session = nil
 
         waitForExpectations(timeout: timeout)
@@ -485,7 +485,7 @@ final class SessionTestCase: BaseTestCase {
         var session: Session? = Session(startRequestsImmediately: false)
 
         // When
-        let request = session?.request(URLRequest.makeHTTPBinRequest())
+        let request = session?.request(.default)
         request?.cancel()
         session = nil
 
@@ -823,7 +823,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"), interceptor: handler)
+        let request = session.request(.basicAuth(), interceptor: handler)
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -856,7 +856,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"), interceptor: requestHandler)
+        let request = session.request(.basicAuth(), interceptor: requestHandler)
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -895,7 +895,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        session.request(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"), interceptor: handler)
+        session.request(.basicAuth(), interceptor: handler)
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -934,7 +934,7 @@ final class SessionTestCase: BaseTestCase {
         }
 
         // When
-        session.download(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"), interceptor: handler, to: destination)
+        session.download(.basicAuth(), interceptor: handler, to: destination)
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -998,7 +998,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"))
+        let request = session.request(.basicAuth())
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -1031,7 +1031,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"))
+        let request = session.request(.basicAuth())
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -1067,7 +1067,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"))
+        let request = session.request(.basicAuth())
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -1102,7 +1102,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "basic-auth/user/password"))
+        let request = session.request(.basicAuth())
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -1144,7 +1144,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "image/jpeg"), interceptor: handler)
+        let request = session.request(.image(.jpeg), interceptor: handler)
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -1394,7 +1394,7 @@ final class SessionTestCase: BaseTestCase {
         let requestExpectation = expectation(description: "request should complete")
 
         // When
-        session?.request(URLRequest.makeHTTPBinRequest()).response { response in
+        session?.request(.default).response { response in
             error = response.error
             requestExpectation.fulfill()
         }
@@ -1418,7 +1418,7 @@ final class SessionTestCase: BaseTestCase {
         var completionCallCount = 0
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(), interceptor: handler)
+        let request = session.request(.default, interceptor: handler)
         request.validate()
 
         request.responseJSON { resp in
@@ -1456,7 +1456,7 @@ final class SessionTestCase: BaseTestCase {
         var response: DataResponse<Any, AFError>?
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).responseJSON { resp in
+        let request = session.request(.default).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -1473,7 +1473,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatGETRequestsWithBodyDataAreConsideredInvalid() {
         // Given
         let session = Session()
-        var request = URLRequest.makeHTTPBinRequest()
+        var request = Endpoint.default.urlRequest
         request.httpBody = Data("invalid".utf8)
         let expect = expectation(description: "request should complete")
         var response: DataResponse<TestResponse, AFError>?
@@ -1504,12 +1504,11 @@ final class SessionTestCase: BaseTestCase {
             }
         }
         let session = Session(interceptor: InvalidAdapter())
-        let request = URLRequest.makeHTTPBinRequest()
         let expect = expectation(description: "request should complete")
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        session.request(request).responseDecodable(of: TestResponse.self) { resp in
+        session.request(.default).responseDecodable(of: TestResponse.self) { resp in
             response = resp
             expect.fulfill()
         }
@@ -1535,7 +1534,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         let monitor = ClosureEventMonitor()
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
         let session = Session(eventMonitors: [monitor])
-        let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
+        let request = Endpoint.delay(1)
         var requests: [DataRequest] = []
 
         // When
@@ -1565,7 +1564,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.fulfill() }
         let session = Session(eventMonitors: [monitor])
-        let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
+        let request = Endpoint.delay(1)
         var requests: [DataRequest] = []
         var responses: [DataResponse<Data?, AFError>] = []
 
@@ -1609,7 +1608,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.fulfill() }
         let session = Session(startRequestsImmediately: false, eventMonitors: [monitor])
-        let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
+        let request = Endpoint.delay(1)
         var responses: [DataResponse<Data?, AFError>] = []
 
         // When
@@ -1660,7 +1659,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         let queue = DispatchQueue(label: "com.alamofire.testQueue")
         let monitor = ClosureEventMonitor(queue: queue)
         let session = Session(rootQueue: queue, interceptor: OnceRetrier(), eventMonitors: [monitor])
-        let request = URLRequest.makeHTTPBinRequest(path: "status/401")
+        let request = Endpoint.status(401)
         let completion = expectation(description: "all requests should finish")
         let cancellation = expectation(description: "cancel all requests should be called")
         let createTask = expectation(description: "should create task twice")
@@ -1751,7 +1750,7 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        session.request(URLRequest.makeHTTPBinRequest())
+        session.request(.default)
             .responseDecodable(of: TestResponse.self) { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
