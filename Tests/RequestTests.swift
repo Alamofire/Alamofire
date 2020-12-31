@@ -229,7 +229,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
         // When
         DispatchQueue.concurrentPerform(iterations: count) { _ in
-            session.request(URLRequest.makeHTTPBinRequest()).responseJSON { resp in
+            session.request(.default).responseJSON { resp in
                 responses.append(resp)
                 expectation.fulfill()
             }
@@ -321,7 +321,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in expect.fulfill() }
+        let request = session.request(.default).response { _ in expect.fulfill() }
 
         waitForExpectations(timeout: timeout)
 
@@ -347,7 +347,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in expect.fulfill() }
+        let request = session.request(.default).response { _ in expect.fulfill() }
         for _ in 0..<100 {
             request.resume()
         }
@@ -376,7 +376,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
         for _ in 0..<100 {
             request.resume()
         }
@@ -405,7 +405,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in expect.fulfill() }
+        let request = session.request(.default).response { _ in expect.fulfill() }
         for _ in 0..<100 {
             request.resume()
         }
@@ -431,7 +431,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
         for _ in 0..<100 {
             request.suspend()
         }
@@ -459,7 +459,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
         for _ in 0..<100 {
             request.suspend()
         }
@@ -485,7 +485,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
         // Cancellation stops task creation, so don't cancel the request until the task has been created.
         eventMonitor.requestDidCreateTask = { [unowned request] _, _ in
             for _ in 0..<100 {
@@ -516,7 +516,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
         // Cancellation stops task creation, so don't cancel the request until the task has been created.
         eventMonitor.requestDidCreateTask = { [unowned request] _, _ in
             for _ in 0..<100 {
@@ -547,7 +547,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "delay/5")).response { _ in expect.fulfill() }
+        let request = session.request(.delay(5)).response { _ in expect.fulfill() }
         // Cancellation stops task creation, so don't cancel the request until the task has been created.
         eventMonitor.requestDidCreateTask = { [unowned request] _, _ in
             DispatchQueue.concurrentPerform(iterations: 100) { i in
@@ -605,7 +605,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidParseResponse = { _, _ in didParseResponse.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in
+        let request = session.request(.default).response { _ in
             responseHandler.fulfill()
         }
 
@@ -645,7 +645,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest(path: "delay/5")).response { _ in
+        let request = session.request(.delay(5)).response { _ in
             responseHandler.fulfill()
         }
 
@@ -673,7 +673,7 @@ final class RequestResponseTestCase: BaseTestCase {
         expect.expectedFulfillmentCount = 2
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
 
         request.responseJSON { resp in
             response1 = resp
@@ -706,7 +706,7 @@ final class RequestResponseTestCase: BaseTestCase {
         expect.expectedFulfillmentCount = 3
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
 
         request.responseJSON { resp in
             response1 = resp
@@ -734,7 +734,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatAppendingResponseSerializerToCompletedRequestOutsideCompletionResumesRequest() {
         // Given
         let session = Session()
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(.default)
 
         var response1: DataResponse<Any, AFError>?
         var response2: DataResponse<Any, AFError>?
@@ -1151,7 +1151,7 @@ final class RequestLifetimeTests: BaseTestCase {
         var request: URLRequest?
 
         // When
-        AF.request(URLRequest.makeHTTPBinRequest())
+        AF.request(.default)
             .onURLRequestCreation { request = $0; didReceiveRequest.fulfill() }
             .responseDecodable(of: TestResponse.self) { _ in didComplete.fulfill() }
 
@@ -1168,7 +1168,7 @@ final class RequestLifetimeTests: BaseTestCase {
         var task: URLSessionTask?
 
         // When
-        AF.request(URLRequest.makeHTTPBinRequest())
+        AF.request(.default)
             .onURLSessionTaskCreation { task = $0; didReceiveTask.fulfill() }
             .responseDecodable(of: TestResponse.self) { _ in didComplete.fulfill() }
 
