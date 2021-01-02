@@ -924,8 +924,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let multipartFormData = MultipartFormData()
         let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
-
         var encodingError: Error?
+        
         // When
         do {
             _ = try multipartFormData.encode()
@@ -939,12 +939,12 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         do {
             _ = try multipartFormData.encode()
         } catch {
-            //Expect error
             encodingError = error
         }
         
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
-        XCTAssertEqual(encodingError?.asAFError?.isUnexpctedInputStreamLength, true)
+        XCTAssertEqual(encodingError?.asAFError?.isInputStreamReadFailed, true)
+        XCTAssert(encodingError?.asAFError?.underlyingError is UnexpectedInputStreamLengthError)
     }
 
 }
