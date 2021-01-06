@@ -555,8 +555,8 @@ open class MultipartFormData {
 /// embedded within the `AFError` `.multipartEncodingFailed` `.inputStreamReadFailed` case.
 public struct UnexpectedInputStreamLengthError: Error {
     /// The expected byte count to read.
-    var bytesExpected: UInt64
+    public var bytesExpected: UInt64
     
     /// The actual byte count read.
-    var bytesRead: UInt64
+    public var bytesRead: UInt64
 }
