@@ -181,7 +181,6 @@ open class Session {
                             redirectHandler: RedirectHandler? = nil,
                             cachedResponseHandler: CachedResponseHandler? = nil,
                             eventMonitors: [EventMonitor] = []) {
-        precondition(configuration.identifier == nil, "Alamofire does not support background URLSessionConfigurations.")
 
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.session.sessionDelegateQueue")
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
