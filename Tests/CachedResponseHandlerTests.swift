@@ -27,10 +27,6 @@ import Foundation
 import XCTest
 
 final class CachedResponseHandlerTestCase: BaseTestCase {
-    // MARK: Properties
-
-    private let urlString = "https://httpbin.org/get"
-
     // MARK: Tests - Per Request
 
     func testThatRequestCachedResponseHandlerCanCacheResponse() {
@@ -41,12 +37,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
-        let request = session.request(urlString).cacheResponse(using: ResponseCacher.cache).response { resp in
+        let request = session.request(.default).cacheResponse(using: ResponseCacher.cache).response { resp in
             response = resp
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -61,12 +57,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Request should not cache response")
 
         // When
-        let request = session.request(urlString).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
+        let request = session.request(.default).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
             response = resp
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -88,12 +84,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
                               storagePolicy: .allowed)
         })
 
-        let request = session.request(urlString).cacheResponse(using: cacher).response { resp in
+        let request = session.request(.default).cacheResponse(using: cacher).response { resp in
             response = resp
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -111,12 +107,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
-        let request = session.request(urlString).response { resp in
+        let request = session.request(.default).response { resp in
             response = resp
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -131,12 +127,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Request should not cache response")
 
         // When
-        let request = session.request(urlString).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
+        let request = session.request(.default).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
             response = resp
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -158,12 +154,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
-        let request = session.request(urlString).cacheResponse(using: cacher).response { resp in
+        let request = session.request(.default).cacheResponse(using: cacher).response { resp in
             response = resp
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -181,12 +177,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
-        let request = session.request(urlString).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
+        let request = session.request(.default).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
             response = resp
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)

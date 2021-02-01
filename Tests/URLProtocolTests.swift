@@ -134,25 +134,20 @@ class URLProtocolTestCase: BaseTestCase {
 
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
-        let urlString = "https://httpbin.org/response-headers"
-        let url = URL(string: urlString)!
-
-        var urlRequest = URLRequest(url: url)
-        urlRequest.method = .get
-        urlRequest.headers["Request-Header"] = "foobar"
+        let endpoint = Endpoint.responseHeaders.modifying(\.headers, to: ["Request-Header": "foobar"])
 
         let expectation = self.expectation(description: "GET request should succeed")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        manager.request(urlRequest)
+        manager.request(endpoint)
             .response { resp in
                 response = resp
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)

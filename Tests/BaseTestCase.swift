@@ -37,6 +37,20 @@ class BaseTestCase: XCTestCase {
 
         FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
         FileManager.createDirectory(at: testDirectoryURL)
+        clearCredentials()
+        clearCookies()
+    }
+
+    func clearCookies(for storage: HTTPCookieStorage = .shared) {
+        storage.cookies?.forEach { storage.deleteCookie($0) }
+    }
+
+    func clearCredentials(for storage: URLCredentialStorage = .shared) {
+        for (protectionSpace, credentials) in storage.allCredentials {
+            for (_, credential) in credentials {
+                storage.remove(credential, for: protectionSpace)
+            }
+        }
     }
 
     func url(forResource fileName: String, withExtension ext: String) -> URL {

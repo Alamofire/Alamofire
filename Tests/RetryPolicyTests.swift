@@ -65,7 +65,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     let session = Session(rootQueue: .main, startRequestsImmediately: false)
 
-    let url = URL(string: "https://api.alamofire.org")!
+    let url = Endpoint().url
 
     let connectionLost = URLError(.networkConnectionLost)
     let resourceUnavailable = URLError(.resourceUnavailable)
@@ -170,7 +170,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout)
 
             request.prepareForRetry()
         }
@@ -208,7 +208,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout)
         }
 
         // Then
@@ -236,7 +236,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout)
         }
 
         // Then
@@ -266,7 +266,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout)
         }
 
         // Then
@@ -296,7 +296,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout)
         }
 
         // Then
@@ -330,7 +330,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout)
         }
 
         // Then
@@ -361,7 +361,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout)
 
             request.prepareForRetry()
         }

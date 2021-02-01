@@ -1,7 +1,7 @@
 //
 //  ParameterEncodingTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -27,12 +27,12 @@ import Foundation
 import XCTest
 
 class ParameterEncodingTestCase: BaseTestCase {
-    let urlRequest = URLRequest(url: URL(string: "https://example.com/")!)
+    let urlRequest = Endpoint().urlRequest
 }
 
 // MARK: -
 
-class URLParameterEncodingTestCase: ParameterEncodingTestCase {
+final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
     let encoding = URLEncoding.default
@@ -649,7 +649,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
 // MARK: -
 
-class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
+final class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
     let encoding = JSONEncoding.default
@@ -741,17 +741,16 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     func testJSONParameterEncodeParametersRetainsCustomContentType() {
         do {
             // Given
-            var mutableURLRequest = URLRequest(url: URL(string: "https://example.com/")!)
-            mutableURLRequest.setValue("application/custom-json-type+json", forHTTPHeaderField: "Content-Type")
+            let request = Endpoint(headers: [.contentType("application/custom-json-type+json")]).urlRequest
 
             let parameters = ["foo": "bar"]
 
             // When
-            let urlRequest = try encoding.encode(mutableURLRequest, with: parameters)
+            let urlRequest = try encoding.encode(request, with: parameters)
 
             // Then
             XCTAssertNil(urlRequest.url?.query)
-            XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/custom-json-type+json")
+            XCTAssertEqual(urlRequest.headers["Content-Type"], "application/custom-json-type+json")
         } catch {
             XCTFail("Test encountered unexpected error: \(error)")
         }

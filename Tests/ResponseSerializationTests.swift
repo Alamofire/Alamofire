@@ -1,7 +1,7 @@
 //
 //  ResponseSerializationTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -93,7 +93,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -109,7 +109,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -125,7 +125,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -273,7 +273,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -289,7 +289,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -305,7 +305,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -410,7 +410,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -426,7 +426,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -442,7 +442,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -462,7 +462,7 @@ final class URLResponseSerializerTests: BaseTestCase {
     func testThatURLResponseSerializerProducesURLOnSuccess() {
         // Given
         let serializer = URLResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 200)
         let url = URL(fileURLWithPath: "/")
 
@@ -479,7 +479,7 @@ final class URLResponseSerializerTests: BaseTestCase {
     func testThatURLResponseSerializerProducesErrorFromIncomingErrors() {
         // Given
         let serializer = URLResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 200)
         let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 404))
 
@@ -496,7 +496,7 @@ final class URLResponseSerializerTests: BaseTestCase {
     func testThatURLResponseSerializerProducesInputFileNilErrorWhenNoURL() {
         // Given
         let serializer = URLResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -647,7 +647,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -662,7 +662,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -677,7 +677,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -1129,12 +1129,12 @@ final class CustomResponseSerializerTests: BaseTestCase {
         var data: Data?
 
         // When
-        AF.request(URLRequest.makeHTTPBinRequest()).response(responseSerializer: serializer) { response in
+        AF.request(.default).response(responseSerializer: serializer) { response in
             data = response.data
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(data)
@@ -1317,7 +1317,7 @@ final class DataPreprocessorTests: BaseTestCase {
 
 extension HTTPURLResponse {
     convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {
-        let url = URL(string: "https://httpbin.org/get")!
-        self.init(url: url, statusCode: statusCode, httpVersion: "HTTP/1.1", headerFields: headers?.dictionary)!
+        let url = Endpoint().url
+        self.init(url: url, statusCode: statusCode, httpVersion: String(kCFHTTPVersion1_1), headerFields: headers?.dictionary)!
     }
 }

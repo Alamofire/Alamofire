@@ -30,8 +30,8 @@ import XCTest
 // final class RedirectHandlerTestCase: BaseTestCase {
 //    // MARK: - Properties
 //
-//    private var redirectURLString: String { "https://www.apple.com/" }
-//    private var urlString: String { "https://httpbin.org/redirect-to?url=\(redirectURLString)" }
+//    private var redirectURLString: String { URL.makeHTTPBinURL().absoluteString }
+//    private var urlString: String { "\(String.httpBinURLString)/redirect-to?url=\(redirectURLString)" }
 //
 //    // MARK: - Tests - Per Request
 //
@@ -48,7 +48,7 @@ import XCTest
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -73,7 +73,7 @@ import XCTest
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -88,7 +88,7 @@ import XCTest
 //    func testThatRequestRedirectHandlerCanModifyRedirects() {
 //        // Given
 //        let session = Session()
-//        let redirectURLString = "https://www.nike.com"
+//        let redirectURLString = URL.makeHTTPBinURL().absoluteString
 //        let redirectURLRequest = URLRequest(url: URL(string: redirectURLString)!)
 //
 //        var response: DataResponse<Data?, AFError>?
@@ -102,7 +102,7 @@ import XCTest
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -129,7 +129,7 @@ import XCTest
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -154,7 +154,7 @@ import XCTest
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -168,7 +168,7 @@ import XCTest
 //
 //    func testThatSessionRedirectHandlerCanModifyRedirects() {
 //        // Given
-//        let redirectURLString = "https://www.nike.com"
+//        let redirectURLString = URL.makeHTTPBinURL().absoluteString
 //        let redirectURLRequest = URLRequest(url: URL(string: redirectURLString)!)
 //
 //        let redirector = Redirector(behavior: .modify { _, _, _ in redirectURLRequest })
@@ -183,7 +183,7 @@ import XCTest
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -210,7 +210,7 @@ import XCTest
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)

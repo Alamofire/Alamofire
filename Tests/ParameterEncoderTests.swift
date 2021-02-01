@@ -29,10 +29,10 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatDataIsProperlyEncodedAndProperContentTypeIsSet() throws {
         // Given
         let encoder = JSONParameterEncoder()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "application/json")
@@ -42,11 +42,11 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatDataIsProperlyEncodedButContentTypeIsNotSetIfRequestAlreadyHasAContentType() throws {
         // Given
         let encoder = JSONParameterEncoder()
-        var request = URLRequest.makeHTTPBinRequest()
+        var request = Endpoint().urlRequest
         request.headers.update(.contentType("type"))
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "type")
@@ -58,10 +58,10 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .prettyPrinted
         let encoder = JSONParameterEncoder(encoder: jsonEncoder)
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let expected = """
@@ -75,10 +75,10 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatJSONEncoderDefaultWorks() throws {
         // Given
         let encoder = JSONParameterEncoder.default
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
 
         // When
-        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        let encoded = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let expected = """
@@ -90,10 +90,10 @@ final class JSONParameterEncoderTests: BaseTestCase {
     func testThatJSONEncoderPrettyPrintedPrintsPretty() throws {
         // Given
         let encoder = JSONParameterEncoder.prettyPrinted
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
 
         // When
-        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        let encoded = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let expected = """
@@ -110,7 +110,7 @@ final class SortedKeysJSONParameterEncoderTests: BaseTestCase {
         guard #available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *) else { return }
         // Given
         let encoder = JSONParameterEncoder.sortedKeys
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
 
         // When
         let encoded = try encoder.encode(["z": "z", "a": "a", "p": "p"], into: request)
@@ -127,10 +127,10 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
     func testThatQueryIsBodyEncodedAndProperContentTypeIsSetForPOSTRequest() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
-        let request = URLRequest.makeHTTPBinRequest(method: .post)
+        let request = Endpoint(method: .post).urlRequest
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "application/x-www-form-urlencoded; charset=utf-8")
@@ -140,11 +140,11 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
     func testThatQueryIsBodyEncodedButContentTypeIsNotSetWhenRequestAlreadyHasContentType() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
-        var request = URLRequest.makeHTTPBinRequest(method: .post)
+        var request = Endpoint(method: .post).urlRequest
         request.headers.update(.contentType("type"))
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         XCTAssertEqual(newRequest.headers["Content-Type"], "type")
@@ -155,7 +155,7 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         // Given
         let urlEncoder = URLEncodedFormEncoder(boolEncoding: .literal)
         let encoder = URLEncodedFormParameterEncoder(encoder: urlEncoder)
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
 
         // When
         let newRequest = try encoder.encode(["bool": true], into: request)
@@ -168,10 +168,10 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
     func testThatQueryIsInURLWhenDestinationIsURLAndMethodIsPOST() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder(destination: .queryString)
-        let request = URLRequest.makeHTTPBinRequest(method: .post)
+        let request = Endpoint(method: .post).urlRequest
 
         // When
-        let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
+        let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
@@ -181,7 +181,7 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
     func testThatQueryIsNilWhenEncodableResultsInAnEmptyString() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder(destination: .queryString)
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
 
         // When
         let newRequest = try encoder.encode([String: String](), into: request)
