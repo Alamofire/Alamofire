@@ -1092,7 +1092,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					4CF626EE1BA7CB3E0011A099 = {
