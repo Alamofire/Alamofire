@@ -1005,6 +1005,11 @@ extension Request {
             } else {
                 if let credential = credential, let user = credential.user, let password = credential.password {
                     components.append("-u \(user):\(password)")
+                } else {
+                    for credential in credentialsByAuthenticationMethod.values {
+                        guard let user = credential.user, let password = credential.password else { continue }
+                        components.append("-u \(user):\(password)")
+                    }
                 }
             }
         }
