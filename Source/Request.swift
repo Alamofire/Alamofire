@@ -106,6 +106,8 @@ public class Request {
         var responseSerializerProcessingFinished = false
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
+        /// All `URLCredential` added by a authenticationMethod of the protection space used for authentication challenges.
+        var credentialsByAuthenticationMethod: [String: URLCredential] = [:]
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
         var requests: [URLRequest] = []
         /// All `URLSessionTask`s created by Alamofire on behalf of the `Request`.
@@ -183,7 +185,12 @@ public class Request {
         get { mutableState.credential }
         set { mutableState.credential = newValue }
     }
-
+    
+    public private(set) var credentialsByAuthenticationMethod: [String:URLCredential] {
+        get { mutableState.credentialsByAuthenticationMethod }
+        set { mutableState.credentialsByAuthenticationMethod = newValue }
+    }
+    
     // MARK: Validators
 
     /// `Validator` callback closures that store the validation calls enqueued.
@@ -753,6 +760,19 @@ public class Request {
     @discardableResult
     public func authenticate(with credential: URLCredential) -> Self {
         mutableState.credential = credential
+
+        return self
+    }
+
+    /// Associates the provided credential for a specific authenticationMethod with the instance.
+    ///
+    /// - Parameter credential: The `URLCredential`.
+    /// - Parameter authenticationMethod: The authenticationMethod as `String`. See Foundation.NSURLProtectionSpace for possible values.
+    ///
+    /// - Returns:              The instance.
+    @discardableResult
+    public func authenticate(with credential: URLCredential, for authenticationMethod: String) -> Self {
+        mutableState.credentialsByAuthenticationMethod[authenticationMethod] = credential
 
         return self
     }

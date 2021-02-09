@@ -1240,8 +1240,9 @@ extension Session: SessionStateProvider {
 
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
         dispatchPrecondition(condition: .onQueue(rootQueue))
-
-        return requestTaskMap[task]?.credential ??
+        
+        return requestTaskMap[task]?.credentialsByAuthenticationMethod[protectionSpace.authenticationMethod] ??
+            requestTaskMap[task]?.credential ??
             session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
 
