@@ -1,12 +1,3 @@
----
-name: Bug Report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
----
-
 > ℹ Please fill out this template when filing an issue.
 > All lines beginning with an ℹ symbol instruct you with what info we expect. You can delete those lines once you've filled in the info.
 >
