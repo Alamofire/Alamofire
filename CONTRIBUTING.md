@@ -13,44 +13,25 @@ Please read it before you start participating.
 
 ## Asking Questions
 
-We don't use GitHub as a support forum.
-For any usage questions that are not specific to the project itself,
-please ask on [Stack Overflow](https://stackoverflow.com) instead.
-By doing so, you'll be more likely to quickly solve your problem,
-and you'll allow anyone else with the same question to find the answer.
-This also allows maintainers to focus on improving the project for others.
+**We don't use GitHub as a support forum.**
+For any usage questions that are not specific to the project itself, please ask on [Stack Overflow](https://stackoverflow.com) instead. By doing so, you'll be more likely to quickly solve your problem, and you'll allow anyone else with the same question to find the answer. This also allows maintainers to focus on improving the project for others.
+
+If you'd like to discuss Alamofire best practices, common usage patters, ideas for new features, or ongoing development, please use our [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/).
 
 ## Reporting Security Issues
 
 The Alamofire Software Foundation takes security seriously.
 If you discover a security issue, please bring it to our attention right away!
 
-Please **DO NOT** file a public issue,
-instead send your report privately to <security@alamofire.org>.
-This will help ensure that any vulnerabilities that _are_ found
-can be [disclosed responsibly](https://en.wikipedia.org/wiki/Responsible_disclosure)
-to any affected parties.
+Please **DO NOT** file a public issue, instead send your report privately to <security@alamofire.org>. This will help ensure that any vulnerabilities that _are_ found can be [disclosed responsibly](https://en.wikipedia.org/wiki/Responsible_disclosure) to any affected parties.
 
 ## Reporting Other Issues
 
-A great way to contribute to the project
-is to send a detailed issue when you encounter a problem.
-We always appreciate a well-written, thorough bug report.
+A great way to contribute to the project is to send a detailed issue when you encounter a problem. We always appreciate a well-written, thorough bug report.
 
-Check that the project issues database
-doesn't already include that problem or suggestion before submitting an issue.
-If you find a match, add a quick "+1" or "I have this problem too."
-Doing this helps prioritize the most common problems and requests.
+Check that the project issues database doesn't already include that problem or suggestion before submitting an issue. If you find a match, feel free to vote for the issue by adding a reaction. Doing this helps prioritize the most common problems and requests.
 
-When reporting issues, please include the following:
-
-* The version of Xcode you're using
-* The version of iOS or macOS you're targeting
-* The full output of any stack trace or compiler error
-* A code snippet that reproduces the described behavior, if applicable
-* Any other details that would be useful in understanding the problem
-
-This information will help us review and fix your issue faster.
+When reporting issues, please include the following please fill out our issue template. The information the templates asks for will help us review and fix your issue faster.
 
 ## Triage Issues [![Open Source Helpers](https://www.codetriage.com/alamofire/alamofire/badges/users.svg)](https://www.codetriage.com/alamofire/alamofire)
 

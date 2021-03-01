@@ -22,11 +22,12 @@
 
 ## Alamofire Environment
 
-**Alamofire version:**
-**Xcode version:**
-**Swift version:**
-**Platform(s) running Alamofire:**
-**macOS version running Xcode:**
+**Alamofire Version:**
+**Dependency Manager:**
+**Xcode Version:**
+**Swift Version:**
+**Platform(s) Running Alamofire:**
+**macOS Version Running Xcode:**
 
 ## Demo Project
 

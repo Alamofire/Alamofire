@@ -385,8 +385,6 @@
 		31425AC0241F098000EE3CCC /* InternalRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestTests.swift; sourceTree = "<group>"; };
 		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
 		315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringEncoding+Alamofire.swift"; sourceTree = "<group>"; };
-		316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = ISSUE_TEMPLATE.md; path = .github/ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
-		316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = PULL_REQUEST_TEMPLATE.md; path = .github/PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
 		31727417218BAEC90039FFCC /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		3172741C218BB1790039FFCC /* ParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoder.swift; sourceTree = "<group>"; };
 		31727421218BB9A50039FFCC /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
@@ -400,6 +398,11 @@
 		319917A4209CDAC400103A19 /* RequestTaskMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTaskMap.swift; sourceTree = "<group>"; };
 		319917A9209CDCB000103A19 /* HTTPHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaders.swift; sourceTree = "<group>"; };
 		319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Alamofire.swift"; sourceTree = "<group>"; };
+		319ECEA025EC96E8001C38CA /* ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ci.yml; sourceTree = "<group>"; };
+		319ECEA125EC96E8001C38CA /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
+		319ECEA225EC96E8001C38CA /* BUG_REPORT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BUG_REPORT.md; sourceTree = "<group>"; };
+		319ECEA425EC96E8001C38CA /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
+		319ECEA525EC9710001C38CA /* FEATURE_REQUEST.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = FEATURE_REQUEST.md; sourceTree = "<group>"; };
 		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		31B51E8B2434FECB005356DB /* RequestModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModifierTests.swift; sourceTree = "<group>"; };
 		31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineTests.swift; sourceTree = "<group>"; };
@@ -557,6 +560,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		319ECE9E25EC96E8001C38CA /* .github */ = {
+			isa = PBXGroup;
+			children = (
+				319ECEA325EC96E8001C38CA /* ISSUE_TEMPLATE */,
+				319ECEA125EC96E8001C38CA /* PULL_REQUEST_TEMPLATE.md */,
+				319ECE9F25EC96E8001C38CA /* workflows */,
+			);
+			path = .github;
+			sourceTree = "<group>";
+		};
+		319ECE9F25EC96E8001C38CA /* workflows */ = {
+			isa = PBXGroup;
+			children = (
+				319ECEA025EC96E8001C38CA /* ci.yml */,
+			);
+			path = workflows;
+			sourceTree = "<group>";
+		};
+		319ECEA325EC96E8001C38CA /* ISSUE_TEMPLATE */ = {
+			isa = PBXGroup;
+			children = (
+				319ECEA225EC96E8001C38CA /* BUG_REPORT.md */,
+				319ECEA525EC9710001C38CA /* FEATURE_REQUEST.md */,
+				319ECEA425EC96E8001C38CA /* config.yml */,
+			);
+			path = ISSUE_TEMPLATE;
+			sourceTree = "<group>";
+		};
 		4C256A4E1B09656A0065714F /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -789,10 +820,9 @@
 				312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */,
 				4CE292321EF4A393008DA555 /* CHANGELOG.md */,
 				4CE292331EF4A393008DA555 /* CONTRIBUTING.md */,
-				316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */,
-				316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */,
 				4CE292311EF4A393008DA555 /* README.md */,
 				312D1E0B1FC2551400E51FF1 /* Usage.md */,
+				319ECE9E25EC96E8001C38CA /* .github */,
 				4C9E88361F5FB39F000BEC61 /* Migration Guides */,
 			);
 			name = Documentation;
@@ -1092,7 +1122,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					4CF626EE1BA7CB3E0011A099 = {
