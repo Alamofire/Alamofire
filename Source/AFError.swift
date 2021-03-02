@@ -433,6 +433,13 @@ extension AFError {
         guard case let .downloadedFileMoveFailed(_, _, destination) = self else { return nil }
         return destination
     }
+   
+    /// The resumeData of a `.sessionTaskFailed` error.
+    /// Only works for `DownloadRequest`
+    public var resumeData: Data? {
+        guard case let .sessionTaskFailed(error) = self else { return nil }
+        return (error as NSError).userInfo[NSURLSessionDownloadTaskResumeData] as? Data
+    }
 }
 
 extension AFError.ParameterEncodingFailureReason {

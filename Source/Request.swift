@@ -1613,6 +1613,14 @@ public class DownloadRequest: Request {
         session.downloadTask(with: request)
     }
 
+    override func didCompleteTask(_ task: URLSessionTask, with error: AFError?) {
+        super.didCompleteTask(task, with: error)
+        
+        $mutableDownloadState.write {
+            $0.resumeData = self.error?.resumeData
+        }
+    }
+
     /// Creates a `URLSessionTask` from the provided resume data.
     ///
     /// - Parameters:
