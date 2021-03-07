@@ -64,10 +64,10 @@ struct Endpoint {
         case compression(Compression)
         case delay(interval: Int)
         case digestAuth(qop: String = "auth", username: String, password: String)
+        case download(count: Int)
         case hiddenBasicAuth(username: String, password: String)
         case image(Image)
         case ip
-        case largeImage
         case method(HTTPMethod)
         case payloads(count: Int)
         case redirect(count: Int)
@@ -91,14 +91,14 @@ struct Endpoint {
                 return "/delay/\(interval)"
             case let .digestAuth(qop, username, password):
                 return "/digest-auth/\(qop)/\(username)/\(password)"
+            case let .download(count):
+                return "/download/\(count)"
             case let .hiddenBasicAuth(username, password):
                 return "/hidden-basic-auth/\(username)/\(password)"
             case let .image(type):
                 return "/image/\(type.rawValue)"
             case .ip:
                 return "/ip"
-            case .largeImage:
-                return "/image/large"
             case let .method(method):
                 return "/\(method.rawValue.lowercased())"
             case let .payloads(count):
@@ -155,6 +155,11 @@ struct Endpoint {
         Endpoint(path: .digestAuth(username: user, password: password))
     }
 
+    static func download(_ count: Int = 10_000, produceError: Bool = false) -> Endpoint {
+        Endpoint(path: .download(count: count), queryItems: [.init(name: "shouldProduceError",
+                                                                   value: "\(produceError)")])
+    }
+
     static func hiddenBasicAuth(forUser user: String = "user", password: String = "password") -> Endpoint {
         Endpoint(path: .hiddenBasicAuth(username: user, password: password),
                  headers: [.authorization(username: user, password: password)])
@@ -166,10 +171,6 @@ struct Endpoint {
 
     static var ip: Endpoint {
         Endpoint(path: .ip)
-    }
-
-    static var largeImage: Endpoint {
-        Endpoint(path: .largeImage)
     }
 
     static func method(_ method: HTTPMethod) -> Endpoint {
