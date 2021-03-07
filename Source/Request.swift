@@ -1528,11 +1528,11 @@ public class DownloadRequest: Request {
     @Protected
     private var mutableDownloadState = DownloadRequestMutableState()
 
-    /// If the download is resumable and eventually cancelled, this value may be used to resume the download using the
-    /// `download(resumingWith data:)` API.
+    /// If the download is resumable and is eventually cancelled or fails, this value may be used to resume the download
+    /// using the `download(resumingWith data:)` API.
     ///
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
-    public var resumeData: Data? { mutableDownloadState.resumeData }
+    public var resumeData: Data? { mutableDownloadState.resumeData ?? error?.downloadResumeData }
     /// If the download is successful, the `URL` where the file was downloaded.
     public var fileURL: URL? { mutableDownloadState.fileURL }
 
