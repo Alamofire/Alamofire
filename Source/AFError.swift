@@ -57,6 +57,15 @@ public enum AFError: Error {
         case inputStreamReadFailed(error: Error)
     }
 
+    /// Represents unexpected input stream length that occur when encoding the `MultipartFormData`. Instances will be
+    /// embedded within an `AFError.multipartEncodingFailed` `.inputStreamReadFailed` case.
+    public struct UnexpectedInputStreamLength: Error {
+        /// The expected byte count to read.
+        public var bytesExpected: UInt64
+        /// The actual byte count read.
+        public var bytesRead: UInt64
+    }
+
     /// The underlying reason the `.parameterEncodingFailed` error occurred.
     public enum ParameterEncodingFailureReason {
         /// The `URLRequest` did not have a `URL` to encode.

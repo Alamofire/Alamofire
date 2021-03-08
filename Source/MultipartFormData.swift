@@ -419,6 +419,12 @@ open class MultipartFormData {
             }
         }
 
+        guard UInt64(encoded.count) == bodyPart.bodyContentLength else {
+            let error = AFError.UnexpectedInputStreamLength(bytesExpected: bodyPart.bodyContentLength,
+                                                            bytesRead: UInt64(encoded.count))
+            throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: error))
+        }
+
         return encoded
     }
 
