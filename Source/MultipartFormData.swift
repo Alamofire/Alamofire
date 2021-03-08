@@ -418,9 +418,11 @@ open class MultipartFormData {
                 break
             }
         }
-        
+
         guard UInt64(encoded.count) == bodyPart.bodyContentLength else {
-            throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: UnexpectedInputStreamLengthError(bytesExpected: bodyPart.bodyContentLength, bytesRead: UInt64(encoded.count))))
+            let error = AFError.UnexpectedInputStreamLength(bytesExpected: bodyPart.bodyContentLength,
+                                                            bytesRead: UInt64(encoded.count))
+            throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: error))
         }
 
         return encoded
@@ -548,15 +550,4 @@ open class MultipartFormData {
         guard bodyPartError == nil else { return }
         bodyPartError = AFError.multipartEncodingFailed(reason: reason)
     }
-}
-
-/// Represents unexpected input stream length that occur when encoding the `MultipartFormData`. All errors are
-/// still vended from Alamofire as `AFError` types. The `UnexpectedInputStreamLengthError` instances will be
-/// embedded within the `AFError` `.multipartEncodingFailed` `.inputStreamReadFailed` case.
-public struct UnexpectedInputStreamLengthError: Error {
-    /// The expected byte count to read.
-    public var bytesExpected: UInt64
-    
-    /// The actual byte count read.
-    public var bytesRead: UInt64
 }
