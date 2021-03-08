@@ -500,8 +500,6 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 // MARK: -
 
 final class DownloadResumeDataTestCase: BaseTestCase {
-    let endpoint = Endpoint.largeImage
-
     func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
@@ -510,9 +508,8 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = AF.download(endpoint)
+        let download = AF.download(.download())
         download.downloadProgress { [unowned download] progress in
-            NSLog("%@", progress)
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
@@ -525,7 +522,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -537,6 +534,34 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNil(download.resumeData)
     }
 
+    func testThatDownloadRequestProducesResumeDataOnError() {
+        // Given
+        let expectation = self.expectation(description: "download complete")
+
+        var response: DownloadResponse<URL?, AFError>?
+
+        // When
+        let download = AF.download(.download(produceError: true))
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNotNil(response?.error)
+
+        XCTAssertNotNil(download.error?.downloadResumeData)
+        XCTAssertNotNil(response?.resumeData)
+        XCTAssertNotNil(download.resumeData)
+        XCTAssertEqual(download.error?.downloadResumeData, response?.resumeData)
+        XCTAssertEqual(response?.resumeData, download.resumeData)
+    }
+
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
@@ -545,7 +570,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = AF.download(endpoint)
+        let download = AF.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -581,7 +606,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<Any, AFError>?
 
         // When
-        let download = AF.download(endpoint)
+        let download = AF.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -610,8 +635,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertEqual(response?.resumeData, download.resumeData)
     }
 
-    // Disabled until we can find another source which supports resume ranges.
-    func _testThatCancelledDownloadCanBeResumedWithResumeData() {
+    func testThatCancelledDownloadCanBeResumedWithResumeData() {
         // Given
         let expectation1 = expectation(description: "Download should be cancelled")
         var cancelled = false
@@ -619,7 +643,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response1: DownloadResponse<Data, AFError>?
 
         // When
-        let download = AF.download(endpoint)
+        let download = AF.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -679,7 +703,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = AF.download(endpoint)
+        let download = AF.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
