@@ -907,8 +907,7 @@ open class Session {
                                                           headers: headers,
                                                           requestModifier: requestModifier)
 
-        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
-                                              encodingMemoryThreshold: encodingMemoryThreshold,
+        let multipartUpload = MultipartUpload(encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: convertible,
                                               multipartFormData: multipartFormData)
 
@@ -947,8 +946,7 @@ open class Session {
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
-                                              encodingMemoryThreshold: encodingMemoryThreshold,
+        let multipartUpload = MultipartUpload(encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
                                               multipartFormData: multipartFormData)
 

@@ -266,8 +266,6 @@ final class UploadDataTestCase: BaseTestCase {
 // MARK: -
 
 final class UploadMultipartFormDataTestCase: BaseTestCase {
-    // MARK: Tests
-
     func testThatUploadingMultipartFormDataSetsContentTypeHeader() {
         // Given
         let url = Endpoint.method(.post).url
@@ -302,6 +300,51 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
             let multipartFormData = formData,
             let contentType = request.value(forHTTPHeaderField: "Content-Type") {
             XCTAssertEqual(contentType, multipartFormData.contentType)
+        } else {
+            XCTFail("Content-Type header value should not be nil")
+        }
+    }
+
+    func testThatAccessingMultipartFormDataURLIsThreadSafe() {
+        // Given
+        let url = Endpoint.method(.post).url
+        let uploadData = Data("upload_data".utf8)
+
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
+
+        var formData: MultipartFormData?
+        var generatedURL: URL?
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        let upload = AF.upload(multipartFormData: { multipartFormData in
+                                   multipartFormData.append(uploadData, withName: "upload_data")
+                                   formData = multipartFormData
+                               },
+                               to: url)
+
+        // Access will produce a thread-sanitizer issue if it isn't safe.
+        generatedURL = upload.convertible.urlRequest?.url
+
+        upload.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+
+        if
+            let request = response?.request,
+            let multipartFormData = formData,
+            let contentType = request.value(forHTTPHeaderField: "Content-Type") {
+            XCTAssertEqual(contentType, multipartFormData.contentType)
+            XCTAssertEqual(url, generatedURL)
         } else {
             XCTFail("Content-Type header value should not be nil")
         }
