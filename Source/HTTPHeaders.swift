@@ -221,7 +221,7 @@ extension HTTPHeader {
     /// - Parameter value: The `Accept` value.
     /// - Returns:         The header.
     public static func accept(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "Accept", value: value)
+        HTTPHeader(name: Header.Accept.rawValue, value: value)
     }
 
     /// Returns an `Accept-Charset` header.
@@ -229,7 +229,7 @@ extension HTTPHeader {
     /// - Parameter value: The `Accept-Charset` value.
     /// - Returns:         The header.
     public static func acceptCharset(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "Accept-Charset", value: value)
+        HTTPHeader(name: Header.Accept_Charset.rawValue, value: value)
     }
 
     /// Returns an `Accept-Language` header.
@@ -241,7 +241,7 @@ extension HTTPHeader {
     ///
     /// - Returns:         The header.
     public static func acceptLanguage(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "Accept-Language", value: value)
+        HTTPHeader(name: Header.Accept_Language.rawValue, value: value)
     }
 
     /// Returns an `Accept-Encoding` header.
@@ -253,7 +253,7 @@ extension HTTPHeader {
     ///
     /// - Returns:         The header
     public static func acceptEncoding(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "Accept-Encoding", value: value)
+        HTTPHeader(name: Header.Accept_Encoding.rawValue, value: value)
     }
 
     /// Returns a `Basic` `Authorization` header using the `username` and `password` provided.
@@ -265,8 +265,8 @@ extension HTTPHeader {
     /// - Returns:    The header.
     public static func authorization(username: String, password: String) -> HTTPHeader {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
-
-        return authorization("Basic \(credential)")
+        
+        return authorization("\(Auth.Basic.rawValue) \(credential)")
     }
 
     /// Returns a `Bearer` `Authorization` header using the `bearerToken` provided
@@ -275,7 +275,7 @@ extension HTTPHeader {
     ///
     /// - Returns:               The header.
     public static func authorization(bearerToken: String) -> HTTPHeader {
-        authorization("Bearer \(bearerToken)")
+        authorization("\(Auth.Bearer.rawValue) \(bearerToken)")
     }
 
     /// Returns an `Authorization` header.
@@ -288,7 +288,7 @@ extension HTTPHeader {
     ///
     /// - Returns:         The header.
     public static func authorization(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "Authorization", value: value)
+        HTTPHeader(name: Header.Authorization.rawValue, value: value)
     }
 
     /// Returns a `Content-Disposition` header.
@@ -297,7 +297,7 @@ extension HTTPHeader {
     ///
     /// - Returns:         The header.
     public static func contentDisposition(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "Content-Disposition", value: value)
+        HTTPHeader(name: Header.Content_Disposition.rawValue, value: value)
     }
 
     /// Returns a `Content-Type` header.
@@ -309,7 +309,7 @@ extension HTTPHeader {
     ///
     /// - Returns:         The header.
     public static func contentType(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "Content-Type", value: value)
+        HTTPHeader(name: Header.Content_Type.rawValue, value: value)
     }
 
     /// Returns a `User-Agent` header.
@@ -318,7 +318,7 @@ extension HTTPHeader {
     ///
     /// - Returns:         The header.
     public static func userAgent(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "User-Agent", value: value)
+        HTTPHeader(name: Header.User_Agent.rawValue, value: value)
     }
 }
 
@@ -348,9 +348,9 @@ extension HTTPHeader {
     public static let defaultAcceptEncoding: HTTPHeader = {
         let encodings: [String]
         if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
-            encodings = ["br", "gzip", "deflate"]
+            encodings = [Encodings.br.rawValue, Encodings.gzip.rawValue, Encodings.deflate.rawValue]
         } else {
-            encodings = ["gzip", "deflate"]
+            encodings = [Encodings.gzip.rawValue, Encodings.deflate.rawValue]
         }
 
         return .acceptEncoding(encodings.qualityEncoded())
@@ -373,10 +373,10 @@ extension HTTPHeader {
         let info = Bundle.main.infoDictionary
         let executable = (info?[kCFBundleExecutableKey as String] as? String) ??
             (ProcessInfo.processInfo.arguments.first?.split(separator: "/").last.map(String.init)) ??
-            "Unknown"
-        let bundle = info?[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
-        let appVersion = info?["CFBundleShortVersionString"] as? String ?? "Unknown"
-        let appBuild = info?[kCFBundleVersionKey as String] as? String ?? "Unknown"
+            Plist.Unknown.rawValue
+        let bundle = info?[kCFBundleIdentifierKey as String] as? String ?? Plist.Unknown.rawValue
+        let appVersion = info?[Plist.CFBundleShortVersionString.rawValue] as? String ?? Plist.Unknown.rawValue
+        let appBuild = info?[kCFBundleVersionKey as String] as? String ?? Plist.Unknown.rawValue
 
         let osNameVersion: String = {
             let version = ProcessInfo.processInfo.operatingSystemVersion
@@ -384,29 +384,29 @@ extension HTTPHeader {
             let osName: String = {
                 #if os(iOS)
                 #if targetEnvironment(macCatalyst)
-                return "macOS(Catalyst)"
+                return Flatform.macOS_Catalyst.rawValue
                 #else
-                return "iOS"
+                return Flatform.iOS.rawValue
                 #endif
                 #elseif os(watchOS)
-                return "watchOS"
+                return Flatform.watchOS.rawValue
                 #elseif os(tvOS)
-                return "tvOS"
+                return Flatform.tvOS.rawValue
                 #elseif os(macOS)
-                return "macOS"
+                return Flatform.macOS.rawValue
                 #elseif os(Linux)
-                return "Linux"
+                return Flatform.Linux.rawValue
                 #elseif os(Windows)
-                return "Windows"
+                return Flatform.Windows.rawValue
                 #else
-                return "Unknown"
+                return Flatform.Unknown.rawValue
                 #endif
             }()
 
             return "\(osName) \(versionString)"
         }()
 
-        let alamofireVersion = "Alamofire/\(version)"
+        let alamofireVersion = "\(ALAMOFIRE_NAME)/\(version)"
 
         let userAgent = "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
 
