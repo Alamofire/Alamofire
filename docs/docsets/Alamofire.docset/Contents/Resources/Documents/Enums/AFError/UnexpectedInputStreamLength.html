@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>ResponseValidationFailureReason Enumeration Reference</title>
+    <title>UnexpectedInputStreamLength Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Enum/ResponseValidationFailureReason" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Struct/UnexpectedInputStreamLength" class="dashAnchor"></a>
 
-    <a title="ResponseValidationFailureReason Enumeration Reference"></a>
+    <a title="UnexpectedInputStreamLength Structure Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -50,7 +50,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../../index.html">Alamofire Reference</a>
       <img class="carat" src="../../img/carat.png" />
-      ResponseValidationFailureReason Enumeration Reference
+      UnexpectedInputStreamLength Structure Reference
     </p>
 
     <div class="content-wrapper">
@@ -508,15 +508,16 @@
 
         <section class="section">
           <div class="section-content top-matter">
-            <h1>ResponseValidationFailureReason</h1>
+            <h1>UnexpectedInputStreamLength</h1>
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ResponseValidationFailureReason</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">UnexpectedInputStreamLength</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
 
                 </div>
               </div>
-            <p>The underlying reason the <code>.responseValidationFailed</code> error occurred.</p>
+            <p>Represents unexpected input stream length that occur when encoding the <code><a href="../../Classes/MultipartFormData.html">MultipartFormData</a></code>. Instances will be
+embedded within an <code>AFError.multipartEncodingFailed</code> <code>.inputStreamReadFailed</code> case.</p>
 
           </div>
         </section>
@@ -528,9 +529,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO11dataFileNilyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/dataFileNil" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO11dataFileNilyA2EmF">dataFileNil</a>
+                    <a name="/s:9Alamofire7AFErrorO27UnexpectedInputStreamLengthV13bytesExpecteds6UInt64Vvp"></a>
+                    <a name="//apple_ref/swift/Property/bytesExpected" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO27UnexpectedInputStreamLengthV13bytesExpecteds6UInt64Vvp">bytesExpected</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -538,14 +539,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The data file containing the server response did not exist.</p>
+                        <p>The expected byte count to read.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">dataFileNil</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">bytesExpected</span><span class="p">:</span> <span class="kt">UInt64</span></code></pre>
 
                         </div>
                       </div>
@@ -555,9 +556,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO18dataFileReadFailedyAE10Foundation3URLV_tcAEmF"></a>
-                    <a name="//apple_ref/swift/Element/dataFileReadFailed(at:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO18dataFileReadFailedyAE10Foundation3URLV_tcAEmF">dataFileReadFailed(at:<wbr>)</a>
+                    <a name="/s:9Alamofire7AFErrorO27UnexpectedInputStreamLengthV9bytesReads6UInt64Vvp"></a>
+                    <a name="//apple_ref/swift/Property/bytesRead" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO27UnexpectedInputStreamLengthV9bytesReads6UInt64Vvp">bytesRead</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -565,123 +566,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The data file containing the server response at the associated <code>URL</code> could not be read.</p>
+                        <p>The actual byte count read.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">dataFileReadFailed</span><span class="p">(</span><span class="nv">at</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO18missingContentTypeyAESaySSG_tcAEmF"></a>
-                    <a name="//apple_ref/swift/Element/missingContentType(acceptableContentTypes:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO18missingContentTypeyAESaySSG_tcAEmF">missingContentType(acceptableContentTypes:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The response did not contain a <code>Content-Type</code> and the <code><a href="../../Enums/AFError.html#/s:9Alamofire7AFErrorO22acceptableContentTypesSaySSGSgvp">acceptableContentTypes</a></code> provided did not contain a
-wildcard type.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">missingContentType</span><span class="p">(</span><span class="nv">acceptableContentTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO23unacceptableContentTypeyAESaySSG_SStcAEmF"></a>
-                    <a name="//apple_ref/swift/Element/unacceptableContentType(acceptableContentTypes:responseContentType:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO23unacceptableContentTypeyAESaySSG_SStcAEmF">unacceptableContentType(acceptableContentTypes:<wbr>responseContentType:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The response <code>Content-Type</code> did not match any type in the provided <code><a href="../../Enums/AFError.html#/s:9Alamofire7AFErrorO22acceptableContentTypesSaySSGSgvp">acceptableContentTypes</a></code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">unacceptableContentType</span><span class="p">(</span><span class="nv">acceptableContentTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="nv">responseContentType</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO22unacceptableStatusCodeyAESi_tcAEmF"></a>
-                    <a name="//apple_ref/swift/Element/unacceptableStatusCode(code:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO22unacceptableStatusCodeyAESi_tcAEmF">unacceptableStatusCode(code:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The response status code was not acceptable.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">unacceptableStatusCode</span><span class="p">(</span><span class="nv">code</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO06customD6FailedyAEs5Error_p_tcAEmF"></a>
-                    <a name="//apple_ref/swift/Element/customValidationFailed(error:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO06customD6FailedyAEs5Error_p_tcAEmF">customValidationFailed(error:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Custom response validation failed due to the associated <code>Error</code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">customValidationFailed</span><span class="p">(</span><span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">bytesRead</span><span class="p">:</span> <span class="kt">UInt64</span></code></pre>
 
                         </div>
                       </div>
