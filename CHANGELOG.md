@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541)
+- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542)
 - `5.3.x` Releases - [5.3.0](#530)
 - `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
@@ -44,6 +44,21 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.4.2](https://github.com/Alamofire/Alamofire/releases/tag/5.4.2)
+Released on 2020-04-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/76?closed=1).
+
+#### Updated
+- Resume data handling for `DownloadRequest`s to access resume data from errors as well as cancellation.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3419](https://github.com/Alamofire/Alamofire/pull/3419).
+- Project files and templates for Xcode 12.4 and GitHub templates.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3414](https://github.com/Alamofire/Alamofire/pull/3414).
+
+#### Fixed
+- `MultipartUpload` thread-safety.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3421](https://github.com/Alamofire/Alamofire/pull/3421).
+- Multipart body stream length handling to better handle partial streams.
+  - Fixed by [Yu Ao](https://github.com/YuAo) and [Jon Shier](https://github.com/jshier) in Pull Requests [#3380](https://github.com/Alamofire/Alamofire/pull/3380) and [#3420](https://github.com/Alamofire/Alamofire/pull/3420).
 
 ## [5.4.1](https://github.com/Alamofire/Alamofire/releases/tag/5.4.1)
 Released on 2020-12-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/75?closed=1).
