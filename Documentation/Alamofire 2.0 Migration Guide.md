@@ -1,6 +1,6 @@
 # Alamofire 2.0 Migration Guide
 
-Alamofire 2.0 is the latest major release of Alamofire, an HTTP networking library for iOS, Mac OS X and watchOS written in Swift. As a major release, following Semantic Versioning conventions, 2.0 introduces several API-breaking changes that one should be aware of.
+Alamofire 2.0 is the latest major release of Alamofire, an HTTP & HTTPS networking library for iOS, Mac OS X and watchOS written in Swift. As a major release, following Semantic Versioning conventions, 2.0 introduces several API-breaking changes that one should be aware of.
 
 This guide is provided in order to ease the transition of existing applications using Alamofire 1.x to the latest APIs, as well as explain the design and structure of new and changed functionality.
 
