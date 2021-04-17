@@ -420,7 +420,7 @@ open class Session {
                             requestModifier: RequestModifier? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
-                                                      parameters: Optional<Empty>.none,
+                                                      parameters: Empty?.none,
                                                       encoder: URLEncodedFormParameterEncoder.default,
                                                       headers: headers,
                                                       requestModifier: requestModifier)
@@ -1019,13 +1019,15 @@ open class Session {
     func performUploadRequest(_ request: UploadRequest) {
         dispatchPrecondition(condition: .onQueue(requestQueue))
 
-        do {
-            let uploadable = try request.upload.createUploadable()
-            rootQueue.async { request.didCreateUploadable(uploadable) }
-
-            performSetupOperations(for: request, convertible: request.convertible)
-        } catch {
-            rootQueue.async { request.didFailToCreateUploadable(with: error.asAFError(or: .createUploadableFailed(error: error))) }
+        performSetupOperations(for: request, convertible: request.convertible) {
+            do {
+                let uploadable = try request.upload.createUploadable()
+                self.rootQueue.async { request.didCreateUploadable(uploadable) }
+                return true
+            } catch {
+                self.rootQueue.async { request.didFailToCreateUploadable(with: error.asAFError(or: .createUploadableFailed(error: error))) }
+                return false
+            }
         }
     }
 
@@ -1040,7 +1042,10 @@ open class Session {
         }
     }
 
-    func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
+    func performSetupOperations(for request: Request,
+                                convertible: URLRequestConvertible,
+                                shouldCreateTask: @escaping () -> Bool = { true })
+    {
         dispatchPrecondition(condition: .onQueue(requestQueue))
 
         let initialRequest: URLRequest
@@ -1058,6 +1063,7 @@ open class Session {
         guard !request.isCancelled else { return }
 
         guard let adapter = adapter(for: request) else {
+            guard shouldCreateTask() else { return }
             rootQueue.async { self.didCreateURLRequest(initialRequest, for: request) }
             return
         }
@@ -1067,10 +1073,11 @@ open class Session {
                 let adaptedRequest = try result.get()
                 try adaptedRequest.validate()
 
-                self.rootQueue.async {
-                    request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
-                    self.didCreateURLRequest(adaptedRequest, for: request)
-                }
+                self.rootQueue.async { request.didAdaptInitialRequest(initialRequest, to: adaptedRequest) }
+
+                guard shouldCreateTask() else { return }
+
+                self.rootQueue.async { self.didCreateURLRequest(adaptedRequest, for: request) }
             } catch {
                 self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: .requestAdaptationFailed(error: error)) }
             }

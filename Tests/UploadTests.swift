@@ -580,6 +580,54 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertTrue(response?.result.isSuccess == false)
     }
 
+    func testThatUploadingMultipartFormDataWorksWhenAppendingBodyPartsInURLRequestConvertible() {
+        // Given
+        struct MultipartFormDataRequest: URLRequestConvertible {
+            let multipartFormData = MultipartFormData()
+
+            func asURLRequest() throws -> URLRequest {
+                appendBodyParts()
+                return try Endpoint.method(.post).asURLRequest()
+            }
+
+            func appendBodyParts() {
+                let frenchData = Data("français".utf8)
+                multipartFormData.append(frenchData, withName: "french")
+
+                let japaneseData = Data("日本語".utf8)
+                multipartFormData.append(japaneseData, withName: "japanese")
+            }
+        }
+
+        let request = MultipartFormDataRequest()
+
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        let uploadRequest = AF.upload(multipartFormData: request.multipartFormData, with: request)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+
+        switch uploadRequest.uploadable {
+        case let .data(data):
+            XCTAssertEqual(data.count, 241)
+
+        default:
+            XCTFail("Uploadable should be of type data and not be empty")
+        }
+    }
+
     #if os(macOS)
     func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
