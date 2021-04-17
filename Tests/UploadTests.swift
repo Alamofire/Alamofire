@@ -620,7 +620,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
 
         switch uploadRequest.uploadable {
-        case .data(let data):
+        case let .data(data):
             XCTAssertEqual(data.count, 241)
 
         default:
