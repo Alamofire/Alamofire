@@ -69,6 +69,22 @@ open class ServerTrustManager {
 
         return evaluator
     }
+    
+    /// Returns the `ServerTrustEvaluating` value for the given host, if one is set.
+    ///
+    /// By default, this method will return the policy that perfectly matches the given host. Subclasses could override
+    /// this method and implement more complex mapping implementations such as wildcards.
+    ///
+    /// - Parameter host: The host to use when searching for a matching policy.
+    ///
+    /// - Parameter task: The task to use when searching for a matching policy.
+    ///
+    /// - Returns:        The `ServerTrustEvaluating` value for the given host if found, `nil` otherwise.
+    /// - Throws:         `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching
+    ///                   evaluators are found.
+    open func serverTrustEvaluator(forTask task: URLSessionTask, forHost host: String) throws -> ServerTrustEvaluating? {
+       return try self.serverTrustEvaluator(forHost: host)
+    }
 }
 
 /// A protocol describing the API used to evaluate server trusts.
