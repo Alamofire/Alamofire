@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542)
+- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543)
 - `5.3.x` Releases - [5.3.0](#530)
 - `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
@@ -44,6 +44,15 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.4.3](https://github.com/Alamofire/Alamofire/releases/tag/5.4.3)
+Released on 2020-04-21. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/77?closed=1).
+
+#### Fixed
+- Change in multipart upload creation order.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#3438](https://github.com/Alamofire/Alamofire/pull/3438).
+- Typo in Alamofire 5 migration guide.
+  - Fixed by [DevYeom](https://github.com/DevYeom) in Pull Request [#3431](https://github.com/Alamofire/Alamofire/pull/3431).
 
 ## [5.4.2](https://github.com/Alamofire/Alamofire/releases/tag/5.4.2)
 Released on 2020-04-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/76?closed=1).
