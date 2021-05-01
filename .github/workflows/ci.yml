@@ -12,8 +12,8 @@ on:
 jobs:
   macOS_5_1:
     name: Build macOS (5.1)
-    runs-on: macOS-latest
-    env: 
+    runs-on: macOS-10.15
+    env:
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
@@ -21,8 +21,8 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean build | xcpretty
   macOS_5_2:
     name: Test macOS (5.2)
-    runs-on: macOS-latest
-    env: 
+    runs-on: macOS-10.15
+    env:
       DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
@@ -30,10 +30,10 @@ jobs:
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: macOS (5.2)
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
-  macOS_Catalina_5_3:
-    name: Test macOS 10.15 (5.3)
+  macOS_5_3:
+    name: Test macOS (5.3)
     runs-on: macOS-10.15
-    env: 
+    env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
@@ -41,21 +41,21 @@ jobs:
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: macOS (5.3)
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
-#  macOS_Big_Sur_5_3:
-#    name: Test macOS 11 (5.3)
-#    runs-on: macOS-11.0
-#    env:
-#      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Install Firewalk
-#        run: brew install alamofire/alamofire/firewalk && firewalk &
-#      - name: macOS (5.3)
-#        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
+  macOS_5_4:
+    name: Test macOS (5.4)
+    runs-on: firebreak
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Firewalk
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+      - name: macOS (5.4)
+        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
-    name: Test Catalyst 
-    runs-on: macOS-latest
-    env: 
+    name: Test Catalyst
+    runs-on: macOS-10.15
+    env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
@@ -64,9 +64,9 @@ jobs:
       - name: Catalyst
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
-    name: Test iOS 
-    runs-on: macOS-latest
-    env: 
+    name: Test iOS
+    runs-on: macOS-10.15
+    env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
     strategy:
       matrix:
@@ -78,9 +78,9 @@ jobs:
       - name: iOS - ${{ matrix.destination }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   tvOS:
-    name: Test tvOS 
-    runs-on: macOS-latest
-    env: 
+    name: Test tvOS
+    runs-on: macOS-10.15
+    env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
     strategy:
       matrix:
@@ -93,8 +93,8 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   watchOS:
     name: Build watchOS
-    runs-on: macOS-latest
-    env: 
+    runs-on: macOS-10.15
+    env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
     strategy:
       matrix:
@@ -105,8 +105,8 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean build | xcpretty
   spm:
     name: Test with SPM
-    runs-on: macOS-latest    
-    env: 
+    runs-on: macOS-10.15
+    env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
