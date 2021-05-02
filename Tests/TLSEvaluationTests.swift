@@ -86,9 +86,6 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         if let error = error?.underlyingError as? URLError {
             XCTAssertEqual(error.code, .serverCertificateUntrusted)
-        } else if let error = error?.underlyingError as NSError? {
-            XCTAssertEqual(error.domain, kCFErrorDomainCFNetwork as String)
-            XCTAssertEqual(error.code, Int(CFNetworkErrors.cfErrorHTTPSProxyConnectionFailure.rawValue))
         } else {
             XCTFail("error should be a URLError or NSError from CFNetwork")
         }
@@ -227,6 +224,8 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
+    // watchOS doesn't perform revocation checking at all.
+    #if !os(watchOS)
     func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
         let policy = RevocationTrustEvaluator()
@@ -264,6 +263,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }
     }
+    #endif
 
     // MARK: Server Trust Policy - Certificate Pinning Tests
 

@@ -34,4 +34,13 @@ extension AlamofireExtension where ExtendedType: URLSessionConfiguration {
 
         return configuration
     }
+
+    /// `.ephemeral` configuration with Alamofire's default `Accept-Language`, `Accept-Encoding`, and `User-Agent`
+    /// headers.
+    public static var ephemeral: URLSessionConfiguration {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.headers = .default
+
+        return configuration
+    }
 }

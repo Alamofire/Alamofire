@@ -27,7 +27,9 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      enableThreadSanitizer = "YES">
+      enableThreadSanitizer = "YES"
+      codeCoverageEnabled = "YES"
+      onlyGenerateCoverageForSpecifiedTargets = "YES">
       <AdditionalOptions>
          <AdditionalOption
             key = "NSZombieEnabled"
@@ -35,7 +37,26 @@
             isEnabled = "YES">
          </AdditionalOption>
       </AdditionalOptions>
+      <CodeCoverageTargets>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "E4202FCD1B667AA100C997FB"
+            BuildableName = "Alamofire.framework"
+            BlueprintName = "Alamofire watchOS"
+            ReferencedContainer = "container:Alamofire.xcodeproj">
+         </BuildableReference>
+      </CodeCoverageTargets>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "31293064263E17D600473CEA"
+               BuildableName = "Alamofire watchOS Tests.xctest"
+               BlueprintName = "Alamofire watchOS Tests"
+               ReferencedContainer = "container:Alamofire.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -48,6 +69,7 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
+      enableGPUValidationMode = "1"
       allowLocationSimulation = "YES">
       <MacroExpansion>
          <BuildableReference

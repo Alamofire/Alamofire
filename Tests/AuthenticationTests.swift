@@ -29,7 +29,7 @@ import XCTest
 final class BasicAuthenticationTestCase: BaseTestCase {
     func testHTTPBasicAuthenticationFailsWithInvalidCredentials() {
         // Given
-        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let session = Session()
         let endpoint = Endpoint.basicAuth()
         let expectation = self.expectation(description: "\(endpoint.url) 401")
 
@@ -55,8 +55,8 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
-        let session = Session(configuration: URLSessionConfiguration.af.default)
-        let user = "user", password = "password"
+        let session = Session()
+        let user = "user1", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
 
@@ -82,8 +82,8 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
     func testHTTPBasicAuthenticationWithStoredCredentials() {
         // Given
-        let session = Session(configuration: URLSessionConfiguration.af.default)
-        let user = "user", password = "password"
+        let session = Session()
+        let user = "user2", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
 
@@ -115,7 +115,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
     func testHiddenHTTPBasicAuthentication() {
         // Given
-        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let session = Session()
         let endpoint = Endpoint.hiddenBasicAuth()
         let expectation = self.expectation(description: "\(endpoint.url) 200")
 
@@ -144,7 +144,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 final class HTTPDigestAuthenticationTestCase: BaseTestCase {
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
-        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let session = Session()
         let endpoint = Endpoint.digestAuth()
         let expectation = self.expectation(description: "\(endpoint.url) 401")
 
@@ -170,7 +170,7 @@ final class HTTPDigestAuthenticationTestCase: BaseTestCase {
 
     func testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
-        let session = Session(configuration: URLSessionConfiguration.af.default)
+        let session = Session()
         let user = "user", password = "password"
         let endpoint = Endpoint.digestAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
