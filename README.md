@@ -1,4 +1,4 @@
-![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/master/alamofire.png)
+![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/Alamofire.png)
 
 [![Build Status](https://github.com/Alamofire/Alamofire/workflows/Alamofire%20CI/badge.svg?branch=master)](https://github.com/Alamofire/Alamofire/actions)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg)](https://img.shields.io/cocoapods/v/Alamofire.svg)
@@ -200,6 +200,12 @@ If you use any of our libraries for work, see if your employers would be interes
 Any amount you can donate today to help us reach our goal would be greatly appreciated.
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W34WPEE74APJQ)
+
+## Supporters
+
+[MacStadium](https://macstadium.com) provides Alamofire with a free, hosted Mac mini.
+
+![Powered by MacStadium](https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/MacStadiumLogo.png)
 
 ## License
 
