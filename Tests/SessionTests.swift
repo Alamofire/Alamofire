@@ -815,75 +815,6 @@ final class SessionTestCase: BaseTestCase {
 
     // MARK: Tests - Request Retrier
 
-    func testThatSessionCallsRequestRetrierWhenRequestEncountersError() {
-        // Given
-        let handler = RequestHandler()
-
-        let session = Session()
-
-        let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, AFError>?
-
-        // When
-        let request = session.request(.basicAuth(), interceptor: handler)
-            .validate()
-            .responseJSON { jsonResponse in
-                response = jsonResponse
-                expectation.fulfill()
-            }
-
-        waitForExpectations(timeout: timeout)
-
-        // Then
-        XCTAssertEqual(handler.adaptCalledCount, 2)
-        XCTAssertEqual(handler.adaptedCount, 2)
-        XCTAssertEqual(handler.retryCalledCount, 3)
-        XCTAssertEqual(handler.retryCount, 3)
-        XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(response?.result.isSuccess, false)
-        assert(on: session.rootQueue) {
-            XCTAssertTrue(session.requestTaskMap.isEmpty)
-            XCTAssertTrue(session.activeRequests.isEmpty)
-        }
-    }
-
-    func testThatSessionCallsRequestRetrierThenSessionRetrierWhenRequestEncountersError() {
-        // Given
-        let sessionHandler = RequestHandler()
-        let requestHandler = RequestHandler()
-
-        let session = Session(interceptor: sessionHandler)
-
-        let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, AFError>?
-
-        // When
-        let request = session.request(.basicAuth(), interceptor: requestHandler)
-            .validate()
-            .responseJSON { jsonResponse in
-                response = jsonResponse
-                expectation.fulfill()
-            }
-
-        waitForExpectations(timeout: timeout)
-
-        // Then
-        XCTAssertEqual(sessionHandler.adaptCalledCount, 3)
-        XCTAssertEqual(sessionHandler.adaptedCount, 3)
-        XCTAssertEqual(sessionHandler.retryCalledCount, 3)
-        XCTAssertEqual(sessionHandler.retryCount, 3)
-        XCTAssertEqual(requestHandler.adaptCalledCount, 3)
-        XCTAssertEqual(requestHandler.adaptedCount, 3)
-        XCTAssertEqual(requestHandler.retryCalledCount, 4)
-        XCTAssertEqual(requestHandler.retryCount, 4)
-        XCTAssertEqual(request.retryCount, 2)
-        XCTAssertEqual(response?.result.isSuccess, false)
-        assert(on: session.rootQueue) {
-            XCTAssertTrue(session.requestTaskMap.isEmpty)
-            XCTAssertTrue(session.activeRequests.isEmpty)
-        }
-    }
-
     func testThatSessionCallsRequestRetrierWhenRequestInitiallyEncountersAdaptError() {
         // Given
         let handler = RequestHandler()
@@ -983,6 +914,77 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
+    }
+
+    // Disable retrier tests on watchOS as there seems to be some sort of implicit credential storage.
+    #if !os(watchOS)
+    func testThatSessionCallsRequestRetrierWhenRequestEncountersError() {
+        // Given
+        let handler = RequestHandler()
+
+        let session = Session()
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any, AFError>?
+
+        // When
+        let request = session.request(.basicAuth(), interceptor: handler)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: 100)
+
+        // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 3)
+        XCTAssertEqual(handler.retryCount, 3)
+        XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, false)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
+    }
+
+    func testThatSessionCallsRequestRetrierThenSessionRetrierWhenRequestEncountersError() {
+        // Given
+        let sessionHandler = RequestHandler()
+        let requestHandler = RequestHandler()
+
+        let session = Session(interceptor: sessionHandler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any, AFError>?
+
+        // When
+        let request = session.request(.basicAuth(), interceptor: requestHandler)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(sessionHandler.adaptCalledCount, 3)
+        XCTAssertEqual(sessionHandler.adaptedCount, 3)
+        XCTAssertEqual(sessionHandler.retryCalledCount, 3)
+        XCTAssertEqual(sessionHandler.retryCount, 3)
+        XCTAssertEqual(requestHandler.adaptCalledCount, 3)
+        XCTAssertEqual(requestHandler.adaptedCount, 3)
+        XCTAssertEqual(requestHandler.retryCalledCount, 4)
+        XCTAssertEqual(requestHandler.retryCount, 4)
+        XCTAssertEqual(request.retryCount, 2)
+        XCTAssertEqual(response?.result.isSuccess, false)
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty)
             XCTAssertTrue(session.activeRequests.isEmpty)
@@ -1132,6 +1134,7 @@ final class SessionTestCase: BaseTestCase {
             XCTFail("error should not be nil")
         }
     }
+    #endif
 
     // MARK: Tests - Response Serializer Retry
 
