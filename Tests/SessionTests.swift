@@ -920,8 +920,6 @@ final class SessionTestCase: BaseTestCase {
         }
     }
 
-    // Disable retrier tests on watchOS as there seems to be some sort of implicit credential storage.
-    #if !os(watchOS)
     func testThatSessionCallsRequestRetrierWhenRequestEncountersError() {
         // Given
         let handler = RequestHandler()
@@ -1134,7 +1132,6 @@ final class SessionTestCase: BaseTestCase {
             XCTFail("error should not be nil")
         }
     }
-    #endif
 
     // MARK: Tests - Response Serializer Retry
 

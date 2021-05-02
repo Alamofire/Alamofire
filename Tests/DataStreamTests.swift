@@ -935,7 +935,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
 
     func testThatDataStreamCanAuthenticate() {
         // Given
-        let user = "user", password = "password"
+        let user = "userstream", password = "password"
         var response: HTTPURLResponse?
         var streamOnMain = false
         var completeOnMain = false

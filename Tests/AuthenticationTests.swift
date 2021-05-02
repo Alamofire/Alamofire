@@ -56,7 +56,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
         let session = Session()
-        let user = "user", password = "password"
+        let user = "user1", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
 
@@ -83,7 +83,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
     func testHTTPBasicAuthenticationWithStoredCredentials() {
         // Given
         let session = Session()
-        let user = "user", password = "password"
+        let user = "user2", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
 
