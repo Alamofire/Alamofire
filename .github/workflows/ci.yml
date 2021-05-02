@@ -85,6 +85,7 @@ jobs:
     strategy:
       matrix:
         destination: ["OS=14.3,name=Apple TV 4K"]
+    steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
