@@ -939,7 +939,7 @@ final class SessionTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: 100)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(handler.adaptCalledCount, 2)
