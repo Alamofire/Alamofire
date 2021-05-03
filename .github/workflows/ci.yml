@@ -133,7 +133,7 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       image: swiftlang/swift:5.4-focal
-      steps:
-        - uses: actions/checkout@v2
-        - name: SPM Linux build
-          run: swift build -c debug
+    steps:
+      - uses: actions/checkout@v2
+      - name: SPM Linux build
+        run: swift build -c debug
