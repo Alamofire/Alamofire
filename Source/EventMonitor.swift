@@ -39,8 +39,10 @@ public protocol EventMonitor {
 
     // MARK: URLSessionTaskDelegate Events
 
+    #if !os(Linux)
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:task:didReceive:completionHandler:)` method.
     func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge)
+    #endif
 
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)` method.
     func urlSession(_ session: URLSession,
@@ -227,9 +229,11 @@ extension EventMonitor {
     // MARK: Default Implementations
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {}
+    #if !os(Linux)
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didReceive challenge: URLAuthenticationChallenge) {}
+    #endif
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didSendBodyData bytesSent: Int64,
@@ -330,11 +334,13 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, didBecomeInvalidWithError: error) }
     }
 
+    #if !os(Linux)
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didReceive challenge: URLAuthenticationChallenge) {
         performEvent { $0.urlSession(session, task: task, didReceive: challenge) }
     }
+    #endif
 
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
@@ -573,8 +579,10 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
     open var sessionDidBecomeInvalidWithError: ((URLSession, Error?) -> Void)?
 
+    #if !os(Linux)
     /// Closure called on the `urlSession(_:task:didReceive:completionHandler:)`.
     open var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> Void)?
+    #endif
 
     /// Closure that receives `urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)` event.
     open var taskDidSendBodyData: ((URLSession, URLSessionTask, Int64, Int64, Int64) -> Void)?
@@ -706,9 +714,11 @@ open class ClosureEventMonitor: EventMonitor {
         sessionDidBecomeInvalidWithError?(session, error)
     }
 
+    #if !os(Linux)
     open func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge) {
         taskDidReceiveChallenge?(session, task, challenge)
     }
+    #endif
 
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,

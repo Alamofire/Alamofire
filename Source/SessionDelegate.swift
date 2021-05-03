@@ -80,6 +80,7 @@ extension SessionDelegate: URLSessionDelegate {
 // MARK: URLSessionTaskDelegate
 
 extension SessionDelegate: URLSessionTaskDelegate {
+    #if !os(Linux)
     /// Result of a `URLAuthenticationChallenge` evaluation.
     typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: AFError?)
 
@@ -153,6 +154,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         return (.useCredential, credential, nil)
     }
+    #endif
 
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,
