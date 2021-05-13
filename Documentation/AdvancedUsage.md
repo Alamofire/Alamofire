@@ -702,7 +702,7 @@ let evaluators: [String: ServerTrustEvaluating] = [
     "keys.example.com": PublicKeysTrustEvaluator(),
 ]
 
-let manager = ServerTrustManager(evaluators: serverTrustPolicies)
+let manager = ServerTrustManager(evaluators: evaluators)
 ```
 
 This `ServerTrustManager` will have the following behaviors:
