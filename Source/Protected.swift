@@ -51,18 +51,8 @@ extension Lock {
 
 #if os(Linux) || os(Windows)
 
-/// An `NSLock` wrapper.
-final class MutexLock: Lock {
-    private var mutex = NSLock()
+extension NSLock: Lock { }
 
-    fileprivate func lock() {
-        self.mutex.lock()
-    }
-
-    fileprivate func unlock() {
-        self.mutex.unlock()
-    }
-}
 #endif
 
 #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
@@ -97,7 +87,7 @@ final class Protected<T> {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     private let lock = UnfairLock()
     #elseif os(Linux) || os(Windows)
-    private let lock = MutexLock()
+    private let lock = NSLock()
     #endif
     private var value: T
 
