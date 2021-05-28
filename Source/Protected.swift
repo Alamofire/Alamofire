@@ -49,7 +49,7 @@ extension Lock {
     }
 }
 
-#if os(Linux) || os(Windows)
+#if os(Linux)
 /// A `pthread_mutex_t` wrapper.
 final class MutexLock: Lock {
     private var mutex: UnsafeMutablePointer<pthread_mutex_t>
@@ -78,6 +78,45 @@ final class MutexLock: Lock {
     fileprivate func unlock() {
         let error = pthread_mutex_unlock(mutex)
         precondition(error == 0, "Failed to unlock pthread_mutex")
+    }
+}
+#endif
+
+#if os(Windows)
+import WinSDK
+private func randomString(length: Int) -> String {
+    let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    return String((0..<length).map{ _ in letters.randomElement()! })
+}
+
+/// A `CreateMutexA` wrapper.
+final class MutexLock: Lock {
+    private var mutex: HANDLE
+    private var locked = false
+
+    init() {
+        let mutexName = "AlamofireMutex\(randomString(length: 6))"
+        guard let _mutex = CreateMutexA(nil, false, mutexName) else {
+            fatalError("CreateMutexA failed")
+        }
+        mutex = _mutex
+    }
+
+    deinit {
+        if self.locked {
+            self.unlock()
+        }
+    }
+
+    fileprivate func lock() {
+        self.locked = true
+        let _ = WaitForSingleObject(self.mutex, INFINITE)
+    }
+
+    fileprivate func unlock() {
+        let error = ReleaseMutex(mutex)
+        precondition(error, "Failed to unlock mutex")
+        self.locked = false
     }
 }
 #endif
