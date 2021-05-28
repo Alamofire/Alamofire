@@ -49,58 +49,12 @@ extension Lock {
     }
 }
 
-#if os(Linux)
-/// A `pthread_mutex_t` wrapper.
+#if os(Linux) || os(Windows)
+
+/// An `NSLock` wrapper.
 final class MutexLock: Lock {
-    private var mutex: UnsafeMutablePointer<pthread_mutex_t>
-
-    init() {
-        mutex = .allocate(capacity: 1)
-
-        var attr = pthread_mutexattr_t()
-        pthread_mutexattr_init(&attr)
-        pthread_mutexattr_settype(&attr, .init(PTHREAD_MUTEX_ERRORCHECK))
-
-        let error = pthread_mutex_init(mutex, &attr)
-        precondition(error == 0, "Failed to create pthread_mutex")
-    }
-
-    deinit {
-        let error = pthread_mutex_destroy(mutex)
-        precondition(error == 0, "Failed to destroy pthread_mutex")
-    }
-
-    fileprivate func lock() {
-        let error = pthread_mutex_lock(mutex)
-        precondition(error == 0, "Failed to lock pthread_mutex")
-    }
-
-    fileprivate func unlock() {
-        let error = pthread_mutex_unlock(mutex)
-        precondition(error == 0, "Failed to unlock pthread_mutex")
-    }
-}
-#endif
-
-#if os(Windows)
-import WinSDK
-private func randomString(length: Int) -> String {
-    let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    return String((0..<length).map{ _ in letters.randomElement()! })
-}
-
-/// A `CreateMutexA` wrapper.
-final class MutexLock: Lock {
-    private var mutex: HANDLE
+    private var mutex = NSLock()
     private var locked = false
-
-    init() {
-        let mutexName = "AlamofireMutex\(randomString(length: 6))"
-        guard let _mutex = CreateMutexA(nil, false, mutexName) else {
-            fatalError("CreateMutexA failed")
-        }
-        mutex = _mutex
-    }
 
     deinit {
         if self.locked {
@@ -110,12 +64,11 @@ final class MutexLock: Lock {
 
     fileprivate func lock() {
         self.locked = true
-        let _ = WaitForSingleObject(self.mutex, INFINITE)
+        self.mutex.lock()
     }
 
     fileprivate func unlock() {
-        let error = ReleaseMutex(mutex)
-        precondition(error, "Failed to unlock mutex")
+        self.mutex.unlock()
         self.locked = false
     }
 }
