@@ -49,7 +49,7 @@ extension Lock {
     }
 }
 
-#if os(Linux)
+#if os(Linux) || os(Windows)
 /// A `pthread_mutex_t` wrapper.
 final class MutexLock: Lock {
     private var mutex: UnsafeMutablePointer<pthread_mutex_t>
@@ -113,7 +113,7 @@ final class UnfairLock: Lock {
 final class Protected<T> {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     private let lock = UnfairLock()
-    #elseif os(Linux)
+    #elseif os(Linux) || os(Windows)
     private let lock = MutexLock()
     #endif
     private var value: T
