@@ -80,7 +80,7 @@ extension SessionDelegate: URLSessionDelegate {
 // MARK: URLSessionTaskDelegate
 
 extension SessionDelegate: URLSessionTaskDelegate {
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     /// Result of a `URLAuthenticationChallenge` evaluation.
     typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: AFError?)
 
