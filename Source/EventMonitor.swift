@@ -39,7 +39,7 @@ public protocol EventMonitor {
 
     // MARK: URLSessionTaskDelegate Events
 
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:task:didReceive:completionHandler:)` method.
     func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge)
     #endif
@@ -229,7 +229,7 @@ extension EventMonitor {
     // MARK: Default Implementations
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {}
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didReceive challenge: URLAuthenticationChallenge) {}
@@ -334,7 +334,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, didBecomeInvalidWithError: error) }
     }
 
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didReceive challenge: URLAuthenticationChallenge) {
@@ -579,7 +579,7 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
     open var sessionDidBecomeInvalidWithError: ((URLSession, Error?) -> Void)?
 
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     /// Closure called on the `urlSession(_:task:didReceive:completionHandler:)`.
     open var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> Void)?
     #endif
@@ -714,7 +714,7 @@ open class ClosureEventMonitor: EventMonitor {
         sessionDidBecomeInvalidWithError?(session, error)
     }
 
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     open func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge) {
         taskDidReceiveChallenge?(session, task, challenge)
     }

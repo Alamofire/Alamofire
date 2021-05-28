@@ -129,7 +129,7 @@ public enum AFError: Error {
         case invalidEmptyResponse(type: String)
     }
 
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     /// Underlying reason a server trust evaluation error occurred.
     public enum ServerTrustFailureReason {
         /// The output of a server trust evaluation.
@@ -211,7 +211,7 @@ public enum AFError: Error {
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     /// Response serialization failed.
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     /// `ServerTrustEvaluating` instance threw an error during trust evaluation.
     case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
     #endif
@@ -314,7 +314,7 @@ extension AFError {
         return false
     }
 
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     /// Returns whether the instance is `.serverTrustEvaluationFailed`. When `true`, the `underlyingError` property will
     /// contain the associated value.
     public var isServerTrustEvaluationError: Bool {
@@ -393,7 +393,7 @@ extension AFError {
             return reason.underlyingError
         case let .responseSerializationFailed(reason):
             return reason.underlyingError
-        #if !os(Linux)
+        #if !(os(Linux) || os(Windows))
         case let .serverTrustEvaluationFailed(reason):
             return reason.underlyingError
         #endif
@@ -451,7 +451,7 @@ extension AFError {
         return destination
     }
 
-    #if !os(Linux)
+    #if !(os(Linux) || os(Windows))
     /// The download resume data of any underlying network error. Only produced by `DownloadRequest`s.
     public var downloadResumeData: Data? {
         (underlyingError as? URLError)?.userInfo[NSURLSessionDownloadTaskResumeData] as? Data
@@ -610,7 +610,7 @@ extension AFError.ResponseSerializationFailureReason {
     }
 }
 
-#if !os(Linux)
+#if !(os(Linux) || os(Windows))
 extension AFError.ServerTrustFailureReason {
     var output: AFError.ServerTrustFailureReason.Output? {
         switch self {
@@ -688,7 +688,7 @@ extension AFError: LocalizedError {
             """
         case let .sessionInvalidated(error):
             return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
-        #if !os(Linux)
+        #if !(os(Linux) || os(Windows))
         case let .serverTrustEvaluationFailed(reason):
             return "Server trust evaluation failed due to reason: \(reason.localizedDescription)"
         #endif
@@ -822,7 +822,7 @@ extension AFError.ResponseValidationFailureReason {
     }
 }
 
-#if !os(Linux)
+#if !(os(Linux) || os(Windows))
 extension AFError.ServerTrustFailureReason {
     var localizedDescription: String {
         switch self {
