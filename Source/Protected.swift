@@ -54,22 +54,13 @@ extension Lock {
 /// An `NSLock` wrapper.
 final class MutexLock: Lock {
     private var mutex = NSLock()
-    private var locked = false
-
-    deinit {
-        if self.locked {
-            self.unlock()
-        }
-    }
 
     fileprivate func lock() {
-        self.locked = true
         self.mutex.lock()
     }
 
     fileprivate func unlock() {
         self.mutex.unlock()
-        self.locked = false
     }
 }
 #endif
