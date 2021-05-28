@@ -137,3 +137,34 @@ jobs:
       - uses: actions/checkout@v2
       - name: SPM Linux build
         run: swift build -c debug
+  Windows:
+    name: Windows
+    runs-on: windows-2019
+    steps:
+    - name: "Clone Project"
+      uses: actions/checkout@v2
+    - uses: seanmiddleditch/gha-setup-vsdevenv@master
+    - name: Install Swift
+      run: |
+        Install-Binary -Url "https://swift.org/builds/swift-5.4.1-release/windows10/swift-5.4.1-RELEASE/swift-5.4.1-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
+    - name: Set Environment Variables
+      run: |
+        echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "DEVELOPER_DIR=C:\Library\Developer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Adjust Paths
+      run: |
+        echo "C:\Library\Swift-development\bin;C:\Library\icu-67\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "C:\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    - name: Install Supporting Files
+      run: |
+        Copy-Item "$env:SDKROOT\usr\share\ucrt.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\ucrt\module.modulemap"
+        Copy-Item "$env:SDKROOT\usr\share\visualc.modulemap" -destination "$env:VCToolsInstallDir\include\module.modulemap"
+        Copy-Item "$env:SDKROOT\usr\share\visualc.apinotes" -destination "$env:VCToolsInstallDir\include\visualc.apinotes"
+        Copy-Item "$env:SDKROOT\usr\share\winsdk.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\um\module.modulemap"
+    - name: SPM Windows build
+      shell: cmd
+      run: |
+        cd ${{ github.workspace}}
+        set SDKROOT=%SystemDrive%\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk
+        %SystemDrive%\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin\swift-build.exe -c debug -Xlinker /INCREMENTAL:NO -v --enable-test-discovery
+        if not exist .build\x86_64-unknown-windows-msvc\debug\alamofire.exe exit 1
