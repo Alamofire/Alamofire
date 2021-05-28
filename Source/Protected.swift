@@ -51,7 +51,7 @@ extension Lock {
 
 #if os(Linux) || os(Windows)
 
-extension NSLock: Lock { }
+extension NSLock: Lock {}
 
 #endif
 
