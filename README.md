@@ -164,10 +164,9 @@ The following radars have been resolved over time after being filed against the 
   - (Resolved): 9/1/17 in Xcode 9 beta 6.
 - [`rdar://36082113`](http://openradar.appspot.com/radar?id=4942308441063424) - `URLSessionTaskMetrics` failing to link on watchOS 3.0+
   - (Resolved): Just add `CFNetwork` to your linked frameworks.
+- `FB7624529` - `urlSession(_:task:didFinishCollecting:)` never called on watchOS
+  - (Resolved): Metrics now collected on watchOS 7+.
 
-## Workarounds
-
-- Collection of `URLSessionTaskMetrics` is currently disabled on watchOS due to `FB7624529`.
 
 ## FAQ
 
