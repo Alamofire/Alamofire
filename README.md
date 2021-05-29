@@ -4,7 +4,7 @@
 [![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-Green?style=flat-square)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square)](https://img.shields.io/cocoapods/v/Alamofire.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square)](https://github.com/Carthage/Carthage)
-[![Swift Package Manager](https://img.shields.io/badge/Swift-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift-compatible-orange?style=flat-square)
+[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
 [![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat-square)](https://twitter.com/AlamofireSF)
 [![Swift Forums](https://img.shields.io/badge/Swift_Forums-Alamofire-orange?style=flat-square)](https://forums.swift.org/c/related-projects/alamofire/37)
 
