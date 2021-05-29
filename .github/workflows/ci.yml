@@ -57,9 +57,9 @@ jobs:
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
-    runs-on: macOS-10.15
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -68,12 +68,12 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
     name: Test iOS
-    runs-on: macOS-10.15
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
     strategy:
       matrix:
-        destination: ["OS=14.4,name=iPhone 12 Pro"]
+        destination: ["OS=14.5,name=iPhone 12 Pro"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -82,12 +82,12 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   tvOS:
     name: Test tvOS
-    runs-on: macOS-10.15
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
     strategy:
       matrix:
-        destination: ["OS=14.3,name=Apple TV 4K"]
+        destination: ["OS=14.5,name=Apple TV 4K"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -95,18 +95,6 @@ jobs:
       - name: tvOS - ${{ matrix.destination }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   watchOS:
-    name: Build watchOS
-    runs-on: macOS-10.15
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
-    strategy:
-      matrix:
-        destination: ["OS=7.2,name=Apple Watch Series 6 - 44mm"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: watchOS - ${{ matrix.destination }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean build | xcpretty
-  watchOS_Test:
     name: Test watchOS
     runs-on: firebreak
     env:
@@ -122,9 +110,9 @@ jobs:
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   spm:
     name: Test with SPM
-    runs-on: macOS-10.15
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
