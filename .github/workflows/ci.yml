@@ -144,7 +144,7 @@ jobs:
     name: Linux Nightly
     runs-on: ubuntu-20.04
     container:
-      image: swift:nightly-focal
+      image: swiftlang/swift:nightly-focal
     steps:
       - uses: actions/checkout@v2
       - name: SPM Linux build
