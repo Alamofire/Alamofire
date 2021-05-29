@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: macOS (5.4)
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
@@ -63,7 +63,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: Catalyst
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
@@ -77,7 +77,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: iOS - ${{ matrix.destination }}
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   tvOS:
@@ -87,11 +87,11 @@ jobs:
       DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
     strategy:
       matrix:
-        destination: ["OS=14.5,name=Apple TV 4K"]
+        destination: ["OS=14.5,name=Apple TV"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: tvOS - ${{ matrix.destination }}
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   watchOS:
@@ -105,7 +105,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: watchOS - ${{ matrix.destination }}
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   spm:
@@ -116,7 +116,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: SPM Test
         run: arch -arch arm64e swift test -c debug
   Linux:
