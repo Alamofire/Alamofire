@@ -57,15 +57,15 @@ jobs:
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
-    runs-on: firebreak
+    runs-on: macos-10.15
     env:
       DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: Catalyst
-        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
     name: Test iOS
     runs-on: firebreak
