@@ -9,6 +9,9 @@ on:
     branches: 
       - '*'
 
+concurrency: 
+  group: ci
+  cancel-in-progress: true
 jobs:
   macOS_5_1:
     name: Build macOS (5.1)
