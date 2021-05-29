@@ -128,16 +128,25 @@ jobs:
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: SPM Test
         run: swift test -c debug
-  linux:
+  Linux:
     name: Linux
     runs-on: ubuntu-20.04
     container:
-      image: swift:5.4-focal
+      image: swift:5.4.1-focal
     steps:
       - uses: actions/checkout@v2
       - name: SPM Linux build
         run: swift build -c debug
-  windows:
+  Linux_Nightly:
+    name: Linux
+    runs-on: ubuntu-20.04
+    container:
+      image: swift:nightly-focal
+    steps:
+      - uses: actions/checkout@v2
+      - name: SPM Linux build
+        run: swift build -c debug
+  Windows:
     name: Windows
     runs-on: windows-2019
     steps:
