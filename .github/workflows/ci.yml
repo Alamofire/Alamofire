@@ -138,7 +138,7 @@ jobs:
       - name: SPM Linux build
         run: swift build -c debug
   Linux_Nightly:
-    name: Linux
+    name: Linux Nightly
     runs-on: ubuntu-20.04
     container:
       image: swift:nightly-focal
