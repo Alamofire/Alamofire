@@ -5,9 +5,13 @@ on:
     branches: 
       - master
       - hotfix
+    paths:
+      - 'Source/**'
+      - 'Tests/**''
   pull_request:
-    branches: 
-      - '*'
+    paths:
+      - 'Source/**'
+      - 'Tests/**''
 
 concurrency: 
   group: ci
@@ -127,7 +131,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: SPM Linux build
-        run: swift build -c debug
+        run: swift build --build-tests -c debug
   Linux_Nightly:
     name: Linux Nightly
     runs-on: ubuntu-20.04
@@ -136,7 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: SPM Linux build
-        run: swift build -c debug
+        run: swift build --build-tests -c debug
   Windows:
     name: Windows
     runs-on: windows-2019
