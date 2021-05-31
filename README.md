@@ -61,8 +61,18 @@ In order to keep Alamofire focused specifically on core networking implementatio
 | Platform | Minimum Swift Version | Installation | Status |
 | --- | --- | --- | --- |
 | iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+ | 5.1 | [CocoaPods](#cocoapods), [Carthage](#carthage), [Swift Package Manager](#swift-package-manager), [Manual](#manually) | Fully Tested |
-| Linux | Latest Only | [Swift Package Manager](#swift-package-manager) | Building But Untested |
-| Windows | Latest Only | [Swift Package Manager](#swift-package-manager) | Building But Untested |
+| Linux | Latest Only | [Swift Package Manager](#swift-package-manager) | Building But Unsupported |
+| Windows | Latest Only | [Swift Package Manager](#swift-package-manager) | Building But Unsupported |
+
+#### Known Issues on Linux and Windows
+
+Alamofire builds on Linux and Windows but there are missing features and many issues in the underlying `swift-corelibs-foundation` that prevent full functionality and may cause crashes. These include:
+- `ServerTrustManager` and associated certificate functionality is unavailable, so there is no certificate pinning and no client certificate support.
+- Various methods of HTTP authentication may crash, including HTTP Basic and HTTP Digest. Crashes may occur if responses contain server challenges.
+- Cache control through `CachedResponseHandler` and associated APIs is unavailable, as the underlying delegate methods aren't called.
+- `URLSessionTaskMetrics` are never gathered.
+
+Due to these issues, Alamofire is unsupported on Linux and Windows. Please report any crashes to the [Swift bug reporter](https://bugs.swift.org).
 
 ## Migration Guides
 
