@@ -170,5 +170,5 @@ jobs:
       run: |
         cd ${{ github.workspace}}
         set SDKROOT=%SystemDrive%\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk
-        %SystemDrive%\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin\swift-build.exe -c debug -Xlinker /INCREMENTAL:NO -v
+        %SystemDrive%\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin\swift-build.exe --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
         if not exist .build\x86_64-unknown-windows-msvc\debug\Alamofire.swiftmodule exit 1
