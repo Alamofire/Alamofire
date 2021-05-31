@@ -7,11 +7,11 @@ on:
       - hotfix
     paths:
       - 'Source/**'
-      - 'Tests/**''
+      - 'Tests/**'
   pull_request:
     paths:
       - 'Source/**'
-      - 'Tests/**''
+      - 'Tests/**'
 
 concurrency: 
   group: ci
