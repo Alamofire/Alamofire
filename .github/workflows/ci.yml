@@ -8,12 +8,12 @@ on:
     paths:
       - 'Source/**'
       - 'Tests/**'
-      - '.github/workflows'
+      - '.github/workflows/**'
   pull_request:
     paths:
       - 'Source/**'
       - 'Tests/**'
-      - '.github/workflows'
+      - '.github/workflows/**'
 
 concurrency: 
   group: ci
