@@ -5,16 +5,28 @@ on:
     branches: 
       - master
       - hotfix
+    paths:
+      - 'Source/**'
+      - 'Tests/**'
+      - '.github/workflows/**'
+      - 'Package.swift'
   pull_request:
-    branches: 
-      - '*'
+    paths:
+      - 'Source/**'
+      - 'Tests/**'
+      - '.github/workflows/**'
+      - 'Package.swift'
 
+concurrency: 
+  group: ci
+  cancel-in-progress: true
 jobs:
   macOS_5_1:
     name: Build macOS (5.1)
     runs-on: macOS-10.15
     env:
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: macOS (5.1)
@@ -24,6 +36,7 @@ jobs:
     runs-on: macOS-10.15
     env:
       DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -35,6 +48,7 @@ jobs:
     runs-on: macOS-10.15
     env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -46,10 +60,11 @@ jobs:
     runs-on: firebreak
     env:
       DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: macOS (5.4)
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
@@ -57,6 +72,7 @@ jobs:
     runs-on: macOS-10.15
     env:
       DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -65,66 +81,110 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
     name: Test iOS
-    runs-on: macOS-10.15
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
+    timeout-minutes: 10
     strategy:
       matrix:
-        destination: ["OS=14.4,name=iPhone 12 Pro"]
+        destination: ["OS=14.5,name=iPhone 12 Pro"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk && firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: iOS - ${{ matrix.destination }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   tvOS:
     name: Test tvOS
-    runs-on: macOS-10.15
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
+    timeout-minutes: 10
     strategy:
       matrix:
-        destination: ["OS=14.3,name=Apple TV 4K"]
+        destination: ["OS=14.5,name=Apple TV"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk && firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: tvOS - ${{ matrix.destination }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   watchOS:
-    name: Build watchOS
-    runs-on: macOS-10.15
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
-    strategy:
-      matrix:
-        destination: ["OS=7.2,name=Apple Watch Series 6 - 44mm"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: watchOS - ${{ matrix.destination }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean build | xcpretty
-  watchOS_Test:
     name: Test watchOS
     runs-on: firebreak
     env:
       DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
+    timeout-minutes: 10
     strategy:
       matrix:
         destination: ["OS=7.4,name=Apple Watch Series 6 - 44mm"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: watchOS - ${{ matrix.destination }}
         run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
-  spm:
+  SPM:
     name: Test with SPM
-    runs-on: macOS-10.15
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk && firewalk &
+        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
       - name: SPM Test
-        run: swift test -c debug
+        run: arch -arch arm64e swift test -c debug
+  Linux:
+    name: Linux
+    runs-on: ubuntu-20.04
+    container:
+      image: swift:5.4.1-focal
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - name: SPM Linux build
+        run: swift build --build-tests -c debug
+  Linux_Nightly:
+    name: Linux Nightly
+    runs-on: ubuntu-20.04
+    container:
+      image: swiftlang/swift:nightly-focal
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - name: SPM Linux build
+        run: swift build --build-tests -c debug
+  Windows:
+    name: Windows
+    runs-on: windows-2019
+    timeout-minutes: 10
+    steps:
+    - name: "Clone Project"
+      uses: actions/checkout@v2
+    - uses: seanmiddleditch/gha-setup-vsdevenv@master
+    - name: Install Swift
+      run: |
+        Install-Binary -Url "https://swift.org/builds/swift-5.4.1-release/windows10/swift-5.4.1-RELEASE/swift-5.4.1-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
+    - name: Set Environment Variables
+      run: |
+        echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "DEVELOPER_DIR=C:\Library\Developer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Adjust Paths
+      run: |
+        echo "C:\Library\Swift-development\bin;C:\Library\icu-67\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "C:\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    - name: Install Supporting Files
+      run: |
+        Copy-Item "$env:SDKROOT\usr\share\ucrt.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\ucrt\module.modulemap"
+        Copy-Item "$env:SDKROOT\usr\share\visualc.modulemap" -destination "$env:VCToolsInstallDir\include\module.modulemap"
+        Copy-Item "$env:SDKROOT\usr\share\visualc.apinotes" -destination "$env:VCToolsInstallDir\include\visualc.apinotes"
+        Copy-Item "$env:SDKROOT\usr\share\winsdk.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\um\module.modulemap"
+    - name: SPM Windows build
+      shell: cmd
+      run: |
+        cd ${{ github.workspace}}
+        set SDKROOT=%SystemDrive%\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk
+        %SystemDrive%\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin\swift-build.exe --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
+        if not exist .build\x86_64-unknown-windows-msvc\debug\Alamofire.swiftmodule exit 1

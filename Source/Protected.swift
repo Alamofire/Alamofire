@@ -49,37 +49,10 @@ extension Lock {
     }
 }
 
-#if os(Linux)
-/// A `pthread_mutex_t` wrapper.
-final class MutexLock: Lock {
-    private var mutex: UnsafeMutablePointer<pthread_mutex_t>
+#if os(Linux) || os(Windows)
 
-    init() {
-        mutex = .allocate(capacity: 1)
+extension NSLock: Lock {}
 
-        var attr = pthread_mutexattr_t()
-        pthread_mutexattr_init(&attr)
-        pthread_mutexattr_settype(&attr, .init(PTHREAD_MUTEX_ERRORCHECK))
-
-        let error = pthread_mutex_init(mutex, &attr)
-        precondition(error == 0, "Failed to create pthread_mutex")
-    }
-
-    deinit {
-        let error = pthread_mutex_destroy(mutex)
-        precondition(error == 0, "Failed to destroy pthread_mutex")
-    }
-
-    fileprivate func lock() {
-        let error = pthread_mutex_lock(mutex)
-        precondition(error == 0, "Failed to lock pthread_mutex")
-    }
-
-    fileprivate func unlock() {
-        let error = pthread_mutex_unlock(mutex)
-        precondition(error == 0, "Failed to unlock pthread_mutex")
-    }
-}
 #endif
 
 #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
@@ -113,8 +86,8 @@ final class UnfairLock: Lock {
 final class Protected<T> {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     private let lock = UnfairLock()
-    #elseif os(Linux)
-    private let lock = MutexLock()
+    #elseif os(Linux) || os(Windows)
+    private let lock = NSLock()
     #endif
     private var value: T
 

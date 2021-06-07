@@ -192,6 +192,13 @@ struct Endpoint {
         return Endpoint(path: .redirectTo, queryItems: items)
     }
 
+    static func redirectTo(_ endpoint: Endpoint, code: Int? = nil) -> Endpoint {
+        var items = [URLQueryItem(name: "url", value: endpoint.url.absoluteString)]
+        items = code.map { items + [.init(name: "statusCode", value: "\($0)")] } ?? items
+
+        return Endpoint(path: .redirectTo, queryItems: items)
+    }
+
     static var responseHeaders: Endpoint {
         Endpoint(path: .responseHeaders)
     }

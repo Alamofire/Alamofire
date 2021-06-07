@@ -91,11 +91,15 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         let evaluation: ChallengeEvaluation
         switch challenge.protectionSpace.authenticationMethod {
+        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
+             NSURLAuthenticationMethodNegotiate:
+            evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
+        #if !(os(Linux) || os(Windows))
         case NSURLAuthenticationMethodServerTrust:
             evaluation = attemptServerTrustAuthentication(with: challenge)
-        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
-             NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodClientCertificate:
+        case NSURLAuthenticationMethodClientCertificate:
             evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
+        #endif
         default:
             evaluation = (.performDefaultHandling, nil, nil)
         }
@@ -107,6 +111,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(evaluation.disposition, evaluation.credential)
     }
 
+    #if !(os(Linux) || os(Windows))
     /// Evaluates the server trust `URLAuthenticationChallenge` received.
     ///
     /// - Parameter challenge: The `URLAuthenticationChallenge`.
@@ -133,6 +138,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
             return (.cancelAuthenticationChallenge, nil, error.asAFError(or: .serverTrustEvaluationFailed(reason: .customEvaluationFailed(error: error))))
         }
     }
+    #endif
 
     /// Evaluates the credential-based authentication `URLAuthenticationChallenge` received for `task`.
     ///

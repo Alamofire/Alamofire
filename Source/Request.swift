@@ -1298,12 +1298,14 @@ public final class DataStreamRequest: Request {
 
     func didReceive(data: Data) {
         $streamMutableState.write { state in
+            #if !(os(Linux) || os(Windows))
             if let stream = state.outputStream {
                 underlyingQueue.async {
                     var bytes = Array(data)
                     stream.write(&bytes, maxLength: bytes.count)
                 }
             }
+            #endif
             state.numberOfExecutingStreams += state.streams.count
             let localState = state
             underlyingQueue.async { localState.streams.forEach { $0(data) } }
@@ -1337,6 +1339,7 @@ public final class DataStreamRequest: Request {
         return self
     }
 
+    #if !(os(Linux) || os(Windows))
     /// Produces an `InputStream` that receives the `Data` received by the instance.
     ///
     /// - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`.
@@ -1359,6 +1362,7 @@ public final class DataStreamRequest: Request {
 
         return inputStream
     }
+    #endif
 
     func capturingError(from closure: () throws -> Void) {
         do {
@@ -1532,7 +1536,14 @@ public class DownloadRequest: Request {
     /// using the `download(resumingWith data:)` API.
     ///
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
-    public var resumeData: Data? { mutableDownloadState.resumeData ?? error?.downloadResumeData }
+    public var resumeData: Data? {
+        #if !(os(Linux) || os(Windows))
+        return mutableDownloadState.resumeData ?? error?.downloadResumeData
+        #else
+        return mutableDownloadState.resumeData
+        #endif
+    }
+
     /// If the download is successful, the `URL` where the file was downloaded.
     public var fileURL: URL? { mutableDownloadState.fileURL }
 

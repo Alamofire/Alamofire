@@ -1701,7 +1701,7 @@ final class SessionMassActionTestCase: BaseTestCase {
 
 final class SessionConfigurationHeadersTestCase: BaseTestCase {
     enum ConfigurationType {
-        case `default`, ephemeral, background
+        case `default`, ephemeral
     }
 
     func testThatDefaultConfigurationHeadersAreSentWithRequest() {
@@ -1714,13 +1714,6 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
         executeAuthorizationHeaderTest(for: .ephemeral)
     }
 
-    #if os(macOS)
-    func disabled_testThatBackgroundConfigurationHeadersAreSentWithRequest() {
-        // Given, When, Then
-        executeAuthorizationHeaderTest(for: .background)
-    }
-    #endif
-
     private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
         // Given
         let session: Session = {
@@ -1732,9 +1725,6 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
                     configuration = .default
                 case .ephemeral:
                     configuration = .ephemeral
-                case .background:
-                    let identifier = "org.alamofire.test.manager-configuration-tests"
-                    configuration = .background(withIdentifier: identifier)
                 }
 
                 var headers = HTTPHeaders.default

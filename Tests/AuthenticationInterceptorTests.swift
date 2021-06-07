@@ -291,6 +291,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
     // MARK: - Tests - Retry
 
+    #if !(os(Linux) || os(Windows)) // URLRequest to /invalid/path is a fatal error.
     func testThatInterceptorDoesNotRetryWithoutResponse() {
         // Given
         let credential = TestCredential()
@@ -324,6 +325,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         XCTAssertEqual(request.retryCount, 0)
     }
+    #endif
 
     func testThatInterceptorDoesNotRetryWhenRequestDoesNotFailDueToAuthError() {
         // Given
