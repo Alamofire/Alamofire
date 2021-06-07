@@ -9,11 +9,13 @@ on:
       - 'Source/**'
       - 'Tests/**'
       - '.github/workflows/**'
+      - 'Package.swift'
   pull_request:
     paths:
       - 'Source/**'
       - 'Tests/**'
       - '.github/workflows/**'
+      - 'Package.swift'
 
 concurrency: 
   group: ci
