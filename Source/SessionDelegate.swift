@@ -38,6 +38,10 @@ open class SessionDelegate: NSObject {
     public init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
     }
+    
+    deinit {
+        NSLog("*** SessionDelegate deinitialized.")
+    }
 
     /// Internal method to find and cast requests while maintaining some integrity checking.
     ///

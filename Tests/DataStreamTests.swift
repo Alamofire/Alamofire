@@ -652,7 +652,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
             }
         }
 
-        let session = Session(interceptor: GoodRetry())
+        let session = Session(interceptor: GoodRetry()); defer { keepAlive(session) }
         var accumulatedData = Data()
         var streamOnMain = false
         var completeOnMain = false
@@ -788,6 +788,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
+        defer { keepAlive(session) }
         var firstResponse: HTTPURLResponse?
         var firstDecodedResponse: TestResponse?
         var firstDecodingError: AFError?

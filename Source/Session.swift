@@ -202,6 +202,7 @@ open class Session {
     deinit {
         finishRequestsForDeinit()
         session.invalidateAndCancel()
+        NSLog("*** Deinitializing session.")
     }
 
     // MARK: - All Requests API

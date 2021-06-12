@@ -150,7 +150,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -181,7 +181,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "both requests should complete")
         expect.expectedFulfillmentCount = 2
@@ -222,7 +222,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator)
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -256,7 +256,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -299,7 +299,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let urlRequest = URLRequest(url: URL(string: "/invalid/path")!)
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -333,7 +333,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -370,7 +370,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
         eventMonitor.requestDidCreateTask = { _, _ in interceptor.credential = nil }
 
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = Session(eventMonitors: [eventMonitor]); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -419,7 +419,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     requiresRefresh: false)
         }
 
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = Session(eventMonitors: [eventMonitor]); defer { keepAlive(session) }
 
         let pathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
@@ -464,7 +464,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     requiresRefresh: false)
         }
 
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = Session(eventMonitors: [eventMonitor]); defer { keepAlive(session) }
 
         let pathAdapter = PathAdapter(paths: ["/status/200"])
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
@@ -502,7 +502,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -533,7 +533,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -573,7 +573,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let requestCount = 6
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "both requests should complete")
         expect.expectedFulfillmentCount = requestCount
@@ -629,7 +629,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
@@ -662,7 +662,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     credential: credential,
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 2))
 
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?

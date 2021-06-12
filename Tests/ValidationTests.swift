@@ -383,7 +383,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             }()
 
             return MockManager(configuration: configuration)
-        }()
+        }(); defer { keepAlive(manager) }
 
         let endpoint = Endpoint.method(.delete)
 

@@ -268,6 +268,11 @@ public class Request {
         self.eventMonitor = eventMonitor
         self.interceptor = interceptor
         self.delegate = delegate
+        NSLog("*** Request \(id) initialized.")
+    }
+    
+    deinit {
+        NSLog("*** Request \(id) deinitialized, delegate: \(String(describing: delegate)).")
     }
 
     // MARK: - Internal Event API
@@ -391,6 +396,7 @@ public class Request {
     func didResumeTask(_ task: URLSessionTask) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
+        NSLog("*** didResumeTask, tasks: \(tasks), delegate: \(String(describing: delegate))")
         eventMonitor?.request(self, didResumeTask: task)
     }
 

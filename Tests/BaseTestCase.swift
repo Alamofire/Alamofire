@@ -57,6 +57,10 @@ class BaseTestCase: XCTestCase {
             }
         }
     }
+    
+    func keepAlive<T: AnyObject>(_ object: T) {
+        withExtendedLifetime(object) {}
+    }
 
     func url(forResource fileName: String, withExtension ext: String) -> URL {
         let bundle = Bundle(for: BaseTestCase.self)

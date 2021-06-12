@@ -29,7 +29,7 @@ import XCTest
 final class BasicAuthenticationTestCase: BaseTestCase {
     func testHTTPBasicAuthenticationFailsWithInvalidCredentials() {
         // Given
-        let session = Session()
+        let session = Session(eventMonitors: [NSLoggingEventMonitor()]); defer { keepAlive(session) }
         let endpoint = Endpoint.basicAuth()
         let expectation = self.expectation(description: "\(endpoint.url) 401")
 
@@ -39,6 +39,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         session.request(endpoint)
             .authenticate(username: "invalid", password: "credentials")
             .response { resp in
+                NSLog("*** Response: \(resp.debugDescription)")
                 response = resp
                 expectation.fulfill()
             }
@@ -46,6 +47,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
+        
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertEqual(response?.response?.statusCode, 401)
@@ -55,7 +57,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
         let user = "user1", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
@@ -82,7 +84,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
     func testHTTPBasicAuthenticationWithStoredCredentials() {
         // Given
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
         let user = "user2", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
@@ -115,7 +117,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
     func testHiddenHTTPBasicAuthentication() {
         // Given
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
         let endpoint = Endpoint.hiddenBasicAuth()
         let expectation = self.expectation(description: "\(endpoint.url) 200")
 
@@ -144,7 +146,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 final class HTTPDigestAuthenticationTestCase: BaseTestCase {
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
         let endpoint = Endpoint.digestAuth()
         let expectation = self.expectation(description: "\(endpoint.url) 401")
 
@@ -170,7 +172,7 @@ final class HTTPDigestAuthenticationTestCase: BaseTestCase {
 
     func testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
-        let session = Session()
+        let session = Session(); defer { keepAlive(session) }
         let user = "user", password = "password"
         let endpoint = Endpoint.digestAuth(forUser: user, password: password)
         let expectation = self.expectation(description: "\(endpoint.url) 200")
