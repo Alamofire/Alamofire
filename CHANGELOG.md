@@ -46,7 +46,7 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [5.4.3](https://github.com/Alamofire/Alamofire/releases/tag/5.4.3)
-Released on 2020-04-21. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/77?closed=1).
+Released on 2021-04-21. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/77?closed=1).
 
 #### Fixed
 - Change in multipart upload creation order.
@@ -55,7 +55,7 @@ Released on 2020-04-21. All issues associated with this milestone can be found u
   - Fixed by [DevYeom](https://github.com/DevYeom) in Pull Request [#3431](https://github.com/Alamofire/Alamofire/pull/3431).
 
 ## [5.4.2](https://github.com/Alamofire/Alamofire/releases/tag/5.4.2)
-Released on 2020-04-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/76?closed=1).
+Released on 2021-04-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/76?closed=1).
 
 #### Updated
 - Resume data handling for `DownloadRequest`s to access resume data from errors as well as cancellation.
