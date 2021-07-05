@@ -43,7 +43,7 @@
   + [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
     - [`ServerTrustEvaluting`](#servertrustevaluting)
     - [`ServerTrustManager`](#servertrustmanager)
-* [Subclassing Server Trust Policy Manager](#subclassing-server-trust-policy-manager)
+* [Subclassing `ServerTrustManager`](#subclassing-servertrustmanager)
   + [App Transport Security](#app-transport-security)
     - [Using Self-Signed Certificates with Local Networking](#using-self-signed-certificates-with-local-networking)
 * [Customizing Caching and Redirect Handling](#customizing-caching-and-redirect-handling)
@@ -717,11 +717,11 @@ This `ServerTrustManager` will have the following behaviors:
 	- Challenge host *must* match the host in the certificate chain's leaf certificate.
 - Requests to other hosts will produce an error, as `ServerTrustManager` requires all hosts to be evaluated by default.
 
-##### Subclassing Server Trust Policy Manager
+##### Subclassing `ServerTrustManager`
 If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcard domains), then subclass the `ServerTrustManager` and override the `serverTrustEvaluator(forHost:)` method with your own custom implementation.
 
 ```swift
-final class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
+final class CustomServerTrustManager: ServerTrustManager {
     override func serverTrustEvaluator(forHost host: String) -> ServerTrustEvaluating? {
         var policy: ServerTrustPolicy?
 
