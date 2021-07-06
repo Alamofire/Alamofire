@@ -89,8 +89,14 @@ public protocol RequestRetrier {
 
 // MARK: -
 
+public protocol ResponseAdapter {
+    func adapt(_ response: HTTPURLResponse, for request: URLRequest) throws -> HTTPURLResponse
+}
+
+// MARK: -
+
 /// Type that provides both `RequestAdapter` and `RequestRetrier` functionality.
-public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
+public protocol RequestInterceptor: RequestAdapter, RequestRetrier, ResponseAdapter {}
 
 extension RequestInterceptor {
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
@@ -102,6 +108,10 @@ extension RequestInterceptor {
                       dueTo error: Error,
                       completion: @escaping (RetryResult) -> Void) {
         completion(.doNotRetry)
+    }
+
+    public func adapt(_ response: HTTPURLResponse, for request: URLRequest) throws -> HTTPURLResponse {
+        response
     }
 }
 

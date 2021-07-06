@@ -120,6 +120,9 @@ public class Request {
         /// Whether the instance has had `finish()` called and is running the serializers. Should be replaced with a
         /// representation in the state machine in the future.
         var isFinishing = false
+
+        /// TBD
+        var adaptedResponse: HTTPURLResponse?
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
@@ -209,7 +212,7 @@ public class Request {
 
     /// `HTTPURLResponse` received from the server, if any. If the `Request` was retried, this is the response of the
     /// last `URLSessionTask`.
-    public var response: HTTPURLResponse? { lastTask?.response as? HTTPURLResponse }
+    public var response: HTTPURLResponse? { mutableState.adaptedResponse ?? lastTask?.response as? HTTPURLResponse }
 
     // MARK: Tasks
 
@@ -465,6 +468,21 @@ public class Request {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
         self.error = self.error ?? error
+
+        /// Adapt the response if there's an interceptor attached to the request
+        if
+            let interceptor = interceptor,
+            let response = task.response as? HTTPURLResponse,
+            let request = task.originalRequest
+        {
+            do {
+                let response = try interceptor.adapt(response, for: request)
+                $mutableState.write { $0.adaptedResponse = response }
+            } catch {
+                /// NOTE: This should be a `responseAdaptationFailed` error
+                self.error = AFError.requestAdaptationFailed(error: error)
+            }
+        }
 
         validators.forEach { $0() }
 
