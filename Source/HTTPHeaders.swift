@@ -320,6 +320,14 @@ extension HTTPHeader {
     public static func userAgent(_ value: String) -> HTTPHeader {
         HTTPHeader(name: "User-Agent", value: value)
     }
+
+    /// Returns a `Sec-WebSocket-Protocol` header.
+    ///
+    /// - Parameter value: The `Sec-WebSocket-Protocol` value.
+    /// - Returns:         The header.
+    public static func websocketProtocol(_ value: String) -> HTTPHeader {
+        HTTPHeader(name: "Sec-WebSocket-Protocol", value: value)
+    }
 }
 
 extension Array where Element == HTTPHeader {

@@ -75,6 +75,9 @@ struct Endpoint {
         case responseHeaders
         case status(Int)
         case stream(count: Int)
+        case websocket
+        case websocketCount(Int)
+        case websocketEcho
         case xml
 
         var string: String {
@@ -113,6 +116,12 @@ struct Endpoint {
                 return "/status/\(code)"
             case let .stream(count):
                 return "/stream/\(count)"
+            case .websocket:
+                return "/websocket"
+            case let .websocketCount(count):
+                return "/websocket/payloads/\(count)"
+            case .websocketEcho:
+                return "/websocket/echo"
             case .xml:
                 return "/xml"
             }
@@ -210,6 +219,25 @@ struct Endpoint {
     static func stream(_ count: Int) -> Endpoint {
         Endpoint(path: .stream(count: count))
     }
+
+    #if !(os(Linux) || os(Windows))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static func websocket(closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure, closeDelay: Int64 = 60) -> Endpoint {
+        Endpoint(path: .websocket, queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
+                                                .init(name: "closeDelay", value: "\(closeDelay)")])
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static func websocketCount(_ count: Int = 2,
+                               closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure,
+                               closeDelay: Int64 = 60) -> Endpoint {
+        Endpoint(path: .websocketCount(count), queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
+                                                            .init(name: "closeDelay", value: "\(closeDelay)")])
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static let websocketEcho = Endpoint(path: .websocketEcho)
+    #endif
 
     static var xml: Endpoint {
         Endpoint(path: .xml, headers: [.contentType("application/xml")])
@@ -320,6 +348,19 @@ extension Session {
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                       interceptor: interceptor)
     }
+
+    #if !(os(Linux) || os(Windows))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func websocketRequest(_ endpoint: Endpoint,
+                          protocol: String? = nil,
+                          maximumMessageSize: Int = 1_048_576,
+                          interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
+        websocketRequest(endpoint as URLRequestConvertible,
+                         protocol: `protocol`,
+                         maximumMessageSize: maximumMessageSize,
+                         interceptor: interceptor)
+    }
+    #endif
 
     func download<Parameters: Encodable>(_ endpoint: Endpoint,
                                          parameters: Parameters? = nil,
