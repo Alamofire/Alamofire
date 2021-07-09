@@ -18,6 +18,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		313A1901266EDF64000A8723 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 31E4765F1C55DD5900968569 /* Alamofire.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 31293065263E17D600473CEA;
+			remoteInfo = "Alamofire watchOS Tests";
+		};
 		31E476691C55DD5900968569 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 31E4765F1C55DD5900968569 /* Alamofire.xcodeproj */;
@@ -124,6 +131,7 @@
 				31E476721C55DD5900968569 /* Alamofire.framework */,
 				31E476741C55DD5900968569 /* Alamofire tvOS Tests.xctest */,
 				31E476761C55DD5900968569 /* Alamofire.framework */,
+				313A1902266EDF64000A8723 /* Alamofire watchOS Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -208,7 +216,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					F8111E0419A951050040E7D1 = {
@@ -242,6 +250,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		313A1902266EDF64000A8723 /* Alamofire watchOS Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Alamofire watchOS Tests.xctest";
+			remoteRef = 313A1901266EDF64000A8723 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		31E4766A1C55DD5900968569 /* Alamofire.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;

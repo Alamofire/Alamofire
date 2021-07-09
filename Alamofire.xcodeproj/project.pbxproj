@@ -187,6 +187,13 @@
 		319917BA209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
 		319917BB209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
 		319917BC209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
+		31B3DE3B25C11CEA00760641 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE3A25C11CEA00760641 /* Async.swift */; };
+		31B3DE3C25C11CEA00760641 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE3A25C11CEA00760641 /* Async.swift */; };
+		31B3DE3D25C11CEA00760641 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE3A25C11CEA00760641 /* Async.swift */; };
+		31B3DE3E25C11CEA00760641 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE3A25C11CEA00760641 /* Async.swift */; };
+		31B3DE4F25C120D800760641 /* AsyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE4E25C120D800760641 /* AsyncTests.swift */; };
+		31B3DE5025C120D800760641 /* AsyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE4E25C120D800760641 /* AsyncTests.swift */; };
+		31B3DE5125C120D800760641 /* AsyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE4E25C120D800760641 /* AsyncTests.swift */; };
 		31B51E8C2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
 		31B51E8D2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
 		31B51E8E2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
@@ -479,6 +486,8 @@
 		319ECEA425EC96E8001C38CA /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		319ECEA525EC9710001C38CA /* FEATURE_REQUEST.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = FEATURE_REQUEST.md; sourceTree = "<group>"; };
 		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		31B3DE3A25C11CEA00760641 /* Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
+		31B3DE4E25C120D800760641 /* AsyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncTests.swift; sourceTree = "<group>"; };
 		31B51E8B2434FECB005356DB /* RequestModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModifierTests.swift; sourceTree = "<group>"; };
 		31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineTests.swift; sourceTree = "<group>"; };
 		31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLConvertible+URLRequestConvertible.swift"; sourceTree = "<group>"; };
@@ -693,6 +702,7 @@
 		4C256A4F1B09656E0065714F /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				31B3DE4E25C120D800760641 /* AsyncTests.swift */,
 				4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */,
 				4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */,
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
@@ -879,6 +889,7 @@
 			isa = PBXGroup;
 			children = (
 				31DADDFA224811ED0051390F /* AlamofireExtended.swift */,
+				31B3DE3A25C11CEA00760641 /* Async.swift */,
 				4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */,
 				4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */,
 				318DD40E2439780500963291 /* Combine.swift */,
@@ -1224,7 +1235,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					31293064263E17D600473CEA = {
@@ -1520,6 +1531,7 @@
 				3191B5771F5F53A6003960A8 /* Protected.swift in Sources */,
 				3199179A209CDA7F00103A19 /* Response.swift in Sources */,
 				31D83FD020D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
+				31B3DE3D25C11CEA00760641 /* Async.swift in Sources */,
 				319917A7209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				4CF627131BA7CBF60011A099 /* Validation.swift in Sources */,
 				31F5085F20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
@@ -1590,6 +1602,7 @@
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
 				3111CE9120A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
 				31BADE502439A8D1007D2AB9 /* CombineTests.swift in Sources */,
+				31B3DE5125C120D800760641 /* AsyncTests.swift in Sources */,
 				31762DCC247738FA0025C704 /* LeaksTests.swift in Sources */,
 				31425AC3241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				4CF627171BA7CC240011A099 /* ParameterEncodingTests.swift in Sources */,
@@ -1604,6 +1617,7 @@
 				3191B5761F5F53A6003960A8 /* Protected.swift in Sources */,
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				31991799209CDA7F00103A19 /* Response.swift in Sources */,
+				31B3DE3C25C11CEA00760641 /* Async.swift in Sources */,
 				31D83FCF20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				319917A6209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */,
@@ -1646,6 +1660,7 @@
 				E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */,
 				3191B5781F5F53A6003960A8 /* Protected.swift in Sources */,
 				3199179B209CDA7F00103A19 /* Response.swift in Sources */,
+				31B3DE3E25C11CEA00760641 /* Async.swift in Sources */,
 				31D83FD120D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				319917A8209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */,
@@ -1688,6 +1703,7 @@
 				3191B5751F5F53A6003960A8 /* Protected.swift in Sources */,
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				31991798209CDA7F00103A19 /* Response.swift in Sources */,
+				31B3DE3B25C11CEA00760641 /* Async.swift in Sources */,
 				31D83FCE20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				319917A5209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */,
@@ -1758,6 +1774,7 @@
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
 				3111CE8F20A7EC26008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
 				31BADE4E2439A8D1007D2AB9 /* CombineTests.swift in Sources */,
+				31B3DE4F25C120D800760641 /* AsyncTests.swift in Sources */,
 				31762DCA247738FA0025C704 /* LeaksTests.swift in Sources */,
 				31425AC1241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */,
@@ -1800,6 +1817,7 @@
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
 				3111CE9020A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
 				31BADE4F2439A8D1007D2AB9 /* CombineTests.swift in Sources */,
+				31B3DE5025C120D800760641 /* AsyncTests.swift in Sources */,
 				31762DCB247738FA0025C704 /* LeaksTests.swift in Sources */,
 				31425AC2241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
 				4C256A541B096C770065714F /* BaseTestCase.swift in Sources */,
