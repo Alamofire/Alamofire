@@ -58,9 +58,9 @@ public struct ResponseCacher {
         case modify((URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)
     }
 
-    /// Returns a `ResponseCacher` with a follow `Behavior`.
+    /// Returns a `ResponseCacher` with a `.cache` `Behavior`.
     public static let cache = ResponseCacher(behavior: .cache)
-    /// Returns a `ResponseCacher` with a do not follow `Behavior`.
+    /// Returns a `ResponseCacher` with a `.doNotCache` `Behavior`.
     public static let doNotCache = ResponseCacher(behavior: .doNotCache)
 
     /// The `Behavior` of the `ResponseCacher`.
