@@ -495,7 +495,7 @@ enum URLEncodedFormComponent {
 
     /// Recursive backing method to `set(to:at:)`.
     private func set(_ context: inout URLEncodedFormComponent, to value: URLEncodedFormComponent, at path: [CodingKey]) {
-        guard path.count >= 1 else {
+        guard !path.isEmpty else {
             context = value
             return
         }
