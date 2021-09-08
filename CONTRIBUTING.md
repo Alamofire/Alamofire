@@ -16,7 +16,7 @@ Please read it before you start participating.
 **We don't use GitHub as a support forum.**
 For any usage questions that are not specific to the project itself, please ask on [Stack Overflow](https://stackoverflow.com) instead. By doing so, you'll be more likely to quickly solve your problem, and you'll allow anyone else with the same question to find the answer. This also allows maintainers to focus on improving the project for others.
 
-If you'd like to discuss Alamofire best practices, common usage patters, ideas for new features, or ongoing development, please use our [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/).
+If you'd like to discuss Alamofire best practices, common usage patterns, ideas for new features, or ongoing development, please use our [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/).
 
 ## Reporting Security Issues
 
@@ -31,7 +31,7 @@ A great way to contribute to the project is to send a detailed issue when you en
 
 Check that the project issues database doesn't already include that problem or suggestion before submitting an issue. If you find a match, feel free to vote for the issue by adding a reaction. Doing this helps prioritize the most common problems and requests.
 
-When reporting issues, please include the following please fill out our issue template. The information the templates asks for will help us review and fix your issue faster.
+When reporting issues, please fill out our issue template. The information the template asks for will help us review and fix your issue faster.
 
 ## Triage Issues [![Open Source Helpers](https://www.codetriage.com/alamofire/alamofire/badges/users.svg)](https://www.codetriage.com/alamofire/alamofire)
 
