@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if canImport(Combine)
+#if !((os(iOS) && (arch(i386) || arch(arm))) || os(Windows) || os(Linux))
 
 import Combine
 import Dispatch
