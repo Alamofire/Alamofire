@@ -61,6 +61,8 @@ Released on 2021-09-20. All issues associated with this milestone can be found u
   - Updated by [Shafeer P](https://github.com/shafeerp) in Pull Request [#3478](https://github.com/Alamofire/Alamofire/pull/3478).
 
 #### Fixed
+- Async navigation title updating in example app.
+  - Fixed by [Tiago Maia](https://github.com/TiagoMaiaL) in Pull Request [3494](https://github.com/Alamofire/Alamofire/pull/3494).
 - Various documentation bugs.
   - Fixed by [Jordan de Laune](https://github.com/jdelaune), [Cédric Luthi](https://github.com/0xced), [Romain Bertozzi](https://github.com/r-mckay), and [Tiago Maia](https://github.com/TiagoMaiaL).
 
