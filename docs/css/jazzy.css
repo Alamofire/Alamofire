@@ -1,3 +1,7 @@
+/*! Jazzy - https://github.com/realm/jazzy
+ *  Copyright Realm Inc.
+ *  SPDX-License-Identifier: MIT
+ */
 *, *:before, *:after {
   box-sizing: inherit; }
 
@@ -83,6 +87,11 @@ th, td {
   padding: 6px 13px;
   border: 1px solid #ddd; }
 
+hr {
+  height: 1px;
+  border: none;
+  background-color: #ddd; }
+
 pre {
   margin: 0 0 1.275em;
   padding: .85em 1em;
@@ -129,8 +138,8 @@ pre code {
   color: #fff; }
 
 .header-icon {
-  padding-right: 6px;
-  vertical-align: -4px;
+  padding-right: 2px;
+  vertical-align: -3px;
   height: 16px; }
 
 .breadcrumbs {

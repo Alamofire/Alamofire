@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543)
+- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
 - `5.3.x` Releases - [5.3.0](#530)
 - `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
@@ -45,6 +45,27 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [5.4.4](https://github.com/Alamofire/Alamofire/releases/tag/5.4.4)
+Released on 2021-09-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/78?closed=1).
+
+#### Added
+- Support for Xcode 13, including a workaround for Combine compilation on older architectures.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3486](https://github.com/Alamofire/Alamofire/pull/3486).
+- Testing on watchOS.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3449](https://github.com/Alamofire/Alamofire/pull/3449).
+- Support for building on Windows and Linux. Alamofire is unsupported on these platforms but should build correctly.
+  - Added by [Jon Shier](https://github.com/jshier) and [Alex Taffe](https://github.com/alex-taffe) in Pull Requests [#3446](https://github.com/Alamofire/Alamofire/pull/3446) and [#3462](https://github.com/Alamofire/Alamofire/pull/3462).
+
+#### Updated
+- Usage of `.count >= 0` to `!.isEmpty`.
+  - Updated by [Shafeer P](https://github.com/shafeerp) in Pull Request [#3478](https://github.com/Alamofire/Alamofire/pull/3478).
+
+#### Fixed
+- Async navigation title updating in example app.
+  - Fixed by [Tiago Maia](https://github.com/TiagoMaiaL) in Pull Request [3494](https://github.com/Alamofire/Alamofire/pull/3494).
+- Various documentation bugs.
+  - Fixed by [Jordan de Laune](https://github.com/jdelaune), [Cédric Luthi](https://github.com/0xced), [Romain Bertozzi](https://github.com/r-mckay), and [Tiago Maia](https://github.com/TiagoMaiaL).
+
 ## [5.4.3](https://github.com/Alamofire/Alamofire/releases/tag/5.4.3)
 Released on 2021-04-21. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/77?closed=1).
 
@@ -81,7 +102,7 @@ Released on 2020-10-17. All issues associated with this milestone can be found u
 
 #### Added
 - `URLResponseSerializer` and attendant convenience methods so downloads can produce a non-optional `URL`.
-  - Added by[Jon Shier](https://github.com/jshier) in Pull Request [#3343](https://github.com/Alamofire/Alamofire/pull/3343).
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3343](https://github.com/Alamofire/Alamofire/pull/3343).
 
 #### Updated
 - Handing of `file://` `URL`s, removing error added in 5.3.0 and adding support for `DownloadRequest`.
