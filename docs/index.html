@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.4.3 Docs
+          Alamofire 5.4.4 Docs
         </a>
          (97% documented)
       </p>
@@ -508,15 +508,15 @@
         <section class="section">
           <div class="section-content top-matter">
             
-            <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/alamofire.png" alt="Alamofire: Elegant Networking in Swift"></p>
+            <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/AlamofireLogo.png" alt="Alamofire: Elegant Networking in Swift"></p>
 
-<p><a href="https://github.com/Alamofire/Alamofire/actions"><img src="https://github.com/Alamofire/Alamofire/workflows/Alamofire%20CI/badge.svg?branch=master" alt="Build Status"></a>
-<a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg" alt="CocoaPods Compatible"></a>
-<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage Compatible"></a>
-<a href="https://alamofire.github.io/Alamofire"><img src="https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat" alt="Platform"></a>
-<a href="https://twitter.com/AlamofireSF"><img src="https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat" alt="Twitter"></a>
-<a href="https://gitter.im/Alamofire/Alamofire?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/Alamofire/Alamofire.svg" alt="Gitter"></a>
-<a href="https://www.codetriage.com/alamofire/alamofire"><img src="https://www.codetriage.com/alamofire/alamofire/badges/users.svg" alt="Open Source Helpers"></a></p>
+<p><a href="https://img.shields.io/badge/Swift-5.1_5.2_5.3_5.4-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.1_5.2_5.3_5.4-orange?style=flat-square" alt="Swift"></a>
+<a href="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-Green?style=flat-square"><img src="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-yellowgreen?style=flat-square" alt="Platforms"></a>
+<a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square" alt="CocoaPods Compatible"></a>
+<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square" alt="Carthage Compatible"></a>
+<a href="https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square"><img src="https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square" alt="Swift Package Manager"></a>
+<a href="https://twitter.com/AlamofireSF"><img src="https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat-square" alt="Twitter"></a>
+<a href="https://forums.swift.org/c/related-projects/alamofire/37"><img src="https://img.shields.io/badge/Swift_Forums-Alamofire-orange?style=flat-square" alt="Swift Forums"></a></p>
 
 <p>Alamofire is an HTTP networking library written in Swift.</p>
 
@@ -577,11 +577,45 @@
 </ul>
 <h2 id='requirements' class='heading'>Requirements</h2>
 
+<table><thead>
+<tr>
+<th>Platform</th>
+<th>Minimum Swift Version</th>
+<th>Installation</th>
+<th>Status</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</td>
+<td>5.1</td>
+<td><a href="#cocoapods">CocoaPods</a>, <a href="#carthage">Carthage</a>, <a href="#swift-package-manager">Swift Package Manager</a>, <a href="#manually">Manual</a></td>
+<td>Fully Tested</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>Latest Only</td>
+<td><a href="#swift-package-manager">Swift Package Manager</a></td>
+<td>Building But Unsupported</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>Latest Only</td>
+<td><a href="#swift-package-manager">Swift Package Manager</a></td>
+<td>Building But Unsupported</td>
+</tr>
+</tbody></table>
+<h4 id='known-issues-on-linux-and-windows' class='heading'>Known Issues on Linux and Windows</h4>
+
+<p>Alamofire builds on Linux and Windows but there are missing features and many issues in the underlying <code>swift-corelibs-foundation</code> that prevent full functionality and may cause crashes. These include:</p>
+
 <ul>
-<li>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</li>
-<li>Xcode 11+</li>
-<li>Swift 5.1+</li>
+<li><code><a href="Classes/ServerTrustManager.html">ServerTrustManager</a></code> and associated certificate functionality is unavailable, so there is no certificate pinning and no client certificate support.</li>
+<li>Various methods of HTTP authentication may crash, including HTTP Basic and HTTP Digest. Crashes may occur if responses contain server challenges.</li>
+<li>Cache control through <code><a href="Protocols/CachedResponseHandler.html">CachedResponseHandler</a></code> and associated APIs is unavailable, as the underlying delegate methods aren&rsquo;t called.</li>
+<li><code>URLSessionTaskMetrics</code> are never gathered.</li>
 </ul>
+
+<p>Due to these issues, Alamofire is unsupported on Linux and Windows. Please report any crashes to the <a href="https://bugs.swift.org">Swift bug reporter</a>.</p>
 <h2 id='migration-guides' class='heading'>Migration Guides</h2>
 
 <ul>
@@ -605,12 +639,12 @@
 <h3 id='cocoapods' class='heading'>CocoaPods</h3>
 
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
-<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.2'</span>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.4'</span>
 </code></pre>
 <h3 id='carthage' class='heading'>Carthage</h3>
 
 <p><a href="https://github.com/Carthage/Carthage">Carthage</a> is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
-<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" ~&gt; 5.2
+<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" ~&gt; 5.4
 </code></pre>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
@@ -618,7 +652,7 @@
 
 <p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
 <pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.2.0"</span><span class="p">))</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.4.0"</span><span class="p">))</span>
 <span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
@@ -672,7 +706,6 @@
 <li><a href="http://www.openradar.me/radar?id=5517037090635776"><code>rdar://21349340</code></a> - Compiler throwing warning due to toll-free bridging issue in the test case</li>
 <li><code>rdar://26870455</code> - Background URL Session Configurations do not work in the simulator</li>
 <li><code>rdar://26849668</code> - Some URLProtocol APIs do not properly handle <code>URLRequest</code></li>
-<li><code>FB7624529</code> - <code>urlSession(_:task:didFinishCollecting:)</code> never called on watchOS</li>
 </ul>
 <h2 id='resolved-radars' class='heading'>Resolved Radars</h2>
 
@@ -689,11 +722,11 @@
 <ul>
 <li>(Resolved): Just add <code>CFNetwork</code> to your linked frameworks.</li>
 </ul></li>
-</ul>
-<h2 id='workarounds' class='heading'>Workarounds</h2>
+<li><code>FB7624529</code> - <code>urlSession(_:task:didFinishCollecting:)</code> never called on watchOS
 
 <ul>
-<li>Collection of <code>URLSessionTaskMetrics</code> is currently disabled on watchOS due to <code>FB7624529</code>.</li>
+<li>(Resolved): Metrics now collected on watchOS 7+.</li>
+</ul></li>
 </ul>
 <h2 id='faq' class='heading'>FAQ</h2>
 <h3 id='what-39-s-the-origin-of-the-name-alamofire' class='heading'>What&rsquo;s the origin of the name Alamofire?</h3>
@@ -725,6 +758,11 @@ If you use any of our libraries for work, see if your employers would be interes
 Any amount you can donate today to help us reach our goal would be greatly appreciated.</p>
 
 <p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W34WPEE74APJQ"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="paypal"></a></p>
+<h2 id='supporters' class='heading'>Supporters</h2>
+
+<p><a href="https://macstadium.com">MacStadium</a> provides Alamofire with a free, hosted Mac mini.</p>
+
+<p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/MacStadiumLogo.png" alt="Powered by MacStadium"></p>
 <h2 id='license' class='heading'>License</h2>
 
 <p>Alamofire is released under the MIT license. <a href="https://github.com/Alamofire/Alamofire/blob/master/LICENSE">See LICENSE</a> for details.</p>
@@ -736,8 +774,8 @@ Any amount you can donate today to help us reach our goal would be greatly appre
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-04-21)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="noopener" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-09-20)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="noopener" rel="external">jazzy ♪♫ v0.14.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="noopener" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

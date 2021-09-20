@@ -1,3 +1,7 @@
+// Jazzy - https://github.com/realm/jazzy
+// Copyright Realm Inc.
+// SPDX-License-Identifier: MIT
+
 window.jazzy = {'docset': false}
 if (typeof window.dash != 'undefined') {
   document.documentElement.className += ' dash'

@@ -1,3 +1,7 @@
+// Jazzy - https://github.com/realm/jazzy
+// Copyright Realm Inc.
+// SPDX-License-Identifier: MIT
+
 $(function(){
   var $typeahead = $('[data-typeahead]');
   var $form = $typeahead.parents('form');
