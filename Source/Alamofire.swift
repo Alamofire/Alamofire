@@ -32,4 +32,4 @@ import Foundation
 public let AF = Session.default
 
 /// Current Alamofire version. Necessary since SPM doesn't use dynamic libraries. Plus this will be more accurate.
-let version = "5.4.3"
+let version = "5.4.4"
