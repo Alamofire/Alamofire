@@ -193,6 +193,9 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
 
 #if swift(>=5.5)
 extension ServerTrustEvaluating where Self == RevocationTrustEvaluator {
+    /// Provides a default `RevocationTrustEvaluator` instance.
+    public static var revocationChecking: RevocationTrustEvaluator { RevocationTrustEvaluator() }
+
     /// Creates a `RevocationTrustEvaluator` using the provided parameters.
     ///
     /// - Note: Default and host validation will fail when using this evaluator with self-signed certificates. Use
@@ -207,9 +210,9 @@ extension ServerTrustEvaluating where Self == RevocationTrustEvaluator {
     ///   - options:                  The `Options` to use to check the revocation status of the certificate. `.any`
     ///                               by default.
     /// - Returns:                    The `RevocationTrustEvaluator`.
-    public static func revocation(performDefaultValidation: Bool = true,
-                                  validateHost: Bool = true,
-                                  options: RevocationTrustEvaluator.Options = .any) -> RevocationTrustEvaluator {
+    public static func revocationChecking(performDefaultValidation: Bool = true,
+                                          validateHost: Bool = true,
+                                          options: RevocationTrustEvaluator.Options = .any) -> RevocationTrustEvaluator {
         RevocationTrustEvaluator(performDefaultValidation: performDefaultValidation,
                                  validateHost: validateHost,
                                  options: options)
@@ -282,6 +285,9 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
 
 #if swift(>=5.5)
 extension ServerTrustEvaluating where Self == PinnedCertificatesTrustEvaluator {
+    /// Provides a default `PinnedCertificatesTrustEvaluator` instance.
+    public static var pinnedCertificates: PinnedCertificatesTrustEvaluator { PinnedCertificatesTrustEvaluator() }
+
     /// Creates a `PinnedCertificatesTrustEvaluator` using the provided parameters.
     ///
     /// - Parameters:
@@ -373,6 +379,9 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
 
 #if swift(>=5.5)
 extension ServerTrustEvaluating where Self == PublicKeysTrustEvaluator {
+    /// Provides a default `PublicKeysTrustEvaluator` instance.
+    public static var publicKeys: PublicKeysTrustEvaluator { PublicKeysTrustEvaluator() }
+
     /// Creates a `PublicKeysTrustEvaluator` from the provided parameters.
     ///
     /// - Note: Default and host validation will fail when using this evaluator with self-signed certificates. Use

@@ -507,7 +507,7 @@ public final class DataResponseSerializer: ResponseSerializer {
     public let emptyResponseCodes: Set<Int>
     public let emptyRequestMethods: Set<HTTPMethod>
 
-    /// Creates an instance using the provided values.
+    /// Creates a `DataResponseSerializer` using the provided parameters.
     ///
     /// - Parameters:
     ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
@@ -540,6 +540,17 @@ public final class DataResponseSerializer: ResponseSerializer {
 
 #if swift(>=5.5)
 extension ResponseSerializer where Self == DataResponseSerializer {
+    /// Provides a default `DataResponseSerializer` instance.
+    public static var data: DataResponseSerializer { DataResponseSerializer() }
+
+    /// Creates a `DataResponseSerializer` using the provided parameters.
+    ///
+    /// - Parameters:
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
+    ///
+    /// - Returns:               The `DataResponseSerializer`.
     public static func data(dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                             emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                             emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataResponseSerializer {
@@ -663,6 +674,9 @@ public final class StringResponseSerializer: ResponseSerializer {
 
 #if swift(>=5.5)
 extension ResponseSerializer where Self == StringResponseSerializer {
+    /// Provides a default `StringResponseSerializer` instance.
+    public static var string: StringResponseSerializer { StringResponseSerializer() }
+
     /// Creates a `StringResponseSerializer` with the provided values.
     ///
     /// - Parameters:

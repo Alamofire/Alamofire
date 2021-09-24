@@ -341,6 +341,9 @@ open class RetryPolicy: RequestInterceptor {
 
 #if swift(>=5.5)
 extension RequestInterceptor where Self == RetryPolicy {
+    /// Provides a default `RetryPolicy` instance.
+    public static var retryPolicy: RetryPolicy { RetryPolicy() }
+
     /// Creates an `RetryPolicy` from the specified parameters.
     ///
     /// - Parameters:
@@ -403,6 +406,9 @@ open class ConnectionLostRetryPolicy: RetryPolicy {
 
 #if swift(>=5.5)
 extension RequestInterceptor where Self == ConnectionLostRetryPolicy {
+    /// Provides a default `ConnectionLostRetryPolicy` instance.
+    public static var connectionLostRetryPolicy: ConnectionLostRetryPolicy { ConnectionLostRetryPolicy() }
+
     /// Creates a `ConnectionLostRetryPolicy` instance from the specified parameters.
     ///
     /// - Parameters:

@@ -94,6 +94,9 @@ open class JSONParameterEncoder: ParameterEncoder {
 
 #if swift(>=5.5)
 extension ParameterEncoder where Self == JSONParameterEncoder {
+    /// Provides a default `JSONParameterEncoder` instance.
+    public static var json: JSONParameterEncoder { JSONParameterEncoder() }
+
     /// Creates a `JSONParameterEncoder` using the provided `JSONEncoder`.
     ///
     /// - Parameter encoder: `JSONEncoder` used to encode parameters. `JSONEncoder()` by default.
@@ -197,6 +200,9 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 
 #if swift(>=5.5)
 extension ParameterEncoder where Self == URLEncodedFormParameterEncoder {
+    /// Provides a default `URLEncodedFormParameterEncoder` instance.
+    public static var urlEncodedForm: URLEncodedFormParameterEncoder { URLEncodedFormParameterEncoder() }
+
     /// Creates a `URLEncodedFormParameterEncoder` with the provided encoder and destination.
     ///
     /// - Parameters:
