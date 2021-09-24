@@ -901,6 +901,24 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
     }
 }
 
+#if swift(>=5.5)
+final class StaticParameterEncoderInstanceTests: BaseTestCase {
+    func takeParameterEncoder(_ parameterEncoder: ParameterEncoder) {
+        _ = parameterEncoder
+    }
+
+    func testThatJSONParameterEncoderCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeParameterEncoder(.json())
+    }
+
+    func testThatURLEncodedFormParameterEncoderCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeParameterEncoder(.urlEncodedForm())
+    }
+}
+#endif
+
 private struct EncodableStruct: Encodable {
     let one = "one"
     let two = 2
