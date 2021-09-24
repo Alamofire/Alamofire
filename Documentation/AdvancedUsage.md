@@ -391,7 +391,7 @@ AF.request(...)
 ##### `URLSessionTask`s
 In many ways, the various `Request` subclasses act as a wrapper for a `URLSessionTask` and present specific API for interacting with the different types of tasks. These tasks are made visible on the `Request` instance through the `tasks` array property. This includes both the initial task created for the `Request`, as well as any subsequent tasks created as part of the retry process, with one task per retry.
 
-In addition to accumulating these values, every `Request` has an `onURLSessionTaskCreation` method which calls a closure whenever a `URLSessionTask` is created for the `Request`. This clsoure will be called multiple times if the `Request` is retried and only one closure can be set at a time. The provided `URLSessionTask` *SHOULD **NOT*** be used to interact with the `task`'s lifetime, which should only be done by the `Request` itself. Instead, you can use this method to provide the `Request`'s active `task` to other APIs, like `NSFileProvider`. 
+In addition to accumulating these values, every `Request` has an `onURLSessionTaskCreation` method which calls a closure whenever a `URLSessionTask` is created for the `Request`. This closure will be called multiple times if the `Request` is retried and only one closure can be set at a time. The provided `URLSessionTask` *SHOULD **NOT*** be used to interact with the `task`'s lifetime, which should only be done by the `Request` itself. Instead, you can use this method to provide the `Request`'s active `task` to other APIs, like `NSFileProvider`. 
 
 ```swift
 AF.request(...)
