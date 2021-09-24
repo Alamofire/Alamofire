@@ -1415,4 +1415,25 @@ class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTestCase {
         #endif
     }
 }
+
+final class StaticServerTrustAccessorTests: ServerTrustPolicyTestCase {
+    func consumeServerTrustEvaluator(_ evaluator: ServerTrustEvaluating) {
+        _ = evaluator
+    }
+
+    func testThatRevocationEvaluatorCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeServerTrustEvaluator(.revocation())
+    }
+
+    func testThatPinnedCertificatesEvaluatorCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeServerTrustEvaluator(.pinnedCertificates())
+    }
+
+    func testThatPublicKeysEvaluatorCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeServerTrustEvaluator(.publicKeys())
+    }
+}
 #endif
