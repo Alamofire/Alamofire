@@ -211,18 +211,9 @@ extension DataRequest {
         return self
     }
 
-    /// Adds a handler to be called once the request has finished.
-    ///
-    /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default
-    ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data.
-    ///   - completionHandler:  The code to be executed once the request has finished.
-    ///
-    /// - Returns:              The request.
-    @discardableResult
-    public func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
-                                                                     responseSerializer: Serializer,
-                                                                     completionHandler: @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
+    private func _response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
+                                                                       responseSerializer: Serializer,
+                                                                       completionHandler: @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
@@ -288,6 +279,38 @@ extension DataRequest {
 
         return self
     }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - Parameters:
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default
+    ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data.
+    ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
+    /// - Returns:              The request.
+    @discardableResult
+    public func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
+                                                                     responseSerializer: Serializer,
+                                                                     completionHandler: @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
+        -> Self {
+        _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - Parameters:
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default
+    ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data.
+    ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
+    /// - Returns:              The request.
+    @discardableResult
+    public func response<Serializer: ResponseSerializer>(queue: DispatchQueue = .main,
+                                                         responseSerializer: Serializer,
+                                                         completionHandler: @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
+        -> Self {
+        _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
+    }
 }
 
 extension DownloadRequest {
@@ -325,19 +348,9 @@ extension DownloadRequest {
         return self
     }
 
-    /// Adds a handler to be called once the request has finished.
-    ///
-    /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
-    ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
-    ///                         contained in the destination `URL`.
-    ///   - completionHandler:  The code to be executed once the request has finished.
-    ///
-    /// - Returns:              The request.
-    @discardableResult
-    public func response<Serializer: DownloadResponseSerializerProtocol>(queue: DispatchQueue = .main,
-                                                                         responseSerializer: Serializer,
-                                                                         completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
+    private func _response<Serializer: DownloadResponseSerializerProtocol>(queue: DispatchQueue = .main,
+                                                                           responseSerializer: Serializer,
+                                                                           completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
@@ -403,6 +416,40 @@ extension DownloadRequest {
         }
 
         return self
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - Parameters:
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
+    ///                         contained in the destination `URL`.
+    ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
+    /// - Returns:              The request.
+    @discardableResult
+    public func response<Serializer: DownloadResponseSerializerProtocol>(queue: DispatchQueue = .main,
+                                                                         responseSerializer: Serializer,
+                                                                         completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
+        -> Self {
+        _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - Parameters:
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
+    ///                         contained in the destination `URL`.
+    ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
+    /// - Returns:              The request.
+    @discardableResult
+    public func response<Serializer: ResponseSerializer>(queue: DispatchQueue = .main,
+                                                         responseSerializer: Serializer,
+                                                         completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
+        -> Self {
+        _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 }
 
