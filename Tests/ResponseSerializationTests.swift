@@ -456,6 +456,57 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     }
 }
 
+#if swift(>=5.5)
+final class StaticSerializationTests: BaseTestCase {
+    func consumeDownloadResponseSerializer<Serializer: DownloadResponseSerializerProtocol>(_ responseSerializer: Serializer) {
+        _ = responseSerializer
+    }
+
+    func consumeStreamSerializer<Serializer: DataStreamSerializer>(_ serializer: Serializer) {
+        _ = serializer
+    }
+
+    func consumeResponseSerializer<Serializer: ResponseSerializer>(_ responseSerializer: Serializer) {
+        _ = responseSerializer
+    }
+
+    func testThatURLSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeDownloadResponseSerializer(.url)
+    }
+
+    func testThatDataSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeResponseSerializer(.data())
+    }
+
+    func testThatStringSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeResponseSerializer(.string())
+    }
+
+    func testThatDecodableSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeResponseSerializer(.decodable(of: TestResponse.self))
+    }
+
+    func testThatPassthroughStreamSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeStreamSerializer(.passthrough)
+    }
+
+    func testThatStringStreamSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeStreamSerializer(.string)
+    }
+
+    func testThatDecodableStreamSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeStreamSerializer(.decodable(of: TestResponse.self))
+    }
+}
+#endif
+
 // MARK: -
 
 final class URLResponseSerializerTests: BaseTestCase {
@@ -1314,6 +1365,24 @@ final class DataPreprocessorTests: BaseTestCase {
         XCTAssertEqual(result.success.map { String(decoding: $0, as: UTF8.self) }, "abcd")
     }
 }
+
+#if swift(>=5.5)
+final class StaticDataPreprocessorTests: BaseTestCase {
+    func consumeDataPreprocessor(_ dataPreprocessor: DataPreprocessor) {
+        _ = dataPreprocessor
+    }
+
+    func testThatPassthroughCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeDataPreprocessor(.passthrough)
+    }
+
+    func testThatGoogleXSSICanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeDataPreprocessor(.googleXSSI)
+    }
+}
+#endif
 
 extension HTTPURLResponse {
     convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {

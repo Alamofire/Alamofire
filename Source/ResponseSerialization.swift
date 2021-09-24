@@ -95,6 +95,18 @@ public struct GoogleXSSIPreprocessor: DataPreprocessor {
     }
 }
 
+#if swift(>=5.5)
+extension DataPreprocessor where Self == PassthroughPreprocessor {
+    /// Provides a `PassthroughPreprocessor` instance.
+    public static var passthrough: PassthroughPreprocessor { PassthroughPreprocessor() }
+}
+
+extension DataPreprocessor where Self == GoogleXSSIPreprocessor {
+    /// Provides a `GoogleXSSIPreprocessor` instance.
+    public static var googleXSSI: GoogleXSSIPreprocessor { GoogleXSSIPreprocessor() }
+}
+#endif
+
 extension ResponseSerializer {
     /// Default `DataPreprocessor`. `PassthroughPreprocessor` by default.
     public static var defaultDataPreprocessor: DataPreprocessor { PassthroughPreprocessor() }
@@ -416,6 +428,13 @@ public struct URLResponseSerializer: DownloadResponseSerializerProtocol {
     }
 }
 
+#if swift(>=5.5)
+extension DownloadResponseSerializerProtocol where Self == URLResponseSerializer {
+    /// Provides a `URLResponseSerializer` instance.
+    public static var url: URLResponseSerializer { URLResponseSerializer() }
+}
+#endif
+
 extension DownloadRequest {
     /// Adds a handler using a `URLResponseSerializer` to be called once the request is finished.
     ///
@@ -471,6 +490,18 @@ public final class DataResponseSerializer: ResponseSerializer {
         return data
     }
 }
+
+#if swift(>=5.5)
+extension ResponseSerializer where Self == DataResponseSerializer {
+    public static func data(dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                            emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
+                            emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataResponseSerializer {
+        DataResponseSerializer(dataPreprocessor: dataPreprocessor,
+                               emptyResponseCodes: emptyResponseCodes,
+                               emptyRequestMethods: emptyRequestMethods)
+    }
+}
+#endif
 
 extension DataRequest {
     /// Adds a handler using a `DataResponseSerializer` to be called once the request has finished.
@@ -582,6 +613,30 @@ public final class StringResponseSerializer: ResponseSerializer {
         return string
     }
 }
+
+#if swift(>=5.5)
+extension ResponseSerializer where Self == StringResponseSerializer {
+    /// Creates a `StringResponseSerializer` with the provided values.
+    ///
+    /// - Parameters:
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
+    ///   - encoding:            A string encoding. Defaults to `nil`, in which case the encoding will be determined
+    ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
+    ///
+    /// - Returns:               The `StringResponseSerializer`.
+    public static func string(dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                              encoding: String.Encoding? = nil,
+                              emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
+                              emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> StringResponseSerializer {
+        StringResponseSerializer(dataPreprocessor: dataPreprocessor,
+                                 encoding: encoding,
+                                 emptyResponseCodes: emptyResponseCodes,
+                                 emptyRequestMethods: emptyRequestMethods)
+    }
+}
+#endif
 
 extension DataRequest {
     /// Adds a handler using a `StringResponseSerializer` to be called once the request has finished.
@@ -856,6 +911,31 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
     }
 }
 
+#if swift(>=5.5)
+extension ResponseSerializer {
+    /// Creates a `DecodableResponseSerializer` using the values provided.
+    ///
+    /// - Parameters:
+    ///   - type:                `Decodable` type to decode from response data.
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
+    ///   - decoder:             The `DataDecoder`. `JSONDecoder()` by default.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
+    ///
+    /// - Returns:               The `DecodableResponseSerializer`.
+    public static func decodable<T: Decodable>(of type: T.Type,
+                                               dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                               decoder: DataDecoder = JSONDecoder(),
+                                               emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
+                                               emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DecodableResponseSerializer<T> where Self == DecodableResponseSerializer<T> {
+        DecodableResponseSerializer<T>(dataPreprocessor: dataPreprocessor,
+                                       decoder: decoder,
+                                       emptyResponseCodes: emptyResponseCodes,
+                                       emptyRequestMethods: emptyRequestMethods)
+    }
+}
+#endif
+
 extension DataRequest {
     /// Adds a handler using a `DecodableResponseSerializer` to be called once the request has finished.
     ///
@@ -869,8 +949,6 @@ extension DataRequest {
     ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  HTTP status codes for which empty responses are always valid. `[204, 205]` by default.
     ///   - emptyRequestMethods: `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
-    ///   - options:             `JSONSerialization.ReadingOptions` used when parsing the response. `.allowFragments`
-    ///                          by default.
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
@@ -904,8 +982,6 @@ extension DownloadRequest {
     ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  HTTP status codes for which empty responses are always valid. `[204, 205]` by default.
     ///   - emptyRequestMethods: `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
-    ///   - options:             `JSONSerialization.ReadingOptions` used when parsing the response. `.allowFragments`
-    ///                          by default.
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
@@ -950,8 +1026,9 @@ public struct DecodableStreamSerializer<T: Decodable>: DataStreamSerializer {
 
     /// Creates an instance with the provided `DataDecoder` and `DataPreprocessor`.
     /// - Parameters:
-    ///   - decoder: `        DataDecoder` used to decode incoming `Data`.
-    ///   - dataPreprocessor: `DataPreprocessor` used to process incoming `Data` before it's passed through the `decoder`.
+    ///   - decoder: `        DataDecoder` used to decode incoming `Data`. `JSONDecoder()` by default.
+    ///   - dataPreprocessor: `DataPreprocessor` used to process incoming `Data` before it's passed through the
+    ///                       `decoder`. `PassthroughPreprocessor()` by default.
     public init(decoder: DataDecoder = JSONDecoder(), dataPreprocessor: DataPreprocessor = PassthroughPreprocessor()) {
         self.decoder = decoder
         self.dataPreprocessor = dataPreprocessor
@@ -978,6 +1055,33 @@ public struct StringStreamSerializer: DataStreamSerializer {
         String(decoding: data, as: UTF8.self)
     }
 }
+
+#if swift(>=5.5)
+extension DataStreamSerializer {
+    /// Creates a `DecodableStreamSerializer` instance with the provided `DataDecoder` and `DataPreprocessor`.
+    ///
+    /// - Parameters:
+    ///   - type:             `Decodable` type to decode from stream data.
+    ///   - decoder: `        DataDecoder` used to decode incoming `Data`. `JSONDecoder()` by default.
+    ///   - dataPreprocessor: `DataPreprocessor` used to process incoming `Data` before it's passed through the
+    ///                       `decoder`. `PassthroughPreprocessor()` by default.
+    public static func decodable<T: Decodable>(of type: T.Type,
+                                               decoder: DataDecoder = JSONDecoder(),
+                                               dataPreprocessor: DataPreprocessor = PassthroughPreprocessor()) -> Self where Self == DecodableStreamSerializer<T> {
+        DecodableStreamSerializer<T>(decoder: decoder, dataPreprocessor: dataPreprocessor)
+    }
+}
+
+extension DataStreamSerializer where Self == PassthroughStreamSerializer {
+    /// Provides a `PassthroughStreamSerializer` instance.
+    public static var passthrough: PassthroughStreamSerializer { PassthroughStreamSerializer() }
+}
+
+extension DataStreamSerializer where Self == StringStreamSerializer {
+    /// Provides a `StringStreamSerializer` instance.
+    public static var string: StringStreamSerializer { StringStreamSerializer() }
+}
+#endif
 
 extension DataStreamRequest {
     /// Adds a `StreamHandler` which performs no parsing on incoming `Data`.
