@@ -208,6 +208,29 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
     }
 }
 
+#if swift(>=5.5)
+final class StaticCachedResponseHandlerTests: BaseTestCase {
+    func takeCachedResponseHandler(_ handler: CachedResponseHandler) {
+        _ = handler
+    }
+
+    func testThatCacheResponseCacherCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeCachedResponseHandler(.cache)
+    }
+
+    func testThatDoNotCacheResponseCacherCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeCachedResponseHandler(.doNotCache)
+    }
+
+    func testThatModifyResponseCacherCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeCachedResponseHandler(.modify { _, _ in nil })
+    }
+}
+#endif
+
 // MARK: -
 
 extension Session {
