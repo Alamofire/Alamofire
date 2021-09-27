@@ -8,6 +8,8 @@ Please read it before you start participating.
 * [Asking Questions](#asking-questions)
 * [Reporting Security Issues](#reporting-security-issues)
 * [Reporting Issues](#reporting-other-issues)
+* [Triage Issues](#triage-issues)
+* [Submitting Pull Requests](#submitting-pull-requests)
 * [Developers Certificate of Origin](#developers-certificate-of-origin)
 * [Code of Conduct](#code-of-conduct)
 
@@ -36,6 +38,18 @@ When reporting issues, please fill out our issue template. The information the t
 ## Triage Issues [![Open Source Helpers](https://www.codetriage.com/alamofire/alamofire/badges/users.svg)](https://www.codetriage.com/alamofire/alamofire)
 
 You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to alamofire on CodeTriage](https://www.codetriage.com/alamofire/alamofire).
+
+## Submitting Pull Requests
+
+You can contribute by fixing bugs or adding new features. For larger code changes, we first recommend them to be discussed in the [project issues](https://github.com/Alamofire/Alamofire/issues) or in our [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/). When submitting a pull request, please make sure your change doesn't break any automated tests (see [Automated Tests](#automated-tests) below).
+
+### Automated Tests
+
+The tests depend on [Firewalk](https://github.com/Alamofire/Firewalk), our HTTP test server. To run the automated tests, you first need to have the server running locally. 
+
+In your terminal, run the following commands:
+- To install Firewalk: `brew install alamofire/alamofire/firewalk`
+- To launch the server: `firewalk &`
 
 ## Developer's Certificate of Origin 1.1
 
