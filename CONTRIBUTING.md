@@ -41,15 +41,16 @@ You can triage issues which may include reproducing bug reports or asking for vi
 
 ## Submitting Pull Requests
 
-You can contribute by fixing bugs or adding new features. For larger code changes, we first recommend them to be discussed in the [project issues](https://github.com/Alamofire/Alamofire/issues) or in our [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/). When submitting a pull request, please make sure your change doesn't break any automated tests (see [Automated Tests](#automated-tests) below).
+You can contribute by fixing bugs or adding new features. For larger code changes, we first recommend discussing them in our [Github issues](https://github.com/Alamofire/Alamofire/issues) or on our [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/). When submitting a pull request, please add relevant tests and ensure your changes don't break any existing tests (see [Automated Tests](#automated-tests) below).
 
 ### Automated Tests
 
-The tests depend on [Firewalk](https://github.com/Alamofire/Firewalk), our HTTP test server. To run the automated tests, you first need to have the server running locally. 
+Alamofire's tests depend on our [Firewalk](https://github.com/Alamofire/Firewalk) test server. To run the automated tests, you first need to have the server running locally. 
 
 In your terminal, run the following commands:
 - To install Firewalk: `brew install alamofire/alamofire/firewalk`
-- To launch the server: `firewalk &`
+- To run and detach the server: `firewalk &`
+- To stop the server, run `kill` and provide the pid output after launch.
 
 ## Developer's Certificate of Origin 1.1
 

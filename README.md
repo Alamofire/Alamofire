@@ -160,7 +160,7 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 
 ## Contributing
 
-Please read the instructions detailed in [CONTRIBUTING.md](./CONTRIBUTING.md).
+Before contributing to Alamofire, please read the instructions detailed in our [contribution guide](https://github.com/Alamofire/Alamofire/blob/master/CONTRIBUTING.md).
 
 ## Open Radars
 
