@@ -204,7 +204,7 @@ final class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequestWithProgress() {
         // Given
         let url = Endpoint.method(.post).url
-        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 300)
+        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 1000)
         let data = Data(string.utf8)
 
         let expectation = self.expectation(description: "Bytes upload progress should be reported: \(url)")
