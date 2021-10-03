@@ -1163,7 +1163,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertEqual(response?.error?.isResponseSerializationError, true)
-        XCTAssertEqual((response?.error?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
+        XCTAssertNotNil(response?.error?.underlyingError as? DecodingError)
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty)
             XCTAssertTrue(session.activeRequests.isEmpty)
@@ -1218,7 +1218,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(error.isRequestRetryError)
             if case let .requestRetryFailed(retryError, originalError) = error {
                 XCTAssertEqual(retryError.asAFError?.urlConvertible as? String, "/invalid/url/\(index + 1)")
-                XCTAssertEqual((originalError.asAFError?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
+                XCTAssertNotNil(originalError.asAFError?.underlyingError as? DecodingError)
             } else {
                 XCTFail("Error failure reason should be response serialization failure")
             }
