@@ -600,12 +600,12 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertEqual(response?.resumeData, download.resumeData)
     }
 
-    func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
+    func testThatCancelledDownloadResumeDataIsAvailableWithDecodableResponseSerializer() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response: DownloadResponse<Any, AFError>?
+        var response: DownloadResponse<TestResponse, AFError>?
 
         // When
         let download = AF.download(.download())
@@ -617,7 +617,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
                 cancelled = true
             }
         }
-        download.responseJSON { resp in
+        download.responseDecodable(of: TestResponse.self) { resp in
             response = resp
             expectation.fulfill()
         }
@@ -746,10 +746,9 @@ final class DownloadResponseMapTestCase: BaseTestCase {
         var response: DownloadResponse<String, AFError>?
 
         // When
-        AF.download(.get, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp.map { json in
-                // json["args"]["foo"] is "bar": use this invariant to test the map function
-                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+        AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+            response = resp.map { response in
+                response.args?["foo"] ?? "invalid"
             }
 
             expectation.fulfill()
@@ -775,7 +774,7 @@ final class DownloadResponseMapTestCase: BaseTestCase {
         var response: DownloadResponse<String, AFError>?
 
         // When
-        AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(urlString, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.map { _ in "ignored" }
             expectation.fulfill()
         }
@@ -803,10 +802,9 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         var response: DownloadResponse<String, Error>?
 
         // When
-        AF.download(.get, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp.tryMap { json in
-                // json["args"]["foo"] is "bar": use this invariant to test the map function
-                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+        AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+            response = resp.tryMap { response in
+                response.args?["foo"] ?? "invalid"
             }
 
             expectation.fulfill()
@@ -833,7 +831,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         var response: DownloadResponse<String, Error>?
 
         // When
-        AF.download(.get, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { _ in
                 throw TransformError()
             }
@@ -865,7 +863,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         var response: DownloadResponse<String, Error>?
 
         // When
-        AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(urlString, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { _ in "ignored" }
             expectation.fulfill()
         }
@@ -889,10 +887,10 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
         let urlString = String.nonexistentDomain
         let expectation = self.expectation(description: "request should not succeed")
 
-        var response: DownloadResponse<Any, TestError>?
+        var response: DownloadResponse<TestResponse, TestError>?
 
         // When
-        AF.download(urlString).responseJSON { resp in
+        AF.download(urlString).responseDecodable(of: TestResponse.self) { resp in
             response = resp.mapError { error in
                 TestError.error(error: error)
             }
