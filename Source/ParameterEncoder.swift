@@ -92,6 +92,21 @@ open class JSONParameterEncoder: ParameterEncoder {
     }
 }
 
+#if swift(>=5.5)
+extension ParameterEncoder where Self == JSONParameterEncoder {
+    /// Provides a default `JSONParameterEncoder` instance.
+    public static var json: JSONParameterEncoder { JSONParameterEncoder() }
+
+    /// Creates a `JSONParameterEncoder` using the provided `JSONEncoder`.
+    ///
+    /// - Parameter encoder: `JSONEncoder` used to encode parameters. `JSONEncoder()` by default.
+    /// - Returns:           The `JSONParameterEncoder`.
+    public static func json(encoder: JSONEncoder = JSONEncoder()) -> JSONParameterEncoder {
+        JSONParameterEncoder(encoder: encoder)
+    }
+}
+#endif
+
 /// A `ParameterEncoder` that encodes types as URL-encoded query strings to be set on the URL or as body data, depending
 /// on the `Destination` set.
 ///
@@ -182,3 +197,21 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
         return request
     }
 }
+
+#if swift(>=5.5)
+extension ParameterEncoder where Self == URLEncodedFormParameterEncoder {
+    /// Provides a default `URLEncodedFormParameterEncoder` instance.
+    public static var urlEncodedForm: URLEncodedFormParameterEncoder { URLEncodedFormParameterEncoder() }
+
+    /// Creates a `URLEncodedFormParameterEncoder` with the provided encoder and destination.
+    ///
+    /// - Parameters:
+    ///   - encoder:     `URLEncodedFormEncoder` used to encode the parameters. `URLEncodedFormEncoder()` by default.
+    ///   - destination: `Destination` to which to encode the parameters. `.methodDependent` by default.
+    /// - Returns:       The `URLEncodedFormParameterEncoder`.
+    public static func urlEncodedForm(encoder: URLEncodedFormEncoder = URLEncodedFormEncoder(),
+                                      destination: URLEncodedFormParameterEncoder.Destination = .methodDependent) -> URLEncodedFormParameterEncoder {
+        URLEncodedFormParameterEncoder(encoder: encoder, destination: destination)
+    }
+}
+#endif

@@ -38,7 +38,7 @@ class DetailViewController: UITableViewController {
             request?.onURLRequestCreation { [weak self] _ in
                 self?.title = self?.request?.description
             }
-            
+
             refreshControl?.endRefreshing()
             headers.removeAll()
             body = nil

@@ -527,6 +527,49 @@ final class InterceptorRequestTests: BaseTestCase {
     }
 }
 
+// MARK: - Static Accessors
+
+#if swift(>=5.5)
+final class StaticAccessorTests: BaseTestCase {
+    func consumeRequestAdapter(_ requestAdapter: RequestAdapter) {
+        _ = requestAdapter
+    }
+
+    func consumeRequestRetrier(_ requestRetrier: RequestRetrier) {
+        _ = requestRetrier
+    }
+
+    func consumeRequestInterceptor(_ requestInterceptor: RequestInterceptor) {
+        _ = requestInterceptor
+    }
+
+    func testThatAdapterCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeRequestAdapter(.adapter { request, _, completion in completion(.success(request)) })
+    }
+
+    func testThatRetrierCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeRequestRetrier(.retrier { _, _, _, completion in completion(.doNotRetry) })
+    }
+
+    func testThatInterceptorCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeRequestInterceptor(.interceptor())
+    }
+
+    func testThatRetryPolicyCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeRequestInterceptor(.retryPolicy())
+    }
+
+    func testThatConnectionLostRetryPolicyCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeRequestInterceptor(.connectionLostRetryPolicy())
+    }
+}
+#endif
+
 // MARK: - Helpers
 
 /// Class which captures the output of any underlying `RequestInterceptor`.

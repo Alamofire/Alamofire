@@ -89,3 +89,21 @@ extension ResponseCacher: CachedResponseHandler {
         }
     }
 }
+
+#if swift(>=5.5)
+extension CachedResponseHandler where Self == ResponseCacher {
+    /// Provides a `ResponseCacher` which caches the response, if allowed. Equivalent to `ResponseCacher.cache`.
+    public static var cache: ResponseCacher { .cache }
+
+    /// Provides a `ResponseCacher` which does not cache the response. Equivalent to `ResponseCacher.doNotCache`.
+    public static var doNotCache: ResponseCacher { .doNotCache }
+
+    /// Creates a `ResponseCacher` which modifies the proposed `CachedURLResponse` using the provided closure.
+    ///
+    /// - Parameter closure: Closure used to modify the `CachedURLResponse`.
+    /// - Returns:           The `ResponseCacher`.
+    public static func modify(using closure: @escaping ((URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)) -> ResponseCacher {
+        ResponseCacher(behavior: .modify(closure))
+    }
+}
+#endif
