@@ -300,7 +300,7 @@ final class SessionTestCase: BaseTestCase {
 
         XCTAssertTrue(userAgent?.contains(alamofireVersion) == true)
         XCTAssertTrue(userAgent?.contains(osNameVersion) == true)
-        XCTAssertTrue(userAgent?.contains("xctest/Unknown") == true)
+        XCTAssertTrue(userAgent?.contains("xctest/") == true)
     }
 
     // MARK: Tests - Supported Accept-Encodings

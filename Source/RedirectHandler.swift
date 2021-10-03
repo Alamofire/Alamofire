@@ -93,3 +93,21 @@ extension Redirector: RedirectHandler {
         }
     }
 }
+
+#if swift(>=5.5)
+extension RedirectHandler where Self == Redirector {
+    /// Provides a `Redirector` which follows redirects. Equivalent to `Redirector.follow`.
+    public static var follow: Redirector { .follow }
+
+    /// Provides a `Redirector` which does not follow redirects. Equivalent to `Redirector.doNotFollow`.
+    public static var doNotFollow: Redirector { .doNotFollow }
+
+    /// Creates a `Redirector` which modifies the redirected `URLRequest` using the provided closure.
+    ///
+    /// - Parameter closure: Closure used to modify the redirect.
+    /// - Returns:           The `Redirector`.
+    public static func modify(using closure: @escaping (URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?) -> Redirector {
+        Redirector(behavior: .modify(closure))
+    }
+}
+#endif

@@ -219,3 +219,26 @@ final class RedirectHandlerTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 }
+
+#if swift(>=5.5)
+final class StaticRedirectHandlerTests: BaseTestCase {
+    func takeRedirectHandler(_ handler: RedirectHandler) {
+        _ = handler
+    }
+
+    func testThatFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeRedirectHandler(.follow)
+    }
+
+    func testThatDoNotFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeRedirectHandler(.doNotFollow)
+    }
+
+    func testThatModifyRedirectorCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        takeRedirectHandler(.modify { _, _, _ in nil })
+    }
+}
+#endif
