@@ -181,6 +181,7 @@ final class ResponseStringTestCase: BaseTestCase {
 
 // MARK: -
 
+@available(*, deprecated)
 final class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
@@ -378,10 +379,9 @@ final class ResponseMapTestCase: BaseTestCase {
         var response: DataResponse<String, AFError>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp.map { json in
-                // json["args"]["foo"] is "bar": use this invariant to test the map function
-                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+        AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+            response = resp.map { response in
+                response.args?["foo"] ?? "invalid"
             }
 
             expectation.fulfill()
@@ -434,10 +434,9 @@ final class ResponseTryMapTestCase: BaseTestCase {
         var response: DataResponse<String, Error>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp.tryMap { json in
-                // json["args"]["foo"] is "bar": use this invariant to test the tryMap function
-                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+        AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+            response = resp.tryMap { response in
+                response.args?["foo"] ?? "invalid"
             }
 
             expectation.fulfill()
@@ -534,10 +533,10 @@ final class ResponseMapErrorTestCase: BaseTestCase {
         let urlString = String.nonexistentDomain
         let expectation = self.expectation(description: "request should not succeed")
 
-        var response: DataResponse<Any, TestError>?
+        var response: DataResponse<TestResponse, TestError>?
 
         // When
-        AF.request(urlString).responseJSON { resp in
+        AF.request(urlString).responseDecodable(of: TestResponse.self) { resp in
             response = resp.mapError { error in
                 TestError.error(error: error)
             }

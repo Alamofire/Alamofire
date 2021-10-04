@@ -320,6 +320,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
 
     // MARK: JSONResponseSerializer
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -334,6 +335,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsEmpty() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -348,6 +350,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -362,6 +365,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -378,6 +382,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual((result.failure?.asAFError?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -392,6 +397,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -407,6 +413,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -423,6 +430,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.success as? NSNull, NSNull())
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -439,6 +447,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.success as? NSNull, NSNull())
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1050,6 +1059,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
 
     // MARK: Tests - JSON Response Serializer
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenFileURLIsNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1064,6 +1074,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileNil, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenFileURLIsInvalid() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1078,6 +1089,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileReadFailed, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenFileDataIsEmpty() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1092,6 +1104,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1105,6 +1118,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1120,6 +1134,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual((result.failure?.asAFError?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1134,6 +1149,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileNil, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1149,6 +1165,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileNil, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1267,6 +1284,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
         XCTAssertNotNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
         // Given
         let preprocessor = DropFirst()
@@ -1282,6 +1300,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
         XCTAssertNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerProperlyReceivesErrorFromFailingDataPreprocessor() {
         // Given
         let preprocessor = Throwing()

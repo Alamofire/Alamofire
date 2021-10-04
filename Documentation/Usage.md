@@ -149,6 +149,8 @@ If you need to use an HTTP method that Alamofire's `HTTPMethod` type doesn't sup
 extension HTTPMethod {
     static let custom = HTTPMethod(rawValue: "CUSTOM")
 }
+
+AF.request("https://httpbin.org/headers", method: .custom)
 ```
 
 ### Setting Other `URLRequest` Properties
@@ -395,7 +397,7 @@ let headers: HTTPHeaders = [
     "Accept": "application/json"
 ]
 
-AF.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+AF.request("https://httpbin.org/headers", headers: headers).responseDecodable(of: DecodableType.self) { response in
     debugPrint(response)
 }
 ```
@@ -408,7 +410,7 @@ let headers: HTTPHeaders = [
     .accept("application/json")
 ]
 
-AF.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+AF.request("https://httpbin.org/headers", headers: headers).responseDecodable(of: DecodableType.self) { response in
     debugPrint(response)
 }
 ```
@@ -432,7 +434,7 @@ By default, Alamofire treats any completed request to be successful, regardless 
 The `validate()` API automatically validates that status codes are within the `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
 
 ```swift
-AF.request("https://httpbin.org/get").validate().responseJSON { response in
+AF.request("https://httpbin.org/get").validate().responseData { response in
     debugPrint(response)
 }
 ```
@@ -457,21 +459,21 @@ AF.request("https://httpbin.org/get")
 
 Alamofire's `DataRequest` and `DownloadRequest` both have a corresponding response type: `DataResponse<Success, Failure: Error>` and `DownloadResponse<Success, Failure: Error>`. Both of these are composed of two generics: the serialized type and the error type. By default, all response values will produce the `AFError` error type (i.e. `DataResponse<Success, AFError>`). Alamofire uses the simpler `AFDataResponse<Success>` and `AFDownloadResponse<Success>`, in its public API, which always have `AFError` error types. `UploadRequest`, a subclass of `DataRequest`, uses the same `DataResponse` type.
 
-Handling the `DataResponse` of a `DataRequest` or `UploadRequest` made in Alamofire involves chaining a response handler like `responseJSON` onto the `DataRequest`:
+Handling the `DataResponse` of a `DataRequest` or `UploadRequest` made in Alamofire involves chaining a response handler like `responseDecodable` onto the `DataRequest`:
 
 ```swift
-AF.request("https://httpbin.org/get").responseJSON { response in
+AF.request("https://httpbin.org/get").responseDecodable(of: DecodableType.self) { response in
     debugPrint(response)
 }
 ```
 
-In the above example, the `responseJSON` handler is added to the `DataRequest` to be executed once the `DataRequest` is complete. The closure passed to the handler receives the `AFDataResponse<Any>` value produced by the `JSONResponseSerializer` from the response properties.
+In the above example, the `responseDecodable` handler is added to the `DataRequest` to be executed once the `DataRequest` is complete. The closure passed to the handler receives the `DataResponse<DecodableType, AFError>` value produced by the `DecodableResponseSerializer` from the `URLRequest`, `HTTPURLResponse`, `Data`, and `Error` produced by the request.
 
-Rather than blocking execution to wait for a response from the server,  this closure is added as a [callback](https://en.wikipedia.org/wiki/Callback_%28computer_programming%29) to handle the response once it's received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.
+Rather than blocking execution to wait for a response from the server, this closure is added as a [callback](https://en.wikipedia.org/wiki/Callback_%28computer_programming%29) to handle the response once it's received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.
 
 > Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
-Alamofire contains six different data response handlers by default, including:
+Alamofire contains five different data response handlers by default, including:
 
 ```swift
 // Response Handler - Unserialized Response
@@ -497,14 +499,6 @@ func responseString(queue: DispatchQueue = .main,
                     emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                     emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods,
                     completionHandler: @escaping (AFDataResponse<String>) -> Void) -> Self
-
-// Response JSON Handler - Serialized into Any Using JSONSerialization
-func responseJSON(queue: DispatchQueue = .main,
-                  dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
-                  emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
-                  emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
-                  options: JSONSerialization.ReadingOptions = .allowFragments,
-                  completionHandler: @escaping (AFDataResponse<Any>) -> Void) -> Self
 
 // Response Decodable Handler - Serialized into Decodable Type
 func responseDecodable<T: Decodable>(of type: T.Type = T.self,
@@ -554,26 +548,14 @@ AF.request("https://httpbin.org/get").responseString { response in
 
 > If no encoding is specified, Alamofire will use the text encoding specified in the `HTTPURLResponse` from the server. If the text encoding cannot be determined by the server response, it defaults to `.isoLatin1`.
 
-#### Response JSON Handler
-
-The `responseJSON` handler uses a `JSONResponseSerializer` to convert the `Data` returned by the server into an `Any` type using the specified `JSONSerialization.ReadingOptions`. If no errors occur and the server data is successfully serialized into a JSON object, the response `AFResult` will be a `.success` and the `value` will be of type `Any`.
-
-```swift
-AF.request("https://httpbin.org/get").responseJSON { response in
-    debugPrint("Response: \(response)")
-}
-```
-
-> JSON serialization in `responseJSON` is handled by the `JSONSerialization` API from the `Foundation` framework.
-
 #### Response `Decodable` Handler
 
 The `responseDecodable` handler uses a `DecodableResponseSerializer` to convert the `Data` returned by the server into the passed `Decodable` type using the specified `DataDecoder` (a protocol abstraction for `Decoder`s which can decode from `Data`). If no errors occur and the server data is successfully decoded into a `Decodable` type, the response `Result` will be a `.success` and the `value` will be of the passed type.
 
 ```swift
-struct HTTPBinResponse: Decodable { let url: String }
+struct DecodableType: Decodable { let url: String }
 
-AF.request("https://httpbin.org/get").responseDecodable(of: HTTPBinResponse.self) { response in
+AF.request("https://httpbin.org/get").responseDecodable(of: DecodableType.self) { response in
     debugPrint("Response: \(response)")
 }
 ```
@@ -587,8 +569,8 @@ Alamofire.request("https://httpbin.org/get")
     .responseString { response in
         print("Response String: \(response.value)")
     }
-    .responseJSON { response in
-        print("Response JSON: \(response.value)")
+    .responseDecodable(of: DecodableType.self) { response in
+        print("Response DecodableType: \(response.value)")
     }
 ```
 
@@ -596,13 +578,13 @@ Alamofire.request("https://httpbin.org/get")
 
 #### Response Handler Queue
 
-Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can be passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
+Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can be passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed in the background on either the `rootQueue` or the `serializationQueue`, if one was provided, of the `Session` issuing the request.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
 
-AF.request("https://httpbin.org/get").responseJSON(queue: utilityQueue) { response in
-    print("Executed on utility queue.")
+AF.request("https://httpbin.org/get").responseDecodable(of: DecodableType.self, queue: utilityQueue) { response in
+    print("This closure is executed on utilityQueue.")
     debugPrint(response)
 }
 ```
@@ -636,7 +618,7 @@ let password = "password"
 
 AF.request("https://httpbin.org/basic-auth/\(user)/\(password)")
     .authenticate(username: user, password: password)
-    .responseJSON { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -651,7 +633,7 @@ let credential = URLCredential(user: user, password: password, persistence: .for
 
 AF.request("https://httpbin.org/basic-auth/\(user)/\(password)")
     .authenticate(with: credential)
-    .responseJSON { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -669,7 +651,7 @@ let password = "password"
 let headers: HTTPHeaders = [.authorization(username: user, password: password)]
 
 AF.request("https://httpbin.org/basic-auth/user/password", headers: headers)
-    .responseJSON { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -682,13 +664,13 @@ In addition to fetching data into memory, Alamofire also provides the `Session.d
 
 ```swift
 AF.download("https://httpbin.org/image/png").responseURL { response in
-    // Read file from provided URL.
+    // Read file from provided file URL.
 }
 ```
 
 In addition to having the same response handlers that `DataRequest` does, `DownloadRequest` also includes `responseURL`. Unlike the other response handlers, this handler just returns the `URL` containing the location of the downloaded data and does not read the `Data` from disk.
 
-Other response handlers, like `responseDecodable`, involve reading the response `Data` from disk. This may involve reading large amounts of data into memory, so it's important to keep that in mind when using those handlers.
+Other response handlers, like `responseDecodable`, involve reading the response `Data` from disk. This may involve reading large amounts of data into memory, so it's important to keep that in mind when using those handlers for downloads.
 
 #### Download File Destination
 
@@ -796,7 +778,7 @@ When sending relatively small amounts of data to a server using JSON or URL enco
 ```swift
 let data = Data("data".utf8)
 
-AF.upload(data, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
+AF.upload(data, to: "https://httpbin.org/post").responseDecodable(of: DecodableType.self) { response in
     debugPrint(response)
 }
 ```
@@ -806,7 +788,7 @@ AF.upload(data, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinRes
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-AF.upload(fileURL, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
+AF.upload(fileURL, to: "https://httpbin.org/post").responseDecodable(of: DecodableType.self) { response in
     debugPrint(response)
 }
 ```
@@ -818,7 +800,7 @@ AF.upload(multipartFormData: { multipartFormData in
     multipartFormData.append(Data("one".utf8), withName: "one")
     multipartFormData.append(Data("two".utf8), withName: "two")
 }, to: "https://httpbin.org/post")
-    .responseDecodable(of: HTTPBinResponse.self) { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -837,7 +819,7 @@ AF.upload(fileURL, to: "https://httpbin.org/post")
     .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
-    .responseDecodable(of: HTTPBinResponse.self) { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -1029,7 +1011,7 @@ AF.streamRequest(...).responseStream { stream in
 Alamofire gathers `URLSessionTaskMetrics` for every `Request`. `URLSessionTaskMetrics` encapsulate some fantastic statistical information about the underlying network connection and request and response timing.
 
 ```swift
-AF.request("https://httpbin.org/get").responseJSON { response in
+AF.request("https://httpbin.org/get").responseDecodable(of: DecodableType.self) { response in
     print(response.metrics)
 }
 ```
@@ -1045,7 +1027,7 @@ AF.request("https://httpbin.org/get")
     .cURLDescription { description in
         print(description)
     }
-    .responseJSON { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response.metrics)
     }
 ```
@@ -1057,6 +1039,6 @@ $ curl -v \
 -X GET \
 -H "Accept-Language: en;q=1.0" \
 -H "Accept-Encoding: br;q=1.0, gzip;q=0.9, deflate;q=0.8" \
--H "User-Agent: Demo/1.0 (com.demo.Demo; build:1; iOS 13.0.0) Alamofire/1.0" \
+-H "User-Agent: Demo/1.0 (com.demo.Demo; build:1; iOS 15.0.0) Alamofire/1.0" \
 "https://httpbin.org/get"
 ```
