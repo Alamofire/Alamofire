@@ -301,7 +301,7 @@ AF.request(...)
     .downloadProgress { progress in
         print(progress)
     }
-    .responseDecodable(of: SomeType.self) { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -323,7 +323,7 @@ Alamofire’s `RedirectHandler` protocol provides control and customization of r
 let redirector = Redirector(behavior: .follow)
 AF.request(...)
     .redirect(using: redirector)
-    .responseDecodable(of: SomeType.self) { response in 
+    .responseDecodable(of: DecodableType.self) { response in 
         debugPrint(response)
     }
 ```
@@ -337,7 +337,7 @@ Alamofire’s `CachedResponseHandler` protocol provides control and customizatio
 let cacher = ResponseCacher(behavior: .cache)
 AF.request(...)
     .cacheResponse(using: cacher)
-    .responseDecodable(of: SomeType.self) { response in 
+    .responseDecodable(of: DecodableType.self) { response in 
         debugPrint(response)
     }
 ```
@@ -352,7 +352,7 @@ Adding a credential to automatically reply to any HTTP authentication challenge 
 ```swift
 AF.request(...)
     .authenticate(username: "user@example.domain", password: "password")
-    .responseDecodable(of: SomeType.self) { response in 
+    .responseDecodable(of: DecodableType.self) { response in 
         debugPrint(response)
     }
 ```
@@ -365,7 +365,7 @@ Additionally, adding a raw `URLCredential` is just as easy:
 let credential = URLCredential(...)
 AF.request(...)
     .authenticate(using: credential)
-    .responseDecodable(of: SomeType.self) { response in 
+    .responseDecodable(of: DecodableType.self) { response in 
         debugPrint(response)
     }
 ```
@@ -383,7 +383,7 @@ AF.request(...)
     .onURLRequestCreation { request in
         print(request)
     }
-    .responseDecodable(of: SomeType.self) { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -398,7 +398,7 @@ AF.request(...)
     .onURLSessionTaskCreation { task in
         print(task)
     }
-    .responseDecodable(of: SomeType.self) { response in
+    .responseDecodable(of: DecodableType.self) { response in
         debugPrint(response)
     }
 ```
@@ -413,7 +413,7 @@ Alamofire gathers `URLSessionTaskMetrics` values for every `URLSessionTask` perf
 
 ```swift
 AF.request(...)
-    .responseDecodable(of: SomeType.self) { response in {
+    .responseDecodable(of: DecodableType.self) { response in {
         print(response.metrics)
     }
 ```
@@ -1030,7 +1030,6 @@ Alamofire includes a few common responses handlers, including:
 
 - `responseData(queue:completionHandler)`: Validates and preprocesses the response `Data` using `DataResponseSerializer`.
 - `responseString(queue:encoding:completionHandler:)`: Parses the response `Data` as a `String` using the provided `String.Encoding`.
-- `responseJSON(queue:options:completionHandler)`: Parses the response `Data` using `JSONSerialization` using the provided `JSONSerialization.ReadingOptions`. Using this method is not recommended and is only offered for compatibility with existing Alamofire usage. Instead, `responseDecodable` should be used.
 - `responseDecodable(of:queue:decoder:completionHandler:)`: Parses the response `Data` into the provided or inferred `Decodable` type using the provided `DataDecoder`. Uses `JSONDecoder` by default. Recommend method for JSON and generic response parsing.
 
 #### `DataResponseSerializer`
@@ -1038,9 +1037,6 @@ Calling `responseData(queue:completionHandler:)` on `DataRequest` or `DownloadRe
 
 #### `StringResponseSerializer`
 Calling `responseString(queue:encoding:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `StringResponseSerializer` to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then used to initialize a `String` using the `String.Encoding` parsed from the `HTTPURLResponse`.
-
-#### `JSONResponseSerializer`
-Calling `responseJSON(queue:options:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `JSONResponseSerializer` to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then passed through `JSONSerialization.jsonObject(with:options:)` with the provided options. This serializer is no longer recommended. Instead, using the `DecodableResponseSerializer` provides a better Swift experience.
 
 #### `DecodableResponseSerializer`
 Calling `responseDecodable(of:queue:decoder:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `DecodableResponseSerializer`to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then passed through the provided `DataDecoder` and parsed into the provided or inferred `Decodable` type.
@@ -1052,7 +1048,7 @@ In addition to the flexible `ResponseSerializer`s included with Alamofire, there
 Using an existing `ResponseSerializer` and then transforming the output is one of the simplest ways of customizing response handlers. Both `DataResponse` and `DownloadResponse` have `map`, `tryMap`, `mapError`, and `tryMapError` methods that can transform responses while preserving the metadata associated with the response. For example, extracting a property from a `Decodable` response can be achieved using `map`, while also preserving any previous parsing errors.
 
 ```swift
-AF.request(...).responseDecodable(of: SomeType.self) { response in
+AF.request(...).responseDecodable(of: DecodableType.self) { response in
     let propertyResponse = response.map { $0.someProperty }
 
     debugPrint(propertyResponse)
@@ -1062,7 +1058,7 @@ AF.request(...).responseDecodable(of: SomeType.self) { response in
 Transforms that throw errors can also be used with `tryMap`, perhaps to perform validation:
 
 ```swift
-AF.request(..).responseDecodable(of: SomeType.self) { response in
+AF.request(..).responseDecodable(of: DecodableType.self) { response in
     let propertyResponse = response.tryMap { try $0.someProperty.validated() }
 
     debugPrint(propertyResponse)
@@ -1132,7 +1128,7 @@ AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableT
 ```
 
 ## Using Alamofire with Combine
-On systems supporting the Combine framework, Alamofire offers the ability to publish responses using a custom `Publisher` type. These publishers work much like Alamofire's response handlers. They are chained onto requests and like response handlers, should come after other API like `validate()`. For example:
+On systems supporting the Combine framework, Alamofire offers the ability to publish responses using a custom `Publisher` type. These publishers work much like Alamofire's response handlers. They are chained onto requests and, like response handlers, should come after other API like `validate()`. For example:
 
 ```swift
 AF.request(...).publishDecodable(type: DecodableType.self)
@@ -1218,10 +1214,10 @@ manager?.startListening { status in
 There are some important things to remember when using network reachability to determine what to do next.
 
 - **DO NOT** use Reachability to determine if a network request should be sent.
-	- You should **ALWAYS** send it.
+    - You should **ALWAYS** send it.
 - When reachability is restored, use the event to retry failed network requests.
-	- Even though the network requests may still fail, this is a good moment to retry them.
+    - Even though the network requests may still fail, this is a good moment to retry them.
 - The network reachability status can be useful for determining why a network request may have failed.
-	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
+    - If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
 
 Alternatively, using a `RequestRetrier`, like the built in `RetryPolicy`, instead of reachability updates to retry requests which failed to a network failure will likely be simpler and more reliable. By default, `RetryPolicy` will retry idempotent requests on a variety of error conditions, including an offline network connection.

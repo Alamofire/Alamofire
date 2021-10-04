@@ -1424,7 +1424,7 @@ final class StaticServerTrustAccessorTests: ServerTrustPolicyTestCase {
 
     func testThatRevocationEvaluatorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
-        consumeServerTrustEvaluator(.revocation())
+        consumeServerTrustEvaluator(.revocationChecking())
     }
 
     func testThatPinnedCertificatesEvaluatorCanBeCreatedStaticallyFromProtocol() {
