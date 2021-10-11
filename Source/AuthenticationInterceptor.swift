@@ -257,7 +257,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
             }
 
             // Throw missing credential error is the credential is missing.
-            guard let credential = $mutableState.credential else {
+            guard let credential = mutableState.credential else {
                 let error = AuthenticationError.missingCredential
                 return .doNotAdapt(error)
             }

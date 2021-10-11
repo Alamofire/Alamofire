@@ -123,6 +123,7 @@ final class ProtectedWrapperTests: BaseTestCase {
         XCTAssertEqual(string.wrappedValue.count, count.wrappedValue)
     }
 
+    #if swift(>=5.5)
     func testThatLocalWrapperInstanceWorkCorrectly() {
         // Given
         @Protected var string = "test"
@@ -136,6 +137,7 @@ final class ProtectedWrapperTests: BaseTestCase {
         // Then
         XCTAssertEqual(string.count, count)
     }
+    #endif
 
     func testThatDynamicMembersAreSetSafely() {
         // Given
