@@ -217,15 +217,15 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     /// The `Credential` used to authenticate requests.
     public var credential: Credential? {
-        get { mutableState.credential }
-        set { mutableState.credential = newValue }
+        get { $mutableState.credential }
+        set { $mutableState.credential = newValue }
     }
 
     let authenticator: AuthenticatorType
     let queue = DispatchQueue(label: "org.alamofire.authentication.inspector")
 
     @Protected
-    private var mutableState = MutableState()
+    private var mutableState: MutableState
 
     // MARK: Initialization
 
@@ -242,8 +242,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
                 credential: Credential? = nil,
                 refreshWindow: RefreshWindow? = RefreshWindow()) {
         self.authenticator = authenticator
-        mutableState.credential = credential
-        mutableState.refreshWindow = refreshWindow
+        mutableState = MutableState(credential: credential, refreshWindow: refreshWindow)
     }
 
     // MARK: Adapt
@@ -258,7 +257,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
             }
 
             // Throw missing credential error is the credential is missing.
-            guard let credential = mutableState.credential else {
+            guard let credential = $mutableState.credential else {
                 let error = AuthenticationError.missingCredential
                 return .doNotAdapt(error)
             }
