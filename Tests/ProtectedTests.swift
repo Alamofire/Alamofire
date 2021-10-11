@@ -284,6 +284,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
         for _ in 1...totalOperations {
             queue1.async {
                 // Reads the total string count in the string array
+                // Using the wrapped value (no $) instead of the wrapper itself triggers the thread sanitizer.
                 let result = self.$stringContainer.totalStrings
 
                 self.$stringContainerRead.write {
