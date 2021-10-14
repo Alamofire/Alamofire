@@ -101,16 +101,32 @@ final class AdapterTestCase: BaseTestCase {
 
     func testThatAdapterCallsAdaptHandlerWithStateAPI() {
         // Given
-        let urlRequest = Endpoint().urlRequest
-        let session = Session()
-        var adapted = false
+        class StateCaptureAdapter: Adapter {
+            private(set) var urlRequest: URLRequest?
+            private(set) var state: RequestAdapterState?
 
-        let adapter = Adapter { request, _, completion in
-            adapted = true
-            completion(.success(request))
+            override func adapt(_ urlRequest: URLRequest,
+                                using state: RequestAdapterState,
+                                completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                self.urlRequest = urlRequest
+                self.state = state
+
+                super.adapt(urlRequest, using: state, completion: completion)
+            }
         }
 
-        let state = RequestAdapterState(requestID: UUID(), session: session)
+        let urlRequest = Endpoint().urlRequest
+        let session = Session()
+        let requestID = UUID()
+
+        var adapted = false
+
+        let adapter = StateCaptureAdapter { urlRequest, _, completion in
+            adapted = true
+            completion(.success(urlRequest))
+        }
+
+        let state = RequestAdapterState(requestID: requestID, session: session)
 
         var result: Result<URLRequest, Error>!
 
@@ -120,6 +136,9 @@ final class AdapterTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(adapted)
         XCTAssertTrue(result.isSuccess)
+        XCTAssertEqual(adapter.urlRequest, urlRequest)
+        XCTAssertEqual(adapter.state?.requestID, requestID)
+        XCTAssertEqual(adapter.state?.session.session, session.session)
     }
 
     func testThatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() {
