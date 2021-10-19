@@ -501,7 +501,7 @@ Alamofire’s `RequestInterceptor` protocol (composed of the `RequestAdapter` an
 ### `RequestAdapter`
 Alamofire’s  `RequestAdapter` protocol allows each `URLRequest` that’s to be performed by a `Session` to be inspected and mutated before being issued over the network. One very common use of an adapter is to add an `Authorization` header to requests behind a certain type of authentication.
 
-The `RequestAdapter` protocol has a single requirement: 
+The `RequestAdapter` protocol has one required method: 
 
 ```swift
 func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void)
@@ -524,6 +524,20 @@ func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping
     completion(.success(urlRequest))
 }
 ```
+
+The `RequestAdapter` also contains a second method with a default protocol extension implementation to support backwards compatibility:
+
+```swift
+func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void)
+```
+
+This second method uses a `RequestAdapterState` type to expose additional internal state beyond the first method including:
+
+- `requestID`: The `UUID` of the `Request` associated with the `URLRequest` to adapt.
+
+This `requestID` is very useful when trying to map custom types associated with the original `Request` to perform custom operations inside the `RequestAdapter`.
+
+> This second method will become the new requirement in the next MAJOR version of Alamofire.
 
 ### `RequestRetrier`
 Alamofire’s `RequestRetrier` protocol allows a `Request` that encountered an `Error` while being executed to be retried. This includes `Error`s produced at any stage of Alamofire’s [request pipeline](#the-request-pipeline).

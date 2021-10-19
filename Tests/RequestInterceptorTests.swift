@@ -99,6 +99,48 @@ final class AdapterTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
     }
 
+    func testThatAdapterCallsAdaptHandlerWithStateAPI() {
+        // Given
+        class StateCaptureAdapter: Adapter {
+            private(set) var urlRequest: URLRequest?
+            private(set) var state: RequestAdapterState?
+
+            override func adapt(_ urlRequest: URLRequest,
+                                using state: RequestAdapterState,
+                                completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                self.urlRequest = urlRequest
+                self.state = state
+
+                super.adapt(urlRequest, using: state, completion: completion)
+            }
+        }
+
+        let urlRequest = Endpoint().urlRequest
+        let session = Session()
+        let requestID = UUID()
+
+        var adapted = false
+
+        let adapter = StateCaptureAdapter { urlRequest, _, completion in
+            adapted = true
+            completion(.success(urlRequest))
+        }
+
+        let state = RequestAdapterState(requestID: requestID, session: session)
+
+        var result: Result<URLRequest, Error>!
+
+        // When
+        adapter.adapt(urlRequest, using: state) { result = $0 }
+
+        // Then
+        XCTAssertTrue(adapted)
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertEqual(adapter.urlRequest, urlRequest)
+        XCTAssertEqual(adapter.state?.requestID, requestID)
+        XCTAssertEqual(adapter.state?.session.session, session.session)
+    }
+
     func testThatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -324,6 +366,26 @@ final class InterceptorTests: BaseTestCase {
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.failure is MockError)
+    }
+
+    func testThatInterceptorCanAdaptRequestWithMultipleAdaptersUsingStateAPI() {
+        // Given
+        let urlRequest = Endpoint().urlRequest
+        let session = Session()
+
+        let adapter1 = Adapter { urlRequest, _, completion in completion(.success(urlRequest)) }
+        let adapter2 = Adapter { _, _, completion in completion(.failure(MockError())) }
+        let interceptor = Interceptor(adapters: [adapter1, adapter2])
+        let state = RequestAdapterState(requestID: UUID(), session: session)
+
+        var result: Result<URLRequest, Error>!
+
+        // When
+        interceptor.adapt(urlRequest, using: state) { result = $0 }
 
         // Then
         XCTAssertTrue(result.isFailure)

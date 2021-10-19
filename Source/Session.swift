@@ -1068,7 +1068,9 @@ open class Session {
             return
         }
 
-        adapter.adapt(initialRequest, for: self) { result in
+        let adapterState = RequestAdapterState(requestID: request.id, session: self)
+
+        adapter.adapt(initialRequest, using: adapterState) { result in
             do {
                 let adaptedRequest = try result.get()
                 try adaptedRequest.validate()
