@@ -40,7 +40,7 @@ final class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptedCount += 1
 
             let result: Result<URLRequest, Error> = Result {
@@ -67,7 +67,7 @@ final class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptedCount += 1
 
             let result: Result<URLRequest, Error> = Result {
@@ -101,7 +101,10 @@ final class SessionTestCase: BaseTestCase {
         var shouldRetry = true
         var retryDelay: TimeInterval?
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(
+            _ urlRequest: URLRequest,
+            using state: RequestAdapterState,
+            completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptCalledCount += 1
 
             let result: Result<URLRequest, Error> = Result {
@@ -165,7 +168,9 @@ final class SessionTestCase: BaseTestCase {
         var retryCount = 0
         var retryErrors: [Error] = []
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest,
+                   using state: RequestAdapterState,
+                   completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptCalledCount += 1
 
             let result: Result<URLRequest, Error> = Result {

@@ -24,6 +24,17 @@
 
 import Foundation
 
+/// Stores all state associated with a `URLRequest` being adapted.
+public struct RequestAdapterState {
+    /// The `UUID` of the `Request` associated with the `URLRequest` to adapt.
+    public let requestID: UUID
+
+    /// The `Session` associated with the `URLRequest` to adapt.
+    public let session: Session
+}
+
+// MARK: -
+
 /// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
 public protocol RequestAdapter {
     /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
@@ -33,6 +44,20 @@ public protocol RequestAdapter {
     ///   - session:    The `Session` that will execute the `URLRequest`.
     ///   - completion: The completion handler that must be called when adaptation is complete.
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void)
+
+    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
+    ///
+    /// - Parameters:
+    ///   - urlRequest: The `URLRequest` to adapt.
+    ///   - state:      The `RequestAdapterState` associated with the `URLRequest`.
+    ///   - completion: The completion handler that must be called when adaptation is complete.
+    func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void)
+}
+
+extension RequestAdapter {
+    public func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        adapt(urlRequest, for: state.session, completion: completion)
+    }
 }
 
 // MARK: -
@@ -125,6 +150,10 @@ open class Adapter: RequestInterceptor {
 
     open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         adaptHandler(urlRequest, session, completion)
+    }
+
+    open func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        adaptHandler(urlRequest, state.session, completion)
     }
 }
 
@@ -231,6 +260,30 @@ open class Interceptor: RequestInterceptor {
             switch result {
             case let .success(urlRequest):
                 self.adapt(urlRequest, for: session, using: pendingAdapters, completion: completion)
+            case .failure:
+                completion(result)
+            }
+        }
+    }
+
+    open func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        adapt(urlRequest, using: state, adapters: adapters, completion: completion)
+    }
+
+    private func adapt(_ urlRequest: URLRequest,
+                       using state: RequestAdapterState,
+                       adapters: [RequestAdapter],
+                       completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        var pendingAdapters = adapters
+
+        guard !pendingAdapters.isEmpty else { completion(.success(urlRequest)); return }
+
+        let adapter = pendingAdapters.removeFirst()
+
+        adapter.adapt(urlRequest, using: state) { result in
+            switch result {
+            case let .success(urlRequest):
+                self.adapt(urlRequest, using: state, adapters: pendingAdapters, completion: completion)
             case .failure:
                 completion(result)
             }
