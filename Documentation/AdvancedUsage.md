@@ -537,6 +537,8 @@ This second method uses a `RequestAdapterState` type to expose additional intern
 
 This `requestID` is very useful when trying to map custom types associated with the original `Request` to perform custom operations inside the `RequestAdapter`.
 
+> This second method will become the new requirement in the next MAJOR version of Alamofire.
+
 ### `RequestRetrier`
 Alamofire’s `RequestRetrier` protocol allows a `Request` that encountered an `Error` while being executed to be retried. This includes `Error`s produced at any stage of Alamofire’s [request pipeline](#the-request-pipeline).
 
