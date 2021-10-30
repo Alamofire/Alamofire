@@ -798,21 +798,21 @@ open class Session {
     ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
-    open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
+    open func upload(multipartFormData: (MultipartFormData) throws -> Void,
                      to url: URLConvertible,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default,
-                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+                     requestModifier: RequestModifier? = nil) rethrows -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url,
                                                           method: method,
                                                           headers: headers,
                                                           requestModifier: requestModifier)
 
         let formData = MultipartFormData(fileManager: fileManager)
-        multipartFormData(formData)
+        try multipartFormData(formData)
 
         return upload(multipartFormData: formData,
                       with: convertible,
@@ -848,13 +848,13 @@ open class Session {
     ///                              written to disk before being uploaded. `.default` instance by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
-    open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
+    open func upload(multipartFormData: (MultipartFormData) throws -> Void,
                      with request: URLRequestConvertible,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
+                     fileManager: FileManager = .default) rethrows -> UploadRequest {
         let formData = MultipartFormData(fileManager: fileManager)
-        multipartFormData(formData)
+        try multipartFormData(formData)
 
         return upload(multipartFormData: formData,
                       with: request,
