@@ -248,8 +248,7 @@ public struct DownloadResponse<Success, Failure: Error> {
     /// - Parameters:
     ///   - request:               The `URLRequest` sent to the server.
     ///   - response:              The `HTTPURLResponse` from the server.
-    ///   - temporaryURL:          The temporary destination `URL` of the data returned from the server.
-    ///   - destinationURL:        The final destination `URL` of the data returned from the server, if it was moved.
+    ///   - fileURL:               The final destination URL of the data returned from the server after it is moved.
     ///   - resumeData:            The resume `Data` generated if the request was cancelled.
     ///   - metrics:               The `URLSessionTaskMetrics` of the `DownloadRequest`.
     ///   - serializationDuration: The duration taken by serialization.
