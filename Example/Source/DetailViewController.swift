@@ -76,6 +76,7 @@ class DetailViewController: UITableViewController {
             return
         }
 
+        refreshControl?.isHidden = false
         refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
