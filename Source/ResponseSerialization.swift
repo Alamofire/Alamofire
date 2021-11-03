@@ -125,7 +125,7 @@ extension ResponseSerializer {
     ///
     /// - Returns:           `Bool` representing the outcome of the evaluation, or `nil` if `request` was `nil`.
     public func requestAllowsEmptyResponseData(_ request: URLRequest?) -> Bool? {
-        request.flatMap { $0.httpMethod }
+        request.flatMap(\.httpMethod)
             .flatMap(HTTPMethod.init)
             .map { emptyRequestMethods.contains($0) }
     }
@@ -136,7 +136,7 @@ extension ResponseSerializer {
     ///
     /// - Returns:            `Bool` representing the outcome of the evaluation, or `nil` if `response` was `nil`.
     public func responseAllowsEmptyResponseData(_ response: HTTPURLResponse?) -> Bool? {
-        response.flatMap { $0.statusCode }
+        response.map(\.statusCode)
             .map { emptyResponseCodes.contains($0) }
     }
 
