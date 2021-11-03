@@ -935,7 +935,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
             .publishDecodable(type: TestResponse.self)
 
         store {
-            Publishers.CombineLatest(first.compactMap { $0.completion }, second.compactMap { $0.completion })
+            Publishers.CombineLatest(first.compactMap(\.completion), second.compactMap(\.completion))
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { first, second in
                           firstCompletion = first
@@ -963,13 +963,13 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         store {
             AF.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
-                .compactMap { $0.completion }
+                .compactMap(\.completion)
                 .flatMap { completion -> DataStreamPublisher<TestResponse> in
                     firstCompletion = completion
                     return AF.streamRequest(.default)
                         .publishDecodable(type: TestResponse.self)
                 }
-                .compactMap { $0.completion }
+                .compactMap(\.completion)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { secondCompletion = $0; responseReceived.fulfill() })
         }

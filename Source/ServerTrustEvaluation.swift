@@ -685,7 +685,7 @@ extension AlamofireExtension where ExtendedType == [SecCertificate] {
 
     /// All public `SecKey` values for the contained `SecCertificate`s.
     public var publicKeys: [SecKey] {
-        type.compactMap { $0.af.publicKey }
+        type.compactMap(\.af.publicKey)
     }
 }
 

@@ -101,10 +101,9 @@ final class SessionTestCase: BaseTestCase {
         var shouldRetry = true
         var retryDelay: TimeInterval?
 
-        func adapt(
-            _ urlRequest: URLRequest,
-            using state: RequestAdapterState,
-            completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest,
+                   using state: RequestAdapterState,
+                   completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptCalledCount += 1
 
             let result: Result<URLRequest, Error> = Result {
@@ -1554,7 +1553,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         wait(for: [massActions], timeout: timeout)
 
         // Then
-        XCTAssertTrue(requests.allSatisfy { $0.isSuspended })
+        XCTAssertTrue(requests.allSatisfy(\.isSuspended))
     }
 
     func testThatAutomaticallyResumedRequestsCanBeMassCancelled() {
