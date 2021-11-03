@@ -183,7 +183,7 @@ extension HTTPHeaders: Collection {
 
 extension HTTPHeaders: CustomStringConvertible {
     public var description: String {
-        headers.map { $0.description }
+        headers.map(\.description)
             .joined(separator: "\n")
     }
 }

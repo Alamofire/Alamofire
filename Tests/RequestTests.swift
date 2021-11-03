@@ -239,7 +239,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(responses.count, count)
-        XCTAssertTrue(responses.allSatisfy { $0.result.isSuccess })
+        XCTAssertTrue(responses.allSatisfy(\.result.isSuccess))
     }
 
     // MARK: Encodable Parameters

@@ -71,14 +71,14 @@ public struct DataResponsePublisher<Value>: Publisher {
     ///
     /// - Returns: The `AnyPublisher` publishing the `Result<Value, AFError>` value.
     public func result() -> AnyPublisher<Result<Value, AFError>, Never> {
-        map { $0.result }.eraseToAnyPublisher()
+        map(\.result).eraseToAnyPublisher()
     }
 
     /// Publishes the `Result` of the `DataResponse` as a single `Value` or fail with the `AFError` instance.
     ///
     /// - Returns: The `AnyPublisher<Value, AFError>` publishing the stream.
     public func value() -> AnyPublisher<Value, AFError> {
-        setFailureType(to: AFError.self).flatMap { $0.result.publisher }.eraseToAnyPublisher()
+        setFailureType(to: AFError.self).flatMap(\.result.publisher).eraseToAnyPublisher()
     }
 
     public func receive<S>(subscriber: S) where S: Subscriber, DataResponsePublisher.Failure == S.Failure, DataResponsePublisher.Output == S.Input {
@@ -282,7 +282,7 @@ public struct DataStreamPublisher<Value>: Publisher {
     ///
     /// - Returns: The `AnyPublisher<Value, AFError>` publishing the stream.
     public func value() -> AnyPublisher<Value, AFError> {
-        result().setFailureType(to: AFError.self).flatMap { $0.publisher }.eraseToAnyPublisher()
+        result().setFailureType(to: AFError.self).flatMap(\.publisher).eraseToAnyPublisher()
     }
 
     public func receive<S>(subscriber: S) where S: Subscriber, DataStreamPublisher.Failure == S.Failure, DataStreamPublisher.Output == S.Input {
@@ -425,14 +425,14 @@ public struct DownloadResponsePublisher<Value>: Publisher {
     ///
     /// - Returns: The `AnyPublisher` publishing the `Result<Value, AFError>` value.
     public func result() -> AnyPublisher<Result<Value, AFError>, Never> {
-        map { $0.result }.eraseToAnyPublisher()
+        map(\.result).eraseToAnyPublisher()
     }
 
     /// Publishes the `Result` of the `DownloadResponse` as a single `Value` or fail with the `AFError` instance.
     ///
     /// - Returns: The `AnyPublisher<Value, AFError>` publishing the stream.
     public func value() -> AnyPublisher<Value, AFError> {
-        setFailureType(to: AFError.self).flatMap { $0.result.publisher }.eraseToAnyPublisher()
+        setFailureType(to: AFError.self).flatMap(\.result.publisher).eraseToAnyPublisher()
     }
 
     public func receive<S>(subscriber: S) where S: Subscriber, DownloadResponsePublisher.Failure == S.Failure, DownloadResponsePublisher.Output == S.Input {
