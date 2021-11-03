@@ -877,7 +877,7 @@ AF.request(urlComponents)
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLConvertible` as a convenient way to map domain-specific models to server resources.
 
 ### `URLRequestConvertible`
-Types adopting the `URLRequestConvertible` protocol can be used to construct `URLRequest`s. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly. Alamofire uses `URLRequestConvertible` as the foundation of all requests flowing through the request pipeline. Using `URLRequest`s directly the recommended way to customize `URLRequest` creation outside of the `ParameterEncoder`s that Alamofire provides.
+Types adopting the `URLRequestConvertible` protocol can be used to construct `URLRequest`s. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly. Alamofire uses `URLRequestConvertible` as the foundation of all requests flowing through the request pipeline. Using `URLRequest`s directly is the recommended way to customize `URLRequest` creation outside of the `ParameterEncoder`s that Alamofire provides.
 
 ```swift
 let url = URL(string: "https://httpbin.org/post")!
