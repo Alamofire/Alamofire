@@ -48,15 +48,19 @@ public final class URLEncodedFormEncoder {
         case brackets
         /// No brackets are appended to the key and the key is encoded as is.
         case noBrackets
+        /// Brackets containing the item index appended. This matches the jQuery and Node.js behavior.
+        case indexInBrackets
 
         /// Encodes the key according to the encoding.
         ///
-        /// - Parameter key: The `key` to encode.
-        /// - Returns:       The encoded key.
-        func encode(_ key: String) -> String {
+        /// - Parameter key:    The `key` to encode.
+        /// - Parameter index:  When this enum instance is `.indexInBrackets`, the `index` to encode.
+        /// - Returns:          The encoded key.
+        func encode(_ key: String, index: Int) -> String {
             switch self {
             case .brackets: return "\(key)[]"
             case .noBrackets: return key
+            case .indexInBrackets: return "\(key)[\(index)]"
             }
         }
     }
@@ -930,8 +934,8 @@ final class URLEncodedFormSerializer {
     }
 
     func serialize(_ array: [URLEncodedFormComponent], forKey key: String) -> String {
-        var segments: [String] = array.map { component in
-            let keyPath = arrayEncoding.encode(key)
+        var segments: [String] = array.enumerated().map { index, component in
+            let keyPath = arrayEncoding.encode(key, index: index)
             return serialize(component, forKey: keyPath)
         }
         segments = alphabetizeKeyValuePairs ? segments.sorted() : segments
