@@ -512,7 +512,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertFalse(result.isSuccess)
     }
     
-    func testThatEncodableClassWithNoInheritanceCanBeEncodedWithIndexInBrackets() {
+    func testThatEncodableSuperclassCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = ["foo": [EncodableSuperclass()]]
@@ -524,12 +524,57 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "foo%5B0%5D%5Bone%5D=one&foo%5B0%5D%5Bthree%5D=1&foo%5B0%5D%5Btwo%5D=2")
     }
     
-    // TODO: Test the other subclasses and structs.
-    // - EncodableStruct
-    // - NestedEncodableStruct
-    // - EncodableSubclass
-    // - ManuallyEncodableSubclass
-    // - ManuallyEncodableStruct
+    func testThatEncodableSubclassCanBeEncodedWithIndexInBrackets() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
+        let parameters = EncodableSubclass()
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5B0%5D=1&four%5B1%5D=2&four%5B2%5D=3&one=one&three=1&two=2"
+        XCTAssertEqual(result.success, expected)
+    }
+    
+    func testThatManuallyEncodableSubclassCanBeEncodedWithIndexInBrackets() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
+        let parameters = ManuallyEncodableSubclass()
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5Bfive%5D=2&four%5Bfour%5D=one"
+        XCTAssertEqual(result.success, expected)
+    }
+    
+    func testThatEncodableStructCanBeEncodedWithIndexInBrackets() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
+        let parameters = EncodableStruct()
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        let expected = "five%5Ba%5D=a&four%5B0%5D=1&four%5B1%5D=2&four%5B2%5D=3&one=one&seven%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&three=1&two=2"
+        XCTAssertEqual(result.success, expected)
+    }
+    
+    func testThatManuallyEncodableStructCanBeEncodedWithIndexInBrackets() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
+        let parameters = ManuallyEncodableStruct()
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // then
+        let expected = "root%5B0%5D%5B0%5D=1&root%5B0%5D%5B1%5D=2&root%5B0%5D%5B2%5D=3&root%5B1%5D%5Ba%5D%5Bstring%5D=string&root%5B2%5D%5B0%5D%5B0%5D=1&root%5B2%5D%5B0%5D%5B1%5D=2&root%5B2%5D%5B0%5D%5B2%5D=3"
+        XCTAssertEqual(result.success, expected)
+    }
     
     func testThatArrayNestedDictionaryIntValueCanBeEncodedWithIndexInBrackets() {
         // Given
