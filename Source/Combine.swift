@@ -201,17 +201,17 @@ extension DataRequest {
     /// response.
     ///
     /// - Parameters:
-    ///   - type:                `Decodable` type to which to decode response `Data`. Inferred from the context by default.
-    ///   - queue:               `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
-    ///   - preprocessor:        `DataPreprocessor` which filters the `Data` before serialization. `PassthroughPreprocessor()`
-    ///                          by default.
-    ///   - decoder:             `DataDecoder` instance used to decode response `Data`. `JSONDecoder()` by default.
-    ///   - emptyResponseCodes:  `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
-    ///                          default.
-    ///   - emptyRequestMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless of
-    ///                          status code. `[.head]` by default.
+    ///   - type:                 `Decodable` type to which to decode response `Data`. Inferred from the context by default.
+    ///   - queue:                `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///   - preprocessor:         `DataPreprocessor` which filters the `Data` before serialization.
+    ///                           `PassthroughPreprocessor()` by default.
+    ///   - decoder:              `DataDecoder` instance used to decode response `Data`. `JSONDecoder()` by default.
+    ///   - emptyResponseCodes:   `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
+    ///                           default.
+    ///   - emptyResponseMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless
+    ///                           of status code. `[.head]` by default.
     ///
-    /// - Returns:               The `DataResponsePublisher`.
+    /// - Returns:                The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
@@ -571,17 +571,17 @@ extension DownloadRequest {
     /// response.
     ///
     /// - Parameters:
-    ///   - type:                `Decodable` type to which to decode response `Data`. Inferred from the context by default.
-    ///   - queue:               `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
-    ///   - preprocessor:        `DataPreprocessor` which filters the `Data` before serialization. `PassthroughPreprocessor()`
-    ///                          by default.
-    ///   - decoder:             `DataDecoder` instance used to decode response `Data`. `JSONDecoder()` by default.
-    ///   - emptyResponseCodes:  `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
-    ///                          default.
-    ///   - emptyRequestMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless of
-    ///                          status code. `[.head]` by default.
+    ///   - type:                 `Decodable` type to which to decode response `Data`. Inferred from the context by default.
+    ///   - queue:                `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///   - preprocessor:         `DataPreprocessor` which filters the `Data` before serialization.
+    ///                           `PassthroughPreprocessor()` by default.
+    ///   - decoder:              `DataDecoder` instance used to decode response `Data`. `JSONDecoder()` by default.
+    ///   - emptyResponseCodes:   `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
+    ///                           default.
+    ///   - emptyResponseMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless
+    ///                           of status code. `[.head]` by default.
     ///
-    /// - Returns:               The `DownloadResponsePublisher`.
+    /// - Returns:                The `DownloadResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
