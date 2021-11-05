@@ -205,6 +205,22 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             XCTFail("Test encountered unexpected error: \(error)")
         }
     }
+    
+    func testURLParameterEncodeArrayNestedDictionaryValueParameterWithIndex() {
+        do {
+            // Given
+            let encoding = URLEncoding(arrayEncoding: .indexInBrackets)
+            let parameters = ["foo": ["a", 1, true, ["bar": 2], ["qux": 3], ["quy": ["quz": 3]]]]
+            
+            // When
+            let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
+            
+            // Then
+            XCTAssertEqual(urlRequest.url?.query, "foo%5B0%5D=a&foo%5B1%5D=1&foo%5B2%5D=1&foo%5B3%5D%5Bbar%5D=2&foo%5B4%5D%5Bqux%5D=3&foo%5B5%5D%5Bquy%5D%5Bquz%5D=3")
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
 
     func testURLParameterEncodeStringKeyArrayValueParameterWithoutBrackets() {
         do {
