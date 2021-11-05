@@ -85,10 +85,10 @@ public struct URLEncoding: ParameterEncoding {
         case brackets
         /// No brackets are appended. The key is encoded as is.
         case noBrackets
-        /// Brackets containing the item index appended. This matches the jQuery and Node.js behavior.
+        /// Brackets containing the item index are appended. This matches the jQuery and Node.js behavior.
         case indexInBrackets
 
-        func encode(key: String, index: Int) -> String {
+        func encode(key: String, atIndex index: Int) -> String {
             switch self {
             case .brackets:
                 return "\(key)[]"
@@ -198,7 +198,7 @@ public struct URLEncoding: ParameterEncoding {
             }
         case let array as [Any]:
             for (index, value) in array.enumerated() {
-                components += queryComponents(fromKey: arrayEncoding.encode(key: key, index: index), value: value)
+                components += queryComponents(fromKey: arrayEncoding.encode(key: key, atIndex: index), value: value)
             }
         case let number as NSNumber:
             if number.isBool {
