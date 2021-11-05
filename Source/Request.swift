@@ -1782,6 +1782,8 @@ public class UploadRequest: DataRequest {
     ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
     ///   - eventMonitor:       `EventMonitor` called for event callbacks from internal `Request` actions.
     ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
+    ///   - fileManager:        `FileManager` used to perform cleanup tasks, including the removal of multipart form
+    ///                         encoded payloads written to disk.
     ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     init(id: UUID = UUID(),
          convertible: UploadConvertible,
