@@ -247,6 +247,78 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         }
     }
 
+    func testThatContentTypeValidationFailureSortsPossibleContentTypes() {
+        // Given
+        let endpoint = Endpoint.xml
+
+        let requestDidCompleteExpectation = expectation(description: "request should succeed and return xml")
+        let downloadDidCompleteExpectation = expectation(description: "download should succeed and return xml")
+
+        var requestError: AFError?
+        var downloadError: AFError?
+
+        let acceptableContentTypes = [ // Sorted in a random order, not alphabetically
+            "application/octet-stream",
+            "image/gif",
+            "image/x-xbitmap",
+            "image/tiff",
+            "image/jpg",
+            "image/x-bmp",
+            "image/jpeg",
+            "image/x-icon",
+            "image/jp2",
+            "image/png",
+            "image/ico",
+            "image/bmp",
+            "image/x-ms-bmp",
+            "image/x-win-bitmap"
+        ]
+
+        // When
+        AF.request(endpoint)
+            .validate(contentType: acceptableContentTypes)
+            .response { resp in
+                requestError = resp.error
+                requestDidCompleteExpectation.fulfill()
+            }
+
+        AF.download(endpoint)
+            .validate(contentType: acceptableContentTypes)
+            .response { resp in
+                downloadError = resp.error
+                downloadDidCompleteExpectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(requestError)
+        XCTAssertNotNil(downloadError)
+
+        let expectedAcceptableContentTypes = [ // Sorted in a specific order, alphabetically
+             "application/octet-stream",
+             "image/bmp",
+             "image/gif",
+             "image/ico",
+             "image/jp2",
+             "image/jpeg",
+             "image/jpg",
+             "image/png",
+             "image/tiff",
+             "image/x-bmp",
+             "image/x-icon",
+             "image/x-ms-bmp",
+             "image/x-win-bitmap",
+             "image/x-xbitmap",
+         ]
+
+        for error in [requestError, downloadError] {
+            XCTAssertEqual(error?.isUnacceptableContentType, true)
+            XCTAssertEqual(error?.responseContentType, "application/xml")
+            XCTAssertEqual(error?.acceptableContentTypes, expectedAcceptableContentTypes)
+        }
+    }
+
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
         let endpoint = Endpoint.xml
