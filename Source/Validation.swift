@@ -117,7 +117,7 @@ extension Request {
             }
 
             let error: AFError = {
-                let reason: ErrorReason = .missingContentType(acceptableContentTypes: Array(acceptableContentTypes))
+                let reason: ErrorReason = .missingContentType(acceptableContentTypes: acceptableContentTypes.sorted())
                 return AFError.responseValidationFailed(reason: reason)
             }()
 
@@ -131,7 +131,7 @@ extension Request {
         }
 
         let error: AFError = {
-            let reason: ErrorReason = .unacceptableContentType(acceptableContentTypes: Array(acceptableContentTypes),
+            let reason: ErrorReason = .unacceptableContentType(acceptableContentTypes: acceptableContentTypes.sorted(),
                                                                responseContentType: responseContentType)
 
             return AFError.responseValidationFailed(reason: reason)
