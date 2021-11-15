@@ -183,7 +183,9 @@ open class Session {
                             eventMonitors: [EventMonitor] = []) {
         precondition(configuration.identifier == nil, "Alamofire does not support background URLSessionConfigurations.")
 
-        let serialRootQueue = DispatchQueue(label: rootQueue.label, target: rootQueue)
+        // Retarget the incoming rootQueue for safety, unless it's the main queue, which we know is safe.
+        let serialRootQueue = (rootQueue === DispatchQueue.main) ? rootQueue : DispatchQueue(label: rootQueue.label,
+                                                                                             target: rootQueue)
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: serialRootQueue, name: "\(serialRootQueue.label).sessionDelegate")
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
 
