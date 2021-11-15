@@ -266,6 +266,27 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNotNil(session.serverTrustManager, "session server trust policy manager should not be nil")
     }
 
+    // MARK: Tests - Parallel Root Queue
+
+    func testThatSessionWorksCorrectlyWhenPassedAConcurrentRootQueue() {
+        // Given
+        let queue = DispatchQueue(label: "ohNoAParallelQueue", attributes: .concurrent)
+        let session = Session(rootQueue: queue)
+        let didFinish = expectation(description: "request did finish")
+        var receivedResponse: TestResponse?
+
+        // When
+        session.request(.get).responseDecodable(of: TestResponse.self) { response in
+            receivedResponse = response.value
+            didFinish.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(receivedResponse, "Should receive TestResponse.")
+    }
+
     // MARK: Tests - Default HTTP Headers
 
     func testDefaultUserAgentHeader() {
