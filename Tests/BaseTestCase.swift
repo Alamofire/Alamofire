@@ -37,13 +37,21 @@ class BaseTestCase: XCTestCase {
         testDirectoryURL.appendingPathComponent(UUID().uuidString)
     }
 
-    override func setUp() {
-        super.setUp()
+    private var session: Session?
 
-        FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
+    override func setUp() {
         FileManager.createDirectory(at: testDirectoryURL)
+
+        super.setUp()
+    }
+
+    override func tearDown() {
+        session = nil
+        FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
         clearCredentials()
         clearCookies()
+
+        super.tearDown()
     }
 
     func clearCookies(for storage: HTTPCookieStorage = .shared) {
@@ -61,6 +69,12 @@ class BaseTestCase: XCTestCase {
     func url(forResource fileName: String, withExtension ext: String) -> URL {
         let bundle = Bundle(for: BaseTestCase.self)
         return bundle.url(forResource: fileName, withExtension: ext)!
+    }
+
+    func stored(_ session: Session) -> Session {
+        self.session = session
+
+        return session
     }
 
     /// Runs assertions on a particular `DispatchQueue`.

@@ -120,6 +120,8 @@ public class Request {
         /// Whether the instance has had `finish()` called and is running the serializers. Should be replaced with a
         /// representation in the state machine in the future.
         var isFinishing = false
+        // TODO: Return Self in closure?
+        var finishObservers: [() -> Void] = []
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
@@ -920,10 +922,22 @@ public class Request {
 
     // MARK: Cleanup
 
+    func onFinish(perform closure: @escaping () -> Void) {
+        guard !isFinished else { closure(); return }
+
+        $mutableState.write { state in
+            state.finishObservers.append(closure)
+        }
+    }
+
     /// Final cleanup step executed when the instance finishes response serialization.
     func cleanup() {
         delegate?.cleanup(after: self)
-        // No-op: override in subclass
+        let observers = $mutableState.finishObservers
+        observers.forEach { $0() }
+        $mutableState.write { state in
+            state.finishObservers.removeAll()
+        }
     }
 }
 
