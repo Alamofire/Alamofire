@@ -124,7 +124,6 @@ final class DataRequestConcurrencyTests: BaseTestCase {
 
         // Then
         XCTAssertTrue(response.error?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(task.isCancelled, "DataTask should report underlying DataRequest is cancelled.")
         XCTAssertTrue(request.isCancelled, "Underlying DataRequest should be cancelled.")
     }
 
@@ -176,48 +175,104 @@ final class DataRequestConcurrencyTests: BaseTestCase {
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class DownloadConcurrencyTests: BaseTestCase {
     func testThatDownloadTaskSerializesResponseFromSerializer() async throws {
-        // Given, When
-        let url = try await AF.download(.get).serialize(using: URLResponseSerializer()).value
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.download(.get)
+            .serializingDownload(using: DataResponseSerializer())
+            .value
 
         // Then
-        XCTAssertNotNil(url)
+        XCTAssertNotNil(value)
     }
 
     func testThatDownloadTaskSerializesDecodable() async throws {
-        // Given, When
-        let value = try await AF.download(.get).decode(TestResponse.self).value
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
 
         // Then
         XCTAssertNotNil(value)
     }
 
     func testThatDownloadTaskSerializesString() async throws {
-        // Given, When
-        let value = try await AF.download(.get).string().value
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.download(.get).serializingString().value
 
         // Then
         XCTAssertNotNil(value)
     }
 
     func testThatDownloadTaskSerializesData() async throws {
-        // Given, When
-        let value = try await AF.download(.get).data().value
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.download(.get).serializingData().value
 
         // Then
         XCTAssertNotNil(value)
     }
 
     func testThatDownloadTaskSerializesURL() async throws {
-        // Given, When
-        let url = try await AF.download(.get).downloadedFileURL().value
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.download(.get).serializingDownloadedFileURL().value
 
         // Then
-        XCTAssertNotNil(url)
+        XCTAssertNotNil(value)
+    }
+
+    func testThatDownloadTaskProducesResult() async {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let result = await session.download(.get).serializingDecodable(TestResponse.self).result
+
+        // Then
+        XCTAssertNotNil(result.success)
+    }
+
+    func testThatDownloadTaskProducesValue() async throws {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
+
+        // Then
+        XCTAssertNotNil(value)
+    }
+
+    func testThatDownloadTaskProperlySupportsConcurrentRequests() async {
+        // Given
+        let session = stored(Session())
+
+        // When
+        async let first = session.download(.get).serializingDecodable(TestResponse.self).response
+        async let second = session.download(.get).serializingDecodable(TestResponse.self).response
+        async let third = session.download(.get).serializingDecodable(TestResponse.self).response
+
+        // Then
+        let responses = await [first, second, third]
+        XCTAssertEqual(responses.count, 3)
+        XCTAssertTrue(responses.allSatisfy(\.result.isSuccess))
     }
 
     func testThatDownloadTaskCancelsRequest() async {
         // Given
-        let task = AF.download(.get).decode(TestResponse.self)
+        let session = stored(Session())
+        let request = session.download(.get)
+        let task = request.serializingDecodable(TestResponse.self)
 
         // When
         task.cancel()
@@ -225,61 +280,50 @@ final class DownloadConcurrencyTests: BaseTestCase {
 
         // Then
         XCTAssertTrue(response.error?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(task.isCancelled, "Underlying DownloadRequest should be cancelled.")
     }
 
-    func testThatDownloadTaskCancelsWhenTaskCancels() async {
+    func testThatDownloadTaskIsAutomaticallyCancelledInTaskWhenEnabled() async {
         // Given
-        let request = AF.download(.get)
+        let session = stored(Session())
+        let request = session.download(.get)
+
+        // When
         let task = Task {
-            let task = request.decode(TestResponse.self)
-            _ = await task.response
+            await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).result
         }
 
-        // When
         task.cancel()
-        _ = await task.value
+        let result = await task.value
 
         // Then
-        XCTAssertTrue(request.isCancelled)
+        XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
+        XCTAssertTrue(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
     }
 
-    func testDownloadTaskProducesResponse() async {
-        // Given, When
-        let response = await AF.download(.get).decode(TestResponse.self).response
-
-        // Then
-        XCTAssertNotNil(response)
-    }
-
-    func testDownloadTaskProducesResult() async {
-        // Given, When
-        let result = await AF.download(.get).decode(TestResponse.self).result
-
-        // Then
-        XCTAssertNotNil(result)
-    }
-
-    func testDownloadTaskProducesValue() async throws {
-        // Given, When
-        let value = try await AF.download(.get).decode(TestResponse.self).value
-
-        // Then
-        XCTAssertNotNil(value)
-    }
-
-    func testThatDownloadTasksCanOperateConcurrently() async throws {
+    func testThatDownloadTaskIsAutomaticallyCancelledInTaskGroupWhenEnabled() async {
         // Given
-        let session = Session(); defer { withExtendedLifetime(session) {} }
+        let session = stored(Session())
+        let request = session.download(.get)
 
         // When
-        async let first = session.download(.get).decode(TestResponse.self).value
-        async let second = session.download(.get).decode(TestResponse.self).value
-        async let third = session.download(.get).decode(TestResponse.self).value
+        let task = Task {
+            await withTaskGroup(of: Result<TestResponse, AFError>.self) { group -> Result<TestResponse, AFError> in
+                group.addTask {
+                    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).result
+                }
+
+                return await group.first(where: { _ in true })!
+            }
+        }
+
+        task.cancel()
+        let result = await task.value
 
         // Then
-        let values = try await [first, second, third].compactMap { $0 }
-        XCTAssertEqual(values.count, 3)
+        XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
+        XCTAssertTrue(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
     }
 }
 
@@ -290,10 +334,10 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let session = stored(Session())
 
         // When
-        let task = session.streamRequest(.payloads(2)).task()
+        let task = session.streamRequest(.payloads(2)).streamTask()
         var datas: [Data] = []
 
-        for await data in task.streamData().compactMap(\.value) {
+        for await data in task.streamingData().compactMap(\.value) {
             datas.append(data)
         }
 
@@ -306,10 +350,10 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let session = stored(Session())
 
         // When
-        let task = session.streamRequest(.payloads(2)).task()
+        let task = session.streamRequest(.payloads(2)).streamTask()
         var strings: [String] = []
 
-        for await string in task.streamStrings().compactMap(\.value) {
+        for await string in task.streamingStrings().compactMap(\.value) {
             strings.append(string)
         }
 
@@ -322,8 +366,8 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let session = stored(Session())
 
         // When
-        let task = session.streamRequest(.payloads(2)).task()
-        let stream = task.stream(serializedUsing: DecodableStreamSerializer<TestResponse>())
+        let task = session.streamRequest(.payloads(2)).streamTask()
+        let stream = task.streamingResponses(serializedUsing: DecodableStreamSerializer<TestResponse>())
         var responses: [TestResponse] = []
 
         for await response in stream.compactMap(\.value) {
@@ -341,10 +385,10 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         // When
         let expectedPayloads = 10
         let request = session.streamRequest(.payloads(expectedPayloads))
-        let task = request.task()
+        let task = request.streamTask()
         var datas: [Data] = []
 
-        for await data in task.streamData().compactMap(\.value) {
+        for await data in task.streamingData().compactMap(\.value) {
             datas.append(data)
             if datas.count == 1 {
                 task.cancel()
@@ -363,10 +407,10 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         // When
         let expectedPayloads = 10
         let request = session.streamRequest(.payloads(expectedPayloads))
-        let task = request.task()
+        let task = request.streamTask()
         var datas: [Data] = []
 
-        for await data in task.streamData().compactMap(\.value) {
+        for await data in task.streamingData().compactMap(\.value) {
             datas.append(data)
             if datas.count == 1 {
                 break
@@ -388,7 +432,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let task = Task<[Data], Never> {
             var datas: [Data] = []
 
-            for await data in request.task().streamData().compactMap(\.value) {
+            for await data in request.streamTask().streamingData().compactMap(\.value) {
                 datas.append(data)
             }
 
