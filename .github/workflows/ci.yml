@@ -92,7 +92,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        destination: ["OS=15.0,name=iPhone 13 Pro"]
+        destination: ["OS=15.2,name=iPhone 13 Pro"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
