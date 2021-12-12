@@ -120,7 +120,7 @@ public class Request {
         /// Whether the instance has had `finish()` called and is running the serializers. Should be replaced with a
         /// representation in the state machine in the future.
         var isFinishing = false
-        // TODO: Return Self in closure?
+        /// Actions to run when requests are finished. Use for concurrency support.
         var finishObservers: [() -> Void] = []
     }
 
