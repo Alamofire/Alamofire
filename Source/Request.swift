@@ -922,6 +922,9 @@ public class Request {
 
     // MARK: Cleanup
 
+    /// Adds a `finishObserver` closure to be called when the request completes.
+    ///
+    /// - Parameter closure: Closure to be called when the request finishes.
     func onFinish(perform closure: @escaping () -> Void) {
         guard !isFinished else { closure(); return }
 
