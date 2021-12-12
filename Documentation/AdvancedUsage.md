@@ -1267,7 +1267,9 @@ let request = AF.request(...) // Creates the DataRequest.
 let task = Task { // Produces a `Task<DataResponse<TestResponse, AFError>, Never> value.
     await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).response
 }
+
 // Later...
+
 task.cancel() // task is cancelled, but the DataRequest created inside it is not.
 print(task.isCancelled) // true
 print(request.isCancelled) // false
@@ -1280,7 +1282,9 @@ let request = AF.request(...) // Creates the DataRequest.
 let task = Task { // Produces a `Task<DataResponse<TestResponse, AFError>, Never> value.
     await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).response
 }
+
 // Later...
+
 task.cancel() // task is cancelled.
 print(task.isCancelled) // true
 print(request.isCancelled) // true
@@ -1294,7 +1298,9 @@ This automatic cancellation only takes affect when one of the asynchronous prope
 
 ```swift
 let streamTask = AF.dataStreamRequest(...).streamTask()
+
 // Later...
+
 for await data in streamTask.streamingData() { 
     // Streams Stream<Data, Never> values. a.k.a StreamOf<DataStreamRequest.Stream<Data, Never>>
 }
@@ -1304,7 +1310,9 @@ This loop only ends when the `DataStreamRequest` completes, either through the s
 
 ```swift
 let streamTask = AF.dataStreamRequest(...).streamTask()
+
 // Later...
+
 for await data in streamTask.streamingData(automaticallyCancelling: false) { 
     // Streams Stream<Data, Never> values. a.k.a StreamOf<DataStreamRequest.Stream<Data, Never>>
     if condition { break } // Stream ends but underlying `DataStreamRequest` is not cancelled and keeps receiving data.
@@ -1312,6 +1320,20 @@ for await data in streamTask.streamingData(automaticallyCancelling: false) {
 ```
 
 One observer setting `automaticallyCancelling` to `false` does not affect other from the same `DataStreamRequest`, so if any other observer exits the request will still be cancelled.
+
+### Value Handlers
+
+Alamofire provides various handlers for internal values which are produced asynchronously, such as `Progress` values, `URLRequest`s and `URLSessionTask`s, as well as cURL descriptions of the request each time a new request is issued. Alamofire's concurrency support now exposes these handlers as `StreamOf` values that can be used to asynchronously observe the received values. For instance, if you wanted to print each cURL description produced by a request:
+
+```swift
+let request = AF.request(...)
+
+// Later...
+
+for await description in request.cURLDescriptions() {
+    print(description)
+}
+```
 
 ## Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
