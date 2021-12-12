@@ -34,7 +34,7 @@ extension Request {
     ///
     /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
-    /// - Returns:                   The `Stream`.
+    /// - Returns:                   The `StreamOf<Progress>`.
     public func uploadProgress(bufferingPolicy: StreamOf<Progress>.BufferingPolicy = .unbounded) -> StreamOf<Progress> {
         stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             uploadProgress(queue: .singleEventQueue) { progress in
@@ -47,7 +47,7 @@ extension Request {
     ///
     /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
-    /// - Returns:                   The `Stream`.
+    /// - Returns:                   The `StreamOf<Progress>`.
     public func downloadProgress(bufferingPolicy: StreamOf<Progress>.BufferingPolicy = .unbounded) -> StreamOf<Progress> {
         stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             downloadProgress(queue: .singleEventQueue) { progress in
@@ -60,7 +60,7 @@ extension Request {
     ///
     /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
-    /// - Returns:                   The `Stream`.
+    /// - Returns:                   The `StreamOf<URLRequest>`.
     public func urlRequests(bufferingPolicy: StreamOf<URLRequest>.BufferingPolicy = .unbounded) -> StreamOf<URLRequest> {
         stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             onURLRequestCreation(on: .singleEventQueue) { request in
@@ -73,7 +73,7 @@ extension Request {
     ///
     /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
-    /// - Returns:                   The `Stream`.
+    /// - Returns:                   The `StreamOf<URLSessionTask>`.
     public func urlSessionTasks(bufferingPolicy: StreamOf<URLSessionTask>.BufferingPolicy = .unbounded) -> StreamOf<URLSessionTask> {
         stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             onURLSessionTaskCreation(on: .singleEventQueue) { task in
@@ -86,7 +86,7 @@ extension Request {
     ///
     /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
-    /// - Returns:                   The `Stream`.
+    /// - Returns:                   The `StreamOf<String>`.
     public func cURLDescriptions(bufferingPolicy: StreamOf<String>.BufferingPolicy = .unbounded) -> StreamOf<String> {
         stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             cURLDescription(on: .singleEventQueue) { description in
@@ -243,10 +243,30 @@ extension DataRequest {
                             automaticallyCancelling: shouldAutomaticallyCancel)
     }
 
+    /// Creates a `DataTask` to `await` serialization using the provided `ResponseSerializer` instance.
+    ///
+    /// - Parameters:
+    ///   - serializer:                `ResponseSerializer` responsible for serializing the request, response, and data.
+    ///   - shouldAutomaticallyCancel: `Bool` determining whether or not the request should be cancelled when the
+    ///                                enclosing async context is cancelled. Only applies to `DataTask`'s async
+    ///                                properties. `false` by default.
+    ///
+    /// - Returns: The `DataTask`.
+    public func serializingResponse<Serializer: ResponseSerializer>(using serializer: Serializer,
+                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = false)
+        -> DataTask<Serializer.SerializedObject> {
+        dataTask(automaticallyCancelling: shouldAutomaticallyCancel) {
+            self.response(queue: .singleEventQueue,
+                          responseSerializer: serializer,
+                          completionHandler: $0)
+        }
+    }
+
     /// Creates a `DataTask` to `await` serialization using the provided `DataResponseSerializerProtocol` instance.
     ///
     /// - Parameters:
-    ///   - serializer:                Response serializer responsible for serializing the request, response, and data.
+    ///   - serializer:                `DataResponseSerializerProtocol` responsible for serializing the request,
+    ///                                response, and data.
     ///   - shouldAutomaticallyCancel: `Bool` determining whether or not the request should be cancelled when the
     ///                                enclosing async context is cancelled. Only applies to `DataTask`'s async
     ///                                properties. `false` by default.
@@ -425,11 +445,31 @@ extension DownloadRequest {
                             automaticallyCancelling: shouldAutomaticallyCancel)
     }
 
+    /// Creates a `DownloadTask` to `await` serialization using the provided `ResponseSerializer` instance.
+    ///
+    /// - Parameters:
+    ///   - serializer:                `ResponseSerializer` responsible for serializing the request, response, and data.
+    ///   - shouldAutomaticallyCancel: `Bool` determining whether or not the request should be cancelled when the
+    ///                                enclosing async context is cancelled. Only applies to `DownloadTask`'s async
+    ///                                properties. `false` by default.
+    ///
+    /// - Returns: The `DownloadTask`.
+    public func serializingDownload<Serializer: ResponseSerializer>(using serializer: Serializer,
+                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = false)
+        -> DownloadTask<Serializer.SerializedObject> {
+        downloadTask(automaticallyCancelling: shouldAutomaticallyCancel) {
+            self.response(queue: .singleEventQueue,
+                          responseSerializer: serializer,
+                          completionHandler: $0)
+        }
+    }
+
     /// Creates a `DownloadTask` to `await` serialization using the provided `DownloadResponseSerializerProtocol`
     /// instance.
     ///
     /// - Parameters:
-    ///   - serializer:                Download serializer responsible for serializing the request, response, and data.
+    ///   - serializer:                `DownloadResponseSerializerProtocol` responsible for serializing the request,
+    ///                                response, and data.
     ///   - shouldAutomaticallyCancel: `Bool` determining whether or not the request should be cancelled when the
     ///                                enclosing async context is cancelled. Only applies to `DownloadTask`'s async
     ///                                properties. `false` by default.
@@ -479,22 +519,27 @@ public struct DataStreamTask {
 
     /// Creates a `Stream` of `Data` values from the underlying `DataStreamRequest`.
     ///
-    /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
+    /// - Parameters:
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                which observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy: `         BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
     /// - Returns:                   The `Stream`.
-    public func streamingData(bufferingPolicy: Stream<Data, Never>.BufferingPolicy = .unbounded) -> Stream<Data, Never> {
-        createStream(bufferingPolicy: bufferingPolicy) { onStream in
+    public func streamingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true, bufferingPolicy: Stream<Data, Never>.BufferingPolicy = .unbounded) -> Stream<Data, Never> {
+        createStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
             self.request.responseStream(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
         }
     }
 
     /// Creates a `Stream` of `UTF-8` `String`s from the underlying `DataStreamRequest`.
     ///
-    /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
-    ///
-    /// - Returns:                   The `Stream`.
-    public func streamingStrings(bufferingPolicy: Stream<String, Never>.BufferingPolicy = .unbounded) -> Stream<String, Never> {
-        createStream(bufferingPolicy: bufferingPolicy) { onStream in
+    /// - Parameters:
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                which observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy: `         BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
+    /// - Returns:
+    public func streamingStrings(automaticallyCancelling shouldAutomaticallyCancel: Bool = true, bufferingPolicy: Stream<String, Never>.BufferingPolicy = .unbounded) -> Stream<String, Never> {
+        createStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
             self.request.responseStreamString(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
         }
     }
@@ -502,38 +547,50 @@ public struct DataStreamTask {
     /// Creates a `Stream` of `Decodable` values from the underlying `DataStreamRequest`.
     ///
     /// - Parameters:
-    ///    - type:            `Decodable` type to be serialized from stream payloads.
-    ///    - bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
+    ///   - type:                      `Decodable` type to be serialized from stream payloads.
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                which observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
     /// - Returns:            The `Stream`.
-    public func streamingDecodable<T>(type: T.Type = T.self, bufferingPolicy: Stream<T, AFError>.BufferingPolicy = .unbounded) -> Stream<T, AFError> where T: Decodable {
-        streamingResponses(serializedUsing: DecodableStreamSerializer<T>(), bufferingPolicy: bufferingPolicy)
+    public func streamingDecodables<T>(_ type: T.Type = T.self,
+                                       automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                                       bufferingPolicy: Stream<T, AFError>.BufferingPolicy = .unbounded)
+        -> Stream<T, AFError> where T: Decodable {
+        streamingResponses(serializedUsing: DecodableStreamSerializer<T>(),
+                           automaticallyCancelling: shouldAutomaticallyCancel,
+                           bufferingPolicy: bufferingPolicy)
     }
 
     /// Creates a `Stream` of values using the provided `DataStreamSerializer` from the underlying `DataStreamRequest`.
     ///
     /// - Parameters:
-    ///   - serializer:      `DataStreamSerializer` to use to serialize incoming `Data`.
-    ///   - bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
+    ///   - serializer:                `DataStreamSerializer` to use to serialize incoming `Data`.
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                which observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
     ///
     /// - Returns:           The `Stream`.
     public func streamingResponses<Serializer: DataStreamSerializer>(serializedUsing serializer: Serializer,
+                                                                     automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                                                      bufferingPolicy: Stream<Serializer.SerializedObject, AFError>.BufferingPolicy = .unbounded)
         -> Stream<Serializer.SerializedObject, AFError> {
-        createStream(bufferingPolicy: bufferingPolicy) { onStream in
+        createStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
             self.request.responseStream(using: serializer,
                                         on: .streamCompletionQueue(forRequestID: request.id),
                                         stream: onStream)
         }
     }
 
-    private func createStream<Success, Failure: Error>(bufferingPolicy: Stream<Success, Failure>.BufferingPolicy = .unbounded,
+    private func createStream<Success, Failure: Error>(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                                                       bufferingPolicy: Stream<Success, Failure>.BufferingPolicy = .unbounded,
                                                        forResponse onResponse: @escaping (@escaping (DataStreamRequest.Stream<Success, Failure>) -> Void) -> Void)
         -> Stream<Success, Failure> {
         StreamOf(bufferingPolicy: bufferingPolicy) {
-            if request.isInitialized || request.isResumed || request.isSuspended {
-                cancel()
-            }
+            guard shouldAutomaticallyCancel,
+                  request.isInitialized || request.isResumed || request.isSuspended else { return }
+
+            cancel()
         } builder: { continuation in
             onResponse { stream in
                 continuation.yield(stream)

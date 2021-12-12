@@ -35,7 +35,7 @@ final class DataRequestConcurrencyTests: BaseTestCase {
 
         // When
         let value = try await session.request(.get)
-            .serializingResponse(using: DataResponseSerializer())
+            .serializingResponse(using: .data)
             .value
 
         // Then
@@ -180,7 +180,7 @@ final class DownloadConcurrencyTests: BaseTestCase {
 
         // When
         let value = try await session.download(.get)
-            .serializingDownload(using: DataResponseSerializer())
+            .serializingDownload(using: .data)
             .value
 
         // Then
@@ -444,6 +444,42 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         // Then
         XCTAssertTrue(request.isCancelled)
         XCTAssertTrue(datas.isEmpty)
+    }
+
+    func testThatDataStreamTaskCanBeCancelledAfterStreamTurnsOffAutomaticCancellation() async {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let expectedPayloads = 10
+        let request = session.streamRequest(.payloads(expectedPayloads))
+        let task = Task<[Data], Never> {
+            var datas: [Data] = []
+            let streamTask = request.streamTask()
+
+            for await data in streamTask.streamingData(automaticallyCancelling: false).compactMap(\.value) {
+                datas.append(data)
+                break
+            }
+
+            for await data in streamTask.streamingData().compactMap(\.value) {
+                datas.append(data)
+                break
+            }
+
+            return datas
+        }
+        let datas: [Data] = await task.value
+
+        // Then
+        XCTAssertTrue(request.isCancelled)
+        XCTAssertTrue(datas.count == 2)
+    }
+
+    func testMany() async {
+        for _ in 0..<100 {
+            await testThatDataStreamTaskCanBeCancelledAfterStreamTurnsOffAutomaticCancellation()
+        }
     }
 }
 
