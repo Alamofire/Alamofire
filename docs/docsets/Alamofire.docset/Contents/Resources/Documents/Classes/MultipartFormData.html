@@ -21,27 +21,27 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.4.4 Docs
+          Alamofire 5.5.0 Docs
         </a>
          (97% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/Alamofire/Alamofire">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire.github.io%2FAlamofire%2Fdocsets%2FAlamofire.xml">
-            <img class="header-icon" src="../img/dash.png"/>
+            <img class="header-icon" src="../img/dash.png" alt="Dash"/>
             Install in Dash
           </a>
         </p>
@@ -49,7 +49,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       MultipartFormData Class Reference
     </p>
 
@@ -412,6 +412,12 @@
                 <a class="nav-group-task-link" href="../Structs/DataStreamPublisher.html">DataStreamPublisher</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataStreamTask.html">DataStreamTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataTask.html">DataTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
@@ -419,6 +425,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DownloadTask.html">DownloadTask</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
@@ -451,10 +460,19 @@
                 <a class="nav-group-task-link" href="../Structs/Redirector/Behavior.html">– Behavior</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RequestAdapterState.html">RequestAdapterState</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher.html">ResponseCacher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher/Behavior.html">– Behavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf.html">StreamOf</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf/Iterator.html">– Iterator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/StringStreamSerializer.html">StringStreamSerializer</a>
@@ -542,7 +560,7 @@ and the w3 form documentation.</p>
                 <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Properties"></a>
-                  <h3 class="section-name"><p>Properties</p>
+                  <h3 class="section-name"><span>Properties</span>
 </h3>
                 </div>
               </div>
@@ -663,7 +681,7 @@ and the w3 form documentation.</p>
                 <a name="//apple_ref/swift/Section/Lifecycle" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Lifecycle"></a>
-                  <h3 class="section-name"><p>Lifecycle</p>
+                  <h3 class="section-name"><span>Lifecycle</span>
 </h3>
                 </div>
               </div>
@@ -734,7 +752,7 @@ and the w3 form documentation.</p>
                 <a name="//apple_ref/swift/Section/Body Parts" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Body%20Parts"></a>
-                  <h3 class="section-name"><p>Body Parts</p>
+                  <h3 class="section-name"><span>Body Parts</span>
 </h3>
                 </div>
               </div>
@@ -1185,7 +1203,7 @@ system associated MIME type.</p>
                 <a name="//apple_ref/swift/Section/Data Encoding" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Data%20Encoding"></a>
-                  <h3 class="section-name"><p>Data Encoding</p>
+                  <h3 class="section-name"><span>Data Encoding</span>
 </h3>
                 </div>
               </div>
@@ -1294,9 +1312,8 @@ this approach is very memory efficient and should be used for large body part da
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="noopener" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-09-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="noopener" rel="external">jazzy ♪♫ v0.14.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="noopener" rel="external">Realm</a> project.</p>
+      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>
