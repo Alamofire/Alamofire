@@ -73,6 +73,8 @@ AF.request("https://httpbin.org/get").response { response in
 
 > All examples require `import Alamofire` somewhere in the source file.
 
+> For examples of use with Swift's `async`-`await` syntax, see our [Advanced Usage](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#using-alamofire-with-swift-concurrency) documentation.
+
 This is actually one form of the two top-level APIs on Alamofire's `Session` type for making requests. Its full definition looks like this:
 
 ```swift
