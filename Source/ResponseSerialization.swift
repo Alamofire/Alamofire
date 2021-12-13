@@ -1110,11 +1110,17 @@ public struct DecodableStreamSerializer<T: Decodable>: DataStreamSerializer {
 
 /// `DataStreamSerializer` which performs no serialization on incoming `Data`.
 public struct PassthroughStreamSerializer: DataStreamSerializer {
+    /// Creates an instance.
+    public init() {}
+
     public func serialize(_ data: Data) throws -> Data { data }
 }
 
 /// `DataStreamSerializer` which serializes incoming stream `Data` into `UTF8`-decoded `String` values.
 public struct StringStreamSerializer: DataStreamSerializer {
+    /// Creates an instance.
+    public init() {}
+
     public func serialize(_ data: Data) throws -> String {
         String(decoding: data, as: UTF8.self)
     }

@@ -1211,6 +1211,130 @@ Like most `DownloadRequest`'s response handlers, `DownloadResponsePublisher` rea
 #### `DataStreamPublisher`
 `DataStreamPublisher` is a `Publisher` for `DataStreamRequest`s. Like `DataStreamRequest` itself, and unlike Alamofire's other `Publisher`s, `DataStreamPublisher` can return multiple values serialized from `Data` received from the network, as well as a final completion event. For more information on how `DataStreamRequest` works, please see our [detailed usage documentation](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#streaming-data-from-a-server).
 
+## Using Alamofire with Swift Concurrency
+Swift's concurrency features, released in Swift 5.5, provide fundamental asynchronous building blocks in the language, including `async`-`await` syntax, `Task`s, and actors. Alamofire provides extensions allowing the use of common Alamofire APIs with Swift's concurrency features.
+
+> Alamofire's concurrency support requires Swift 5.5.2 or Xcode 13.2. These examples also include the use of static protocol values added in Alamofire 5.5 for Swift 5.5.
+
+Alamofire's concurrency support works by vending various `*Task` types, like `DataTask`, `DownloadTask`, and `DataStreamTask`. These types work similarly to Alamofire's existing response handlers and convert the standard completion handlers into `async` properties which can be `await`ed. For example, `DataRequest` (and `UploadRequest`, which inherits from `DataRequest`) can provide a `DataTask` used to `await` any of the asynchronous values:
+
+```swift
+let value = try await AF.request(...).serializingDecodable(TestResponse.self).value
+```
+
+This code synchronously produces a `DataTask<TestResponse>` value which can be used to `await` any part of the resulting `DataResponse<TestResponse, AFError>`. Each `DataTask` can be used to `await` any of these properties as many times as needed. For example:
+
+```swift
+let dataTask = AF.request(...).serializingDecodable(TestResponse.self)
+// Later...
+let response = await task.response // Returns full DataResponse<TestResponse, AFError>
+// Elsewhere...
+let result = await task.result // Returns Result<TestResponse, AFError>
+// And...
+let value = try await task.value // Returns the TestResponse or throws the AFError
+```
+
+Like all Swift Concurrency APIs, these `await`able properties can be used to `await` multiple requests issued in parallel. For example:
+
+```swift
+async let first = AF.request(...).serializingDecodable(TestResponse.self).response
+async let second = AF.request(...).serializingString().response
+async let third = AF.request(...).serializingData().response
+
+// Later...
+
+// Produces (DataResponse<TestResponse, AFError>, DataResponse<String, AFError>,  DataResponse<Data, AFError>) 
+// when all requests are complete.
+let responses = await (first, second, third) 
+```
+
+Alamofire's concurrency APIs can also be used with other builtin concurrency constructs like `Task` and `TaskGroup`.
+
+### `DownloadRequest` Support
+
+Like `DataRequest`, `DownloadRequest` vends its own `DownloadTask` value which can be used to `await` the completion of the request. Like the existing response handlers, the `DownloadTask` will read the downloaded `Data` from disk, so if the `Data` is very large it's best to simply get the `URL` and read the `Data` in a way that won't read it all into memory at once.
+
+```swift
+let url = try await AF.download(...).serializingURL().value
+```
+
+#### Automatic Cancellation
+
+By default, `DataTask` and `DownloadTask` values do not cancel the underlying request when an enclosing concurrent context is cancelled. This means that request will complete even if the enclosing context is explicitly cancelled. For example:
+
+```swift
+let request = AF.request(...) // Creates the DataRequest.
+let task = Task { // Produces a `Task<DataResponse<TestResponse, AFError>, Never> value.
+    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).response
+}
+
+// Later...
+
+task.cancel() // task is cancelled, but the DataRequest created inside it is not.
+print(task.isCancelled) // true
+print(request.isCancelled) // false
+```
+
+If automatic cancellation is desired, it can be configured when creating the `DataTask` or `DownloadTask`. For example:
+
+```swift
+let request = AF.request(...) // Creates the DataRequest.
+let task = Task { // Produces a `Task<DataResponse<TestResponse, AFError>, Never> value.
+    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).response
+}
+
+// Later...
+
+task.cancel() // task is cancelled.
+print(task.isCancelled) // true
+print(request.isCancelled) // true
+```
+
+This automatic cancellation only takes affect when one of the asynchronous properties is `await`ed. 
+
+### `DataStreamRequest` Support
+
+`DataStreamRequest`, unlike the other request types, does not read a single value and complete. Instead, it continuously streams `Data` from the server to be processed through a handler. With Swift Concurrency, this callback API has been replaced with `StreamOf` values vended by `DataStreamTask`. `StreamOf` conforms to `AsyncSequence`, allowing the use of `for await` syntax to observe values as they're received by the stream. Unlike `DataTask` and `DownloadTask`, `DataStreamTask` doesn't vend asynchronous properties itself. Instead, it vends the streams that can be observed.
+
+```swift
+let streamTask = AF.dataStreamRequest(...).streamTask()
+
+// Later...
+
+for await data in streamTask.streamingData() { 
+    // Streams Stream<Data, Never> values. a.k.a StreamOf<DataStreamRequest.Stream<Data, Never>>
+}
+```
+
+This loop only ends when the `DataStreamRequest` completes, either through the server closing the connection or the `DataStreamRequest` being cancelled. If the loop is ended early by `break`ing out of it, the `DataStreamRequest` is canceled and no further values can be received. If the use of multiple observers without automatically cancellation is desired, you can pass `false` for the `automaticallyCancelling` parameter.
+
+```swift
+let streamTask = AF.dataStreamRequest(...).streamTask()
+
+// Later...
+
+for await data in streamTask.streamingData(automaticallyCancelling: false) { 
+    // Streams Stream<Data, Never> values. a.k.a StreamOf<DataStreamRequest.Stream<Data, Never>>
+    if condition { break } // Stream ends but underlying `DataStreamRequest` is not cancelled and keeps receiving data.
+}
+```
+
+One observer setting `automaticallyCancelling` to `false` does not affect other from the same `DataStreamRequest`, so if any other observer exits the request will still be cancelled.
+
+### Value Handlers
+
+Alamofire provides various handlers for internal values which are produced asynchronously, such as `Progress` values, `URLRequest`s and `URLSessionTask`s, as well as cURL descriptions of the request each time a new request is issued. Alamofire's concurrency support now exposes these handlers as `StreamOf` values that can be used to asynchronously observe the received values. For instance, if you wanted to print each cURL description produced by a request:
+
+```swift
+let request = AF.request(...)
+
+// Later...
+
+for await description in request.cURLDescriptions() {
+    print(description)
+}
+```
+
 ## Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
 
