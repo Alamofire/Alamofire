@@ -121,7 +121,7 @@ public class Request {
         /// representation in the state machine in the future.
         var isFinishing = false
         /// Actions to run when requests are finished. Use for concurrency support.
-        var finishObservers: [() -> Void] = []
+        var finishHandlers: [() -> Void] = []
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
@@ -922,24 +922,24 @@ public class Request {
 
     // MARK: Cleanup
 
-    /// Adds a `finishObserver` closure to be called when the request completes.
+    /// Adds a `finishHandler` closure to be called when the request completes.
     ///
     /// - Parameter closure: Closure to be called when the request finishes.
-    func onFinish(perform closure: @escaping () -> Void) {
-        guard !isFinished else { closure(); return }
+    func onFinish(perform finishHandler: @escaping () -> Void) {
+        guard !isFinished else { finishHandler(); return }
 
         $mutableState.write { state in
-            state.finishObservers.append(closure)
+            state.finishHandlers.append(finishHandler)
         }
     }
 
     /// Final cleanup step executed when the instance finishes response serialization.
     func cleanup() {
         delegate?.cleanup(after: self)
-        let observers = $mutableState.finishObservers
-        observers.forEach { $0() }
+        let handlers = $mutableState.finishHandlers
+        handlers.forEach { $0() }
         $mutableState.write { state in
-            state.finishObservers.removeAll()
+            state.finishHandlers.removeAll()
         }
     }
 }
