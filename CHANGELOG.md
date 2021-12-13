@@ -1,8 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
-`Alamofire` adheres to [Semantic Versioning](https://semver.org/).
+Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
+[🔥 Experimental 🔥] features may require breaking changes in minor, rather than major, releases. This will be rare and 
+compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
+- `5.5.x` Releases - [5.5.0](#550)
 - `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
 - `5.3.x` Releases - [5.3.0](#530)
 - `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
@@ -44,6 +47,39 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.5.0](https://github.com/Alamofire/Alamofire/releases/tag/5.5.0)
+Released on 2021-12-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/79?closed=1).
+
+#### Added
+- [🔥 Experimental 🔥] support for Swift Concurrency, including `async`-`await` for requests and `StreamOf` for streaming values.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3463](https://github.com/Alamofire/Alamofire/pull/3463).
+- Generic static accessors for various protocols types for Swift 5.5.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3499](https://github.com/Alamofire/Alamofire/pull/3499).
+- `.indexInBrackets` options for array encoding in query parameters.
+  - Added by [Tiago Lopes](https://github.com/TiagoMaiaL) in Pull Request [#3516](https://github.com/Alamofire/Alamofire/pull/3516).
+- `RequestAdapterState` and new protocol requirements for `RequestAdapter` to allow for additional state to be available.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#3504](https://github.com/Alamofire/Alamofire/pull/3504).
+
+#### Updated
+- `Session` to more safely target provided custom `DispatchQueue`s for internal use.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3523](https://github.com/Alamofire/Alamofire/pull/3523).
+- `AFError` message regarding unacceptable `Content-Type`s to sort the types.
+  - Updated by [Timur Yusipov](https://github.com/Usipov) in Pull Request [#3518](https://github.com/Alamofire/Alamofire/pull/3518).
+- Base Swift language version requirement to 5.3.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3495](https://github.com/Alamofire/Alamofire/pull/3495).
+- Sample app to show proper loading state for requests.
+  - Updated by [Tiago Lopes](https://github.com/TiagoMaiaL) in Pull Request [#3514](https://github.com/Alamofire/Alamofire/pull/3514).
+
+#### Deprecated
+- `responseJSON` and associated methods, in preference to `responseDecodable`.
+  - Deprecated by [Jon Shier](https://github.com/jshier) in Pull Request [#3502](https://github.com/Alamofire/Alamofire/pull/3502).
+
+#### Fixed
+- Use of `Protected` wrapper when accessing properties of the wrapped values to ensure proper thread-safety.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3505](https://github.com/Alamofire/Alamofire/pull/3505).
+- Various documentation typos.
+  - Fixed by [Christos Koninis](https://github.com/csknns), [Tiago Lopes](https://github.com/TiagoMaiaL), and [Eugene Berdnikov](https://github.com/evnik) in various Pull Requests.
 
 ## [5.4.4](https://github.com/Alamofire/Alamofire/releases/tag/5.4.4)
 Released on 2021-09-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/78?closed=1).
