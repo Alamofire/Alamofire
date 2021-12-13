@@ -68,6 +68,12 @@
   + [Using Alamofire with Combine](#using-alamofire-with-combine)
     - [`DownloadResponsePublisher`](#downloadresponsepublisher)
     - [`DataStreamPublisher`](#datastreampublisher)
+  + [Using Alamofire with Swift Concurrency](#using-alamofire-with-swift-concurrency)
+    - [`DataRequest` and `UploadRequest` Support](#datarequest-and-uploadrequest-support)
+    - [`DownloadRequest` Support](#downloadrequest-support)
+    - [Automatic Cancellation](#automatic-cancellation)
+    - [`DataStreamRequest` Support](#datastreamrequest-support)
+    - [Value Stream Handlers](#value-stream-handlers)
 * [Network Reachability](#network-reachability)
 
 # Advanced Usage
@@ -1216,6 +1222,8 @@ Swift's concurrency features, released in Swift 5.5, provide fundamental asynchr
 
 > Alamofire's concurrency support requires Swift 5.5.2 or Xcode 13.2. These examples also include the use of static protocol values added in Alamofire 5.5 for Swift 5.5.
 
+### `DataRequest` and `UploadRequest` Support
+
 Alamofire's concurrency support works by vending various `*Task` types, like `DataTask`, `DownloadTask`, and `DataStreamTask`. These types work similarly to Alamofire's existing response handlers and convert the standard completion handlers into `async` properties which can be `await`ed. For example, `DataRequest` (and `UploadRequest`, which inherits from `DataRequest`) can provide a `DataTask` used to `await` any of the asynchronous values:
 
 ```swift
@@ -1258,7 +1266,7 @@ Like `DataRequest`, `DownloadRequest` vends its own `DownloadTask` value which c
 let url = try await AF.download(...).serializingURL().value
 ```
 
-#### Automatic Cancellation
+### Automatic Cancellation
 
 By default, `DataTask` and `DownloadTask` values do not cancel the underlying request when an enclosing concurrent context is cancelled. This means that request will complete even if the enclosing context is explicitly cancelled. For example:
 
@@ -1321,7 +1329,7 @@ for await data in streamTask.streamingData(automaticallyCancelling: false) {
 
 One observer setting `automaticallyCancelling` to `false` does not affect other from the same `DataStreamRequest`, so if any other observer exits the request will still be cancelled.
 
-### Value Handlers
+### Value Stream Handlers
 
 Alamofire provides various handlers for internal values which are produced asynchronously, such as `Progress` values, `URLRequest`s and `URLSessionTask`s, as well as cURL descriptions of the request each time a new request is issued. Alamofire's concurrency support now exposes these handlers as `StreamOf` values that can be used to asynchronously observe the received values. For instance, if you wanted to print each cURL description produced by a request:
 

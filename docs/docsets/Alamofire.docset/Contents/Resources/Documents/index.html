@@ -20,27 +20,27 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.4.4 Docs
+          Alamofire 5.5.0 Docs
         </a>
          (97% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/Alamofire/Alamofire">
-            <img class="header-icon" src="img/gh.png"/>
+            <img class="header-icon" src="img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire.github.io%2FAlamofire%2Fdocsets%2FAlamofire.xml">
-            <img class="header-icon" src="img/dash.png"/>
+            <img class="header-icon" src="img/dash.png" alt="Dash"/>
             Install in Dash
           </a>
         </p>
@@ -48,7 +48,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="index.html">Alamofire Reference</a>
-      <img class="carat" src="img/carat.png" />
+      <img class="carat" src="img/carat.png" alt=""/>
       Alamofire  Reference
     </p>
 
@@ -411,6 +411,12 @@
                 <a class="nav-group-task-link" href="Structs/DataStreamPublisher.html">DataStreamPublisher</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DataStreamTask.html">DataStreamTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DataTask.html">DataTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
@@ -418,6 +424,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DownloadTask.html">DownloadTask</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/Empty.html">Empty</a>
@@ -450,10 +459,19 @@
                 <a class="nav-group-task-link" href="Structs/Redirector/Behavior.html">– Behavior</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/RequestAdapterState.html">RequestAdapterState</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ResponseCacher.html">ResponseCacher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ResponseCacher/Behavior.html">– Behavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/StreamOf.html">StreamOf</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/StreamOf/Iterator.html">– Iterator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/StringStreamSerializer.html">StringStreamSerializer</a>
@@ -510,7 +528,7 @@
             
             <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/AlamofireLogo.png" alt="Alamofire: Elegant Networking in Swift"></p>
 
-<p><a href="https://img.shields.io/badge/Swift-5.1_5.2_5.3_5.4-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.1_5.2_5.3_5.4-orange?style=flat-square" alt="Swift"></a>
+<p><a href="https://img.shields.io/badge/Swift-5.3_5.4_5.5-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.3_5.4_5.5-orange?style=flat-square" alt="Swift"></a>
 <a href="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-Green?style=flat-square"><img src="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-yellowgreen?style=flat-square" alt="Platforms"></a>
 <a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square" alt="CocoaPods Compatible"></a>
 <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square" alt="Carthage Compatible"></a>
@@ -527,6 +545,7 @@
 <li><a href="#migration-guides">Migration Guides</a></li>
 <li><a href="#communication">Communication</a></li>
 <li><a href="#installation">Installation</a></li>
+<li><a href="#contributing">Contributing</a></li>
 <li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#using-alamofire">Usage</a>
 
 <ul>
@@ -541,6 +560,7 @@
 <li><strong>URL Session -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session">Session Manager</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#sessiondelegate">Session Delegate</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request">Request</a></li>
 <li><strong>Routing -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#routing-requests">Routing Requests</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#adapting-and-retrying-requests-with-requestinterceptor">Adapting and Retrying Requests</a></li>
 <li><strong>Model Objects -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#customizing-response-handlers">Custom Response Handlers</a></li>
+<li><strong>Advanced Concurrency -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#using-alamofire-with-swift-concurrency">Swift Concurrency</a> and <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#using-alamofire-with-combine">Combine</a></li>
 <li><strong>Connection -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#security">Security</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#network-reachability">Network Reachability</a></li>
 </ul></li>
 <li><a href="#open-radars">Open Radars</a></li>
@@ -553,6 +573,7 @@
 
 <ul>
 <li>[x] Chainable Request / Response Methods</li>
+<li>[x] Swift Concurrency Support Back to iOS 13, macOS 10.15, tvOS 13, and watchOS 6.</li>
 <li>[x] Combine Support</li>
 <li>[x] URL / JSON Parameter Encoding</li>
 <li>[x] Upload File / Data / Stream / MultipartFormData</li>
@@ -587,7 +608,7 @@
 </thead><tbody>
 <tr>
 <td>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</td>
-<td>5.1</td>
+<td>5.3</td>
 <td><a href="#cocoapods">CocoaPods</a>, <a href="#carthage">Carthage</a>, <a href="#swift-package-manager">Swift Package Manager</a>, <a href="#manually">Manual</a></td>
 <td>Fully Tested</td>
 </tr>
@@ -633,18 +654,17 @@
 <li>If you&rsquo;d like to <strong>discuss Alamofire best practices</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you&rsquo;d like to <strong>discuss a feature request</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you <strong>found a bug</strong>, open an issue here on GitHub and follow the guide. The more detail the better!</li>
-<li>If you <strong>want to contribute</strong>, submit a pull request!</li>
 </ul>
 <h2 id='installation' class='heading'>Installation</h2>
 <h3 id='cocoapods' class='heading'>CocoaPods</h3>
 
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
-<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.4'</span>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.5'</span>
 </code></pre>
 <h3 id='carthage' class='heading'>Carthage</h3>
 
 <p><a href="https://github.com/Carthage/Carthage">Carthage</a> is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
-<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" ~&gt; 5.4
+<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" ~&gt; 5.5
 </code></pre>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
@@ -652,7 +672,7 @@
 
 <p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
 <pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.4.0"</span><span class="p">))</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.5.0"</span><span class="p">))</span>
 <span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
@@ -698,6 +718,9 @@
 <blockquote>
 <p>The <code>Alamofire.framework</code> is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.</p>
 </blockquote>
+<h2 id='contributing' class='heading'>Contributing</h2>
+
+<p>Before contributing to Alamofire, please read the instructions detailed in our <a href="https://github.com/Alamofire/Alamofire/blob/master/CONTRIBUTING.md">contribution guide</a>.</p>
 <h2 id='open-radars' class='heading'>Open Radars</h2>
 
 <p>The following radars have some effect on the current implementation of Alamofire.</p>
@@ -774,9 +797,8 @@ Any amount you can donate today to help us reach our goal would be greatly appre
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="noopener" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-09-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="noopener" rel="external">jazzy ♪♫ v0.14.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="noopener" rel="external">Realm</a> project.</p>
+      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>

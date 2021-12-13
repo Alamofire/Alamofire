@@ -21,27 +21,27 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.4.4 Docs
+          Alamofire 5.5.0 Docs
         </a>
          (97% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/Alamofire/Alamofire">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire.github.io%2FAlamofire%2Fdocsets%2FAlamofire.xml">
-            <img class="header-icon" src="../img/dash.png"/>
+            <img class="header-icon" src="../img/dash.png" alt="Dash"/>
             Install in Dash
           </a>
         </p>
@@ -49,7 +49,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       ResponseSerializer Protocol Reference
     </p>
 
@@ -412,6 +412,12 @@
                 <a class="nav-group-task-link" href="../Structs/DataStreamPublisher.html">DataStreamPublisher</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataStreamTask.html">DataStreamTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataTask.html">DataTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
@@ -419,6 +425,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DownloadTask.html">DownloadTask</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
@@ -451,10 +460,19 @@
                 <a class="nav-group-task-link" href="../Structs/Redirector/Behavior.html">– Behavior</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RequestAdapterState.html">RequestAdapterState</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher.html">ResponseCacher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher/Behavior.html">– Behavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf.html">StreamOf</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf/Iterator.html">– Iterator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/StringStreamSerializer.html">StringStreamSerializer</a>
@@ -635,7 +653,7 @@
                 <a name="//apple_ref/swift/Section/Protocols" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Protocols"></a>
-                  <h3 class="section-name"><p>Protocols</p>
+                  <h3 class="section-name"><span>Protocols</span>
 </h3>
                 </div>
               </div>
@@ -903,15 +921,390 @@
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Decodable"></a>
+                <a name="//apple_ref/swift/Section/Decodable" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Decodable"></a>
+                  <h3 class="section-name"><span>Decodable</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18ResponseSerializerPAAE9decodable2of16dataPreprocessor7decoder05emptyB5Codes0I14RequestMethodsAA09DecodablebC0Cyqd__Gqd__m_AA04DataG0_pAA0N7Decoder_pShySiGShyAA10HTTPMethodVGtALRszSeRd__lFZ"></a>
+                    <a name="//apple_ref/swift/Method/decodable(of:dataPreprocessor:decoder:emptyResponseCodes:emptyRequestMethods:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPAAE9decodable2of16dataPreprocessor7decoder05emptyB5Codes0I14RequestMethodsAA09DecodablebC0Cyqd__Gqd__m_AA04DataG0_pAA0N7Decoder_pShySiGShyAA10HTTPMethodVGtALRszSeRd__lFZ">decodable(of:<wbr>dataPreprocessor:<wbr>decoder:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></code> using the values provided.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="n">decodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span><span class="p">,</span>
+                                           <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE23defaultDataPreprocessorAA0eF0_pvpZ">defaultDataPreprocessor</a></span><span class="p">,</span>
+                                           <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
+                                           <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE012defaultEmptyB5CodesShySiGvpZ">defaultEmptyResponseCodes</a></span><span class="p">,</span>
+                                           <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE26defaultEmptyRequestMethodsShyAA10HTTPMethodVGvpZ">defaultEmptyRequestMethods</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="k">where</span> <span class="k">Self</span> <span class="o">==</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>type</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>Decodable</code> type to decode from response data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataPreprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> used to prepare the received <code>Data</code> for serialization.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>decoder</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code>. <code>JSONDecoder()</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyResponseCodes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The HTTP response codes for which empty responses are allowed. <code>[204, 205]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyRequestMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The HTTP request methods for which empty responses are allowed. <code>[.head]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60DataResponseSerializer%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `DataResponseSerializer`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60DataResponseSerializer%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18ResponseSerializerPA2A04DatabC0CRszrlE4dataAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/data" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPA2A04DatabC0CRszrlE4dataAEvpZ">data</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Provides a default <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code> instance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">data</span><span class="p">:</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18ResponseSerializerPA2A04DatabC0CRszrlE4data0E12Preprocessor05emptyB5Codes0G14RequestMethodsAeA0dF0_p_ShySiGShyAA10HTTPMethodVGtFZ"></a>
+                    <a name="//apple_ref/swift/Method/data(dataPreprocessor:emptyResponseCodes:emptyRequestMethods:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPA2A04DatabC0CRszrlE4data0E12Preprocessor05emptyB5Codes0G14RequestMethodsAeA0dF0_p_ShySiGShyAA10HTTPMethodVGtFZ">data(dataPreprocessor:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code> using the provided parameters.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">data</span><span class="p">(</span><span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE23defaultDataPreprocessorAA0eF0_pvpZ">defaultDataPreprocessor</a></span><span class="p">,</span>
+                        <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE012defaultEmptyB5CodesShySiGvpZ">defaultEmptyResponseCodes</a></span><span class="p">,</span>
+                        <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE26defaultEmptyRequestMethodsShyAA10HTTPMethodVGvpZ">defaultEmptyRequestMethods</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataPreprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> used to prepare the received <code>Data</code> for serialization.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyResponseCodes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The HTTP response codes for which empty responses are allowed. <code>[204, 205]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyRequestMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The HTTP request methods for which empty responses are allowed. <code>[.head]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60StringResponseSerializer%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `StringResponseSerializer`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60StringResponseSerializer%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18ResponseSerializerPA2A06StringbC0CRszrlE6stringAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/string" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPA2A06StringbC0CRszrlE6stringAEvpZ">string</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Provides a default <code><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></code> instance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">string</span><span class="p">:</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18ResponseSerializerPA2A06StringbC0CRszrlE6string16dataPreprocessor8encoding05emptyB5Codes0I14RequestMethodsAeA04DataG0_p_SS10FoundationE8EncodingVSgShySiGShyAA10HTTPMethodVGtFZ"></a>
+                    <a name="//apple_ref/swift/Method/string(dataPreprocessor:encoding:emptyResponseCodes:emptyRequestMethods:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPA2A06StringbC0CRszrlE6string16dataPreprocessor8encoding05emptyB5Codes0I14RequestMethodsAeA04DataG0_p_SS10FoundationE8EncodingVSgShySiGShyAA10HTTPMethodVGtFZ">string(dataPreprocessor:<wbr>encoding:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></code> with the provided values.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">string</span><span class="p">(</span><span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE23defaultDataPreprocessorAA0eF0_pvpZ">defaultDataPreprocessor</a></span><span class="p">,</span>
+                          <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                          <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE012defaultEmptyB5CodesShySiGvpZ">defaultEmptyResponseCodes</a></span><span class="p">,</span>
+                          <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n"><a href="../Protocols/ResponseSerializer.html#/s:9Alamofire18ResponseSerializerPAAE26defaultEmptyRequestMethodsShyAA10HTTPMethodVGvpZ">defaultEmptyRequestMethods</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataPreprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> used to prepare the received <code>Data</code> for serialization.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A string encoding. Defaults to <code>nil</code>, in which case the encoding will be determined
+                 from the server response, falling back to the default HTTP character set, <code>ISO-8859-1</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyResponseCodes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The HTTP response codes for which empty responses are allowed. <code>[204, 205]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyRequestMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The HTTP request methods for which empty responses are allowed. <code>[.head]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </section>
 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="noopener" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-09-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="noopener" rel="external">jazzy ♪♫ v0.14.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="noopener" rel="external">Realm</a> project.</p>
+      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>

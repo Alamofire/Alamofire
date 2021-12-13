@@ -21,27 +21,27 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.4.4 Docs
+          Alamofire 5.5.0 Docs
         </a>
          (97% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/Alamofire/Alamofire">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire.github.io%2FAlamofire%2Fdocsets%2FAlamofire.xml">
-            <img class="header-icon" src="../img/dash.png"/>
+            <img class="header-icon" src="../img/dash.png" alt="Dash"/>
             Install in Dash
           </a>
         </p>
@@ -49,7 +49,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       ServerTrustEvaluating Protocol Reference
     </p>
 
@@ -412,6 +412,12 @@
                 <a class="nav-group-task-link" href="../Structs/DataStreamPublisher.html">DataStreamPublisher</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataStreamTask.html">DataStreamTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataTask.html">DataTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
@@ -419,6 +425,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DownloadTask.html">DownloadTask</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
@@ -451,10 +460,19 @@
                 <a class="nav-group-task-link" href="../Structs/Redirector/Behavior.html">– Behavior</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RequestAdapterState.html">RequestAdapterState</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher.html">ResponseCacher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher/Behavior.html">– Behavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf.html">StreamOf</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf/Iterator.html">– Iterator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/StringStreamSerializer.html">StringStreamSerializer</a>
@@ -589,15 +607,473 @@
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60RevocationTrustEvaluator%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `RevocationTrustEvaluator`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60RevocationTrustEvaluator%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21ServerTrustEvaluatingPA2A010RevocationC9EvaluatorCRszrlE18revocationCheckingAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/revocationChecking" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21ServerTrustEvaluatingPA2A010RevocationC9EvaluatorCRszrlE18revocationCheckingAEvpZ">revocationChecking</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Provides a default <code><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></code> instance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">revocationChecking</span><span class="p">:</span> <span class="kt"><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21ServerTrustEvaluatingPA2A010RevocationC9EvaluatorCRszrlE18revocationChecking24performDefaultValidation12validateHost7optionsAESb_SbAE7OptionsVtFZ"></a>
+                    <a name="//apple_ref/swift/Method/revocationChecking(performDefaultValidation:validateHost:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21ServerTrustEvaluatingPA2A010RevocationC9EvaluatorCRszrlE18revocationChecking24performDefaultValidation12validateHost7optionsAESb_SbAE7OptionsVtFZ">revocationChecking(performDefaultValidation:<wbr>validateHost:<wbr>options:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></code> using the provided parameters.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Default and host validation will fail when using this evaluator with self-signed certificates. Use
+    <code><a href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a></code> if you need to use self-signed certificates.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">revocationChecking</span><span class="p">(</span><span class="nv">performDefaultValidation</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                                      <span class="nv">validateHost</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                                      <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="o">.</span><span class="n">any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>performDefaultValidation</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether default validation should be performed in addition to
+                      evaluating the pinned certificates. <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>validateHost</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether or not the evaluator should validate the host, in addition
+                      to performing the default evaluation, even if <code>performDefaultValidation</code> is
+                      <code>false</code>. <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>Options</code> to use to check the revocation status of the certificate. <code>.any</code>
+                      by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60PinnedCertificatesTrustEvaluator%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `PinnedCertificatesTrustEvaluator`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60PinnedCertificatesTrustEvaluator%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21ServerTrustEvaluatingPA2A018PinnedCertificatesC9EvaluatorCRszrlE06pinnedF0AEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/pinnedCertificates" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21ServerTrustEvaluatingPA2A018PinnedCertificatesC9EvaluatorCRszrlE06pinnedF0AEvpZ">pinnedCertificates</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Provides a default <code><a href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a></code> instance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">pinnedCertificates</span><span class="p">:</span> <span class="kt"><a href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21ServerTrustEvaluatingPA2A018PinnedCertificatesC9EvaluatorCRszrlE06pinnedF012certificates016acceptSelfSignedF024performDefaultValidation12validateHostAESaySo17SecCertificateRefaG_S3btFZ"></a>
+                    <a name="//apple_ref/swift/Method/pinnedCertificates(certificates:acceptSelfSignedCertificates:performDefaultValidation:validateHost:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21ServerTrustEvaluatingPA2A018PinnedCertificatesC9EvaluatorCRszrlE06pinnedF012certificates016acceptSelfSignedF024performDefaultValidation12validateHostAESaySo17SecCertificateRefaG_S3btFZ">pinnedCertificates(certificates:<wbr>acceptSelfSignedCertificates:<wbr>performDefaultValidation:<wbr>validateHost:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a></code> using the provided parameters.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">pinnedCertificates</span><span class="p">(</span><span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">]</span> <span class="o">=</span> <span class="kt">Bundle</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">af</span><span class="o">.</span><span class="n">certificates</span><span class="p">,</span>
+                                      <span class="nv">acceptSelfSignedCertificates</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+                                      <span class="nv">performDefaultValidation</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                                      <span class="nv">validateHost</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>certificates</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The certificates to use to evaluate the trust. All <code>cer</code>, <code>crt</code>, and <code>der</code>
+                          certificates in <code>Bundle.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>acceptSelfSignedCertificates</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Adds the provided certificates as anchors for the trust evaluation, allowing
+                          self-signed certificates to pass. <code>false</code> by default. THIS SETTING SHOULD BE
+                          FALSE IN PRODUCTION!</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>performDefaultValidation</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether default validation should be performed in addition to
+                          evaluating the pinned certificates. <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>validateHost</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether or not the evaluator should validate the host, in addition
+                          to performing the default evaluation, even if <code>performDefaultValidation</code> is
+                          <code>false</code>. <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60PublicKeysTrustEvaluator%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `PublicKeysTrustEvaluator`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60PublicKeysTrustEvaluator%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Classes/PublicKeysTrustEvaluator.html">PublicKeysTrustEvaluator</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21ServerTrustEvaluatingPA2A010PublicKeysC9EvaluatorCRszrlE06publicF0AEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/publicKeys" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21ServerTrustEvaluatingPA2A010PublicKeysC9EvaluatorCRszrlE06publicF0AEvpZ">publicKeys</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Provides a default <code><a href="../Classes/PublicKeysTrustEvaluator.html">PublicKeysTrustEvaluator</a></code> instance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="kt"><a href="../Classes/PublicKeysTrustEvaluator.html">PublicKeysTrustEvaluator</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21ServerTrustEvaluatingPA2A010PublicKeysC9EvaluatorCRszrlE06publicF04keys24performDefaultValidation12validateHostAESaySo9SecKeyRefaG_S2btFZ"></a>
+                    <a name="//apple_ref/swift/Method/publicKeys(keys:performDefaultValidation:validateHost:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21ServerTrustEvaluatingPA2A010PublicKeysC9EvaluatorCRszrlE06publicF04keys24performDefaultValidation12validateHostAESaySo9SecKeyRefaG_S2btFZ">publicKeys(keys:<wbr>performDefaultValidation:<wbr>validateHost:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Classes/PublicKeysTrustEvaluator.html">PublicKeysTrustEvaluator</a></code> from the provided parameters.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Default and host validation will fail when using this evaluator with self-signed certificates. Use
+    <code><a href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a></code> if you need to use self-signed certificates.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">publicKeys</span><span class="p">(</span><span class="nv">keys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="o">=</span> <span class="kt">Bundle</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">af</span><span class="o">.</span><span class="n"><a href="../Protocols/ServerTrustEvaluating.html#/s:9Alamofire21ServerTrustEvaluatingPA2A010PublicKeysC9EvaluatorCRszrlE06publicF0AEvpZ">publicKeys</a></span><span class="p">,</span>
+                              <span class="nv">performDefaultValidation</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                              <span class="nv">validateHost</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/PublicKeysTrustEvaluator.html">PublicKeysTrustEvaluator</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>keys</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>SecKey</code>s to use to validate public keys. Defaults to the public keys of all
+                      certificates included in the main bundle.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>performDefaultValidation</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether default validation should be performed in addition to
+                      evaluating the pinned certificates. <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>validateHost</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether or not the evaluator should validate the host, in addition to
+                      performing the default evaluation, even if <code>performDefaultValidation</code> is <code>false</code>.
+                      <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60CompositeTrustEvaluator%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `CompositeTrustEvaluator`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60CompositeTrustEvaluator%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Classes/CompositeTrustEvaluator.html">CompositeTrustEvaluator</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21ServerTrustEvaluatingPA2A09CompositeC9EvaluatorCRszrlE9composite10evaluatorsAESayAaB_pG_tFZ"></a>
+                    <a name="//apple_ref/swift/Method/composite(evaluators:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21ServerTrustEvaluatingPA2A09CompositeC9EvaluatorCRszrlE9composite10evaluatorsAESayAaB_pG_tFZ">composite(evaluators:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Classes/CompositeTrustEvaluator.html">CompositeTrustEvaluator</a></code> from the provided evaluators.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">composite</span><span class="p">(</span><span class="nv">evaluators</span><span class="p">:</span> <span class="p">[</span><span class="kt">ServerTrustEvaluating</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/CompositeTrustEvaluator.html">CompositeTrustEvaluator</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>evaluators</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>ServerTrustEvaluating</code> values used to evaluate the server trust.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </section>
 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="noopener" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-09-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="noopener" rel="external">jazzy ♪♫ v0.14.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="noopener" rel="external">Realm</a> project.</p>
+      <p>&copy; 2021 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2021-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>
