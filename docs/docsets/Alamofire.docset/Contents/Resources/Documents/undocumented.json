@@ -2,8 +2,50 @@
   "warnings": [
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Combine.swift",
-      "line": 242,
+      "line": 203,
+      "symbol": "DataRequest.publishDecodable(type:queue:preprocessor:decoder:emptyResponseCodes:emptyResponseMethods:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Combine.swift",
+      "line": 259,
       "symbol": "DataStreamPublisher",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Combine.swift",
+      "line": 590,
+      "symbol": "DownloadRequest.publishDecodable(type:queue:preprocessor:decoder:emptyResponseCodes:emptyResponseMethods:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
+      "line": 510,
+      "symbol": "DataStreamTask",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
+      "line": 512,
+      "symbol": "DataStreamTask.Stream",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
+      "line": 643,
+      "symbol": "StreamOf.BufferingPolicy",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
+      "line": 671,
+      "symbol": "StreamOf.Iterator",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
@@ -142,21 +184,21 @@
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/URLEncodedFormEncoder.swift",
-      "line": 574,
+      "line": 606,
       "symbol": "_URLEncodedFormEncoder.KeyedContainer",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/URLEncodedFormEncoder.swift",
-      "line": 660,
+      "line": 698,
       "symbol": "_URLEncodedFormEncoder.SingleValueContainer",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/URLEncodedFormEncoder.swift",
-      "line": 803,
+      "line": 836,
       "symbol": "_URLEncodedFormEncoder.UnkeyedContainer",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
