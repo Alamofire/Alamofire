@@ -120,6 +120,8 @@ public class Request {
         /// Whether the instance has had `finish()` called and is running the serializers. Should be replaced with a
         /// representation in the state machine in the future.
         var isFinishing = false
+        /// Actions to run when requests are finished. Use for concurrency support.
+        var finishHandlers: [() -> Void] = []
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
@@ -920,10 +922,25 @@ public class Request {
 
     // MARK: Cleanup
 
+    /// Adds a `finishHandler` closure to be called when the request completes.
+    ///
+    /// - Parameter closure: Closure to be called when the request finishes.
+    func onFinish(perform finishHandler: @escaping () -> Void) {
+        guard !isFinished else { finishHandler(); return }
+
+        $mutableState.write { state in
+            state.finishHandlers.append(finishHandler)
+        }
+    }
+
     /// Final cleanup step executed when the instance finishes response serialization.
     func cleanup() {
         delegate?.cleanup(after: self)
-        // No-op: override in subclass
+        let handlers = $mutableState.finishHandlers
+        handlers.forEach { $0() }
+        $mutableState.write { state in
+            state.finishHandlers.removeAll()
+        }
     }
 }
 
