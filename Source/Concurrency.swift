@@ -632,7 +632,7 @@ extension DispatchQueue {
                                                             attributes: .concurrent)
 
     fileprivate static func streamCompletionQueue(forRequestID id: UUID) -> DispatchQueue {
-        DispatchQueue(label: "org.alamofire.concurrencyStreamCompletionQueue-\(id)")
+        DispatchQueue(label: "org.alamofire.concurrencyStreamCompletionQueue-\(id)", target: .singleEventQueue)
     }
 }
 
