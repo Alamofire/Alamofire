@@ -81,7 +81,8 @@ public enum ParameterEncoding {
 
         var mutableURLRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as NSMutableURLRequest
         var error: NSError? = nil
-
+        
+        // Test입니다.
         switch self {
         case .URL:
             func query(parameters: [String: AnyObject]) -> String {
