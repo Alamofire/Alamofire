@@ -48,15 +48,18 @@ jobs:
   macOS_5_5:
     name: Test macOS 11 (5.5)
     runs-on: firebreak
+    defaults:
+      run:
+        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: macOS 11 (5.5)
-        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
     runs-on: macOS-11
@@ -72,6 +75,9 @@ jobs:
   iOS:
     name: Test iOS 15
     runs-on: firebreak
+    defaults:
+      run:
+        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
     timeout-minutes: 10
@@ -81,9 +87,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: iOS - ${{ matrix.destination }}
-        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   iOS_Concurrency:
     name: Test Swift Concurrency
     runs-on: macOS-11
@@ -102,6 +108,9 @@ jobs:
   tvOS:
     name: Test tvOS
     runs-on: firebreak
+    defaults:
+      run:
+        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
     timeout-minutes: 10
@@ -111,12 +120,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: tvOS - ${{ matrix.destination }}
-        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   watchOS:
     name: Test watchOS
     runs-on: firebreak
+    defaults:
+      run:
+        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
     timeout-minutes: 10
@@ -126,21 +138,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: watchOS - ${{ matrix.destination }}
-        run: set -o pipefail && arch -arch arm64e env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   SPM:
     name: Test with SPM
     runs-on: firebreak
+    defaults:
+      run:
+        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: arch -arch arm64e brew install alamofire/alamofire/firewalk || arch -arch arm64e brew upgrade alamofire/alamofire/firewalk && arch -arch x86_64 firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: SPM Test
-        run: arch -arch arm64e swift test -c debug
+        run: swift test -c debug
   Linux:
     name: Linux
     runs-on: ubuntu-20.04
