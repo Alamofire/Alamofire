@@ -112,7 +112,7 @@ github "Alamofire/Alamofire" ~> 5.5
 
 ### Swift Package Manager
 
-The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. It is in early development, but Alamofire does support its use on supported platforms.
+The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. 
 
 Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
 
@@ -197,11 +197,11 @@ Alamofire is owned and maintained by the [Alamofire Software Foundation](http://
 
 If you believe you have identified a security vulnerability with Alamofire, you should report it as soon as possible via email to security@alamofire.org. Please do not post it to a public issue tracker.
 
-## Donations
+## Sponsorship
 
 The [ASF](https://github.com/Alamofire/Foundation#members) is looking to raise money to officially stay registered as a federal non-profit organization.
 Registering will allow Foundation members to gain some legal protections and also allow us to put donations to use, tax-free.
-Donating to the ASF will enable us to:
+Sponsoring the ASF will enable us to:
 
 - Pay our yearly legal fees to keep the non-profit in good status
 - Pay for our mail servers to help us stay on top of all questions and security issues
@@ -212,9 +212,9 @@ The community adoption of the ASF libraries has been amazing.
 We are greatly humbled by your enthusiasm around the projects and want to continue to do everything we can to move the needle forward.
 With your continued support, the ASF will be able to improve its reach and also provide better legal safety for the core members.
 If you use any of our libraries for work, see if your employers would be interested in donating.
-Any amount you can donate today to help us reach our goal would be greatly appreciated.
+Any amount you can donate, whether once or monthly, to help us reach our goal would be greatly appreciated.
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W34WPEE74APJQ)
+[Sponsor Alamofire](https://github.com/sponsors/Alamofire)
 
 ## Supporters
 
