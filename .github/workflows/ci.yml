@@ -28,6 +28,7 @@ jobs:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
     timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
         include:
           - xcode: "Xcode_13.1.app"
@@ -67,6 +68,7 @@ jobs:
       DEVELOPER_DIR: "/Applications/Xcode_13.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
         include:
           - destination: "OS=14.5,name=iPhone 12 Pro"
