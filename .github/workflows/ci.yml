@@ -23,9 +23,9 @@ concurrency:
 jobs:
   macOS:
     name: Test macOS (5.5, 5.4, 5.3)
-    runs-on: "#{{ matrix.runsOn }}"
+    runs-on: ${{ matrix.runsOn }}
     env:
-      DEVELOPER_DIR: "/Applications/#{{ matrix.xcode }}/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
     timeout-minutes: 10
     strategy:
       matrix:
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
-      - name: "#{{ matrix.name }}"
+      - name: "${{ matrix.name }}"
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
@@ -59,7 +59,7 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS_Old:
     name: "Test iOS 14, 13, 12, 11"
-    runs-on: firewalk
+    runs-on: firebreak
     defaults:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
@@ -81,7 +81,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: "Test #{{ matrix.name }}"
+      - name: "Test ${{ matrix.name }}"
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   iOS:
     name: Test iOS 15
