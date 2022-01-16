@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if !((os(iOS) && (arch(i386) || arch(arm))) || os(Windows) || os(Linux)) && canImport(Combine)
+#if !((os(iOS) && (arch(i386) || arch(arm))) || os(Windows) || os(Linux))
 
 import Alamofire
 import Combine

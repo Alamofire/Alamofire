@@ -75,10 +75,10 @@ jobs:
             name: "iOS 14.5"
           - destination: "OS=13.7,name=iPhone 11 Pro"
             name: "iOS 13.7"
-          - destination: "OS=12.4,name=iPhone Xs"
-            name: "iOS 12.4"
-          - destination: "OS=11.4,name=iPhone 7"
-            name: "iOS 11.4"
+          # - destination: "OS=12.4,name=iPhone Xs"
+          #   name: "iOS 12.4"
+          # - destination: "OS=11.4,name=iPhone 7"
+          #   name: "iOS 11.4"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
