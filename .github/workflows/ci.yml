@@ -72,6 +72,29 @@ jobs:
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Catalyst
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
+  iOS_Old:
+    name: "Test iOS 14, 13, 12, 11"
+    runs-on: macOS-11
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_13.1.app/Contents/Developer"
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        include:
+          - destination: "OS=14.5,name=iPhone 12 Pro"
+            name: "iOS 14.5"
+          - destination: "OS=13.7,name=iPhone 11 Pro"
+            name: "iOS 13.7"
+          - destination: "OS=12.4,name=iPhone X"
+            name: "iOS 12.4"
+          - destination: "OS=11.4,name=iPhone 7"
+            name: "iOS 11.4"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Firewalk
+        run: brew install alamofire/alamofire/firewalk && firewalk &
+      - name: "Test #{{ matrix.name }}"
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   iOS:
     name: Test iOS 15
     runs-on: firebreak
@@ -94,7 +117,7 @@ jobs:
     name: Test Swift Concurrency
     runs-on: macOS-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       matrix:
