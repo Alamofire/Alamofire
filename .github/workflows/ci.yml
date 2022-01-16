@@ -35,8 +35,8 @@ jobs:
             runsOn: macOS-11
             name: "macOS 11, Swift 5.5"
           - xcode: "Xcode_12.5.1.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, Swift 5.4"
+            runsOn: macOS-11
+            name: "macOS 11, Swift 5.4"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
             name: "macOS 10.15, Swift 5.3"
