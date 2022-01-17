@@ -781,7 +781,6 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 
 // MARK: -
 
-#if !SWIFT_PACKAGE
 final class DownloadResponseSerializationTestCase: BaseTestCase {
     // MARK: Properties
 
@@ -1182,7 +1181,6 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.success as? NSNull, NSNull())
     }
 }
-#endif
 
 final class CustomResponseSerializerTests: BaseTestCase {
     func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {

@@ -22,11 +22,12 @@
 //  THE SOFTWARE.
 //
 
+#if !(os(Linux) || os(Windows))
+
 import Alamofire
 import Foundation
 import XCTest
 
-#if !SWIFT_PACKAGE
 private enum TestCertificates {
     static let rootCA = TestCertificates.certificate(filename: "expired.badssl.com-root-ca")
     static let intermediateCA1 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-1")
@@ -34,8 +35,7 @@ private enum TestCertificates {
     static let leaf = TestCertificates.certificate(filename: "expired.badssl.com-leaf")
 
     static func certificate(filename: String) -> SecCertificate {
-        class Locator {}
-        let filePath = Bundle(for: Locator.self).path(forResource: filename, ofType: "cer")!
+        let filePath = Bundle.test.path(forResource: filename, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
         let certificate = SecCertificateCreateWithData(nil, data as CFData)!
 

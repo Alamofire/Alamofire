@@ -173,7 +173,6 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         }
     }
 
-    #if !SWIFT_PACKAGE
     func testEncodingFileBodyPart() {
         // Given
         let multipartFormData = MultipartFormData()
@@ -419,7 +418,6 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             XCTAssertEqual(encodedData, expectedData, "data should match expected data")
         }
     }
-    #endif
 }
 
 // MARK: -
@@ -510,7 +508,6 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         }
     }
 
-    #if !SWIFT_PACKAGE
     func testWritingEncodedFileBodyPartToDisk() {
         // Given
         let fileURL = temporaryFileURL
@@ -771,7 +768,6 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             XCTFail("file data should not be nil")
         }
     }
-    #endif
 }
 
 // MARK: -
