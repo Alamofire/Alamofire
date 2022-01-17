@@ -129,17 +129,15 @@ final class RequestResponseTestCase: BaseTestCase {
     func testPOSTRequestWithBase64EncodedImages() {
         // Given
         let pngBase64EncodedString: String = {
-            let url = url(forResource: "unicorn", withExtension: "png")
-            print(url)
-            let data = try! Data(contentsOf: url)
+            let fileURL = url(forResource: "unicorn", withExtension: "png")
+            let data = try! Data(contentsOf: fileURL)
 
             return data.base64EncodedString(options: .lineLength64Characters)
         }()
 
         let jpegBase64EncodedString: String = {
-            let url = url(forResource: "rainbow", withExtension: "jpg")
-            print(url)
-            let data = try! Data(contentsOf: url)
+            let fileURL = url(forResource: "rainbow", withExtension: "jpg")
+            let data = try! Data(contentsOf: fileURL)
 
             return data.base64EncodedString(options: .lineLength64Characters)
         }()
