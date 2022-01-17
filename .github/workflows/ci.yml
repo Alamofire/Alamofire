@@ -31,7 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_13.1.app"
+          - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
             name: "macOS 11, Swift 5.5"
           - xcode: "Xcode_12.5.1.app"
@@ -50,7 +50,7 @@ jobs:
     name: Test Catalyst
     runs-on: macOS-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -65,7 +65,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.2.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -86,22 +86,7 @@ jobs:
       - name: "Test ${{ matrix.name }}"
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   iOS:
-    name: Test iOS 15
-    runs-on: macOS-11
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        destination: ["OS=15.0,name=iPhone 13 Pro"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk && firewalk &
-      - name: iOS - ${{ matrix.destination }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
-  iOS_Concurrency:
-    name: Test Swift Concurrency
+    name: Test iOS
     runs-on: firebreak
     defaults:
       run:
@@ -125,7 +110,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       matrix:
@@ -143,7 +128,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       matrix:
@@ -161,7 +146,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -173,7 +158,7 @@ jobs:
     name: Linux
     runs-on: ubuntu-20.04
     container:
-      image: swift:5.5.1-focal
+      image: swift:5.5.2-focal
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -199,7 +184,7 @@ jobs:
     - uses: seanmiddleditch/gha-setup-vsdevenv@master
     - name: Install Swift
       run: |
-        Install-Binary -Url "https://swift.org/builds/swift-5.5.1-release/windows10/swift-5.5.1-RELEASE/swift-5.5.1-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
+        Install-Binary -Url "https://swift.org/builds/swift-5.5.2-release/windows10/swift-5.5.2-RELEASE/swift-5.5.2-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
     - name: Set Environment Variables
       run: |
         echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
