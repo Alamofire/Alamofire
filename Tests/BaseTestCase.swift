@@ -67,8 +67,7 @@ class BaseTestCase: XCTestCase {
     }
 
     func url(forResource fileName: String, withExtension ext: String) -> URL {
-        let bundle = Bundle(for: BaseTestCase.self)
-        return bundle.url(forResource: fileName, withExtension: ext)!
+        Bundle.test.url(forResource: fileName, withExtension: ext)!
     }
 
     func stored(_ session: Session) -> Session {

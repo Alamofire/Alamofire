@@ -21,50 +21,36 @@ concurrency:
   group: ci
   cancel-in-progress: true
 jobs:
-  macOS_5_3:
-    name: Test macOS 10.15 (5.3)
-    runs-on: macOS-10.15
+  macOS:
+    name: Test macOS (5.5, 5.4, 5.3)
+    runs-on: ${{ matrix.runsOn }}
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - xcode: "Xcode_13.2.1.app"
+            runsOn: macOS-11
+            name: "macOS 11, Swift 5.5"
+          - xcode: "Xcode_12.5.1.app"
+            runsOn: macOS-11
+            name: "macOS 11, Swift 5.4"
+          - xcode: "Xcode_12.4.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, Swift 5.3"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
-      - name: macOS 10.15 (5.3)
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
-  macOS_5_4:
-    name: Test macOS 11 (5.4)
-    runs-on: macOS-11
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk && firewalk &
-      - name: macOS 11 (5.4)
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
-  macOS_5_5:
-    name: Test macOS 11 (5.5)
-    runs-on: firebreak
-    defaults:
-      run:
-        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: macOS 11 (5.5)
+      - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
     runs-on: macOS-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -73,38 +59,34 @@ jobs:
       - name: Catalyst
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
-    name: Test iOS 15
+    name: "Test iOS"
     runs-on: firebreak
     defaults:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: "/Applications/Xcode_13.2.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
-        destination: ["OS=15.0,name=iPhone 13 Pro"]
+        include:
+          - destination: "OS=15.2,name=iPhone 13 Pro"
+            name: "iOS 15.2"
+          - destination: "OS=14.5,name=iPhone 12 Pro"
+            name: "iOS 14.5"
+          - destination: "OS=13.7,name=iPhone 11 Pro"
+            name: "iOS 13.7"
+          # - destination: "OS=12.4,name=iPhone Xs"
+          #   name: "iOS 12.4"
+          # - destination: "OS=11.4,name=iPhone 7"
+          #   name: "iOS 11.4"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: iOS - ${{ matrix.destination }}
+      - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
-  iOS_Concurrency:
-    name: Test Swift Concurrency
-    runs-on: macOS-11
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_13.2.app/Contents/Developer
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        destination: ["OS=15.2,name=iPhone 13 Pro"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: iOS - ${{ matrix.destination }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -enableThreadSanitizer NO clean test | xcpretty
   tvOS:
     name: Test tvOS
     runs-on: firebreak
@@ -112,16 +94,23 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
-        destination: ["OS=15.0,name=Apple TV"]
+        include:
+          - destination: "OS=15.2,name=Apple TV"
+            name: "tvOS 15.2"
+          - destination: "OS=14.5,name=Apple TV"
+            name: "tvOS 14.5"
+          - destination: "OS=13.4,name=Apple TV"
+            name: "tvOS 13.4"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: tvOS - ${{ matrix.destination }}
+      - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   watchOS:
     name: Test watchOS
@@ -130,37 +119,39 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
-        destination: ["OS=8.0,name=Apple Watch Series 7 - 45mm"]
+        include:
+          - destination: "OS=8.3,name=Apple Watch Series 7 - 45mm"
+            name: "watchOS 8.3"
+          - destination: "OS=7.4,name=Apple Watch Series 6 - 44mm"
+            name: "watchOS 7.4"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: watchOS - ${{ matrix.destination }}
+      - name: ${{ matrix.name}}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   SPM:
     name: Test with SPM
-    runs-on: firebreak
-    defaults:
-      run:
-        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
+    runs-on: macOS-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: SPM Test
+        run: brew install alamofire/alamofire/firewalk && firewalk &
+      - name: Test SPM
         run: swift test -c debug
   Linux:
     name: Linux
     runs-on: ubuntu-20.04
     container:
-      image: swift:5.5.1-focal
+      image: swift:5.5.2-focal
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -186,7 +177,7 @@ jobs:
     - uses: seanmiddleditch/gha-setup-vsdevenv@master
     - name: Install Swift
       run: |
-        Install-Binary -Url "https://swift.org/builds/swift-5.5.1-release/windows10/swift-5.5.1-RELEASE/swift-5.5.1-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
+        Install-Binary -Url "https://swift.org/builds/swift-5.5.2-release/windows10/swift-5.5.2-RELEASE/swift-5.5.2-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
     - name: Set Environment Variables
       run: |
         echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append

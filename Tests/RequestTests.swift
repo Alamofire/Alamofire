@@ -126,19 +126,18 @@ final class RequestResponseTestCase: BaseTestCase {
         }
     }
 
-    #if !SWIFT_PACKAGE
     func testPOSTRequestWithBase64EncodedImages() {
         // Given
         let pngBase64EncodedString: String = {
-            let URL = url(forResource: "unicorn", withExtension: "png")
-            let data = try! Data(contentsOf: URL)
+            let fileURL = url(forResource: "unicorn", withExtension: "png")
+            let data = try! Data(contentsOf: fileURL)
 
             return data.base64EncodedString(options: .lineLength64Characters)
         }()
 
         let jpegBase64EncodedString: String = {
-            let URL = url(forResource: "rainbow", withExtension: "jpg")
-            let data = try! Data(contentsOf: URL)
+            let fileURL = url(forResource: "rainbow", withExtension: "jpg")
+            let data = try! Data(contentsOf: fileURL)
 
             return data.base64EncodedString(options: .lineLength64Characters)
         }()
@@ -174,7 +173,6 @@ final class RequestResponseTestCase: BaseTestCase {
             XCTFail("form parameter in JSON should not be nil")
         }
     }
-    #endif
 
     // MARK: Queues
 
@@ -1179,7 +1177,6 @@ final class RequestLifetimeTests: BaseTestCase {
 
 // MARK: -
 
-#if !SWIFT_PACKAGE
 final class RequestInvalidURLTestCase: BaseTestCase {
     func testThatDataRequestWithFileURLThrowsError() {
         // Given
@@ -1240,4 +1237,3 @@ final class RequestInvalidURLTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
     }
 }
-#endif

@@ -26,7 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-#if !SWIFT_PACKAGE
 final class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
         // Given
@@ -73,7 +72,6 @@ final class UploadFileInitializationTestCase: BaseTestCase {
         XCTAssertNotNil(request.response, "response should not be nil")
     }
 }
-#endif
 
 // MARK: -
 
@@ -124,7 +122,6 @@ final class UploadDataInitializationTestCase: BaseTestCase {
 
 // MARK: -
 
-#if !SWIFT_PACKAGE
 final class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndStream() {
         // Given
@@ -173,7 +170,6 @@ final class UploadStreamInitializationTestCase: BaseTestCase {
         XCTAssertNotNil(request.response, "response should not be nil, tasks: \(request.tasks)")
     }
 }
-#endif
 
 // MARK: -
 
