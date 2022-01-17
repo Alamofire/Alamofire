@@ -24,6 +24,9 @@
 
 #if compiler(>=5.5.2) && canImport(_Concurrency)
 
+#if SWIFT_PACKAGE
+import Alamofire
+#endif
 import Foundation
 
 // MARK: - Request Event Streams
