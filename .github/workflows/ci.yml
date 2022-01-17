@@ -114,7 +114,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        destination: ["OS=15.0,name=Apple TV"]
+        destination: ["OS=15.2,name=Apple TV"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -132,7 +132,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        destination: ["OS=8.0,name=Apple Watch Series 7 - 45mm"]
+        destination: ["OS=8.3,name=Apple Watch Series 7 - 45mm"]
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
