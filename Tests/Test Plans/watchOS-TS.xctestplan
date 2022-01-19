@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "13FE6F19-6B66-4BD2-862D-9F091CA8B792",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "threadSanitizerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "ClosureAPIConcurrencyTests",
+        "DataRequestConcurrencyTests",
+        "DataStreamConcurrencyTests",
+        "DownloadConcurrencyTests"
+      ],
+      "target" : {
+        "containerPath" : "container:Alamofire.xcodeproj",
+        "identifier" : "31293064263E17D600473CEA",
+        "name" : "Alamofire watchOS Tests"
+      }
+    }
+  ],
+  "version" : 1
+}
