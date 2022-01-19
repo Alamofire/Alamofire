@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "06BDBD92-3173-4395-90BF-851B80FF1162",
+      "name" : "Default",
+      "options" : {
+        "threadSanitizerEnabled" : true
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "ClosureAPIConcurrencyTests",
+        "DataRequestConcurrencyTests",
+        "DataStreamConcurrencyTests",
+        "DownloadConcurrencyTests"
+      ],
+      "target" : {
+        "containerPath" : "container:Alamofire.xcodeproj",
+        "identifier" : "4CF626F71BA7CB3E0011A099",
+        "name" : "Alamofire tvOS Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

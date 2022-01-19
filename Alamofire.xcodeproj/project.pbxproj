@@ -494,6 +494,9 @@
 		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
 		31425AC0241F098000EE3CCC /* InternalRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestTests.swift; sourceTree = "<group>"; };
 		3145E0E227977AA300949557 /* iOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iOS-TS.xctestplan"; sourceTree = "<group>"; };
+		3145E0E32797A8EF00949557 /* tvOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tvOS-TS.xctestplan"; sourceTree = "<group>"; };
+		3145E0E42797A8EF00949557 /* tvOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = tvOS.xctestplan; sourceTree = "<group>"; };
+		3145E0E52797A8EF00949557 /* tvOS-Old.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tvOS-Old.xctestplan"; sourceTree = "<group>"; };
 		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
 		31577E0A2676E72D001C7532 /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringEncoding+Alamofire.swift"; sourceTree = "<group>"; };
@@ -737,9 +740,12 @@
 		31EF4BF4279646000048A19D /* Test Plans */ = {
 			isa = PBXGroup;
 			children = (
-				31EF4BF5279646450048A19D /* iOS.xctestplan */,
 				31EF4BF627964B520048A19D /* iOS-Old.xctestplan */,
 				3145E0E227977AA300949557 /* iOS-TS.xctestplan */,
+				31EF4BF5279646450048A19D /* iOS.xctestplan */,
+				3145E0E52797A8EF00949557 /* tvOS-Old.xctestplan */,
+				3145E0E32797A8EF00949557 /* tvOS-TS.xctestplan */,
+				3145E0E42797A8EF00949557 /* tvOS.xctestplan */,
 			);
 			path = "Test Plans";
 			sourceTree = "<group>";

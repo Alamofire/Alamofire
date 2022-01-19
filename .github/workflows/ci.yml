@@ -107,16 +107,25 @@ jobs:
         include:
           - destination: "OS=15.2,name=Apple TV"
             name: "tvOS 15.2"
+            testPlan: "tvOS"
           - destination: "OS=14.5,name=Apple TV"
             name: "tvOS 14.5"
+            testPlan: "tvOS"
           - destination: "OS=13.4,name=Apple TV"
             name: "tvOS 13.4"
+            testPlan: "tvOS"
+          - destination: "OS=12.4,name=Apple TV"
+            name: "tvOS 12.4"
+            testPlan: "tvOS-Old"
+          - destination: "OS=11.4,name=Apple TV"
+            name: "tvOS 11.4"
+            testPlan: "tvOS-Old"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   watchOS:
     name: Test watchOS
     runs-on: firebreak
