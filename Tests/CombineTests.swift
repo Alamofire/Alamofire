@@ -1423,10 +1423,10 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 class CombineTestCase: BaseTestCase {
-    var storage: Set<AnyCancellable> = []
+    private lazy var storage: Set<AnyCancellable> = { Set<AnyCancellable>() }()
 
     override func tearDown() {
-        storage = []
+        storage.removeAll()
 
         super.tearDown()
     }
