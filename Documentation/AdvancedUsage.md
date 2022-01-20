@@ -1249,7 +1249,7 @@ let request = AF.request(...)
 // Later...
 let stringResponse = await request.serializingString().response
 // Elsewhere...
-let decodableResponse = await request.serializingDecodable(TestResponse.self).self
+let decodableResponse = await request.serializingDecodable(TestResponse.self).response
 ```
 
 Finally, like all Swift Concurrency APIs, these `await`able properties can be used to `await` multiple requests issued in parallel. For example:
