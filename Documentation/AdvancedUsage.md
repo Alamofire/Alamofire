@@ -1239,10 +1239,20 @@ let response = await task.response // Returns full DataResponse<TestResponse, AF
 // Elsewhere...
 let result = await task.result // Returns Result<TestResponse, AFError>
 // And...
-let value = try await task.value // Returns the TestResponse or throws the AFError
+let value = try await task.value // Returns the TestResponse or throws the AFError as an Error
 ```
 
-Like all Swift Concurrency APIs, these `await`able properties can be used to `await` multiple requests issued in parallel. For example:
+Similarly, and like Alamofire's existing closure and publisher-based response handlers, each request can produce multiple tasks that perform the same or different serializations.
+
+```swift
+let request = AF.request(...)
+// Later...
+let stringResponse = await request.serializingString().response
+// Elsewhere...
+let decodableResponse = await request.serializingDecodable(TestResponse.self).response
+```
+
+Finally, like all Swift Concurrency APIs, these `await`able properties can be used to `await` multiple requests issued in parallel. For example:
 
 ```swift
 async let first = AF.request(...).serializingDecodable(TestResponse.self).response
