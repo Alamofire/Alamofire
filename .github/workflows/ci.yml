@@ -58,6 +58,31 @@ jobs:
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Catalyst
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
+  Latest:
+    name: Test Latest (iOS, tvOS, watchOS)
+    runs-on: macOS-11
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_13.2.1/Contents/Developer"
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "OS=15.2,name=iPhone 13 Pro"
+            name: "iOS 15.2"
+            scheme: "Alamofire iOS"
+          - destination: "OS=15.2,name=Apple TV"
+            name: "tvOS 15.2"
+            scheme: "Alamofire tvOS"
+          - destination: "OS=8.3,name=Apple Watch Series 7 - 45mm"
+            name: "watchOS 8.3"
+            scheme: "Alamofire watchOS"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Firewalk
+        run: brew install alamofire/alamofire/firewalk && firewalk &
+      - name: ${{ matrix.name }}
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" clean test | xcpretty
   iOS:
     name: "Test iOS"
     runs-on: firebreak
@@ -71,9 +96,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=15.2,name=iPhone 13 Pro"
-            name: "iOS 15.2"
-            testPlan: "iOS"
           - destination: "OS=14.5,name=iPhone 12 Pro"
             name: "iOS 14.5"
             testPlan: "iOS"
@@ -105,9 +127,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=15.2,name=Apple TV"
-            name: "tvOS 15.2"
-            testPlan: "tvOS"
           - destination: "OS=14.5,name=Apple TV"
             name: "tvOS 14.5"
             testPlan: "tvOS"
@@ -139,8 +158,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=8.3,name=Apple Watch Series 7 - 45mm"
-            name: "watchOS 8.3"
           - destination: "OS=7.4,name=Apple Watch Series 6 - 44mm"
             name: "watchOS 7.4"
     steps:
