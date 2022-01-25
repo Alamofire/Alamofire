@@ -62,7 +62,7 @@ jobs:
     name: Test Latest (iOS, tvOS, watchOS)
     runs-on: macOS-11
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.2.1/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.2.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
