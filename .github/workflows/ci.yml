@@ -18,7 +18,7 @@ on:
       - 'Package.swift'
 
 concurrency: 
-  group: ci
+  group: ${{ github.ref_name }}
   cancel-in-progress: true
 jobs:
   macOS:
@@ -58,6 +58,31 @@ jobs:
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Catalyst
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
+  Latest:
+    name: Test Latest (iOS, tvOS, watchOS)
+    runs-on: macOS-11
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_13.2.1.app/Contents/Developer"
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "OS=15.2,name=iPhone 13 Pro"
+            name: "iOS 15.2"
+            scheme: "Alamofire iOS"
+          - destination: "OS=15.2,name=Apple TV"
+            name: "tvOS 15.2"
+            scheme: "Alamofire tvOS"
+          - destination: "OS=8.3,name=Apple Watch Series 7 - 45mm"
+            name: "watchOS 8.3"
+            scheme: "Alamofire watchOS"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Firewalk
+        run: brew install alamofire/alamofire/firewalk && firewalk &
+      - name: ${{ matrix.name }}
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" clean test | xcpretty
   iOS:
     name: "Test iOS"
     runs-on: firebreak
@@ -71,22 +96,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=15.2,name=iPhone 13 Pro"
-            name: "iOS 15.2"
           - destination: "OS=14.5,name=iPhone 12 Pro"
             name: "iOS 14.5"
+            testPlan: "iOS"
           - destination: "OS=13.7,name=iPhone 11 Pro"
             name: "iOS 13.7"
-          # - destination: "OS=12.4,name=iPhone Xs"
-          #   name: "iOS 12.4"
-          # - destination: "OS=11.4,name=iPhone 7"
-          #   name: "iOS 11.4"
+            testPlan: "iOS"
+          - destination: "OS=12.4,name=iPhone Xs"
+            name: "iOS 12.4"
+            testPlan: "iOS-Old"
+          - destination: "OS=11.4,name=iPhone 7"
+            name: "iOS 11.4"
+            testPlan: "iOS-Old"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   tvOS:
     name: Test tvOS
     runs-on: firebreak
@@ -100,18 +127,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=15.2,name=Apple TV"
-            name: "tvOS 15.2"
           - destination: "OS=14.5,name=Apple TV"
             name: "tvOS 14.5"
+            testPlan: "tvOS"
           - destination: "OS=13.4,name=Apple TV"
             name: "tvOS 13.4"
+            testPlan: "tvOS"
+          - destination: "OS=12.4,name=Apple TV"
+            name: "tvOS 12.4"
+            testPlan: "tvOS-Old"
+          - destination: "OS=11.4,name=Apple TV"
+            name: "tvOS 11.4"
+            testPlan: "tvOS-Old"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   watchOS:
     name: Test watchOS
     runs-on: firebreak
@@ -125,8 +158,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=8.3,name=Apple Watch Series 7 - 45mm"
-            name: "watchOS 8.3"
           - destination: "OS=7.4,name=Apple Watch Series 6 - 44mm"
             name: "watchOS 7.4"
     steps:
@@ -135,6 +166,38 @@ jobs:
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name}}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
+  Thread_Sanitizer:
+    name: Test Thread Sanitizer
+    runs-on: macOS-11
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_13.2.1.app/Contents/Developer"
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - scheme: "Alamofire macOS"
+            destination: "platform=macOS"
+            testPlan: "macOS-TS"
+            name: "macOS Thread Sanitizer"
+          - scheme: "Alamofire iOS"
+            destination: "OS=15.2,name=iPhone 13 Pro"
+            testPlan: "iOS-TS"
+            name: "iOS Thread Sanitizer"
+          - scheme: "Alamofire tvOS"
+            destination: "OS=15.2,name=Apple TV"
+            testPlan: "tvOS-TS"
+            name: "tvOS Thread Sanitizer"
+          - scheme: "Alamofire watchOS"
+            destination: "OS=8.3,name=Apple Watch Series 7 - 45mm"
+            testPlan: "watchOS-TS"
+            name: "watchOS Thread Sanitizer"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Firewalk
+        run: brew install alamofire/alamofire/firewalk && firewalk &
+      - name: ${{ matrix.name }}
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   SPM:
     name: Test with SPM
     runs-on: macOS-11

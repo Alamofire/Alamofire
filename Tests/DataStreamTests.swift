@@ -71,7 +71,9 @@ final class DataStreamTests: BaseTestCase {
         var completeOnMain = false
         var streamCalled = 0
         let didReceive = expectation(description: "stream should receive once")
-        didReceive.expectedFulfillmentCount = expectedSize
+        if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) {
+            didReceive.expectedFulfillmentCount = expectedSize
+        }
         let didComplete = expectation(description: "stream should complete")
 
         // When
@@ -96,13 +98,22 @@ final class DataStreamTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(streamCalled, expectedSize)
+        // Older OSes don't return individual bytes.
+        if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) {
+            XCTAssertEqual(streamCalled, expectedSize)
+        } else {
+            XCTAssertEqual(streamCalled, 1)
+        }
         XCTAssertEqual(accumulatedData.count, expectedSize)
         XCTAssertTrue(streamOnMain)
         XCTAssertTrue(completeOnMain)
     }
 
-    func testThatDataCanBeStreamedAsMultipleJSONPayloads() {
+    func testThatDataCanBeStreamedAsMultipleJSONPayloads() throws {
+        guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
+            throw XCTSkip("Older OSes do not separate chunked payloads in callbacks.")
+        }
+        
         // Given
         let expectedSize = 10
         var responses: [TestResponse] = []
