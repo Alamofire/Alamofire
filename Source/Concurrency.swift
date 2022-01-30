@@ -29,7 +29,7 @@ import Foundation
 // MARK: - Request Event Streams
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-extension Request {
+extension Request: @unchecked Sendable {
     /// Creates a `StreamOf<Progress>` for the instance's upload progress.
     ///
     /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
@@ -112,7 +112,7 @@ extension Request {
 
 /// Value used to `await` a `DataResponse` and associated values.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DataTask<Value> {
+public struct DataTask<Value>: @unchecked Sendable {
     /// `DataResponse` produced by the `DataRequest` and its response handler.
     public var response: DataResponse<Value, AFError> {
         get async {
@@ -305,7 +305,7 @@ extension DataRequest {
 
 /// Value used to `await` a `DownloadResponse` and associated values.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DownloadTask<Value> {
+public struct DownloadTask<Value>: @unchecked Sendable {
     /// `DownloadResponse` produced by the `DownloadRequest` and its response handler.
     public var response: DownloadResponse<Value, AFError> {
         get async {
@@ -507,7 +507,7 @@ extension DownloadRequest {
 // MARK: - DataStreamTask
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DataStreamTask {
+public struct DataStreamTask: @unchecked Sendable {
     // Type of created streams.
     public typealias Stream<Success, Failure: Error> = StreamOf<DataStreamRequest.Stream<Success, Failure>>
 
