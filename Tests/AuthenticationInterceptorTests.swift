@@ -370,7 +370,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
         eventMonitor.requestDidCreateTask = { _, _ in interceptor.credential = nil }
 
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session(eventMonitors: [eventMonitor]))
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
