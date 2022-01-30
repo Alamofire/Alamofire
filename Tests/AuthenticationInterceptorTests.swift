@@ -367,10 +367,11 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let eventMonitor = ClosureEventMonitor()
+        let queue = DispatchQueue(label: "org.alamofire.testQueue")
+        let eventMonitor = ClosureEventMonitor(queue: queue)
         eventMonitor.requestDidCreateTask = { _, _ in interceptor.credential = nil }
 
-        let session = stored(Session(eventMonitors: [eventMonitor]))
+        let session = stored(Session(rootQueue: queue, eventMonitors: [eventMonitor]))
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
