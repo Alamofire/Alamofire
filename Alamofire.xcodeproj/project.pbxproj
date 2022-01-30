@@ -188,7 +188,7 @@
 		3129308F263E184500473CEA /* MultipartFormDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */; };
 		31293090263E184500473CEA /* TLSEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */; };
 		31293091263E184500473CEA /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
-		31293092263E184900473CEA /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+Alamofire.swift */; };
+		31293092263E184900473CEA /* Result+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+AlamofireTests.swift */; };
 		312930AA263E187200473CEA /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1241B5207DB00873DFF /* unicorn.png */; };
 		312930AB263E187200473CEA /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
 		312930AC263E187500473CEA /* empty_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EA1D7D2FA20056F249 /* empty_data.json */; };
@@ -201,6 +201,10 @@
 		31425AC2241F098000EE3CCC /* InternalRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31425AC0241F098000EE3CCC /* InternalRequestTests.swift */; };
 		31425AC3241F098000EE3CCC /* InternalRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31425AC0241F098000EE3CCC /* InternalRequestTests.swift */; };
 		3145E0EA2797DA4200949557 /* ConcurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B3DE4E25C120D800760641 /* ConcurrencyTests.swift */; };
+		314998EA27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314998E927A6560600ABB856 /* Request+AlamofireTests.swift */; };
+		314998EB27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314998E927A6560600ABB856 /* Request+AlamofireTests.swift */; };
+		314998EC27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314998E927A6560600ABB856 /* Request+AlamofireTests.swift */; };
+		314998ED27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314998E927A6560600ABB856 /* Request+AlamofireTests.swift */; };
 		31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
 		31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
 		31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
@@ -356,9 +360,9 @@
 		4C67D1372454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */; };
 		4C67D1382454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */; };
 		4C67D1392454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */; };
-		4C7DD7EB224C627300249836 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+Alamofire.swift */; };
-		4C7DD7EC224C627300249836 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+Alamofire.swift */; };
-		4C7DD7ED224C627300249836 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+Alamofire.swift */; };
+		4C7DD7EB224C627300249836 /* Result+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+AlamofireTests.swift */; };
+		4C7DD7EC224C627300249836 /* Result+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+AlamofireTests.swift */; };
+		4C7DD7ED224C627300249836 /* Result+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+AlamofireTests.swift */; };
 		4C811F8D1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */; };
 		4C811F8E1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */; };
 		4CB0080D2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */; };
@@ -502,6 +506,7 @@
 		3145E0E72797D94200949557 /* watchOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "watchOS-TS.xctestplan"; sourceTree = "<group>"; };
 		3145E0E82797D9E700949557 /* macOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = macOS.xctestplan; sourceTree = "<group>"; };
 		3145E0E92797D9E900949557 /* macOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "macOS-TS.xctestplan"; sourceTree = "<group>"; };
+		314998E927A6560600ABB856 /* Request+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Request+AlamofireTests.swift"; sourceTree = "<group>"; };
 		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
 		31577E0A2676E72D001C7532 /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringEncoding+Alamofire.swift"; sourceTree = "<group>"; };
@@ -558,7 +563,7 @@
 		4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Alamofire.swift"; sourceTree = "<group>"; };
 		4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedResponseHandler.swift; sourceTree = "<group>"; };
 		4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationInterceptor.swift; sourceTree = "<group>"; };
-		4C7DD7EA224C627300249836 /* Result+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Alamofire.swift"; sourceTree = "<group>"; };
+		4C7DD7EA224C627300249836 /* Result+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustEvaluation.swift; sourceTree = "<group>"; };
 		4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionDelegateTests.swift; sourceTree = "<group>"; };
 		4C9E88371F5FB3B0000BEC61 /* Alamofire 2.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 2.0 Migration Guide.md"; path = "Documentation/Alamofire 2.0 Migration Guide.md"; sourceTree = "<group>"; };
@@ -850,18 +855,12 @@
 			isa = PBXGroup;
 			children = (
 				31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */,
-				4CFB028F1D7CF28F0056F249 /* FileManager+AlamofireTests.swift */,
 				31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */,
+				4CFB028F1D7CF28F0056F249 /* FileManager+AlamofireTests.swift */,
+				314998E927A6560600ABB856 /* Request+AlamofireTests.swift */,
+				4C7DD7EA224C627300249836 /* Result+AlamofireTests.swift */,
 			);
 			name = Extensions;
-			sourceTree = "<group>";
-		};
-		4C7DD7E9224C625500249836 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				4C7DD7EA224C627300249836 /* Result+Alamofire.swift */,
-			);
-			name = Helpers;
 			sourceTree = "<group>";
 		};
 		4C9E88361F5FB39F000BEC61 /* Migration Guides */ = {
@@ -1024,17 +1023,16 @@
 		F8111E3F19A95C8B0040E7D1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				31EF4BF4279646000048A19D /* Test Plans */,
 				4C256A501B096C2C0065714F /* BaseTestCase.swift */,
-				31727421218BB9A50039FFCC /* TestHelpers.swift */,
 				31762DC9247738FA0025C704 /* LeaksTests.swift */,
 				31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */,
+				31727421218BB9A50039FFCC /* TestHelpers.swift */,
 				4C256A4E1B09656A0065714F /* Core */,
 				4C7C8D201B9D0D7300948136 /* Extensions */,
 				4C256A4F1B09656E0065714F /* Features */,
-				4C7DD7E9224C625500249836 /* Helpers */,
 				4C3238E91B3617A600FE04AE /* Resources */,
 				F8111E4019A95C8B0040E7D1 /* Supporting Files */,
+				31EF4BF4279646000048A19D /* Test Plans */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1496,6 +1494,7 @@
 				31293071263E183800473CEA /* LeaksTests.swift in Sources */,
 				31293090263E184500473CEA /* TLSEvaluationTests.swift in Sources */,
 				31293075263E183C00473CEA /* SessionDelegateTests.swift in Sources */,
+				314998ED27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */,
 				3129308B263E184500473CEA /* CacheTests.swift in Sources */,
 				3129307A263E183C00473CEA /* UploadTests.swift in Sources */,
 				31293091263E184500473CEA /* URLProtocolTests.swift in Sources */,
@@ -1518,7 +1517,7 @@
 				31293082263E184500473CEA /* ProtectedTests.swift in Sources */,
 				31293070263E183500473CEA /* BaseTestCase.swift in Sources */,
 				31293072263E183800473CEA /* TestHelpers.swift in Sources */,
-				31293092263E184900473CEA /* Result+Alamofire.swift in Sources */,
+				31293092263E184900473CEA /* Result+AlamofireTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1582,7 +1581,8 @@
 				3107EA3A20A11F9700445260 /* ResponseTests.swift in Sources */,
 				4CFB02921D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
 				4CF627141BA7CC240011A099 /* BaseTestCase.swift in Sources */,
-				4C7DD7ED224C627300249836 /* Result+Alamofire.swift in Sources */,
+				4C7DD7ED224C627300249836 /* Result+AlamofireTests.swift in Sources */,
+				314998EC27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */,
 				3106FB6323F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
 				4CB0080F2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */,
 				31727424218BB9A50039FFCC /* TestHelpers.swift in Sources */,
@@ -1755,7 +1755,8 @@
 				3107EA3820A11F9600445260 /* ResponseTests.swift in Sources */,
 				F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */,
 				4C256A531B096C770065714F /* BaseTestCase.swift in Sources */,
-				4C7DD7EB224C627300249836 /* Result+Alamofire.swift in Sources */,
+				4C7DD7EB224C627300249836 /* Result+AlamofireTests.swift in Sources */,
+				314998EA27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */,
 				3106FB6123F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
 				4CB0080D2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */,
 				31727422218BB9A50039FFCC /* TestHelpers.swift in Sources */,
@@ -1799,7 +1800,8 @@
 				3107EA3920A11F9600445260 /* ResponseTests.swift in Sources */,
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,
 				F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */,
-				4C7DD7EC224C627300249836 /* Result+Alamofire.swift in Sources */,
+				4C7DD7EC224C627300249836 /* Result+AlamofireTests.swift in Sources */,
+				314998EB27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */,
 				3106FB6223F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
 				4CB0080E2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */,
 				31727423218BB9A50039FFCC /* TestHelpers.swift in Sources */,
