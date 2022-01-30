@@ -367,20 +367,21 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let queue = DispatchQueue(label: "org.alamofire.testQueue")
-        let eventMonitor = ClosureEventMonitor(queue: queue)
-        eventMonitor.requestDidCreateTask = { _, _ in interceptor.credential = nil }
-
-        let session = stored(Session(rootQueue: queue, eventMonitors: [eventMonitor]))
+        let session = stored(Session())
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
 
         // When
-        let request = session.request(.status(401), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
-        }
+        let request = session.request(.status(401), interceptor: interceptor)
+            .validate { request, response, data in
+                interceptor.credential = nil
+                return .failure(AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: response.statusCode)))
+            }
+            .response {
+                response = $0
+                expect.fulfill()
+            }
 
         waitForExpectations(timeout: timeout)
 
@@ -402,6 +403,12 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
 
         XCTAssertEqual(request.retryCount, 0)
+    }
+    
+    func testMany() {
+        for _ in 0..<1000 {
+            testThatInterceptorThrowsMissingCredentialErrorWhenCredentialIsNilAndRequestShouldBeRetried()
+        }
     }
 
     func testThatInterceptorRetriesRequestThatFailedWithOutdatedCredential() {
