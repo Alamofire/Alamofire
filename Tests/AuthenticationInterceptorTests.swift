@@ -74,7 +74,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
             applyCount += 1
 
-            urlRequest.headers.add(.authorization(bearerToken: credential.accessToken))
+            urlRequest.headers.add(.authorization(credential.accessToken))
         }
 
         func refresh(_ credential: TestCredential,
@@ -117,9 +117,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
             isRequestAuthenticatedWithCredentialCount += 1
 
-            let bearerToken = HTTPHeader.authorization(bearerToken: credential.accessToken).value
-
-            return urlRequest.headers["Authorization"] == bearerToken
+            return urlRequest.headers["Authorization"] == credential.accessToken
         }
     }
 
@@ -164,7 +162,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a0")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
         XCTAssertEqual(response?.result.isSuccess, true)
 
         XCTAssertEqual(authenticator.applyCount, 1)
@@ -203,8 +201,8 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response1?.request?.headers["Authorization"], "Bearer a1")
-        XCTAssertEqual(response2?.request?.headers["Authorization"], "Bearer a1")
+        XCTAssertEqual(response1?.request?.headers["Authorization"], "a1")
+        XCTAssertEqual(response2?.request?.headers["Authorization"], "a1")
         XCTAssertEqual(response1?.result.isSuccess, true)
         XCTAssertEqual(response2?.result.isSuccess, true)
 
@@ -313,7 +311,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a0")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
 
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.isSessionTaskError, true)
@@ -347,7 +345,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a0")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
 
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.isResponseValidationError, true)
@@ -367,24 +365,25 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let eventMonitor = ClosureEventMonitor()
-        eventMonitor.requestDidCreateTask = { _, _ in interceptor.credential = nil }
-
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session())
 
         let expect = expectation(description: "request should complete")
         var response: AFDataResponse<Data?>?
 
         // When
-        let request = session.request(.status(401), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
-        }
+        let request = session.request(.status(401), interceptor: interceptor)
+            .validate {
+                interceptor.credential = nil
+            }
+            .response {
+                response = $0
+                expect.fulfill()
+            }
 
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a0")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
 
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
@@ -409,17 +408,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let eventMonitor = ClosureEventMonitor()
-
-        eventMonitor.requestDidCreateTask = { _, _ in
-            interceptor.credential = TestCredential(accessToken: "a1",
-                                                    refreshToken: "r1",
-                                                    userID: "u0",
-                                                    expiration: Date(),
-                                                    requiresRefresh: false)
-        }
-
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session())
 
         let pathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
@@ -428,15 +417,23 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         var response: AFDataResponse<Data?>?
 
         // When
-        let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            response = $0
-            expect.fulfill()
-        }
+        let request = session.request(.default, interceptor: compositeInterceptor)
+            .validate {
+                interceptor.credential = TestCredential(accessToken: "a1",
+                                                        refreshToken: "r1",
+                                                        userID: "u0",
+                                                        expiration: Date(),
+                                                        requiresRefresh: false)
+            }
+            .response {
+                response = $0
+                expect.fulfill()
+            }
 
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a1")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
         XCTAssertEqual(response?.result.isSuccess, true)
 
         XCTAssertEqual(authenticator.applyCount, 2)
@@ -481,7 +478,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a1")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
         XCTAssertEqual(response?.result.isSuccess, true)
 
         XCTAssertEqual(authenticator.applyCount, 1)
@@ -516,7 +513,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a1")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
         XCTAssertEqual(response?.result.isSuccess, true)
 
         XCTAssertEqual(authenticator.applyCount, 2)
@@ -547,7 +544,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a0")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
 
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
@@ -573,7 +570,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let requestCount = 6
-        let session = Session()
+        let session = stored(Session())
 
         let expect = expectation(description: "both requests should complete")
         expect.expectedFulfillmentCount = requestCount
@@ -599,7 +596,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         // Then
         for index in 0..<requestCount {
             let response = responses[index]
-            XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a1")
+            XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
             XCTAssertEqual(response?.result.isSuccess, true)
 
             let request = requests[index]
@@ -643,7 +640,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a5")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a5")
         XCTAssertEqual(response?.result.isSuccess, true)
 
         XCTAssertEqual(authenticator.applyCount, 6)
@@ -676,7 +673,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "Bearer a2")
+        XCTAssertEqual(response?.request?.headers["Authorization"], "a2")
 
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)

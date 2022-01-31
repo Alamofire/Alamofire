@@ -1,5 +1,5 @@
 //
-//  Result+Alamofire.swift
+//  Result+AlamofireTests.swift
 //
 //  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //

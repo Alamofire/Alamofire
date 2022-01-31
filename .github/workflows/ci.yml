@@ -105,9 +105,6 @@ jobs:
           - destination: "OS=12.4,name=iPhone Xs"
             name: "iOS 12.4"
             testPlan: "iOS-Old"
-          - destination: "OS=11.4,name=iPhone 7"
-            name: "iOS 11.4"
-            testPlan: "iOS-Old"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
@@ -135,9 +132,6 @@ jobs:
             testPlan: "tvOS"
           - destination: "OS=12.4,name=Apple TV"
             name: "tvOS 12.4"
-            testPlan: "tvOS-Old"
-          - destination: "OS=11.4,name=Apple TV"
-            name: "tvOS 11.4"
             testPlan: "tvOS-Old"
     steps:
       - uses: actions/checkout@v2
