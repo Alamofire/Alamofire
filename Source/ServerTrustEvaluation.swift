@@ -606,8 +606,12 @@ extension AlamofireExtension where ExtendedType == SecTrust {
 
     /// The `SecCertificate`s contained i `self`.
     public var certificates: [SecCertificate] {
-        (0..<SecTrustGetCertificateCount(type)).compactMap { index in
-            SecTrustGetCertificateAtIndex(type, index)
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+            return (SecTrustCopyCertificateChain(type) as? [SecCertificate]) ?? []
+        } else {
+            return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
+                SecTrustGetCertificateAtIndex(type, index)
+            }
         }
     }
 
@@ -699,7 +703,11 @@ extension AlamofireExtension where ExtendedType == SecCertificate {
 
         guard let createdTrust = trust, trustCreationStatus == errSecSuccess else { return nil }
 
-        return SecTrustCopyPublicKey(createdTrust)
+        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) {
+            return SecTrustCopyKey(createdTrust)
+        } else {
+            return SecTrustCopyPublicKey(createdTrust)
+        }
     }
 }
 
