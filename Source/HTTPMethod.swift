@@ -43,6 +43,8 @@ public struct HTTPMethod: RawRepresentable, Equatable, Hashable {
     public static let post = HTTPMethod(rawValue: "POST")
     /// `PUT` method.
     public static let put = HTTPMethod(rawValue: "PUT")
+    /// `QUERY` method.
+    public static let query = HTTPMethod(rawValue: "QUERY")
     /// `TRACE` method.
     public static let trace = HTTPMethod(rawValue: "TRACE")
 
