@@ -32,7 +32,7 @@ extension Bundle {
         #else
         bundle = Bundle(for: BaseTestCase.self)
         #endif
-        
+
         return bundle
     }
 }

@@ -604,12 +604,25 @@ extension AlamofireExtension where ExtendedType == SecTrust {
         certificates.af.publicKeys
     }
 
-    /// The `SecCertificate`s contained i `self`.
+    #if swift(>=5.5) // Xcode 13 / 2021 SDKs.
+    /// The `SecCertificate`s contained in `self`.
+    public var certificates: [SecCertificate] {
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+            return (SecTrustCopyCertificateChain(type) as? [SecCertificate]) ?? []
+        } else {
+            return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
+                SecTrustGetCertificateAtIndex(type, index)
+            }
+        }
+    }
+    #else
+    /// The `SecCertificate`s contained in `self`.
     public var certificates: [SecCertificate] {
         (0..<SecTrustGetCertificateCount(type)).compactMap { index in
             SecTrustGetCertificateAtIndex(type, index)
         }
     }
+    #endif
 
     /// The `Data` values for all certificates contained in `self`.
     public var certificateData: [Data] {
@@ -692,6 +705,9 @@ extension AlamofireExtension where ExtendedType == [SecCertificate] {
 extension SecCertificate: AlamofireExtended {}
 extension AlamofireExtension where ExtendedType == SecCertificate {
     /// The public key for `self`, if it can be extracted.
+    ///
+    /// - Note: On 2020 OSes and newer, only RSA and ECDSA keys are supported.
+    ///
     public var publicKey: SecKey? {
         let policy = SecPolicyCreateBasicX509()
         var trust: SecTrust?
@@ -699,7 +715,11 @@ extension AlamofireExtension where ExtendedType == SecCertificate {
 
         guard let createdTrust = trust, trustCreationStatus == errSecSuccess else { return nil }
 
-        return SecTrustCopyPublicKey(createdTrust)
+        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) {
+            return SecTrustCopyKey(createdTrust)
+        } else {
+            return SecTrustCopyPublicKey(createdTrust)
+        }
     }
 }
 
