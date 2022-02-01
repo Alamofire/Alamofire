@@ -113,7 +113,7 @@ final class DataStreamTests: BaseTestCase {
         guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
             throw XCTSkip("Older OSes do not separate chunked payloads in callbacks.")
         }
-        
+
         // Given
         let expectedSize = 10
         var responses: [TestResponse] = []

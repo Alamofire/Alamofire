@@ -32,7 +32,7 @@ extension DataRequest {
     func validate(performing closure: @escaping () -> Void) -> Self {
         validate { _, _, _ in
             closure()
-            
+
             return .success(())
         }
         .validate()
