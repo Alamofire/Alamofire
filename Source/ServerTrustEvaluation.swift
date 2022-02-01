@@ -604,6 +604,7 @@ extension AlamofireExtension where ExtendedType == SecTrust {
         certificates.af.publicKeys
     }
 
+    #if swift(>=5.5) // Xcode 13 / 2021 SDKs.
     /// The `SecCertificate`s contained in `self`.
     public var certificates: [SecCertificate] {
         if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
@@ -614,6 +615,14 @@ extension AlamofireExtension where ExtendedType == SecTrust {
             }
         }
     }
+    #else
+    /// The `SecCertificate`s contained in `self`.
+    public var certificates: [SecCertificate] {
+        (0..<SecTrustGetCertificateCount(type)).compactMap { index in
+            SecTrustGetCertificateAtIndex(type, index)
+        }
+    }
+    #endif
 
     /// The `Data` values for all certificates contained in `self`.
     public var certificateData: [Data] {
