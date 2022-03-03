@@ -194,6 +194,18 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   SPM:
     name: Test with SPM
+    runs-on: macOS-11
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_13.2.1.app/Contents/Developer"
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Firewalk
+        run: brew install alamofire/alamofire/firewalk && firewalk &
+      - name: Test SPM
+        run: swift test -c debug
+  SPM_Older:
+    name: Test with SPM
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
@@ -202,21 +214,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_13.2.1.app"
-            runsOn: macOS-11
-            name: "macOS 11, SPM 5.5"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
-            name: "macOS 11, SPM 5.4"
+            name: "macOS 11, SPM 5.4 Build"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
-            name: "macOS 10.15, SPM 5.3"
+            name: "macOS 10.15, SPM 5.3 Build"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Test SPM
-        run: swift test -c debug
+        run: swift build -c debug
   Linux:
     name: Linux
     runs-on: ubuntu-20.04
