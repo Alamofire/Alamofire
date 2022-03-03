@@ -1235,11 +1235,11 @@ This code synchronously produces a `DataTask<TestResponse>` value which can be u
 ```swift
 let dataTask = AF.request(...).serializingDecodable(TestResponse.self)
 // Later...
-let response = await task.response // Returns full DataResponse<TestResponse, AFError>
+let response = await dataTask.response // Returns full DataResponse<TestResponse, AFError>
 // Elsewhere...
-let result = await task.result // Returns Result<TestResponse, AFError>
+let result = await dataTask.result // Returns Result<TestResponse, AFError>
 // And...
-let value = try await task.value // Returns the TestResponse or throws the AFError as an Error
+let value = try await dataTask.value // Returns the TestResponse or throws the AFError as an Error
 ```
 
 Similarly, and like Alamofire's existing closure and publisher-based response handlers, each request can produce multiple tasks that perform the same or different serializations.
