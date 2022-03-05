@@ -43,6 +43,6 @@ let package = Package(name: "Alamofire",
                                 .testTarget(name: "AlamofireTests",
                                             dependencies: ["Alamofire"],
                                             path: "Tests",
-                                            exclude: ["Info.plist"],
+                                            exclude: ["Info.plist", "Test Plans"],
                                             resources: [.process("Resources")])],
                       swiftLanguageVersions: [.v5])
