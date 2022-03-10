@@ -136,10 +136,10 @@ It's important to remember that the different HTTP methods may have different se
 Alamofire also offers an extension on `URLRequest` to bridge the `httpMethod` property that returns a `String` to an `HTTPMethod` value:
 
 ```swift
-public extension URLRequest {
+extension URLRequest {
     /// Returns the `httpMethod` as Alamofire's `HTTPMethod` type.
-    var method: HTTPMethod? {
-        get { return httpMethod.flatMap(HTTPMethod.init) }
+    public var method: HTTPMethod? {
+        get { httpMethod.flatMap(HTTPMethod.init) }
         set { httpMethod = newValue?.rawValue }
     }
 }
