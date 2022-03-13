@@ -90,7 +90,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.2.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.3.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -118,7 +118,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.3.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -146,7 +146,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.3.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -194,14 +194,17 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   SPM:
     name: Test with SPM
-    runs-on: macOS-11
+    runs-on: firebreak
+    defaults:
+      run:
+        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.2.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.3.app/Contents/Developer"
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: Test SPM
         run: swift test -c debug
   SPM_Older:
@@ -214,6 +217,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_13.2.1.app"
+            runsOn: macOS-11
+            name: "macOS 11, SPM 5.5 Build"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.4 Build"
