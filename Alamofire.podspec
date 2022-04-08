@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Source/*.swift'
 
   s.subspec 'Concurrency' do |sp|
-    sp.source_files = ['Source/*.swift', 'Source/AlamofireConcurrency/Concurrency.swift']
+    sp.source_files = 'Source/AlamofireConcurrency/Concurrency.swift'
   end
 
   s.frameworks = 'CFNetwork'
