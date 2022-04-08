@@ -99,7 +99,13 @@ Due to these issues, Alamofire is unsupported on Linux and Windows. Please repor
 [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'Alamofire', '~> 5.5'
+pod 'Alamofire'
+```
+
+Alamofire's Swift Concurrency support can be added through the `Concurrency` subspec.
+
+```ruby
+pod 'Alamofire/Concurrency'
 ```
 
 ### Carthage
@@ -107,7 +113,7 @@ pod 'Alamofire', '~> 5.5'
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" ~> 5.5
+github "Alamofire/Alamofire"
 ```
 
 ### Swift Package Manager
@@ -120,6 +126,18 @@ Once you have your Swift package set up, adding Alamofire as a dependency is as 
 dependencies: [
     .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.5.0"))
 ]
+```
+
+Alamofire's Swift Concurrency support can be added through the `AlamofireConcurrency` module, which can be added to your target as a product.
+
+```swift
+.product(name: "AlamofireConcurrency", package: "Alamofire")
+```
+
+It then needs to be imported wherever Alamofire's Concurrency APIs need to be used.
+
+```swift
+import AlamofireConcurrency
 ```
 
 ### Manually
