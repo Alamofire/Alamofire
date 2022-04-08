@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'Concurrency' do |sp|
-    sp.dependency = 'Core'
+    sp.dependency 'Core'
     sp.source_files = 'Source/AlamofireConcurrency/Concurrency.swift'
   end
 
