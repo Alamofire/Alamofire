@@ -24,6 +24,9 @@
 
 #if compiler(>=5.5.2) && canImport(_Concurrency)
 
+#if SWIFT_PACKAGE
+import Alamofire
+#endif
 import Foundation
 
 // MARK: - Request Event Streams
@@ -101,7 +104,7 @@ extension Request {
         StreamOf<T>(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             yielder(continuation)
             // Must come after serializers run in order to catch retry progress.
-            onFinish {
+            _onFinish {
                 continuation.finish()
             }
         }

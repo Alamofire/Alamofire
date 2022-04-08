@@ -924,8 +924,10 @@ public class Request {
 
     /// Adds a `finishHandler` closure to be called when the request completes.
     ///
+    /// - Note: This is only public because SPM requires it for the AlamofireConcurrency module. It should not be used.
+    ///
     /// - Parameter closure: Closure to be called when the request finishes.
-    func onFinish(perform finishHandler: @escaping () -> Void) {
+    public func _onFinish(perform finishHandler: @escaping () -> Void) {
         guard !isFinished else { finishHandler(); return }
 
         $mutableState.write { state in
