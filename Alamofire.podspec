@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.exclude_files = 'Source/AlamofireConcurrency/Concurrency.swift'
 
   s.subspec 'Concurrency' do |sp|
-    sp.source_files = 'Source/AlamofireConcurrency/Concurrency.swift'
+    sp.source_files = 'Source/*.swift'
   end
 
   s.frameworks = 'CFNetwork'
