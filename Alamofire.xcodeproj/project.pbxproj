@@ -1047,37 +1047,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		4CF626EC1BA7CB3E0011A099 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4DD67C081A5C55C900ED2280 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E4202FDA1B667AA100C997FB /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F8111E3019A95C8B0040E7D1 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		31293064263E17D600473CEA /* Alamofire watchOS Tests */ = {
 			isa = PBXNativeTarget;
@@ -1103,7 +1072,6 @@
 			buildPhases = (
 				4CF626EA1BA7CB3E0011A099 /* Sources */,
 				4CF626EB1BA7CB3E0011A099 /* Frameworks */,
-				4CF626EC1BA7CB3E0011A099 /* Headers */,
 				4CF626ED1BA7CB3E0011A099 /* Resources */,
 			);
 			buildRules = (
@@ -1139,7 +1107,6 @@
 			buildPhases = (
 				4DD67C061A5C55C900ED2280 /* Sources */,
 				4DD67C071A5C55C900ED2280 /* Frameworks */,
-				4DD67C081A5C55C900ED2280 /* Headers */,
 				4DD67C091A5C55C900ED2280 /* Resources */,
 			);
 			buildRules = (
@@ -1157,7 +1124,6 @@
 			buildPhases = (
 				E4202FCE1B667AA100C997FB /* Sources */,
 				E4202FD91B667AA100C997FB /* Frameworks */,
-				E4202FDA1B667AA100C997FB /* Headers */,
 				E4202FDC1B667AA100C997FB /* Resources */,
 			);
 			buildRules = (
@@ -1175,7 +1141,6 @@
 			buildPhases = (
 				F8111E2E19A95C8B0040E7D1 /* Sources */,
 				F8111E2F19A95C8B0040E7D1 /* Frameworks */,
-				F8111E3019A95C8B0040E7D1 /* Headers */,
 				F8111E3119A95C8B0040E7D1 /* Resources */,
 			);
 			buildRules = (
