@@ -15,9 +15,14 @@ Pod::Spec.new do |s|
 
   s.swift_versions = ['5.3', '5.4', '5.5', '5.6']
 
-  s.source_files = 'Source/*.swift'
+  s.default_subspec = 'Core'
+  
+  s.subspec 'Core' do |sp|
+    sp.source_files = 'Source/*.swift'
+  end
 
   s.subspec 'Concurrency' do |sp|
+    sp.dependency = 'Core'
     sp.source_files = 'Source/AlamofireConcurrency/Concurrency.swift'
   end
 
