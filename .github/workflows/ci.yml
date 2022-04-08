@@ -158,9 +158,9 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   watchOS:
     name: Test watchOS
-    runs-on: macOS-11
+    runs-on: macOS-10.15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
