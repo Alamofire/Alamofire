@@ -529,7 +529,7 @@
 		319ECEA425EC96E8001C38CA /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		319ECEA525EC9710001C38CA /* FEATURE_REQUEST.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = FEATURE_REQUEST.md; sourceTree = "<group>"; };
 		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		31B3DE3A25C11CEA00760641 /* Concurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concurrency.swift; sourceTree = "<group>"; };
+		31B3DE3A25C11CEA00760641 /* Concurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Concurrency.swift; path = AlamofireConcurrency/Concurrency.swift; sourceTree = "<group>"; };
 		31B3DE4E25C120D800760641 /* ConcurrencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrencyTests.swift; sourceTree = "<group>"; };
 		31B51E8B2434FECB005356DB /* RequestModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModifierTests.swift; sourceTree = "<group>"; };
 		31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineTests.swift; sourceTree = "<group>"; };
