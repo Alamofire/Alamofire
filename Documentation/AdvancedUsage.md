@@ -60,7 +60,6 @@
   + [`ResponseSerializer`](#responseserializer)
     - [`DataResponseSerializer`](#dataresponseserializer)
     - [`StringResponseSerializer`](#stringresponseserializer)
-    - [`JSONResponseSerializer`](#jsonresponseserializer)
     - [`DecodableResponseSerializer`](#decodableresponseserializer)
   + [Customizing Response Handlers](#customizing-response-handlers)
     - [Response Transforms](#response-transforms)
