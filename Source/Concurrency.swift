@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if compiler(>=5.5.2) && canImport(_Concurrency)
+#if compiler(>=5.6.0) && canImport(_Concurrency)
 
 import Foundation
 
