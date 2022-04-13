@@ -171,6 +171,9 @@ let session = Session(interceptor: policy)
 ```
 
 ### Adding a `ServerTrustManager`
+
+> For projects deploying to iOS 14, tvOS 14, watchOS 7, or macOS 11 or later, [Apple now provides built in pinning capabilities](https://developer.apple.com/news/?id=g9ejcf8y) configurable in your app's Info.plist. Please use that capability before implementing your own using Alamofire.
+
 Alamofire’s `ServerTrustManager` class encapsulates mappings between domains and instances of `ServerTrustEvaluating`-conforming types, which provide the ability to customize a `Session`’s handling of TLS security. This includes the use of certificate and public key pinning as well as certificate revocation checking. For more information, see the section about the `ServerTrustManager` and `ServerTrustEvaluating`. Initializing a `ServerTrustManger` is as simple as providing a mapping between the domain and the type of evaluation to be performed:
 
 ```swift

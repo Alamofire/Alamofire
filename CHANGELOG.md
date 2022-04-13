@@ -5,6 +5,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
+- `5.6.x` Releases - [5.6.0](#560)
 - `5.5.x` Releases - [5.5.0](#550)
 - `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
 - `5.3.x` Releases - [5.3.0](#530)
@@ -48,6 +49,35 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 
 ---
 
+## [5.6.0](https://github.com/Alamofire/Alamofire/releases/tag/5.6.0)
+Released on 2022-04-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/80?closed=1).
+
+#### Added
+- Support for `HTTPMethod.query` to support the [upcoming standard](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-safe-method-w-body-02).
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3553](https://github.com/Alamofire/Alamofire/pull/3553).
+- Compile-time Swift version check to enforce minimum supported Swift version.
+  - Added by [Dave Verwer](https://github.com/daveverwer) in Pull Request [#3549](https://github.com/Alamofire/Alamofire/pull/3549).
+- GitHub Sponsors support. You can now sponsor Alamofire directly through GitHub.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3543](https://github.com/Alamofire/Alamofire/pull/3543).
+
+#### Updated
+- Swift version required to build [🔥 Experimental 🔥] Swift Concurrency support to 5.6.0 to avoid various Apple bugs with Xcode 13.2.0 and 13.2.1. Support now requires Xcode 13.3.1.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3590](https://github.com/Alamofire/Alamofire/pull/3590).
+- `DownloadRequest` to avoid producing resume data when not explicitly requested on cancellation.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3538](https://github.com/Alamofire/Alamofire/pull/3538).
+- Testing infrastructure to use XCTestPlans on Apple platforms.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3538](https://github.com/Alamofire/Alamofire/pull/3538).
+- GitHub Actions support for greater OS coverage, more SPM platforms, and Swift 5.6.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3534](https://github.com/Alamofire/Alamofire/pull/3534), [#3545](https://github.com/Alamofire/Alamofire/pull/3545), [#3570](https://github.com/Alamofire/Alamofire/pull/3570), and [#3587](https://github.com/Alamofire/Alamofire/pull/3587).
+
+#### Fixed
+- Various Security framework deprecation warnings when deploying to newer OSes.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3555](https://github.com/Alamofire/Alamofire/pull/3555).
+- Various documentation issues.
+  - Fixed by [Jon Shier](https://github.com/jshier), [Emanuele Fumagalli](https://github.com/emanuelef), [Huang-Libo](https://github.com/Huang-Libo), and [rain2540](https://github.com/rain2540) in Pull Requests [#3548](https://github.com/Alamofire/Alamofire/pull/3548), [#3562](https://github.com/Alamofire/Alamofire/pull/3562), [#3573](https://github.com/Alamofire/Alamofire/pull/3573), [#3574](https://github.com/Alamofire/Alamofire/pull/3574), and [#3585](https://github.com/Alamofire/Alamofire/pull/3562), [#3573](https://github.com/Alamofire/Alamofire/pull/3585).
+
+---
+
 ## [5.5.0](https://github.com/Alamofire/Alamofire/releases/tag/5.5.0)
 Released on 2021-12-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/79?closed=1).
 
@@ -80,6 +110,8 @@ Released on 2021-12-13. All issues associated with this milestone can be found u
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3505](https://github.com/Alamofire/Alamofire/pull/3505).
 - Various documentation typos.
   - Fixed by [Christos Koninis](https://github.com/csknns), [Tiago Lopes](https://github.com/TiagoMaiaL), and [Eugene Berdnikov](https://github.com/evnik) in various Pull Requests.
+
+---
 
 ## [5.4.4](https://github.com/Alamofire/Alamofire/releases/tag/5.4.4)
 Released on 2021-09-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/78?closed=1).
