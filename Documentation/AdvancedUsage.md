@@ -1222,7 +1222,7 @@ Like most `DownloadRequest`'s response handlers, `DownloadResponsePublisher` rea
 ## Using Alamofire with Swift Concurrency
 Swift's concurrency features, released in Swift 5.5, provide fundamental asynchronous building blocks in the language, including `async`-`await` syntax, `Task`s, and actors. Alamofire provides extensions allowing the use of common Alamofire APIs with Swift's concurrency features.
 
-> Alamofire's concurrency support requires Swift 5.5.2 or Xcode 13.2. These examples also include the use of static protocol values added in Alamofire 5.5 for Swift 5.5.
+> Alamofire's concurrency support requires Swift 5.6.0 or Xcode 13.3.1 due to bugs with older Swift 5.5 compilers and Xcode versions. These examples also include the use of static protocol values added in Alamofire 5.5 for Swift 5.5.
 
 ### `DataRequest` and `UploadRequest` Support
 
