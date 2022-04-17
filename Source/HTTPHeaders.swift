@@ -275,7 +275,10 @@ extension HTTPHeader {
     ///
     /// - Returns:               The header.
     public static func authorization(bearerToken: String) -> HTTPHeader {
-        authorization("Bearer \(bearerToken)")
+        guard !bearerToken.contains("Bearer") else {
+            return authorization("\(bearerToken)")
+        }
+        return authorization("Bearer \(bearerToken)")
     }
 
     /// Returns an `Authorization` header.
