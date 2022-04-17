@@ -23,28 +23,28 @@
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
-      "line": 510,
+      "line": 516,
       "symbol": "DataStreamTask",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
-      "line": 512,
+      "line": 518,
       "symbol": "DataStreamTask.Stream",
       "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
-      "line": 643,
+      "line": 649,
       "symbol": "StreamOf.BufferingPolicy",
       "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Concurrency.swift",
-      "line": 671,
+      "line": 677,
       "symbol": "StreamOf.Iterator",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"

@@ -49,6 +49,13 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 
 ---
 
+## [5.6.1](https://github.com/Alamofire/Alamofire/releases/tag/5.6.1)
+Released on 2022-04-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/81?closed=1).
+
+#### Fixed
+- Missing `automaticallyCancelling` parameter in `serializingDownloadedFileURL`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3555](https://github.com/Alamofire/Alamofire/pull/3555).
+
 ## [5.6.0](https://github.com/Alamofire/Alamofire/releases/tag/5.6.0)
 Released on 2022-04-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/80?closed=1).
 
@@ -74,7 +81,7 @@ Released on 2022-04-13. All issues associated with this milestone can be found u
 - Various Security framework deprecation warnings when deploying to newer OSes.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3555](https://github.com/Alamofire/Alamofire/pull/3555).
 - Various documentation issues.
-  - Fixed by [Jon Shier](https://github.com/jshier), [Emanuele Fumagalli](https://github.com/emanuelef), [Huang-Libo](https://github.com/Huang-Libo), and [rain2540](https://github.com/rain2540) in Pull Requests [#3548](https://github.com/Alamofire/Alamofire/pull/3548), [#3562](https://github.com/Alamofire/Alamofire/pull/3562), [#3573](https://github.com/Alamofire/Alamofire/pull/3573), [#3574](https://github.com/Alamofire/Alamofire/pull/3574), and [#3585](https://github.com/Alamofire/Alamofire/pull/3562), [#3573](https://github.com/Alamofire/Alamofire/pull/3585).
+  - Fixed by [Jon Shier](https://github.com/jshier), [Emanuele Fumagalli](https://github.com/emanuelef), [Huang-Libo](https://github.com/Huang-Libo), and [rain2540](https://github.com/rain2540) in Pull Requests [#3548](https://github.com/Alamofire/Alamofire/pull/3548), [#3562](https://github.com/Alamofire/Alamofire/pull/3562), [#3573](https://github.com/Alamofire/Alamofire/pull/3573), [#3574](https://github.com/Alamofire/Alamofire/pull/3574), and [#3585](https://github.com/Alamofire/Alamofire/pull/3585).
 
 ---
 
