@@ -413,9 +413,15 @@ extension DownloadRequest {
 
     /// Creates a `DownloadTask` to `await` serialization of the downloaded file's `URL` on disk.
     ///
+    /// - Parameters:
+    ///   - shouldAutomaticallyCancel: `Bool` determining whether or not the request should be cancelled when the
+    ///                                enclosing async context is cancelled. Only applies to `DownloadTask`'s async
+    ///                                properties. `false` by default.
+    ///
     /// - Returns: The `DownloadTask`.
-    public func serializingDownloadedFileURL() -> DownloadTask<URL> {
-        serializingDownload(using: URLResponseSerializer())
+    public func serializingDownloadedFileURL(automaticallyCancelling shouldAutomaticallyCancel: Bool = false) -> DownloadTask<URL> {
+        serializingDownload(using: URLResponseSerializer(),
+                            automaticallyCancelling: shouldAutomaticallyCancel)
     }
 
     /// Creates a `DownloadTask` to `await` serialization of a `String` value.
