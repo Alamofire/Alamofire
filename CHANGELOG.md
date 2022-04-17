@@ -50,7 +50,7 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 ---
 
 ## [5.6.1](https://github.com/Alamofire/Alamofire/releases/tag/5.6.1)
-Released on 2022-04-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/81?closed=1).
+Released on 2022-04-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/81?closed=1).
 
 #### Fixed
 - Missing `automaticallyCancelling` parameter in `serializingDownloadedFileURL`.
