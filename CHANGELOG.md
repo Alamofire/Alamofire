@@ -5,7 +5,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
-- `5.6.x` Releases - [5.6.0](#560)
+- `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561)
 - `5.5.x` Releases - [5.5.0](#550)
 - `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
 - `5.3.x` Releases - [5.3.0](#530)
@@ -54,7 +54,7 @@ Released on 2022-04-17. All issues associated with this milestone can be found u
 
 #### Fixed
 - Missing `automaticallyCancelling` parameter in `serializingDownloadedFileURL`.
-  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3555](https://github.com/Alamofire/Alamofire/pull/3555).
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3597](https://github.com/Alamofire/Alamofire/pull/3597).
 
 ## [5.6.0](https://github.com/Alamofire/Alamofire/releases/tag/5.6.0)
 Released on 2022-04-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/80?closed=1).
