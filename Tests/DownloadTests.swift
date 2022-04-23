@@ -768,8 +768,8 @@ final class DownloadResponseMapTestCase: BaseTestCase {
 
     func testThatMapPreservesFailureError() {
         // Given
-        let urlString = String.nonexistentDomain
-        let expectation = self.expectation(description: "request should fail with 404")
+        let urlString = String.invalidURL
+        let expectation = self.expectation(description: "request should fail with invalid URL")
 
         var response: DownloadResponse<String, AFError>?
 
@@ -857,7 +857,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
 
     func testThatTryMapPreservesFailureError() {
         // Given
-        let urlString = String.nonexistentDomain
+        let urlString = String.invalidURL
         let expectation = self.expectation(description: "request should fail with 404")
 
         var response: DownloadResponse<String, Error>?
@@ -884,7 +884,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
 final class DownloadResponseMapErrorTestCase: BaseTestCase {
     func testThatMapErrorTransformsFailureValue() {
         // Given
-        let urlString = String.nonexistentDomain
+        let urlString = String.invalidURL
         let expectation = self.expectation(description: "request should not succeed")
 
         var response: DownloadResponse<TestResponse, TestError>?
@@ -966,7 +966,7 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
 
     func testThatTryMapErrorCatchesTransformationError() {
         // Given
-        let urlString = String.nonexistentDomain
+        let urlString = String.invalidURL
         let expectation = self.expectation(description: "request should fail")
 
         var response: DownloadResponse<Data, Error>?
@@ -998,7 +998,7 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
 
     func testThatTryMapErrorTransformsError() {
         // Given
-        let urlString = String.nonexistentDomain
+        let urlString = String.invalidURL
         let expectation = self.expectation(description: "request should fail")
 
         var response: DownloadResponse<Data, Error>?
