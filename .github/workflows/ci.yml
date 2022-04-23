@@ -34,7 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_13.3.app"
+          - xcode: "Xcode_13.3.1.app"
             runsOn: firebreak
             name: "macOS 12, Swift 5.6"
             firewalk: "brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &"
@@ -79,7 +79,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -135,7 +135,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -213,7 +213,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -250,7 +250,7 @@ jobs:
     name: Linux
     runs-on: ubuntu-20.04
     container:
-      image: swift:5.6.0-focal
+      image: swift:5.6.1-focal
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -276,7 +276,7 @@ jobs:
     - uses: seanmiddleditch/gha-setup-vsdevenv@master
     - name: Install Swift
       run: |
-        Install-Binary -Url "https://download.swift.org/swift-5.6-release/windows10/swift-5.6-RELEASE/swift-5.6-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
+        Install-Binary -Url "https://download.swift.org/swift-5.6.1-release/windows10/swift-5.6.1-RELEASE/swift-5.6.1-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
     - name: Set Environment Variables
       run: |
         echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
