@@ -26,6 +26,7 @@ import Alamofire
 import Foundation
 
 extension String {
+    static let invalidURL = "invalid"
     static let nonexistentDomain = "https://nonexistent-domain.org"
 }
 
@@ -60,6 +61,7 @@ struct Endpoint {
     enum Path {
         case basicAuth(username: String, password: String)
         case bytes(count: Int)
+        case cache
         case chunked(count: Int)
         case compression(Compression)
         case delay(interval: Int)
@@ -83,6 +85,8 @@ struct Endpoint {
                 return "/basic-auth/\(username)/\(password)"
             case let .bytes(count):
                 return "/bytes/\(count)"
+            case .cache:
+                return "/cache"
             case let .chunked(count):
                 return "/chunked/\(count)"
             case let .compression(compression):
@@ -136,6 +140,8 @@ struct Endpoint {
     static func bytes(_ count: Int) -> Endpoint {
         Endpoint(path: .bytes(count: count))
     }
+
+    static let cache: Endpoint = .init(path: .cache)
 
     static func chunked(_ count: Int) -> Endpoint {
         Endpoint(path: .chunked(count: count))
