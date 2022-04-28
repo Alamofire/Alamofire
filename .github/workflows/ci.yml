@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   macOS:
-    name: Test macOS (5.6, 5.5, 5.4, 5.3)
+    name: Test macOS, All Xcodes and Swifts
     runs-on: ${{ matrix.runsOn }}
     defaults:
       run:
@@ -35,23 +35,33 @@ jobs:
       matrix:
         include:
           - xcode: "Xcode_13.3.1.app"
-            runsOn: firebreak
-            name: "macOS 12, Swift 5.6"
-            firewalk: "brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &"
-            shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
+            runsOn: macOS-12
+            name: "macOS 12, Xcode 13.3.1, Swift 5.6"
+            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
+            shell: "/bin/zsh {0}"
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
-            name: "macOS 11, Swift 5.5"
+            name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
+            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
+            shell: "/bin/zsh {0}"
+          - xcode: "Xcode_13.1.app"
+            runsOn: macOS-11
+            name: "macOS 11, Xcode 13.1, Swift 5.5.1"
+            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
+            shell: "/bin/zsh {0}"
+          - xcode: "Xcode_13.0.app"
+            runsOn: macOS-11
+            name: "macOS 11, Xcode 13.0, Swift 5.5.0"
             firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
             shell: "/bin/zsh {0}"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
-            name: "macOS 11, Swift 5.4"
+            name: "macOS 11, Xcode 12.5.1, Swift 5.4"
             firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
             shell: "/bin/zsh {0}"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
-            name: "macOS 10.15, Swift 5.3"
+            name: "macOS 10.15, Xcode 12.4, Swift 5.3"
             firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
             shell: "/bin/zsh {0}"
     steps:
