@@ -25,7 +25,6 @@
     - [Response Handler](#response-handler)
     - [Response Data Handler](#response-data-handler)
     - [Response String Handler](#response-string-handler)
-    - [Response JSON Handler](#response-json-handler)
     - [Response `Decodable` Handler](#response-decodable-handler)
     - [Chained Response Handlers](#chained-response-handlers)
     - [Response Handler Queue](#response-handler-queue)
