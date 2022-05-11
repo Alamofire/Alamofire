@@ -983,7 +983,7 @@ extension Request {
             let host = url.host,
             let method = request.httpMethod else { return "$ curl command could not be created" }
 
-        var components = ["$ curl -v"]
+        var components = ["$ curl -v --output -"]
 
         components.append("-X \(method)")
 
