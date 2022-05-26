@@ -24,9 +24,6 @@ jobs:
   macOS:
     name: Test macOS, All Xcodes and Swifts
     runs-on: ${{ matrix.runsOn }}
-    defaults:
-      run:
-        shell: ${{ matrix.shell }}
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
     timeout-minutes: 10
@@ -34,50 +31,41 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_13.4.app"
+            runsOn: macOS-12
+            name: "macOS 12, Xcode 13.4, Swift 5.6.1"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 13.3.1, Swift 5.6"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_13.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.1, Swift 5.5.1"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_13.0.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.0, Swift 5.5.0"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 12.5.1, Swift 5.4"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
             name: "macOS 10.15, Xcode 12.4, Swift 5.3"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
     steps:
       - uses: actions/checkout@v2
       - name: Install Firewalk
-        run: ${{ matrix.firewalk }}
+        run: "brew install alamofire/alamofire/firewalk && firewalk &"
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.4.app/Contents/Developer
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Catalyst
@@ -86,7 +74,7 @@ jobs:
     name: Test Latest (iOS, tvOS, watchOS)
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -114,7 +102,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -142,7 +130,7 @@ jobs:
       run:
         shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.4.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -185,7 +173,7 @@ jobs:
     name: Test Thread Sanitizer
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -223,6 +211,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_13.4.app"
+            runsOn: macOS-12
+            name: "macOS 12, SPM 5.6.1 Build"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6 Build"
@@ -240,7 +231,7 @@ jobs:
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Test SPM
-        run: swift build -c debug
+        run: swift test -c debug
   Linux:
     name: Linux
     runs-on: ubuntu-20.04
