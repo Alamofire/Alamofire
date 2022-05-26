@@ -98,9 +98,9 @@ jobs:
   iOS:
     name: "Test iOS"
     runs-on: firebreak
-    defaults:
-      run:
-        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
+    # defaults:
+    #   run:
+    #     shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
       DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
     timeout-minutes: 10
@@ -126,9 +126,9 @@ jobs:
   tvOS:
     name: Test tvOS
     runs-on: firebreak
-    defaults:
-      run:
-        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
+    # defaults:
+    #   run:
+    #     shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.4.app/Contents/Developer
     timeout-minutes: 10
