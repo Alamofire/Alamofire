@@ -24,9 +24,6 @@ jobs:
   macOS:
     name: Test macOS, All Xcodes and Swifts
     runs-on: ${{ matrix.runsOn }}
-    defaults:
-      run:
-        shell: ${{ matrix.shell }}
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
     timeout-minutes: 10
@@ -34,50 +31,41 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_13.4.app"
+            runsOn: macOS-12
+            name: "macOS 12, Xcode 13.4, Swift 5.6.1"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 13.3.1, Swift 5.6"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_13.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.1, Swift 5.5.1"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_13.0.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.0, Swift 5.5.0"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 12.5.1, Swift 5.4"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
             name: "macOS 10.15, Xcode 12.4, Swift 5.3"
-            firewalk: "brew install alamofire/alamofire/firewalk && firewalk &"
-            shell: "/bin/zsh {0}"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
-        run: ${{ matrix.firewalk }}
+        run: "brew install alamofire/alamofire/firewalk && firewalk &"
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.4.app/Contents/Developer
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Catalyst
@@ -86,13 +74,13 @@ jobs:
     name: Test Latest (iOS, tvOS, watchOS)
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=15.4,name=iPhone 13 Pro"
+          - destination: "OS=15.5,name=iPhone 13 Pro"
             name: "iOS"
             scheme: "Alamofire iOS"
           - destination: "OS=15.4,name=Apple TV"
@@ -102,7 +90,7 @@ jobs:
             name: "watchOS"
             scheme: "Alamofire watchOS"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -110,11 +98,11 @@ jobs:
   iOS:
     name: "Test iOS"
     runs-on: firebreak
-    defaults:
-      run:
-        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
+    # defaults:
+    #   run:
+    #     shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -130,7 +118,7 @@ jobs:
             name: "iOS 12.4"
             testPlan: "iOS-Old"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -138,11 +126,11 @@ jobs:
   tvOS:
     name: Test tvOS
     runs-on: firebreak
-    defaults:
-      run:
-        shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
+    # defaults:
+    #   run:
+    #     shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.4.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -158,7 +146,7 @@ jobs:
             name: "tvOS 12.4"
             testPlan: "tvOS-Old"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -176,7 +164,7 @@ jobs:
           - destination: "OS=7.4,name=Apple Watch Series 6 - 44mm"
             name: "watchOS 7.4"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name}}
@@ -185,7 +173,7 @@ jobs:
     name: Test Thread Sanitizer
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.3.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -196,7 +184,7 @@ jobs:
             testPlan: "macOS-TS"
             name: "macOS Thread Sanitizer"
           - scheme: "Alamofire iOS"
-            destination: "OS=15.4,name=iPhone 13 Pro"
+            destination: "OS=15.5,name=iPhone 13 Pro"
             testPlan: "iOS-TS"
             name: "iOS Thread Sanitizer"
           - scheme: "Alamofire tvOS"
@@ -208,7 +196,7 @@ jobs:
             testPlan: "watchOS-TS"
             name: "watchOS Thread Sanitizer"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -223,24 +211,40 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_13.4.app"
+            runsOn: macOS-12
+            name: "macOS 12, SPM 5.6.1 Test"
+            action: swift test -c debug
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
-            name: "macOS 12, SPM 5.6 Build"
+            name: "macOS 12, SPM 5.6 Test"
+            action: swift test -c debug
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
-            name: "macOS 11, SPM 5.5 Build"
+            name: "macOS 11, SPM 5.5.2 Test"
+            action: swift test -c debug
+          - xcode: "Xcode_13.1.app"
+            runsOn: macOS-11
+            name: "macOS 11, SPM 5.5.1 Test"
+            action: swift test -c debug
+          - xcode: "Xcode_13.0.app"
+            runsOn: macOS-11
+            name: "macOS 11, SPM 5.5 Test"
+            action: swift test -c debug
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.4 Build"
+            action: swift build -c debug
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
             name: "macOS 10.15, SPM 5.3 Build"
+            action: swift build -c debug
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Test SPM
-        run: swift build -c debug
+        run: ${{ matrix.action }}
   Linux:
     name: Linux
     runs-on: ubuntu-20.04
@@ -248,7 +252,7 @@ jobs:
       image: swift:5.6.1-focal
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: SPM Linux build
         run: swift build --build-tests -c debug
   Linux_Nightly:
@@ -258,7 +262,7 @@ jobs:
       image: swiftlang/swift:nightly-focal
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: SPM Linux build
         run: swift build --build-tests -c debug
   Windows:
@@ -267,7 +271,7 @@ jobs:
     timeout-minutes: 10
     steps:
     - name: "Clone Project"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - uses: seanmiddleditch/gha-setup-vsdevenv@master
     - name: Install Swift
       run: |
