@@ -41,7 +41,7 @@ You can triage issues which may include reproducing bug reports or asking for vi
 
 ## Submitting Pull Requests
 
-You can contribute by fixing bugs or adding new features. For larger code changes, we first recommend discussing them in our [Github issues](https://github.com/Alamofire/Alamofire/issues) or on our [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/). When submitting a pull request, please add relevant tests and ensure your changes don't break any existing tests (see [Automated Tests](#automated-tests) below).
+You can contribute by fixing bugs or adding new features. For larger code changes, we recommend first discussing your ideas on our [GitHub Discussions](https://github.com/Alamofire/Alamofire/discussions) or [Swift Forums](https://forums.swift.org/c/related-projects/alamofire/). When submitting a pull request, please add relevant tests and ensure your changes don't break any existing tests (see [Automated Tests](#automated-tests) below).
 
 ### Automated Tests
 
