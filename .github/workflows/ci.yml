@@ -31,9 +31,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_13.4.app"
+          - xcode: "Xcode_13.4.1.app"
             runsOn: macOS-12
-            name: "macOS 12, Xcode 13.4, Swift 5.6.1"
+            name: "macOS 12, Xcode 13.4.1, Swift 5.6.1"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 13.3.1, Swift 5.6"
@@ -62,7 +62,7 @@ jobs:
     name: Test Catalyst
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
@@ -74,7 +74,7 @@ jobs:
     name: Test Latest (iOS, tvOS, watchOS)
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -98,11 +98,8 @@ jobs:
   iOS:
     name: "Test iOS"
     runs-on: firebreak
-    # defaults:
-    #   run:
-    #     shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -126,11 +123,8 @@ jobs:
   tvOS:
     name: Test tvOS
     runs-on: firebreak
-    # defaults:
-    #   run:
-    #     shell: "/usr/bin/arch -arch arm64e /bin/zsh {0}"
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -173,7 +167,7 @@ jobs:
     name: Test Thread Sanitizer
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.4.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -211,7 +205,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_13.4.app"
+          - xcode: "Xcode_13.4.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6.1 Test"
             action: swift test -c debug
@@ -247,23 +241,27 @@ jobs:
         run: ${{ matrix.action }}
   Linux:
     name: Linux
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: swift:5.6.1-bionic
+          - image: swift:5.6.1-focal
+          - image: swift:5.6.1-centos7
+          - image: swift:5.6.1-amazonlinux2
+          - image: swiftlang/swift:nightly-bionic
+          - image: swiftlang/swift:nightly-focal
+          - image: swiftlang/swift:nightly-jammy
+          # - image: swiftlang/swift:nightly-centos7 # Currently ignored since git doesn't work.
+          - image: swiftlang/swift:nightly-centos8
+          - image: swiftlang/swift:nightly-amazonlinux2
     container:
-      image: swift:5.6.1-focal
+      image: ${{ matrix.image }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-      - name: SPM Linux build
-        run: swift build --build-tests -c debug
-  Linux_Nightly:
-    name: Linux Nightly
-    runs-on: ubuntu-20.04
-    container:
-      image: swiftlang/swift:nightly-focal
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v3
-      - name: SPM Linux build
+      - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
   Windows:
     name: Windows
