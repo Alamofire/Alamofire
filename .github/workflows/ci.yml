@@ -255,6 +255,16 @@ jobs:
       - uses: actions/checkout@v3
       - name: SPM Linux build
         run: swift build --build-tests -c debug
+  centOS:
+    name: centOS
+    runs-on: ubuntu-20.04
+    container:
+      image: swift:5.6.1-centos7
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - name: SPM Linux build
+        run: swift build --build-tests -c debug
   Linux_Nightly:
     name: Linux Nightly
     runs-on: ubuntu-20.04
