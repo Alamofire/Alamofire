@@ -386,6 +386,10 @@ extension Data {
     var asString: String {
         String(decoding: self, as: UTF8.self)
     }
+
+    func asJSONObject() throws -> Any {
+        try JSONSerialization.jsonObject(with: self, options: .allowFragments)
+    }
 }
 
 struct TestResponse: Decodable {
