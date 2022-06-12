@@ -522,12 +522,12 @@ final class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testJSONParameterEncodeNilParameters() throws {
         // Given, When
-        let urlRequest = try encoding.encode(urlRequest, with: nil)
+        let request = try encoding.encode(urlRequest, with: nil)
 
         // Then
-        XCTAssertNil(urlRequest.url?.query, "query should be nil")
-        XCTAssertNil(urlRequest.value(forHTTPHeaderField: "Content-Type"))
-        XCTAssertNil(urlRequest.httpBody, "HTTPBody should be nil")
+        XCTAssertNil(request.url?.query, "query should be nil")
+        XCTAssertNil(request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertNil(request.httpBody, "HTTPBody should be nil")
     }
 
     func testJSONParameterEncodeComplexParameters() throws {
@@ -539,15 +539,15 @@ final class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
                                                  "c": [3, 3, 3]]]
 
         // When
-        let urlRequest = try encoding.encode(urlRequest, with: parameters)
+        let request = try encoding.encode(urlRequest, with: parameters)
 
         // Then
-        XCTAssertNil(urlRequest.url?.query)
-        XCTAssertNotNil(urlRequest.value(forHTTPHeaderField: "Content-Type"))
-        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
-        XCTAssertNotNil(urlRequest.httpBody)
+        XCTAssertNil(request.url?.query)
+        XCTAssertNotNil(request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        XCTAssertNotNil(request.httpBody)
 
-        XCTAssertEqual(try urlRequest.httpBody?.asJSONObject() as? NSObject,
+        XCTAssertEqual(try request.httpBody?.asJSONObject() as? NSObject,
                        parameters as NSObject,
                        "Decoded request body and parameters should be equal.")
     }
@@ -557,15 +557,15 @@ final class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
         let array = ["foo", "bar", "baz"]
 
         // When
-        let urlRequest = try encoding.encode(urlRequest, withJSONObject: array)
+        let request = try encoding.encode(urlRequest, withJSONObject: array)
 
         // Then
-        XCTAssertNil(urlRequest.url?.query)
-        XCTAssertNotNil(urlRequest.value(forHTTPHeaderField: "Content-Type"))
-        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
-        XCTAssertNotNil(urlRequest.httpBody)
+        XCTAssertNil(request.url?.query)
+        XCTAssertNotNil(request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        XCTAssertNotNil(request.httpBody)
 
-        XCTAssertEqual(try urlRequest.httpBody?.asJSONObject() as? NSObject,
+        XCTAssertEqual(try request.httpBody?.asJSONObject() as? NSObject,
                        array as NSObject,
                        "Decoded request body and parameters should be equal.")
     }
