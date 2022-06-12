@@ -498,12 +498,8 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
                      tasks: [URLSessionTask],
                      descriptions: [String],
                      response: AFDataResponse<TestResponse>)
-        #if swift(>=5.7)
-        values = try! await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)
-        #else
         values = await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)
-        #endif
-        
+
         // Then
         XCTAssertTrue(values.uploadProgresses.isEmpty)
         XCTAssertNotNil(values.downloadProgresses.last)
