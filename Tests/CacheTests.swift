@@ -138,9 +138,9 @@ final class CacheTestCase: BaseTestCase {
 
     @discardableResult
     private func startRequest(cacheControl: CacheControl,
-                      cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
-                      queue: DispatchQueue = .main,
-                      completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
+                              cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
+                              queue: DispatchQueue = .main,
+                              completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
         -> URLRequest {
         let urlRequest = Endpoint(path: .cache,
                                   timeout: 30,
@@ -158,8 +158,8 @@ final class CacheTestCase: BaseTestCase {
     // MARK: - Test Execution and Verification
 
     private func executeTest(cachePolicy: URLRequest.CachePolicy,
-                     cacheControl: CacheControl,
-                     shouldReturnCachedResponse: Bool) {
+                             cacheControl: CacheControl,
+                             shouldReturnCachedResponse: Bool) {
         // Given
         let requestDidFinish = expectation(description: "cache test request did finish")
         var response: HTTPURLResponse?
