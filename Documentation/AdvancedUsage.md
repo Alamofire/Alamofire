@@ -1285,7 +1285,7 @@ By default, `DataTask` and `DownloadTask` values do not cancel the underlying re
 ```swift
 let request = AF.request(...) // Creates the DataRequest.
 let task = Task { // Produces a `Task<DataResponse<TestResponse, AFError>, Never> value.
-    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).response
+    await request.serializingDecodable(TestResponse.self).response
 }
 
 // Later...
