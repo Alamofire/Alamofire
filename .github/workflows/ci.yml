@@ -165,7 +165,7 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   Thread_Sanitizer:
     name: Test Thread Sanitizer
-    runs-on: macOS-12
+    runs-on: firebreak
     env:
       DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
     timeout-minutes: 10
@@ -192,7 +192,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   SPM:
