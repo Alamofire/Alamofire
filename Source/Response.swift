@@ -82,6 +82,10 @@ public struct DataResponse<Success, Failure: Error> {
     }
 }
 
+#if swift(>=5.7)
+extension DataResponse: Sendable where Success: Sendable {}
+#endif
+
 // MARK: -
 
 extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
@@ -269,6 +273,10 @@ public struct DownloadResponse<Success, Failure: Error> {
         self.result = result
     }
 }
+
+#if swift(>=5.7)
+extension DownloadResponse: Sendable where Success: Sendable {}
+#endif
 
 // MARK: -
 

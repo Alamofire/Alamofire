@@ -972,6 +972,11 @@ extension Request: CustomStringConvertible {
     }
 }
 
+#if swift(>=5.7)
+extension Request: @unchecked Sendable {}
+// extension DataRequest: @unchecked Sendable {}
+#endif
+
 extension Request {
     /// cURL representation of the instance.
     ///
