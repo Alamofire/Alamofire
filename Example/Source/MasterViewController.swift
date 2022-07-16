@@ -56,7 +56,7 @@ class MasterViewController: UITableViewController {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return AF.request("https://httpbin.org/get")
+                    return AF.request("https://httpbin.org/delay/10")
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
                     return AF.request("https://httpbin.org/post", method: .post)

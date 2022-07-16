@@ -994,6 +994,10 @@ open class Session {
         rootQueue.async {
             guard !request.isCancelled else { return }
 
+            #if os(iOS) || os(tvOS) || os(watchOS)
+            BackgroundAssertion.start()
+            #endif
+
             self.activeRequests.insert(request)
 
             self.requestQueue.async {
