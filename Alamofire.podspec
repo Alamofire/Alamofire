@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Alamofire'
-  s.version = '5.6.1'
+  s.version = '5.6.2'
   s.license = 'MIT'
   s.summary = 'Elegant HTTP Networking in Swift'
   s.homepage = 'https://github.com/Alamofire/Alamofire'
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '10.0'
   s.watchos.deployment_target = '3.0'
 
-  s.swift_versions = ['5.3', '5.4', '5.5']
+  s.swift_versions = ['5']
 
   s.source_files = 'Source/*.swift'
 
