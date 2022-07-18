@@ -817,8 +817,6 @@ extension DataRequest {
     ///   - queue:               The queue on which the completion handler is dispatched. `.main` by default.
     ///   - dataPreprocessor:    `DataPreprocessor` which processes the received `Data` before calling the
     ///                          `completionHandler`. `PassthroughPreprocessor()` by default.
-    ///   - encoding:            The string encoding. Defaults to `nil`, in which case the encoding will be determined
-    ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  HTTP status codes for which empty responses are always valid. `[204, 205]` by default.
     ///   - emptyRequestMethods: `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///   - options:             `JSONSerialization.ReadingOptions` used when parsing the response. `.allowFragments`
@@ -850,8 +848,6 @@ extension DownloadRequest {
     ///   - queue:               The queue on which the completion handler is dispatched. `.main` by default.
     ///   - dataPreprocessor:    `DataPreprocessor` which processes the received `Data` before calling the
     ///                          `completionHandler`. `PassthroughPreprocessor()` by default.
-    ///   - encoding:            The string encoding. Defaults to `nil`, in which case the encoding will be determined
-    ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  HTTP status codes for which empty responses are always valid. `[204, 205]` by default.
     ///   - emptyRequestMethods: `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///   - options:             `JSONSerialization.ReadingOptions` used when parsing the response. `.allowFragments`
@@ -1009,8 +1005,6 @@ extension DataRequest {
     ///   - dataPreprocessor:    `DataPreprocessor` which processes the received `Data` before calling the
     ///                          `completionHandler`. `PassthroughPreprocessor()` by default.
     ///   - decoder:             `DataDecoder` to use to decode the response. `JSONDecoder()` by default.
-    ///   - encoding:            The string encoding. Defaults to `nil`, in which case the encoding will be determined
-    ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  HTTP status codes for which empty responses are always valid. `[204, 205]` by default.
     ///   - emptyRequestMethods: `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///   - completionHandler:   A closure to be executed once the request has finished.
@@ -1042,8 +1036,6 @@ extension DownloadRequest {
     ///   - dataPreprocessor:    `DataPreprocessor` which processes the received `Data` before calling the
     ///                          `completionHandler`. `PassthroughPreprocessor()` by default.
     ///   - decoder:             `DataDecoder` to use to decode the response. `JSONDecoder()` by default.
-    ///   - encoding:            The string encoding. Defaults to `nil`, in which case the encoding will be determined
-    ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  HTTP status codes for which empty responses are always valid. `[204, 205]` by default.
     ///   - emptyRequestMethods: `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///   - completionHandler:   A closure to be executed once the request has finished.
