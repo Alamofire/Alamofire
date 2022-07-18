@@ -78,6 +78,34 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 242,
+      "symbol": "JSONEncoding.Error",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 243,
+      "symbol": "JSONEncoding.Error.invalidJSONObject",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 325,
+      "symbol": "JSONEncoding.Error",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 326,
+      "symbol": "JSONEncoding.Error.localizedDescription",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
       "line": 84,
       "symbol": "PassthroughPreprocessor.init()",
