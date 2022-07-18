@@ -5,7 +5,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
-- `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561)
+- `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562)
 - `5.5.x` Releases - [5.5.0](#550)
 - `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
 - `5.3.x` Releases - [5.3.0](#530)
@@ -48,6 +48,27 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.6.2](https://github.com/Alamofire/Alamofire/releases/tag/5.6.2)
+Released on 2022-07-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/82?closed=1).
+
+#### Added
+- Error when object provided to `JSONEcoding` contains values that can't be passed through `JSONSerialization`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3624](https://github.com/Alamofire/Alamofire/pull/3624).
+
+#### Updated
+- CI support for all supported Xcode, macOS, and Linux version.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3607](https://github.com/Alamofire/Alamofire/pull/3607) and [#3622](https://github.com/Alamofire/Alamofire/pull/3622).
+- Support for various Xcode version.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3616](https://github.com/Alamofire/Alamofire/pull/3616) and [#3632](https://github.com/Alamofire/Alamofire/pull/3632).
+- `Cache-Control` header tests to not require hard-coded delays.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3601](https://github.com/Alamofire/Alamofire/pull/3601).
+
+#### Fixed
+- Swift version check for `SecTrustCopyCertificateChain`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3606](https://github.com/Alamofire/Alamofire/pull/3606).
+- Various documentation issues.
+  - Fixed by [Jacob Lange](https://github.com/jacoblange-dev), [rain2540](https://github.com/rain2540), [bondxf](https://github.com/bondxf), [Ikko Ashimine](https://github.com/eltociear), and [Elon Park](https://github.com/ElonPark) in various Pull Requests.
 
 ## [5.6.1](https://github.com/Alamofire/Alamofire/releases/tag/5.6.1)
 Released on 2022-04-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/81?closed=1).
