@@ -499,7 +499,7 @@ final class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        if #available(macOS 13, iOS 14, tvOS 14, watchOS 9, *) {
+        if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *) {
             // On 2022 OS versions and later, URLSessionTasks are completed even if not resumed before invalidating a session.
             XCTAssertTrue([.canceling, .completed].contains(request?.task?.state))
         } else {
