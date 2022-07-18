@@ -487,9 +487,10 @@ final class SessionTestCase: BaseTestCase {
     func testReleasingManagerWithPendingRequestDeinitializesSuccessfully() {
         // Given
         let monitor = ClosureEventMonitor()
-        let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreateTask = { _, _ in expectation.fulfill() }
+        let didCreateRequest = expectation(description: "Request created")
+        monitor.requestDidCreateTask = { _, _ in didCreateRequest.fulfill() }
         var session: Session? = Session(startRequestsImmediately: false, eventMonitors: [monitor])
+        weak var weakSession = session
 
         // When
         let request = session?.request(.default)
@@ -498,8 +499,14 @@ final class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(request?.task?.state, .suspended)
-        XCTAssertNil(session, "manager should be nil")
+        if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *) {
+            // On 2022 OS versions and later, URLSessionTasks are completed even if not resumed before invalidating a session.
+            XCTAssertTrue([.canceling, .completed].contains(request?.task?.state))
+        } else {
+            XCTAssertEqual(request?.task?.state, .suspended)
+        }
+        XCTAssertNil(session, "session should be nil")
+        XCTAssertNil(weakSession, "weak session should be nil")
     }
 
     func testReleasingManagerWithPendingCanceledRequestDeinitializesSuccessfully() {
