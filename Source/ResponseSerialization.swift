@@ -240,7 +240,7 @@ extension DataRequest {
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
-                guard let serializerError = result.failure, let delegate = self.delegate else {
+                guard !self.isCancelled, let serializerError = result.failure, let delegate = self.delegate else {
                     self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
                     return
                 }
