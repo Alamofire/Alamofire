@@ -52,6 +52,15 @@ jobs:
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
             name: "macOS 10.15, Xcode 12.4, Swift 5.3"
+          - xcode: "Xcode_12.3.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, Xcode 12.3, Swift 5.3"
+          - xcode: "Xcode_12.2.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, Xcode 12.2, Swift 5.3"
+          - xcode: "Xcode_12.1.1.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, Xcode 12.1.1, Swift 5.3"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
