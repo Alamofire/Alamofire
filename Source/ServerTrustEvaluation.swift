@@ -715,11 +715,15 @@ extension AlamofireExtension where ExtendedType == SecCertificate {
 
         guard let createdTrust = trust, trustCreationStatus == errSecSuccess else { return nil }
 
+        #if swift(>=5.3.1) // SecTrustCopyKey not visible in Xcode <= 12.1, despite being a 2020 API.
         if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) {
             return SecTrustCopyKey(createdTrust)
         } else {
             return SecTrustCopyPublicKey(createdTrust)
         }
+        #else
+        return SecTrustCopyPublicKey(createdTrust)
+        #endif
     }
 }
 
