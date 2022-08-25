@@ -710,7 +710,7 @@ extension AFError.ParameterEncodingFailureReason {
     var localizedDescription: String {
         switch self {
         case .missingURL:
-            return "URL request to encode was missing a URL"
+            return "URL request to encode was missing a URL."
         case let .jsonEncodingFailed(error):
             return "JSON could not be encoded because of error:\n\(error.localizedDescription)"
         case let .customEncodingFailed(error):
