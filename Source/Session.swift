@@ -1262,3 +1262,9 @@ extension Session: SessionStateProvider {
         requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
     }
 }
+
+extension Session {
+    public func getActiveRequests() -> [Request] {
+        return Array(self.activeRequests)
+    }
+}
