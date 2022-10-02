@@ -750,13 +750,13 @@
 		31EF4BF4279646000048A19D /* Test Plans */ = {
 			isa = PBXGroup;
 			children = (
-				31EF4BF627964B520048A19D /* iOS-Old.xctestplan */,
 				3145E0E227977AA300949557 /* iOS-NoTS.xctestplan */,
+				31EF4BF627964B520048A19D /* iOS-Old.xctestplan */,
 				31EF4BF5279646450048A19D /* iOS.xctestplan */,
 				3145E0E92797D9E900949557 /* macOS-NoTS.xctestplan */,
 				3145E0E82797D9E700949557 /* macOS.xctestplan */,
-				3145E0E52797A8EF00949557 /* tvOS-Old.xctestplan */,
 				3145E0E32797A8EF00949557 /* tvOS-NoTS.xctestplan */,
+				3145E0E52797A8EF00949557 /* tvOS-Old.xctestplan */,
 				3145E0E42797A8EF00949557 /* tvOS.xctestplan */,
 				3145E0E72797D94200949557 /* watchOS-NoTS.xctestplan */,
 				3145E0E62797D91600949557 /* watchOS.xctestplan */,
@@ -921,11 +921,7 @@
 			isa = PBXGroup;
 			children = (
 				312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */,
-				4CE292321EF4A393008DA555 /* CHANGELOG.md */,
-				4CE292331EF4A393008DA555 /* CONTRIBUTING.md */,
-				4CE292311EF4A393008DA555 /* README.md */,
 				312D1E0B1FC2551400E51FF1 /* Usage.md */,
-				319ECE9E25EC96E8001C38CA /* .github */,
 				4C9E88361F5FB39F000BEC61 /* Migration Guides */,
 			);
 			name = Documentation;
@@ -934,9 +930,13 @@
 		4CE292381EF4B116008DA555 /* Deployment */ = {
 			isa = PBXGroup;
 			children = (
+				319ECE9E25EC96E8001C38CA /* .github */,
 				4CE292391EF4B12B008DA555 /* Alamofire.podspec */,
+				4CE292321EF4A393008DA555 /* CHANGELOG.md */,
+				4CE292331EF4A393008DA555 /* CONTRIBUTING.md */,
 				4CF3B4281F5FC7900075BE59 /* LICENSE */,
 				31B2CA9521AA25CD005B371A /* Package.swift */,
+				4CE292311EF4A393008DA555 /* README.md */,
 			);
 			name = Deployment;
 			sourceTree = "<group>";

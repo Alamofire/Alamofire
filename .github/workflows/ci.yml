@@ -109,7 +109,7 @@ jobs:
           - destination: "OS=16.0,name=Apple TV"
             name: "tvOS"
             scheme: "Alamofire tvOS"
-          - destination: "OS=9.0,name=Apple Watch Series 8 - 45mm"
+          - destination: "OS=9.0,name=Apple Watch Series 8 (45mm)"
             name: "watchOS"
             scheme: "Alamofire watchOS"
     steps:
@@ -250,7 +250,7 @@ jobs:
           - image: swiftlang/swift:nightly-bionic
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
-          - image: swiftlang/swift:nightly-centos7
+          # - image: swiftlang/swift:nightly-centos7
           - image: swiftlang/swift:nightly-centos8
           - image: swiftlang/swift:nightly-amazonlinux2
     container:
