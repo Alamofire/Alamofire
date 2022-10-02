@@ -4,7 +4,7 @@
       "id" : "06BDBD92-3173-4395-90BF-851B80FF1162",
       "name" : "Default",
       "options" : {
-
+        "threadSanitizerEnabled" : true
       }
     }
   ],

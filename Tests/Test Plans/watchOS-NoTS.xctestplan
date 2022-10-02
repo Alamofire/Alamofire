@@ -1,10 +1,10 @@
 {
   "configurations" : [
     {
-      "id" : "06BDBD92-3173-4395-90BF-851B80FF1162",
+      "id" : "13FE6F19-6B66-4BD2-862D-9F091CA8B792",
       "name" : "Default",
       "options" : {
-        "threadSanitizerEnabled" : true
+
       }
     }
   ],
@@ -21,8 +21,8 @@
       ],
       "target" : {
         "containerPath" : "container:Alamofire.xcodeproj",
-        "identifier" : "F8111E3D19A95C8B0040E7D1",
-        "name" : "Alamofire iOS Tests"
+        "identifier" : "31293064263E17D600473CEA",
+        "name" : "Alamofire watchOS Tests"
       }
     }
   ],

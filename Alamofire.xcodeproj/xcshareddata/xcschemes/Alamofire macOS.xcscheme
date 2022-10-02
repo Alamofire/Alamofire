@@ -75,7 +75,7 @@
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests/Test Plans/macOS-TS.xctestplan">
+            reference = "container:Tests/Test Plans/macOS-NoTS.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

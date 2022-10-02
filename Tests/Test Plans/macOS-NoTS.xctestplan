@@ -4,7 +4,7 @@
       "id" : "06BDBD92-3173-4395-90BF-851B80FF1162",
       "name" : "Default",
       "options" : {
-        "threadSanitizerEnabled" : true
+
       }
     }
   ],
@@ -21,8 +21,8 @@
       ],
       "target" : {
         "containerPath" : "container:Alamofire.xcodeproj",
-        "identifier" : "4CF626F71BA7CB3E0011A099",
-        "name" : "Alamofire tvOS Tests"
+        "identifier" : "F829C6B11A7A94F100A2CD59",
+        "name" : "Alamofire macOS Tests"
       }
     }
   ],

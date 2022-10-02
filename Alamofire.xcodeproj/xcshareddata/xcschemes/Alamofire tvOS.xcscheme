@@ -74,7 +74,7 @@
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests/Test Plans/tvOS-TS.xctestplan">
+            reference = "container:Tests/Test Plans/tvOS-NoTS.xctestplan">
          </TestPlanReference>
          <TestPlanReference
             reference = "container:Tests/Test Plans/tvOS-Old.xctestplan">

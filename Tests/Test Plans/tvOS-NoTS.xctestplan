@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "13FE6F19-6B66-4BD2-862D-9F091CA8B792",
+      "id" : "06BDBD92-3173-4395-90BF-851B80FF1162",
       "name" : "Default",
       "options" : {
 
@@ -9,8 +9,7 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
-    "threadSanitizerEnabled" : true
+    "codeCoverage" : false
   },
   "testTargets" : [
     {
@@ -22,8 +21,8 @@
       ],
       "target" : {
         "containerPath" : "container:Alamofire.xcodeproj",
-        "identifier" : "31293064263E17D600473CEA",
-        "name" : "Alamofire watchOS Tests"
+        "identifier" : "4CF626F71BA7CB3E0011A099",
+        "name" : "Alamofire tvOS Tests"
       }
     }
   ],
