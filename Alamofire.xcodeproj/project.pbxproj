@@ -498,14 +498,14 @@
 		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
 		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
 		31425AC0241F098000EE3CCC /* InternalRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestTests.swift; sourceTree = "<group>"; };
-		3145E0E227977AA300949557 /* iOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iOS-TS.xctestplan"; sourceTree = "<group>"; };
-		3145E0E32797A8EF00949557 /* tvOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tvOS-TS.xctestplan"; sourceTree = "<group>"; };
+		3145E0E227977AA300949557 /* iOS-NoTS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iOS-NoTS.xctestplan"; sourceTree = "<group>"; };
+		3145E0E32797A8EF00949557 /* tvOS-NoTS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tvOS-NoTS.xctestplan"; sourceTree = "<group>"; };
 		3145E0E42797A8EF00949557 /* tvOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = tvOS.xctestplan; sourceTree = "<group>"; };
 		3145E0E52797A8EF00949557 /* tvOS-Old.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tvOS-Old.xctestplan"; sourceTree = "<group>"; };
 		3145E0E62797D91600949557 /* watchOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = watchOS.xctestplan; sourceTree = "<group>"; };
-		3145E0E72797D94200949557 /* watchOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "watchOS-TS.xctestplan"; sourceTree = "<group>"; };
+		3145E0E72797D94200949557 /* watchOS-NoTS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "watchOS-NoTS.xctestplan"; sourceTree = "<group>"; };
 		3145E0E82797D9E700949557 /* macOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = macOS.xctestplan; sourceTree = "<group>"; };
-		3145E0E92797D9E900949557 /* macOS-TS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "macOS-TS.xctestplan"; sourceTree = "<group>"; };
+		3145E0E92797D9E900949557 /* macOS-NoTS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "macOS-NoTS.xctestplan"; sourceTree = "<group>"; };
 		314998E927A6560600ABB856 /* Request+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Request+AlamofireTests.swift"; sourceTree = "<group>"; };
 		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
 		31577E0A2676E72D001C7532 /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
@@ -750,15 +750,15 @@
 		31EF4BF4279646000048A19D /* Test Plans */ = {
 			isa = PBXGroup;
 			children = (
+				3145E0E227977AA300949557 /* iOS-NoTS.xctestplan */,
 				31EF4BF627964B520048A19D /* iOS-Old.xctestplan */,
-				3145E0E227977AA300949557 /* iOS-TS.xctestplan */,
 				31EF4BF5279646450048A19D /* iOS.xctestplan */,
-				3145E0E92797D9E900949557 /* macOS-TS.xctestplan */,
+				3145E0E92797D9E900949557 /* macOS-NoTS.xctestplan */,
 				3145E0E82797D9E700949557 /* macOS.xctestplan */,
+				3145E0E32797A8EF00949557 /* tvOS-NoTS.xctestplan */,
 				3145E0E52797A8EF00949557 /* tvOS-Old.xctestplan */,
-				3145E0E32797A8EF00949557 /* tvOS-TS.xctestplan */,
 				3145E0E42797A8EF00949557 /* tvOS.xctestplan */,
-				3145E0E72797D94200949557 /* watchOS-TS.xctestplan */,
+				3145E0E72797D94200949557 /* watchOS-NoTS.xctestplan */,
 				3145E0E62797D91600949557 /* watchOS.xctestplan */,
 			);
 			path = "Test Plans";
@@ -921,11 +921,7 @@
 			isa = PBXGroup;
 			children = (
 				312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */,
-				4CE292321EF4A393008DA555 /* CHANGELOG.md */,
-				4CE292331EF4A393008DA555 /* CONTRIBUTING.md */,
-				4CE292311EF4A393008DA555 /* README.md */,
 				312D1E0B1FC2551400E51FF1 /* Usage.md */,
-				319ECE9E25EC96E8001C38CA /* .github */,
 				4C9E88361F5FB39F000BEC61 /* Migration Guides */,
 			);
 			name = Documentation;
@@ -934,9 +930,13 @@
 		4CE292381EF4B116008DA555 /* Deployment */ = {
 			isa = PBXGroup;
 			children = (
+				319ECE9E25EC96E8001C38CA /* .github */,
 				4CE292391EF4B12B008DA555 /* Alamofire.podspec */,
+				4CE292321EF4A393008DA555 /* CHANGELOG.md */,
+				4CE292331EF4A393008DA555 /* CONTRIBUTING.md */,
 				4CF3B4281F5FC7900075BE59 /* LICENSE */,
 				31B2CA9521AA25CD005B371A /* Package.swift */,
+				4CE292311EF4A393008DA555 /* README.md */,
 			);
 			name = Deployment;
 			sourceTree = "<group>";

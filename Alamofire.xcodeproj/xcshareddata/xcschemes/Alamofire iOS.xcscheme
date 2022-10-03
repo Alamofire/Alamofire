@@ -77,7 +77,7 @@
             reference = "container:Tests/Test Plans/iOS-Old.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests/Test Plans/iOS-TS.xctestplan">
+            reference = "container:Tests/Test Plans/iOS-NoTS.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

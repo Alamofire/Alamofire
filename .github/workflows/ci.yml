@@ -1,23 +1,23 @@
 name: "Alamofire CI"
 
-on: 
+on:
   push:
-    branches: 
+    branches:
       - master
       - hotfix
     paths:
-      - 'Source/**'
-      - 'Tests/**'
       - '.github/workflows/**'
       - 'Package.swift'
+      - 'Source/**'
+      - 'Tests/**'
   pull_request:
     paths:
-      - 'Source/**'
-      - 'Tests/**'
       - '.github/workflows/**'
       - 'Package.swift'
+      - 'Source/**'
+      - 'Tests/**'
 
-concurrency: 
+concurrency:
   group: ${{ github.ref_name }}
   cancel-in-progress: true
 jobs:
@@ -31,38 +31,61 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.0.1.app"
+            runsOn: macOS-12
+            name: "macOS 12, Xcode 14.0.1, Swift 5.7.0"
+            testPlan: "macOS"
           - xcode: "Xcode_13.4.1.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 13.4.1, Swift 5.6.1"
+            testPlan: "macOS-NoTS"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 13.3.1, Swift 5.6"
+            testPlan: "macOS-NoTS"
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
+            testPlan: "macOS-NoTS"
           - xcode: "Xcode_13.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.1, Swift 5.5.1"
+            testPlan: "macOS-NoTS"
           - xcode: "Xcode_13.0.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.0, Swift 5.5.0"
+            testPlan: "macOS-NoTS"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
             name: "macOS 11, Xcode 12.5.1, Swift 5.4"
+            testPlan: "macOS-NoTS"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
             name: "macOS 10.15, Xcode 12.4, Swift 5.3"
+            testPlan: "macOS-NoTS"
+          - xcode: "Xcode_12.3.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, Xcode 12.3, Swift 5.3"
+            testPlan: "macOS-NoTS"
+          - xcode: "Xcode_12.2.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, Xcode 12.2, Swift 5.3"
+            testPlan: "macOS-NoTS"
+          - xcode: "Xcode_12.1.1.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, Xcode 12.1.1, Swift 5.3"
+            testPlan: "macOS-NoTS"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
         run: "brew install alamofire/alamofire/firewalk && firewalk &"
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   Catalyst:
     name: Test Catalyst
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
@@ -74,19 +97,19 @@ jobs:
     name: Test Latest (iOS, tvOS, watchOS)
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_14.0.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=15.5,name=iPhone 13 Pro"
+          - destination: "OS=16.0,name=iPhone 14 Pro"
             name: "iOS"
             scheme: "Alamofire iOS"
-          - destination: "OS=15.4,name=Apple TV"
+          - destination: "OS=16.0,name=Apple TV"
             name: "tvOS"
             scheme: "Alamofire tvOS"
-          - destination: "OS=8.5,name=Apple Watch Series 7 - 45mm"
+          - destination: "OS=9.0,name=Apple Watch Series 8 (45mm)"
             name: "watchOS"
             scheme: "Alamofire watchOS"
     steps:
@@ -96,21 +119,24 @@ jobs:
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" clean test | xcpretty
   iOS:
-    name: "Test iOS"
+    name: "Test Old iOS"
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_14.0.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=15.5,name=iPhone 13 Pro"
+            name: "iOS 15.5"
+            testPlan: "iOS-NoTS"
           - destination: "OS=14.5,name=iPhone 12 Pro"
             name: "iOS 14.5"
-            testPlan: "iOS"
+            testPlan: "iOS-NoTS"
           - destination: "OS=13.7,name=iPhone 11 Pro"
             name: "iOS 13.7"
-            testPlan: "iOS"
+            testPlan: "iOS-NoTS"
           - destination: "OS=12.4,name=iPhone Xs"
             name: "iOS 12.4"
             testPlan: "iOS-Old"
@@ -124,18 +150,21 @@ jobs:
     name: Test tvOS
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=15.4,name=Apple TV"
+            name: "tvOS 15.4"
+            testPlan: "tvOS-NoTS"
           - destination: "OS=14.5,name=Apple TV"
             name: "tvOS 14.5"
-            testPlan: "tvOS"
+            testPlan: "tvOS-NoTS"
           - destination: "OS=13.4,name=Apple TV"
             name: "tvOS 13.4"
-            testPlan: "tvOS"
+            testPlan: "tvOS-NoTS"
           - destination: "OS=12.4,name=Apple TV"
             name: "tvOS 12.4"
             testPlan: "tvOS-Old"
@@ -147,54 +176,26 @@ jobs:
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   watchOS:
     name: Test watchOS
-    runs-on: macOS-11
+    runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=7.4,name=Apple Watch Series 6 - 44mm"
+          - destination: "OS=8.5,name=Apple Watch Series 7 (45mm)"
+            name: "watchOS 8.5"
+            testPlan: "watchOS-NoTS"
+          - destination: "OS=7.4,name=Apple Watch Series 6 (44mm)"
             name: "watchOS 7.4"
+            testPlan: "watchOS-NoTS"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name}}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | xcpretty
-  Thread_Sanitizer:
-    name: Test Thread Sanitizer
-    runs-on: firebreak
-    env:
-      DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
-    timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - scheme: "Alamofire macOS"
-            destination: "platform=macOS"
-            testPlan: "macOS-TS"
-            name: "macOS Thread Sanitizer"
-          - scheme: "Alamofire iOS"
-            destination: "OS=15.5,name=iPhone 13 Pro"
-            testPlan: "iOS-TS"
-            name: "iOS Thread Sanitizer"
-          - scheme: "Alamofire tvOS"
-            destination: "OS=15.4,name=Apple TV"
-            testPlan: "tvOS-TS"
-            name: "tvOS Thread Sanitizer"
-          - scheme: "Alamofire watchOS"
-            destination: "OS=8.5,name=Apple Watch Series 7 - 45mm"
-            testPlan: "watchOS-TS"
-            name: "watchOS Thread Sanitizer"
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
-      - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   SPM:
     name: Test with SPM
     runs-on: ${{ matrix.runsOn }}
@@ -205,40 +206,36 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.0.1.app"
+            runsOn: macOS-12
+            name: "macOS 12, SPM 5.7.0 Test"
           - xcode: "Xcode_13.4.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6.1 Test"
-            action: swift test -c debug
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6 Test"
-            action: swift test -c debug
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.2 Test"
-            action: swift test -c debug
           - xcode: "Xcode_13.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.1 Test"
-            action: swift test -c debug
           - xcode: "Xcode_13.0.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5 Test"
-            action: swift test -c debug
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.4 Build"
-            action: swift build -c debug
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
             name: "macOS 10.15, SPM 5.3 Build"
-            action: swift build -c debug
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Test SPM
-        run: ${{ matrix.action }}
+        run: swift build -c debug
   Linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -246,14 +243,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: swift:5.6.1-bionic
-          - image: swift:5.6.1-focal
-          - image: swift:5.6.1-centos7
-          - image: swift:5.6.1-amazonlinux2
+          - image: swift:5.7-bionic
+          - image: swift:5.7-focal
+          - image: swift:5.7-centos7
+          - image: swift:5.7-amazonlinux2
           - image: swiftlang/swift:nightly-bionic
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
-          # - image: swiftlang/swift:nightly-centos7 # Currently ignored since git doesn't work.
+          # - image: swiftlang/swift:nightly-centos7
           - image: swiftlang/swift:nightly-centos8
           - image: swiftlang/swift:nightly-amazonlinux2
     container:

@@ -52,7 +52,7 @@
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests/Test Plans/watchOS-TS.xctestplan">
+            reference = "container:Tests/Test Plans/watchOS-NoTS.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

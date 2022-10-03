@@ -154,6 +154,27 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     // MARK: Tests - Retry
 
+    func testThatRetryIsNotPerformedOnCancelledRequests() {
+        // Given
+        let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
+            completion(.retry)
+        })
+        let session = Session(interceptor: retrier)
+        let didFinish = expectation(description: "didFinish request")
+
+        // When
+        let request = session.request(.default).responseDecodable(of: TestResponse.self) { _ in
+            didFinish.fulfill()
+        }
+        request.cancel()
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(request.isCancelled)
+        XCTAssertEqual(retrier.retryCalledCount, 0)
+    }
+
     func testThatRetryPolicyRetriesRequestsBelowRetryLimit() {
         // Given
         let retryPolicy = RetryPolicy()
