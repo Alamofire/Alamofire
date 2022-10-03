@@ -493,7 +493,7 @@ public class Request {
     func retryOrFinish(error: AFError?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        guard let error = error, let delegate = delegate else { finish(); return }
+        guard !isCancelled, let error = error, let delegate = delegate else { finish(); return }
 
         delegate.retryResult(for: self, dueTo: error) { retryResult in
             switch retryResult {
