@@ -184,10 +184,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=8.5,name=Apple Watch Series 7 - 45mm"
+          - destination: "OS=8.5,name=Apple Watch Series 7 (45mm)"
             name: "watchOS 8.5"
             testPlan: "watchOS-NoTS"
-          - destination: "OS=7.4,name=Apple Watch Series 6 - 44mm"
+          - destination: "OS=7.4,name=Apple Watch Series 6 (44mm)"
             name: "watchOS 7.4"
             testPlan: "watchOS-NoTS"
     steps:
