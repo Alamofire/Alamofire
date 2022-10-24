@@ -118,9 +118,9 @@ public struct DataTask<Value> {
         get async {
             if shouldAutomaticallyCancel {
                 return await withTaskCancellationHandler {
-                    self.cancel()
-                } operation: {
                     await task.value
+                } onCancel: {
+                    self.cancel()
                 }
             } else {
                 return await task.value
@@ -287,13 +287,13 @@ extension DataRequest {
         -> DataTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
-                self.cancel()
-            } operation: {
                 await withCheckedContinuation { continuation in
                     onResponse {
                         continuation.resume(returning: $0)
                     }
                 }
+            } onCancel: {
+                self.cancel()
             }
         }
 
@@ -311,9 +311,9 @@ public struct DownloadTask<Value> {
         get async {
             if shouldAutomaticallyCancel {
                 return await withTaskCancellationHandler {
-                    self.cancel()
-                } operation: {
                     await task.value
+                } onCancel: {
+                    self.cancel()
                 }
             } else {
                 return await task.value
@@ -496,13 +496,13 @@ extension DownloadRequest {
         -> DownloadTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
-                self.cancel()
-            } operation: {
                 await withCheckedContinuation { continuation in
                     onResponse {
                         continuation.resume(returning: $0)
                     }
                 }
+            } onCancel: {
+                self.cancel()
             }
         }
 
