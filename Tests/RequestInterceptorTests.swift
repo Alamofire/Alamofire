@@ -34,10 +34,7 @@ private struct RetryError: Error {}
 final class RetryResultTestCase: BaseTestCase {
     func testRetryRequiredProperty() {
         // Given, When
-        let retry = RetryResult.retry
-        let retryWithDelay = RetryResult.retryWithDelay(1.0)
-        let doNotRetry = RetryResult.doNotRetry
-        let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
+        let (retry, retryWithDelay, doNotRetry, doNotRetryWithError) = makeSUT()
 
         // Then
         XCTAssertTrue(retry.retryRequired)
@@ -48,10 +45,7 @@ final class RetryResultTestCase: BaseTestCase {
 
     func testDelayProperty() {
         // Given, When
-        let retry = RetryResult.retry
-        let retryWithDelay = RetryResult.retryWithDelay(1.0)
-        let doNotRetry = RetryResult.doNotRetry
-        let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
+        let (retry, retryWithDelay, doNotRetry, doNotRetryWithError) = makeSUT()
 
         // Then
         XCTAssertEqual(retry.delay, nil)
@@ -62,16 +56,23 @@ final class RetryResultTestCase: BaseTestCase {
 
     func testErrorProperty() {
         // Given, When
-        let retry = RetryResult.retry
-        let retryWithDelay = RetryResult.retryWithDelay(1.0)
-        let doNotRetry = RetryResult.doNotRetry
-        let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
+        let (retry, retryWithDelay, doNotRetry, doNotRetryWithError) = makeSUT()
 
         // Then
         XCTAssertNil(retry.error)
         XCTAssertNil(retryWithDelay.error)
         XCTAssertNil(doNotRetry.error)
         XCTAssertTrue(doNotRetryWithError.error is MockError)
+    }
+
+    // MARK:- Helper
+    private func makeSUT() -> (retry: RetryResult, retryWithDelay: RetryResult, doNotRetry: RetryResult, doNotRetryWithError: RetryResult) {
+        let retry = RetryResult.retry
+        let retryWithDelay = RetryResult.retryWithDelay(1.0)
+        let doNotRetry = RetryResult.doNotRetry
+        let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
+
+        return (retry, retryWithDelay, doNotRetry, doNotRetryWithError)
     }
 }
 
@@ -80,8 +81,7 @@ final class RetryResultTestCase: BaseTestCase {
 final class AdapterTestCase: BaseTestCase {
     func testThatAdapterCallsAdaptHandler() {
         // Given
-        let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let (urlRequest, session) = makeSUT()
         var adapted = false
 
         let adapter = Adapter { request, _, completion in
@@ -115,8 +115,7 @@ final class AdapterTestCase: BaseTestCase {
             }
         }
 
-        let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let (urlRequest, session) = makeSUT()
         let requestID = UUID()
 
         var adapted = false
@@ -161,8 +160,7 @@ final class AdapterTestCase: BaseTestCase {
 
     func testThatAdapterCanBeImplementedAsynchronously() {
         // Given
-        let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let (urlRequest, session) = makeSUT()
         var adapted = false
 
         let adapter = Adapter { request, _, completion in
@@ -187,6 +185,13 @@ final class AdapterTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(adapted)
         XCTAssertTrue(result.isSuccess)
+    }
+
+    // MARK:- Helper
+    private func makeSUT() -> (urlRequest: URLRequest, session: Session) {
+        let urlRequest = Endpoint().urlRequest
+        let session = Session()
+        return (urlRequest, session)
     }
 }
 
@@ -216,8 +221,7 @@ final class RetrierTestCase: BaseTestCase {
 
     func testThatRetrierCallsRequestAdapterDefaultImplementationInProtocolExtension() {
         // Given
-        let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let (urlRequest, session) = makeSUT()
 
         let retrier = Retrier { _, _, _, completion in
             completion(.retry)
@@ -260,6 +264,13 @@ final class RetrierTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(retried)
         XCTAssertEqual(result, .retry)
+    }
+
+    // MARK:- Helper
+    private func makeSUT() -> (urlRequest: URLRequest, session: Session) {
+        let urlRequest = Endpoint().urlRequest
+        let session = Session()
+        return (urlRequest, session)
     }
 }
 
