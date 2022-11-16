@@ -141,8 +141,9 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
 // MARK: -
 
+// Disabled due to HTTPBin flakiness.
 final class HTTPDigestAuthenticationTestCase: BaseTestCase {
-    func testHTTPDigestAuthenticationWithInvalidCredentials() {
+    func _testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
         let session = Session()
         let endpoint = Endpoint.digestAuth()
@@ -168,7 +169,7 @@ final class HTTPDigestAuthenticationTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
-    func testHTTPDigestAuthenticationWithValidCredentials() {
+    func _testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
         let session = Session()
         let user = "user", password = "password"

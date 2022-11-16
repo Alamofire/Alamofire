@@ -330,7 +330,8 @@ final class SessionTestCase: BaseTestCase {
 
     // MARK: Tests - Supported Accept-Encodings
 
-    func testDefaultAcceptEncodingSupportsAppropriateEncodingsOnAppropriateSystems() {
+    // Disabled due to HTTPBin flakiness.
+    func _testDefaultAcceptEncodingSupportsAppropriateEncodingsOnAppropriateSystems() {
         // Given
         let brotliExpectation = expectation(description: "brotli request should complete")
         let gzipExpectation = expectation(description: "gzip request should complete")
