@@ -6,16 +6,16 @@ on:
       - master
       - hotfix
     paths:
-      - '.github/workflows/**'
-      - 'Package.swift'
-      - 'Source/**'
-      - 'Tests/**'
+      - ".github/workflows/**"
+      - "Package.swift"
+      - "Source/**"
+      - "Tests/**"
   pull_request:
     paths:
-      - '.github/workflows/**'
-      - 'Package.swift'
-      - 'Source/**'
-      - 'Tests/**'
+      - ".github/workflows/**"
+      - "Package.swift"
+      - "Source/**"
+      - "Tests/**"
 
 concurrency:
   group: ${{ github.ref_name }}
@@ -31,6 +31,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.1.app"
+            runsOn: macOS-12
+            name: "macOS 12, Xcode 14.1, Swift 5.7.1"
+            testPlan: "macOS"
           - xcode: "Xcode_14.0.1.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.0.1, Swift 5.7.0"
@@ -41,7 +45,7 @@ jobs:
             testPlan: "macOS-NoTS"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
-            name: "macOS 12, Xcode 13.3.1, Swift 5.6"
+            name: "macOS 12, Xcode 13.3.1, Swift 5.6.0"
             testPlan: "macOS-NoTS"
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
@@ -57,23 +61,23 @@ jobs:
             testPlan: "macOS-NoTS"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
-            name: "macOS 11, Xcode 12.5.1, Swift 5.4"
+            name: "macOS 11, Xcode 12.5.1, Swift 5.4.2"
             testPlan: "macOS-NoTS"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.4, Swift 5.3"
+            name: "macOS 10.15, Xcode 12.4, Swift 5.3.2"
             testPlan: "macOS-NoTS"
           - xcode: "Xcode_12.3.app"
             runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.3, Swift 5.3"
+            name: "macOS 10.15, Xcode 12.3, Swift 5.3.2"
             testPlan: "macOS-NoTS"
           - xcode: "Xcode_12.2.app"
             runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.2, Swift 5.3"
+            name: "macOS 10.15, Xcode 12.2, Swift 5.3.1"
             testPlan: "macOS-NoTS"
           - xcode: "Xcode_12.1.1.app"
             runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.1.1, Swift 5.3"
+            name: "macOS 10.15, Xcode 12.1.1, Swift 5.3.0"
             testPlan: "macOS-NoTS"
     steps:
       - uses: actions/checkout@v3
@@ -85,7 +89,7 @@ jobs:
     name: Test Catalyst
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
@@ -97,19 +101,19 @@ jobs:
     name: Test Latest (iOS, tvOS, watchOS)
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.0.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_14.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=16.0,name=iPhone 14 Pro"
+          - destination: "OS=16.1,name=iPhone 14 Pro"
             name: "iOS"
             scheme: "Alamofire iOS"
-          - destination: "OS=16.0,name=Apple TV"
+          - destination: "OS=16.1,name=Apple TV"
             name: "tvOS"
             scheme: "Alamofire tvOS"
-          - destination: "OS=9.0,name=Apple Watch Series 8 (45mm)"
+          - destination: "OS=9.1,name=Apple Watch Series 8 (45mm)"
             name: "watchOS"
             scheme: "Alamofire watchOS"
     steps:
@@ -122,7 +126,7 @@ jobs:
     name: "Test Old iOS"
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.0.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_14.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -147,10 +151,10 @@ jobs:
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   tvOS:
-    name: Test tvOS
+    name: Test Old tvOS
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -175,10 +179,10 @@ jobs:
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   watchOS:
-    name: Test watchOS
+    name: Test Old watchOS
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -206,36 +210,60 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.1.app"
+            runsOn: macOS-12
+            name: "macOS 12, SPM 5.7.1 Test"
+            run: "swift test -c debug"
           - xcode: "Xcode_14.0.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.0 Test"
+            run: "swift test -c debug"
           - xcode: "Xcode_13.4.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6.1 Test"
+            run: "swift test -c debug"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
-            name: "macOS 12, SPM 5.6 Test"
+            name: "macOS 12, SPM 5.6.0 Test"
+            run: "swift test -c debug"
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.2 Test"
+            run: "swift test -c debug"
           - xcode: "Xcode_13.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.1 Test"
+            run: "swift test -c debug"
           - xcode: "Xcode_13.0.app"
             runsOn: macOS-11
-            name: "macOS 11, SPM 5.5 Test"
+            name: "macOS 11, SPM 5.5.0 Test"
+            run: "swift test -c debug"
           - xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
-            name: "macOS 11, SPM 5.4 Build"
+            name: "macOS 11, SPM 5.4.2 Build"
+            run: "swift build -c debug"
           - xcode: "Xcode_12.4.app"
             runsOn: macOS-10.15
-            name: "macOS 10.15, SPM 5.3 Build"
+            name: "macOS 10.15, SPM 5.3.2 Build"
+            run: "swift build -c debug"
+          - xcode: "Xcode_12.3.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, SPM 5.3.2 Build"
+            run: "swift build -c debug"
+          - xcode: "Xcode_12.2.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, SPM 5.3.1 Build"
+            run: "swift build -c debug"
+          - xcode: "Xcode_12.1.app"
+            runsOn: macOS-10.15
+            name: "macOS 10.15, SPM 5.3.0 Build"
+            run: "swift build -c debug"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Test SPM
-        run: swift build -c debug
+        run: ${{ matrix.run }}
   Linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -265,30 +293,30 @@ jobs:
     runs-on: windows-2019
     timeout-minutes: 10
     steps:
-    - name: "Clone Project"
-      uses: actions/checkout@v3
-    - uses: seanmiddleditch/gha-setup-vsdevenv@master
-    - name: Install Swift
-      run: |
-        Install-Binary -Url "https://download.swift.org/swift-5.6-release/windows10/swift-5.6-RELEASE/swift-5.6-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
-    - name: Set Environment Variables
-      run: |
-        echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "DEVELOPER_DIR=C:\Library\Developer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-    - name: Adjust Paths
-      run: |
-        echo "C:\Library\Swift-development\bin;C:\Library\icu-67\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        echo "C:\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    - name: Install Supporting Files
-      run: |
-        Copy-Item "$env:SDKROOT\usr\share\ucrt.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\ucrt\module.modulemap"
-        Copy-Item "$env:SDKROOT\usr\share\visualc.modulemap" -destination "$env:VCToolsInstallDir\include\module.modulemap"
-        Copy-Item "$env:SDKROOT\usr\share\visualc.apinotes" -destination "$env:VCToolsInstallDir\include\visualc.apinotes"
-        Copy-Item "$env:SDKROOT\usr\share\winsdk.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\um\module.modulemap"
-    - name: SPM Windows build
-      shell: cmd
-      run: |
-        cd ${{ github.workspace}}
-        set SDKROOT=%SystemDrive%\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk
-        %SystemDrive%\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin\swift-build.exe --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
-        if not exist .build\x86_64-unknown-windows-msvc\debug\Alamofire.swiftmodule exit 1
+      - name: "Clone Project"
+        uses: actions/checkout@v3
+      - uses: seanmiddleditch/gha-setup-vsdevenv@master
+      - name: Install Swift
+        run: |
+          Install-Binary -Url "https://download.swift.org/swift-5.6-release/windows10/swift-5.6-RELEASE/swift-5.6-RELEASE-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
+      - name: Set Environment Variables
+        run: |
+          echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "DEVELOPER_DIR=C:\Library\Developer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Adjust Paths
+        run: |
+          echo "C:\Library\Swift-development\bin;C:\Library\icu-67\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "C:\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Install Supporting Files
+        run: |
+          Copy-Item "$env:SDKROOT\usr\share\ucrt.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\ucrt\module.modulemap"
+          Copy-Item "$env:SDKROOT\usr\share\visualc.modulemap" -destination "$env:VCToolsInstallDir\include\module.modulemap"
+          Copy-Item "$env:SDKROOT\usr\share\visualc.apinotes" -destination "$env:VCToolsInstallDir\include\visualc.apinotes"
+          Copy-Item "$env:SDKROOT\usr\share\winsdk.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\um\module.modulemap"
+      - name: SPM Windows build
+        shell: cmd
+        run: |
+          cd ${{ github.workspace}}
+          set SDKROOT=%SystemDrive%\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk
+          %SystemDrive%\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin\swift-build.exe --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
+          if not exist .build\x86_64-unknown-windows-msvc\debug\Alamofire.swiftmodule exit 1

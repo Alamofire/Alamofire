@@ -1,6 +1,6 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.6
 //
-//  Package@swift-5.5.swift
+//  Package@swift-5.6.swift
 //
 //  Copyright (c) 2022 Alamofire Software Foundation (http://alamofire.org/)
 //
