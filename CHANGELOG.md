@@ -5,7 +5,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
-- `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563)
+- `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563) | [5.6.4](#564)
 - `5.5.x` Releases - [5.5.0](#550)
 - `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
 - `5.3.x` Releases - [5.3.0](#530)
@@ -49,6 +49,13 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 
 ---
 
+## [5.6.4](https://github.com/Alamofire/Alamofire/releases/tag/5.6.4)
+Released on 2022-11-21. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/84?closed=1).
+
+#### Fixed
+- Deprecated OS version support in Swift 5.7 SPM Package.
+  - Fixed by [Guglielmo Faglioni](https://github.com/guidev) in Pull Request [#3665](https://github.com/Alamofire/Alamofire/pull/3665).
+
 ## [5.6.3](https://github.com/Alamofire/Alamofire/releases/tag/5.6.3)
 Released on 2022-11-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/83?closed=1).
 
@@ -58,9 +65,9 @@ Released on 2022-11-20. All issues associated with this milestone can be found u
 
 #### Fixed
 - Calls to deprecated cancellation handler function.
-  - Fixed by [Sven Münnich](https://github.com/svenmuennich) in Pull Request [#3641](https://github.com/Alamofire/Alamofire/pull/3657).
+  - Fixed by [Sven Münnich](https://github.com/svenmuennich) in Pull Request [#3657](https://github.com/Alamofire/Alamofire/pull/3657).
 - Unnecessary protocol conformance on Combine publishers.
-  - Fixed by [MoonkiKim(김문기)](https://github.com/tedKim5178) in Pull Request [#3641](https://github.com/Alamofire/Alamofire/pull/3650).
+  - Fixed by [MoonkiKim(김문기)](https://github.com/tedKim5178) in Pull Request [#3650](https://github.com/Alamofire/Alamofire/pull/3650).
 - Don't attempt retry when `Request` has already been cancelled.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3641](https://github.com/Alamofire/Alamofire/pull/3641).
 
