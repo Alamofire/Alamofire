@@ -663,7 +663,7 @@ public struct StreamOf<Element>: AsyncSequence {
 
     public func makeAsyncIterator() -> Iterator {
         var continuation: AsyncStream<Element>.Continuation?
-        let stream = AsyncStream<Element> { innerContinuation in
+        let stream = AsyncStream<Element>(bufferingPolicy: bufferingPolicy) { innerContinuation in
             continuation = innerContinuation
             builder(innerContinuation)
         }
