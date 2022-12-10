@@ -1001,7 +1001,6 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
     }
 }
 
-#if swift(>=5.5)
 final class StaticParameterEncoderInstanceTests: BaseTestCase {
     func takeParameterEncoder(_ parameterEncoder: ParameterEncoder) {
         _ = parameterEncoder
@@ -1017,7 +1016,6 @@ final class StaticParameterEncoderInstanceTests: BaseTestCase {
         takeParameterEncoder(.urlEncodedForm())
     }
 }
-#endif
 
 private struct EncodableStruct: Encodable {
     let one = "one"

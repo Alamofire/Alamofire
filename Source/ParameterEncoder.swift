@@ -92,7 +92,6 @@ open class JSONParameterEncoder: ParameterEncoder {
     }
 }
 
-#if swift(>=5.5)
 extension ParameterEncoder where Self == JSONParameterEncoder {
     /// Provides a default `JSONParameterEncoder` instance.
     public static var json: JSONParameterEncoder { JSONParameterEncoder() }
@@ -105,7 +104,6 @@ extension ParameterEncoder where Self == JSONParameterEncoder {
         JSONParameterEncoder(encoder: encoder)
     }
 }
-#endif
 
 /// A `ParameterEncoder` that encodes types as URL-encoded query strings to be set on the URL or as body data, depending
 /// on the `Destination` set.
@@ -198,7 +196,6 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
     }
 }
 
-#if swift(>=5.5)
 extension ParameterEncoder where Self == URLEncodedFormParameterEncoder {
     /// Provides a default `URLEncodedFormParameterEncoder` instance.
     public static var urlEncodedForm: URLEncodedFormParameterEncoder { URLEncodedFormParameterEncoder() }
@@ -214,4 +211,3 @@ extension ParameterEncoder where Self == URLEncodedFormParameterEncoder {
         URLEncodedFormParameterEncoder(encoder: encoder, destination: destination)
     }
 }
-#endif

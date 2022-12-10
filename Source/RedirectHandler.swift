@@ -94,7 +94,6 @@ extension Redirector: RedirectHandler {
     }
 }
 
-#if swift(>=5.5)
 extension RedirectHandler where Self == Redirector {
     /// Provides a `Redirector` which follows redirects. Equivalent to `Redirector.follow`.
     public static var follow: Redirector { .follow }
@@ -110,4 +109,3 @@ extension RedirectHandler where Self == Redirector {
         Redirector(behavior: .modify(closure))
     }
 }
-#endif

@@ -208,7 +208,6 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
     }
 }
 
-#if swift(>=5.5)
 final class StaticCachedResponseHandlerTests: BaseTestCase {
     func takeCachedResponseHandler(_ handler: CachedResponseHandler) {
         _ = handler
@@ -229,7 +228,6 @@ final class StaticCachedResponseHandlerTests: BaseTestCase {
         takeCachedResponseHandler(.modify { _, _ in nil })
     }
 }
-#endif
 
 // MARK: -
 

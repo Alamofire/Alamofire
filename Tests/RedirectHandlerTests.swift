@@ -220,7 +220,6 @@ final class RedirectHandlerTestCase: BaseTestCase {
     }
 }
 
-#if swift(>=5.5)
 final class StaticRedirectHandlerTests: BaseTestCase {
     func takeRedirectHandler(_ handler: RedirectHandler) {
         _ = handler
@@ -241,4 +240,3 @@ final class StaticRedirectHandlerTests: BaseTestCase {
         takeRedirectHandler(.modify { _, _, _ in nil })
     }
 }
-#endif
