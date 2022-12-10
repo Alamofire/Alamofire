@@ -1189,7 +1189,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
             }
         }
         let serializer = UselessResponseSerializer()
-        let expectation = self.expectation(description: "request should finish")
+        let expectation = expectation(description: "request should finish")
         var data: Data?
 
         // When

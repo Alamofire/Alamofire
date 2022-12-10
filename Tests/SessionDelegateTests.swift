@@ -34,7 +34,7 @@ final class SessionDelegateTestCase: BaseTestCase {
         let session = Session(configuration: .ephemeral)
         let redirectURLString = Endpoint().url.absoluteString
 
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+        let expectation = expectation(description: "Request should redirect to \(redirectURLString)")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -61,7 +61,7 @@ final class SessionDelegateTestCase: BaseTestCase {
         // Given
         let session = Session(configuration: .ephemeral)
 
-        let expectation = self.expectation(description: "Request should redirect")
+        let expectation = expectation(description: "Request should redirect")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -87,7 +87,7 @@ final class SessionDelegateTestCase: BaseTestCase {
         let session = Session(configuration: .ephemeral)
         let redirectURLString = Endpoint().url.absoluteString
 
-        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+        let expectation = expectation(description: "Request should redirect to \(redirectURLString)")
 
         var response: DataResponse<Data?, AFError>?
 

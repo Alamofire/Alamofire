@@ -30,7 +30,7 @@ final class DownloadInitializationTests: BaseTestCase {
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
         let endpoint = Endpoint.get
-        let expectation = self.expectation(description: "download should complete")
+        let expectation = expectation(description: "download should complete")
 
         // When
         let request = AF.download(endpoint).response { _ in
@@ -50,7 +50,7 @@ final class DownloadInitializationTests: BaseTestCase {
         // Given
         let endpoint = Endpoint.get
         let headers: HTTPHeaders = ["Authorization": "123456"]
-        let expectation = self.expectation(description: "download should complete")
+        let expectation = expectation(description: "download should complete")
 
         // When
         let request = AF.download(endpoint, headers: headers).response { _ in
@@ -82,7 +82,7 @@ final class DownloadResponseTests: BaseTestCase {
         let endpoint = Endpoint.stream(numberOfLines)
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
-        let expectation = self.expectation(description: "Download request should download data to file: \(endpoint.url.absoluteString)")
+        let expectation = expectation(description: "Download request should download data to file: \(endpoint.url.absoluteString)")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -114,7 +114,7 @@ final class DownloadResponseTests: BaseTestCase {
 
     func testDownloadRequestResponseURLProducesURL() throws {
         // Given
-        let expectation = self.expectation(description: "Download request should download data")
+        let expectation = expectation(description: "Download request should download data")
         var response: DownloadResponse<URL, AFError>?
 
         // When
@@ -143,7 +143,7 @@ final class DownloadResponseTests: BaseTestCase {
         let numberOfLines = 10
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
-        let expectation = self.expectation(description: "Cancelled download request should not download data to file")
+        let expectation = expectation(description: "Cancelled download request should not download data to file")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -168,7 +168,7 @@ final class DownloadResponseTests: BaseTestCase {
         let randomBytes = 1 * 25 * 1024
         let endpoint = Endpoint.bytes(randomBytes)
 
-        let expectation = self.expectation(description: "Bytes download progress should be reported: \(endpoint.url)")
+        let expectation = expectation(description: "Bytes download progress should be reported: \(endpoint.url)")
 
         var progressValues: [Double] = []
         var response: DownloadResponse<URL?, AFError>?
@@ -212,7 +212,7 @@ final class DownloadResponseTests: BaseTestCase {
         let parameters = ["foo": "bar"]
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
-        let expectation = self.expectation(description: "Download request should download data to file")
+        let expectation = expectation(description: "Download request should download data to file")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -249,7 +249,7 @@ final class DownloadResponseTests: BaseTestCase {
         let headers: HTTPHeaders = ["Authorization": "123456"]
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
-        let expectation = self.expectation(description: "Download request should download data to file: \(endpoint.url)")
+        let expectation = expectation(description: "Download request should download data to file: \(endpoint.url)")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -283,7 +283,7 @@ final class DownloadResponseTests: BaseTestCase {
         // Given
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
-        let expectation = self.expectation(description: "Download request should download data but fail to move file")
+        let expectation = expectation(description: "Download request should download data but fail to move file")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -308,7 +308,7 @@ final class DownloadResponseTests: BaseTestCase {
         // Given
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
-        let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
+        let expectation = expectation(description: "Download request should download data to file: \(fileURL)")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -336,7 +336,7 @@ final class DownloadResponseTests: BaseTestCase {
         let fileURL = directoryURL.appendingPathComponent("test_output.json")
         try "random_data".write(to: fileURL, atomically: true, encoding: .utf8)
 
-        let expectation = self.expectation(description: "Download should complete but fail to move file")
+        let expectation = expectation(description: "Download should complete but fail to move file")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -366,7 +366,7 @@ final class DownloadResponseTests: BaseTestCase {
 
         let fileURL = directoryURL.appendingPathComponent("test_output.json")
 
-        let expectation = self.expectation(description: "Download should complete and move file to URL: \(fileURL)")
+        let expectation = expectation(description: "Download should complete and move file to URL: \(fileURL)")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -502,7 +502,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 final class DownloadResumeDataTestCase: BaseTestCase {
     func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
         // Given
-        let expectation = self.expectation(description: "Download should be cancelled")
+        let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response: DownloadResponse<URL?, AFError>?
@@ -536,7 +536,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatDownloadRequestProducesResumeDataOnError() {
         // Given
-        let expectation = self.expectation(description: "download complete")
+        let expectation = expectation(description: "download complete")
 
         var response: DownloadResponse<URL?, AFError>?
 
@@ -566,7 +566,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
         // Given
-        let expectation = self.expectation(description: "Download should be cancelled")
+        let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response: DownloadResponse<URL?, AFError>?
@@ -602,7 +602,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatCancelledDownloadResumeDataIsAvailableWithDecodableResponseSerializer() {
         // Given
-        let expectation = self.expectation(description: "Download should be cancelled")
+        let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response: DownloadResponse<TestResponse, AFError>?
@@ -699,7 +699,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatCancelledDownloadProducesMatchingResumeData() {
         // Given
-        let expectation = self.expectation(description: "Download should be cancelled")
+        let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
         var receivedResumeData: Data?
         var response: DownloadResponse<URL?, AFError>?
@@ -741,7 +741,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 final class DownloadResponseMapTestCase: BaseTestCase {
     func testThatMapTransformsSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<String, AFError>?
 
@@ -769,7 +769,7 @@ final class DownloadResponseMapTestCase: BaseTestCase {
     func testThatMapPreservesFailureError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail with invalid URL")
+        let expectation = expectation(description: "request should fail with invalid URL")
 
         var response: DownloadResponse<String, AFError>?
 
@@ -797,7 +797,7 @@ final class DownloadResponseMapTestCase: BaseTestCase {
 final class DownloadResponseTryMapTestCase: BaseTestCase {
     func testThatTryMapTransformsSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<String, Error>?
 
@@ -826,7 +826,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         // Given
         struct TransformError: Error {}
 
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<String, Error>?
 
@@ -858,7 +858,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
     func testThatTryMapPreservesFailureError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail with 404")
+        let expectation = expectation(description: "request should fail with 404")
 
         var response: DownloadResponse<String, Error>?
 
@@ -885,7 +885,7 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
     func testThatMapErrorTransformsFailureValue() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should not succeed")
+        let expectation = expectation(description: "request should not succeed")
 
         var response: DownloadResponse<TestResponse, TestError>?
 
@@ -915,7 +915,7 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
 
     func testThatMapErrorPreservesSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<Data, TestError>?
 
@@ -942,7 +942,7 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
 final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<Data, Error>?
 
@@ -967,7 +967,7 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorCatchesTransformationError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail")
+        let expectation = expectation(description: "request should fail")
 
         var response: DownloadResponse<Data, Error>?
 
@@ -999,7 +999,7 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorTransformsError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail")
+        let expectation = expectation(description: "request should fail")
 
         var response: DownloadResponse<Data, Error>?
 

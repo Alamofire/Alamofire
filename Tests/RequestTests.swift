@@ -30,7 +30,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
         let url = Endpoint.get.url
-        let expectation = self.expectation(description: "GET request should succeed: \(url)")
+        let expectation = expectation(description: "GET request should succeed: \(url)")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -54,7 +54,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let byteCount = 50 * 1024
         let url = Endpoint.bytes(byteCount).url
 
-        let expectation = self.expectation(description: "Bytes download progress should be reported: \(url)")
+        let expectation = expectation(description: "Bytes download progress should be reported: \(url)")
 
         var progressValues: [Double] = []
         var response: DataResponse<Data?, AFError>?
@@ -98,7 +98,7 @@ final class RequestResponseTestCase: BaseTestCase {
                           "arabic": "العربية",
                           "emoji": "😃"]
 
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
@@ -146,7 +146,7 @@ final class RequestResponseTestCase: BaseTestCase {
                           "png_image": pngBase64EncodedString,
                           "jpeg_image": jpegBase64EncodedString]
 
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
@@ -180,7 +180,7 @@ final class RequestResponseTestCase: BaseTestCase {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         let manager = Session(serializationQueue: queue)
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var response: DataResponse<TestResponse, AFError>?
 
         // When
@@ -200,7 +200,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         let manager = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var response: DataResponse<TestResponse, AFError>?
 
         // When
@@ -221,7 +221,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
         let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
         let count = 10
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         expectation.expectedFulfillmentCount = count
         var responses: [DataResponse<TestResponse, AFError>] = []
 
@@ -767,7 +767,7 @@ final class RequestDescriptionTestCase: BaseTestCase {
         let manager = Session(startRequestsImmediately: false)
         let request = manager.request(url)
 
-        let expectation = self.expectation(description: "Request description should update: \(url)")
+        let expectation = expectation(description: "Request description should update: \(url)")
 
         var response: HTTPURLResponse?
 
@@ -841,7 +841,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testGETRequestCURLDescription() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var components: [String]?
 
         // When
@@ -861,7 +861,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testGETRequestCURLDescriptionOnMainQueue() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var isMainThread = false
         var components: [String]?
 
@@ -884,7 +884,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testGETRequestCURLDescriptionSynchronous() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var components: [String]?
         var syncComponents: [String]?
 
@@ -908,7 +908,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var components: [String]?
         var secondComponents: [String]?
 
@@ -934,7 +934,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testGETRequestWithCustomHeaderCURLDescription() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var cURLDescription: String?
 
         // When
@@ -953,7 +953,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testGETRequestWithDuplicateHeadersDebugDescription() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var cURLDescription: String?
         var components: [String]?
 
@@ -981,7 +981,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testPOSTRequestCURLDescription() {
         // Given
         let url = Endpoint.method(.post).url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var components: [String]?
 
         // When
@@ -1001,7 +1001,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testPOSTRequestWithJSONParametersCURLDescription() {
         // Given
         let url = Endpoint.method(.post).url
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var cURLDescription: String?
         var components: [String]?
 
@@ -1040,7 +1040,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
                                              .name: "foo",
                                              .value: "bar"])!
         let cookieManager = sessionWithCookie(cookie)
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var components: [String]?
 
         // When
@@ -1067,7 +1067,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
                                              .name: "foo",
                                              .value: "bar"])!
         sessionDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var components: [String]?
 
         // When
@@ -1087,7 +1087,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Given
         let url = Endpoint.method(.post).url
         let japaneseData = Data("日本語".utf8)
-        let expectation = self.expectation(description: "multipart form data encoding should succeed")
+        let expectation = expectation(description: "multipart form data encoding should succeed")
         var cURLDescription: String?
         var components: [String]?
 
@@ -1116,7 +1116,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     func testThatRequestWithInvalidURLDebugDescription() {
         // Given
         let urlString = "invalid_url"
-        let expectation = self.expectation(description: "request should complete")
+        let expectation = expectation(description: "request should complete")
         var cURLDescription: String?
 
         // When
@@ -1181,7 +1181,7 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     func testThatDataRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = self.expectation(description: "Request should succeed.")
+        let expectation = expectation(description: "Request should succeed.")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -1200,7 +1200,7 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     func testThatDownloadRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = self.expectation(description: "Request should succeed.")
+        let expectation = expectation(description: "Request should succeed.")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
@@ -1219,7 +1219,7 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     func testThatDataStreamRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = self.expectation(description: "Request should succeed.")
+        let expectation = expectation(description: "Request should succeed.")
         var response: DataStreamRequest.Completion?
 
         // When

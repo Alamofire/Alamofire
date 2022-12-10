@@ -136,7 +136,7 @@ class URLProtocolTestCase: BaseTestCase {
         // Given
         let endpoint = Endpoint.responseHeaders.modifying(\.headers, to: ["Request-Header": "foobar"])
 
-        let expectation = self.expectation(description: "GET request should succeed")
+        let expectation = expectation(description: "GET request should succeed")
 
         var response: DataResponse<Data?, AFError>?
 

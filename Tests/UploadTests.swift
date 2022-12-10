@@ -31,7 +31,7 @@ final class UploadFileInitializationTestCase: BaseTestCase {
         // Given
         let requestURL = Endpoint.method(.post).url
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
-        let expectation = self.expectation(description: "upload should complete")
+        let expectation = expectation(description: "upload should complete")
 
         // When
         let request = AF.upload(imageURL, to: requestURL).response { _ in
@@ -52,7 +52,7 @@ final class UploadFileInitializationTestCase: BaseTestCase {
         let requestURL = Endpoint.method(.post).url
         let headers: HTTPHeaders = ["Authorization": "123456"]
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
-        let expectation = self.expectation(description: "upload should complete")
+        let expectation = expectation(description: "upload should complete")
 
         // When
         let request = AF.upload(imageURL, to: requestURL, method: .post, headers: headers).response { _ in
@@ -79,7 +79,7 @@ final class UploadDataInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndData() {
         // Given
         let url = Endpoint.method(.post).url
-        let expectation = self.expectation(description: "upload should complete")
+        let expectation = expectation(description: "upload should complete")
 
         // When
         let request = AF.upload(Data(), to: url).response { _ in
@@ -99,7 +99,7 @@ final class UploadDataInitializationTestCase: BaseTestCase {
         // Given
         let url = Endpoint.method(.post).url
         let headers: HTTPHeaders = ["Authorization": "123456"]
-        let expectation = self.expectation(description: "upload should complete")
+        let expectation = expectation(description: "upload should complete")
 
         // When
         let request = AF.upload(Data(), to: url, headers: headers).response { _ in
@@ -128,7 +128,7 @@ final class UploadStreamInitializationTestCase: BaseTestCase {
         let requestURL = Endpoint.method(.post).url
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let imageStream = InputStream(url: imageURL)!
-        let expectation = self.expectation(description: "upload should complete")
+        let expectation = expectation(description: "upload should complete")
 
         // When
         let request = AF.upload(imageStream, to: requestURL).response { _ in
@@ -150,7 +150,7 @@ final class UploadStreamInitializationTestCase: BaseTestCase {
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let headers: HTTPHeaders = ["Authorization": "123456"]
         let imageStream = InputStream(url: imageURL)!
-        let expectation = self.expectation(description: "upload should complete")
+        let expectation = expectation(description: "upload should complete")
 
         // When
         let request = AF.upload(imageStream, to: requestURL, headers: headers).response { _ in
@@ -179,7 +179,7 @@ final class UploadDataTestCase: BaseTestCase {
         let url = Endpoint.method(.post).url
         let data = Data("Lorem ipsum dolor sit amet".utf8)
 
-        let expectation = self.expectation(description: "Upload request should succeed: \(url)")
+        let expectation = expectation(description: "Upload request should succeed: \(url)")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -203,7 +203,7 @@ final class UploadDataTestCase: BaseTestCase {
         let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 1000)
         let data = Data(string.utf8)
 
-        let expectation = self.expectation(description: "Bytes upload progress should be reported: \(url)")
+        let expectation = expectation(description: "Bytes upload progress should be reported: \(url)")
 
         var uploadProgressValues: [Double] = []
         var downloadProgressValues: [Double] = []
@@ -267,7 +267,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let url = Endpoint.method(.post).url
         let uploadData = Data("upload_data".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
         var response: DataResponse<Data?, AFError>?
@@ -306,7 +306,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let url = Endpoint.method(.post).url
         let uploadData = Data("upload_data".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
         var generatedURL: URL?
@@ -353,7 +353,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let formData = MultipartFormData(fileManager: .default, boundary: "custom-test-boundary")
         formData.append(uploadData, withName: "upload_data")
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -383,7 +383,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let frenchData = Data("français".utf8)
         let japaneseData = Data("日本語".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -419,7 +419,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let frenchData = Data("français".utf8)
         let japaneseData = Data("日本語".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -448,7 +448,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         // Given
         let uploadData = Data("upload_data".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
         var response: DataResponse<Data?, AFError>?
@@ -487,7 +487,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let frenchData = Data("français".utf8)
         let japaneseData = Data("日本語".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -517,7 +517,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         // Given
         let uploadData = Data("upload_data".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?, AFError>?
         var formData: MultipartFormData?
 
@@ -556,7 +556,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         // Given
         let imageURL = URL(fileURLWithPath: "does_not_exist.jpg")
 
-        let expectation = self.expectation(description: "multipart form data upload from nonexistent file should fail")
+        let expectation = expectation(description: "multipart form data upload from nonexistent file should fail")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -597,7 +597,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
 
         let request = MultipartFormDataRequest()
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?, AFError>?
 
         // When
@@ -637,7 +637,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let french = Data("français".utf8)
         let japanese = Data("日本語".utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -683,7 +683,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         let loremData2 = Data(String(repeating: "Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.",
                                      count: 500).utf8)
 
-        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        let expectation = expectation(description: "multipart form data upload should succeed")
 
         var uploadProgressValues: [Double] = []
         var downloadProgressValues: [Double] = []

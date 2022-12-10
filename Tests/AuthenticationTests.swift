@@ -31,7 +31,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         // Given
         let session = Session()
         let endpoint = Endpoint.basicAuth()
-        let expectation = self.expectation(description: "\(endpoint.url) 401")
+        let expectation = expectation(description: "\(endpoint.url) 401")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -58,7 +58,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         let session = Session()
         let user = "user1", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
-        let expectation = self.expectation(description: "\(endpoint.url) 200")
+        let expectation = expectation(description: "\(endpoint.url) 200")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -85,7 +85,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         let session = Session()
         let user = "user2", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
-        let expectation = self.expectation(description: "\(endpoint.url) 200")
+        let expectation = expectation(description: "\(endpoint.url) 200")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -117,7 +117,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         // Given
         let session = Session()
         let endpoint = Endpoint.hiddenBasicAuth()
-        let expectation = self.expectation(description: "\(endpoint.url) 200")
+        let expectation = expectation(description: "\(endpoint.url) 200")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -147,7 +147,7 @@ final class HTTPDigestAuthenticationTestCase: BaseTestCase {
         // Given
         let session = Session()
         let endpoint = Endpoint.digestAuth()
-        let expectation = self.expectation(description: "\(endpoint.url) 401")
+        let expectation = expectation(description: "\(endpoint.url) 401")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -174,7 +174,7 @@ final class HTTPDigestAuthenticationTestCase: BaseTestCase {
         let session = Session()
         let user = "user", password = "password"
         let endpoint = Endpoint.digestAuth(forUser: user, password: password)
-        let expectation = self.expectation(description: "\(endpoint.url) 200")
+        let expectation = expectation(description: "\(endpoint.url) 200")
 
         var response: DataResponse<Data?, AFError>?
 
