@@ -1416,7 +1416,6 @@ final class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTest
     }
 }
 
-#if swift(>=5.5)
 final class StaticServerTrustAccessorTests: ServerTrustPolicyTestCase {
     func consumeServerTrustEvaluator(_ evaluator: ServerTrustEvaluating) {
         _ = evaluator
@@ -1437,6 +1436,5 @@ final class StaticServerTrustAccessorTests: ServerTrustPolicyTestCase {
         consumeServerTrustEvaluator(.publicKeys())
     }
 }
-#endif
 
 #endif

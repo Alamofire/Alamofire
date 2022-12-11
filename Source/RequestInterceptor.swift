@@ -157,7 +157,6 @@ open class Adapter: RequestInterceptor {
     }
 }
 
-#if swift(>=5.5)
 extension RequestAdapter where Self == Adapter {
     /// Creates an `Adapter` using the provided `AdaptHandler` closure.
     ///
@@ -167,7 +166,6 @@ extension RequestAdapter where Self == Adapter {
         Adapter(closure)
     }
 }
-#endif
 
 // MARK: -
 
@@ -190,7 +188,6 @@ open class Retrier: RequestInterceptor {
     }
 }
 
-#if swift(>=5.5)
 extension RequestRetrier where Self == Retrier {
     /// Creates a `Retrier` using the provided `RetryHandler` closure.
     ///
@@ -200,7 +197,6 @@ extension RequestRetrier where Self == Retrier {
         Retrier(closure)
     }
 }
-#endif
 
 // MARK: -
 
@@ -320,7 +316,6 @@ open class Interceptor: RequestInterceptor {
     }
 }
 
-#if swift(>=5.5)
 extension RequestInterceptor where Self == Interceptor {
     /// Creates an `Interceptor` using the provided `AdaptHandler` and `RetryHandler` closures.
     ///
@@ -354,4 +349,3 @@ extension RequestInterceptor where Self == Interceptor {
         Interceptor(adapters: adapters, retriers: retriers, interceptors: interceptors)
     }
 }
-#endif

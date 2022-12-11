@@ -591,7 +591,6 @@ final class InterceptorRequestTests: BaseTestCase {
 
 // MARK: - Static Accessors
 
-#if swift(>=5.5)
 final class StaticAccessorTests: BaseTestCase {
     func consumeRequestAdapter(_ requestAdapter: RequestAdapter) {
         _ = requestAdapter
@@ -630,7 +629,6 @@ final class StaticAccessorTests: BaseTestCase {
         consumeRequestInterceptor(.connectionLostRetryPolicy())
     }
 }
-#endif
 
 // MARK: - Helpers
 

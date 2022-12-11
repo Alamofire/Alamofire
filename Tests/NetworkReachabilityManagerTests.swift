@@ -174,7 +174,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
             return
         }
 
-        let expectation = self.expectation(description: "listener closure should be executed")
+        let expectation = expectation(description: "listener closure should be executed")
         var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
         // When
@@ -192,7 +192,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
     func testThatAddressManagerIsNotifiedWhenStartListeningIsCalled() {
         // Given
         let manager = NetworkReachabilityManager()
-        let expectation = self.expectation(description: "listener closure should be executed")
+        let expectation = expectation(description: "listener closure should be executed")
 
         var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 

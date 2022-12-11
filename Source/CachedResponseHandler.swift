@@ -90,7 +90,6 @@ extension ResponseCacher: CachedResponseHandler {
     }
 }
 
-#if swift(>=5.5)
 extension CachedResponseHandler where Self == ResponseCacher {
     /// Provides a `ResponseCacher` which caches the response, if allowed. Equivalent to `ResponseCacher.cache`.
     public static var cache: ResponseCacher { .cache }
@@ -106,4 +105,3 @@ extension CachedResponseHandler where Self == ResponseCacher {
         ResponseCacher(behavior: .modify(closure))
     }
 }
-#endif

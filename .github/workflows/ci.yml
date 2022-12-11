@@ -59,26 +59,6 @@ jobs:
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.0, Swift 5.5.0"
             testPlan: "macOS-NoTS"
-          - xcode: "Xcode_12.5.1.app"
-            runsOn: macOS-11
-            name: "macOS 11, Xcode 12.5.1, Swift 5.4.2"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_12.4.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.4, Swift 5.3.2"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_12.3.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.3, Swift 5.3.2"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_12.2.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.2, Swift 5.3.1"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_12.1.1.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, Xcode 12.1.1, Swift 5.3.0"
-            testPlan: "macOS-NoTS"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
@@ -213,57 +193,30 @@ jobs:
           - xcode: "Xcode_14.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.1 Test"
-            run: "swift test -c debug"
           - xcode: "Xcode_14.0.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.0 Test"
-            run: "swift test -c debug"
           - xcode: "Xcode_13.4.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6.1 Test"
-            run: "swift test -c debug"
           - xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6.0 Test"
-            run: "swift test -c debug"
           - xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.2 Test"
-            run: "swift test -c debug"
           - xcode: "Xcode_13.1.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.1 Test"
-            run: "swift test -c debug"
           - xcode: "Xcode_13.0.app"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.0 Test"
-            run: "swift test -c debug"
-          - xcode: "Xcode_12.5.1.app"
-            runsOn: macOS-11
-            name: "macOS 11, SPM 5.4.2 Build"
-            run: "swift build -c debug"
-          - xcode: "Xcode_12.4.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, SPM 5.3.2 Build"
-            run: "swift build -c debug"
-          - xcode: "Xcode_12.3.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, SPM 5.3.2 Build"
-            run: "swift build -c debug"
-          - xcode: "Xcode_12.2.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, SPM 5.3.1 Build"
-            run: "swift build -c debug"
-          - xcode: "Xcode_12.1.app"
-            runsOn: macOS-10.15
-            name: "macOS 10.15, SPM 5.3.0 Build"
-            run: "swift build -c debug"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk && firewalk &
       - name: Test SPM
-        run: ${{ matrix.run }}
+        run: swift test -c debug
   Linux:
     name: Linux
     runs-on: ubuntu-latest

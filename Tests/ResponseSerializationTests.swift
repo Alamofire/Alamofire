@@ -465,7 +465,6 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     }
 }
 
-#if swift(>=5.5)
 final class StaticSerializationTests: BaseTestCase {
     func consumeDownloadResponseSerializer<Serializer: DownloadResponseSerializerProtocol>(_ responseSerializer: Serializer) {
         _ = responseSerializer
@@ -514,7 +513,6 @@ final class StaticSerializationTests: BaseTestCase {
         consumeStreamSerializer(.decodable(of: TestResponse.self))
     }
 }
-#endif
 
 // MARK: -
 
@@ -1191,7 +1189,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
             }
         }
         let serializer = UselessResponseSerializer()
-        let expectation = self.expectation(description: "request should finish")
+        let expectation = expectation(description: "request should finish")
         var data: Data?
 
         // When
@@ -1383,7 +1381,6 @@ final class DataPreprocessorTests: BaseTestCase {
     }
 }
 
-#if swift(>=5.5)
 final class StaticDataPreprocessorTests: BaseTestCase {
     func consumeDataPreprocessor(_ dataPreprocessor: DataPreprocessor) {
         _ = dataPreprocessor
@@ -1399,7 +1396,6 @@ final class StaticDataPreprocessorTests: BaseTestCase {
         consumeDataPreprocessor(.googleXSSI)
     }
 }
-#endif
 
 extension HTTPURLResponse {
     convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {

@@ -29,7 +29,7 @@ import XCTest
 final class ResponseTestCase: BaseTestCase {
     func testThatResponseReturnsSuccessResultWithValidData() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -52,7 +52,7 @@ final class ResponseTestCase: BaseTestCase {
     func testThatResponseReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail with invalid URL error")
+        let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -79,7 +79,7 @@ final class ResponseTestCase: BaseTestCase {
 final class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsSuccessResultWithValidData() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data, AFError>?
 
@@ -103,7 +103,7 @@ final class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail with invalid URL error")
+        let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<Data, AFError>?
 
@@ -130,7 +130,7 @@ final class ResponseDataTestCase: BaseTestCase {
 final class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsSuccessResultWithValidString() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<String, AFError>?
 
@@ -154,7 +154,7 @@ final class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail with invalid URL error")
+        let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<String, AFError>?
 
@@ -182,7 +182,7 @@ final class ResponseStringTestCase: BaseTestCase {
 final class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
@@ -206,7 +206,7 @@ final class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail")
+        let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<Any, AFError>?
 
@@ -229,7 +229,7 @@ final class ResponseJSONTestCase: BaseTestCase {
 
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
@@ -260,7 +260,7 @@ final class ResponseJSONTestCase: BaseTestCase {
 
     func testThatResponseJSONReturnsSuccessResultForPOSTRequest() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
@@ -294,7 +294,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
     func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
@@ -318,7 +318,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
     func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
         // Given
         let url = Endpoint().url
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
@@ -342,7 +342,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail")
+        let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<TestResponse, AFError>?
 
@@ -369,7 +369,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
 final class ResponseMapTestCase: BaseTestCase {
     func testThatMapTransformsSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<String, AFError>?
 
@@ -396,7 +396,7 @@ final class ResponseMapTestCase: BaseTestCase {
     func testThatMapPreservesFailureError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail with invalid URL error")
+        let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<String, AFError>?
 
@@ -423,7 +423,7 @@ final class ResponseMapTestCase: BaseTestCase {
 final class ResponseTryMapTestCase: BaseTestCase {
     func testThatTryMapTransformsSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<String, Error>?
 
@@ -451,7 +451,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
         // Given
         struct TransformError: Error {}
 
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<String, Error>?
 
@@ -484,7 +484,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
     func testThatTryMapPreservesFailureError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail with invalid URL error")
+        let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<String, Error>?
 
@@ -524,7 +524,7 @@ final class ResponseMapErrorTestCase: BaseTestCase {
     func testThatMapErrorTransformsFailureValue() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should not succeed")
+        let expectation = expectation(description: "request should not succeed")
 
         var response: DataResponse<TestResponse, TestError>?
 
@@ -551,7 +551,7 @@ final class ResponseMapErrorTestCase: BaseTestCase {
 
     func testThatMapErrorPreservesSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data, TestError>?
 
@@ -577,7 +577,7 @@ final class ResponseMapErrorTestCase: BaseTestCase {
 final class ResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
-        let expectation = self.expectation(description: "request should succeed")
+        let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data, Error>?
 
@@ -600,7 +600,7 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorCatchesTransformationError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail")
+        let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<Data, Error>?
 
@@ -630,7 +630,7 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorTransformsError() {
         // Given
         let urlString = String.invalidURL
-        let expectation = self.expectation(description: "request should fail")
+        let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<Data, Error>?
 
