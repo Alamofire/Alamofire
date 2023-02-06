@@ -24,6 +24,6 @@
 --nospaceoperators ..<, ...
 --selfrequired validate
 --stripunusedargs closure-only
---wraparguments after-first
---wrapcollections after-first
---wrapparameters after-first
+--wraparguments preserve
+--wrapcollections preserve
+--wrapparameters preserve

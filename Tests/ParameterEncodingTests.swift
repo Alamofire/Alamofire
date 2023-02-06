@@ -236,7 +236,7 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testURLParameterLiteralBoolEncodingWorksAndDoesNotAffectNumbers() throws {
         // Given
         let encoding = URLEncoding(boolEncoding: .literal)
-        let parameters: [String: Any] = [// Must still encode to numbers
+        let parameters: [String: Any] = [ // Must still encode to numbers
             "a": 1,
             "b": 0,
             "c": 1.0,
@@ -250,7 +250,8 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             "i": true,
             "j": false,
             "k": NSNumber(value: true),
-            "l": NSNumber(value: false)]
+            "l": NSNumber(value: false)
+        ]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)

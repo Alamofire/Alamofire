@@ -56,7 +56,7 @@ open class RetryPolicy: RequestInterceptor {
     ]
 
     /// The default URL error codes to retry.
-    public static let defaultRetryableURLErrorCodes: Set<URLError.Code> = [// [Security] App Transport Security disallowed a connection because there is no secure network connection.
+    public static let defaultRetryableURLErrorCodes: Set<URLError.Code> = [ // [Security] App Transport Security disallowed a connection because there is no secure network connection.
         //   - [Disabled] ATS settings do not change at runtime.
         // .appTransportSecurityRequiresSecureConnection,
 
