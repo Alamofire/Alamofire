@@ -31,6 +31,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.2.app"
+            runsOn: macOS-12
+            name: "macOS 12, Xcode 14.2, Swift 5.7.2"
+            testPlan: "macOS"
           - xcode: "Xcode_14.1.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.1, Swift 5.7.1"
@@ -69,7 +73,7 @@ jobs:
     name: Test Catalyst
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
@@ -81,13 +85,13 @@ jobs:
     name: Test Latest (iOS, tvOS, watchOS)
     runs-on: macOS-12
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=16.1,name=iPhone 14 Pro"
+          - destination: "OS=16.2,name=iPhone 14 Pro"
             name: "iOS"
             scheme: "Alamofire iOS"
           - destination: "OS=16.1,name=Apple TV"
@@ -106,7 +110,7 @@ jobs:
     name: "Test Old iOS"
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -134,7 +138,7 @@ jobs:
     name: Test Old tvOS
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -162,7 +166,7 @@ jobs:
     name: Test Old watchOS
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -190,6 +194,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.2.app"
+            runsOn: macOS-12
+            name: "macOS 12, SPM 5.7.2 Test"
           - xcode: "Xcode_14.1.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.1 Test"
