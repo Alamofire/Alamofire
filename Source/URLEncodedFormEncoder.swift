@@ -277,7 +277,7 @@ public final class URLEncodedFormEncoder {
     public struct NilEncoding {
         /// Encodes `nil` by dropping the entire key / value pair.
         public static let dropKey = NilEncoding { nil }
-        /// Encodes `nil` by dropping only the value. e.g. `value1=one&nilValue&value2=two`.
+        /// Encodes `nil` by dropping only the value. e.g. `value1=one&nilValue=&value2=two`.
         public static let dropValue = NilEncoding { "" }
         /// Encodes `nil` as `null`.
         public static let null = NilEncoding { "null" }
