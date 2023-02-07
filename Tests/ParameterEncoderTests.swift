@@ -193,30 +193,6 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
 }
 
 final class URLEncodedFormEncoderTests: BaseTestCase {
-    func testEncoderThrowsErrorWhenAttemptingToEncodeNilInKeyedContainer() {
-        // Given
-        let encoder = URLEncodedFormEncoder()
-        let parameters = FailingOptionalStruct(testedContainer: .keyed)
-
-        // When
-        let result = Result<String, Error> { try encoder.encode(parameters) }
-
-        // Then
-        XCTAssertTrue(result.isFailure)
-    }
-
-    func testEncoderThrowsErrorWhenAttemptingToEncodeNilInUnkeyedContainer() {
-        // Given
-        let encoder = URLEncodedFormEncoder()
-        let parameters = FailingOptionalStruct(testedContainer: .unkeyed)
-
-        // When
-        let result = Result<String, Error> { try encoder.encode(parameters) }
-
-        // Then
-        XCTAssertTrue(result.isFailure)
-    }
-
     func testEncoderCanEncodeDictionary() {
         // Given
         let encoder = URLEncodedFormEncoder()
@@ -492,18 +468,6 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = "string"
-
-        // When
-        let result = Result<String, Error> { try encoder.encode(parameters) }
-
-        // Then
-        XCTAssertFalse(result.isSuccess)
-    }
-
-    func testThatOptionalValuesCannotBeEncoded() {
-        // Given
-        let encoder = URLEncodedFormEncoder()
-        let parameters: [String: String?] = ["string": nil]
 
         // When
         let result = Result<String, Error> { try encoder.encode(parameters) }
@@ -824,6 +788,54 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result.success, "A=oneTwoThree")
+    }
+
+    func testThatNilCanBeEncodedByDroppingTheKeyByDefault() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: String?] = ["a": nil]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "")
+    }
+
+    func testThatNilCanBeEncodedAsNull() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .null)
+        let parameters: [String: String?] = ["a": nil]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a=null")
+    }
+
+    func testThatNilCanBeEncodedByDroppingTheKey() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .dropKey)
+        let parameters: [String: String?] = ["a": nil]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "")
+    }
+
+    func testThatNilCanBeEncodedByDroppingTheValue() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .dropValue)
+        let parameters: [String: String?] = ["a": nil]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a=")
     }
 
     func testThatSpacesCanBeEncodedAsPluses() {

@@ -343,6 +343,28 @@ You can create your own `URLEncodedFormParameterEncoder` and specify the desired
 let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(spaceEncoding: .plusReplaced))
 ```
 
+##### Configuring the Encoding of Optionals
+
+There is no standard for encoding `Optional` values as part of form data. Nonetheless, Alamofire provides `NilEncoding` with the following methods for encoding optionals:
+
+- `.dropKey` - Encodes `nil` values by dropping them from the output entirely. This matches other Swift encoders. e.g. `otherValue=2`.
+- `.dropValue` - Encodes `nil` values by dropping the value from the output. e.g. `nilValue=&otherValue=2`.
+- `.null` - Encodes `nil` values as the string `null`. e.g. `nilValue=null&otherValue=2`.
+
+Additionally, custom encodings can be created by specifying an encoding closure that provides the `nil` replacement value.
+
+```swift
+extension URLEncodedFormEncoder.NilEncoding {
+  static let customEncoding = NilEncoding { "customNilValue" }
+}
+```
+
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `NilEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
+
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(nilEncoding: .dropKey))
+```
+
 #### `JSONParameterEncoder`
 
 `JSONParameterEncoder` encodes `Encodable` values using Swift's `JSONEncoder` and sets the result as the `httpBody` of the `URLRequest`. The `Content-Type` HTTP header field of an encoded request is set to `application/json` if not already set.
