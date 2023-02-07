@@ -257,7 +257,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         var requestError: AFError?
         var downloadError: AFError?
 
-        let acceptableContentTypes = [// Sorted in a random order, not alphabetically
+        let acceptableContentTypes = [ // Sorted in a random order, not alphabetically
             "application/octet-stream",
             "image/gif",
             "image/x-xbitmap",
@@ -271,7 +271,8 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             "image/ico",
             "image/bmp",
             "image/x-ms-bmp",
-            "image/x-win-bitmap"]
+            "image/x-win-bitmap"
+        ]
 
         // When
         AF.request(endpoint)
@@ -294,7 +295,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(requestError)
         XCTAssertNotNil(downloadError)
 
-        let expectedAcceptableContentTypes = [// Sorted in a specific order, alphabetically
+        let expectedAcceptableContentTypes = [ // Sorted in a specific order, alphabetically
             "application/octet-stream",
             "image/bmp",
             "image/gif",
@@ -308,7 +309,8 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             "image/x-icon",
             "image/x-ms-bmp",
             "image/x-win-bitmap",
-            "image/x-xbitmap"]
+            "image/x-xbitmap"
+        ]
 
         for error in [requestError, downloadError] {
             XCTAssertEqual(error?.isUnacceptableContentType, true)
