@@ -826,6 +826,30 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "A=oneTwoThree")
     }
 
+    func testThatNilCanBeEncodedAsNull() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .null)
+        let parameters: [String: String?] = ["a": nil]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a=null")
+    }
+
+    func testThatNilCanBeEncodedByDropping() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: String?] = ["a": nil]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "")
+    }
+
     func testThatSpacesCanBeEncodedAsPluses() {
         // Given
         let encoder = URLEncodedFormEncoder(spaceEncoding: .plusReplaced)
