@@ -363,7 +363,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "a=1")
     }
 
-    func testThatNestedDictionariesHaveBracketedKeys() {
+    func testThatNestedDictionariesCanHaveBracketKeyPathsByDefault() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["a": ["b": "b"]]
@@ -373,6 +373,42 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result.success, "a%5Bb%5D=b")
+    }
+
+    func testThatNestedDictionariesCanHaveExplicitBracketKeyPaths() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyPathEncoding: .brackets)
+        let parameters = ["a": ["b": "b"]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a%5Bb%5D=b")
+    }
+
+    func testThatNestedDictionariesCanHaveDottedKeyPaths() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyPathEncoding: .dots)
+        let parameters = ["a": ["b": "b"]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a.b=b")
+    }
+
+    func testThatNestedDictionariesCanHaveCustomKeyPaths() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyPathEncoding: .init { "-\($0)" })
+        let parameters = ["a": ["b": "b"]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a-b=b")
     }
 
     func testThatEncodableStructCanBeEncoded() {
