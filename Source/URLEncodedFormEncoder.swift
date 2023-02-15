@@ -44,8 +44,8 @@ import Foundation
 /// `KeyPathEncoding` can be used to configure how paths within nested objects are encoded. By default, the `.brackets`
 /// encoding is used, which encodes each sub-key in brackets. e.g. `parent[child][grandchild]=value`.
 ///
-/// `NilEncoding` can be used to configure how `nil` `Optional` values are encoded. By default, the `.dropValue`
-/// encoding is used, which drops the `nil` key / value pair from the output entirely.
+/// `NilEncoding` can be used to configure how `nil` `Optional` values are encoded. By default, the `.dropKey` encoding
+/// is used, which drops `nil` key / value pairs from the output entirely.
 ///
 /// `SpaceEncoding` can be used to configure how spaces are encoded. By default, the `.percentEscaped` encoding is used,
 /// replacing spaces with `%20`.

@@ -330,6 +330,21 @@ You can create your own `URLEncodedFormParameterEncoder` and specify the desired
 let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(keyEncoding: .convertToSnakeCase))
 ```
 
+#### Configuring the Encoding of Object Key Paths
+
+Nest object key paths are typically encoded using brackets (e.g. `parent[child][grandchild]`). Alamofire provides the `KeyPathEncoding` to customize that behavior.
+
+- `.brackets` - Wraps each sub-key in the key path in brackets. e.g `parent[child][grandchild]`.
+- `.dots` - Separates each sub-key in the key path with dots. e.g. `parent.child.grandchild`.
+
+Additionally, you can create your own encoding by creating an instance with a custom encoding closure. For example, `KeyPathEncoding { "-\($0)" }` will separate each sub-key path with hyphens. e.g. `parent-child-grandchild`.
+
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `KeyPathEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
+
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(keyPathEncoding: .brackets))
+```
+
 ##### Configuring the Encoding of Spaces
 
 Older form encoders used `+` to encode spaces and some servers still expect this encoding instead of the modern percent encoding, so Alamofire includes the following methods for encoding spaces:
