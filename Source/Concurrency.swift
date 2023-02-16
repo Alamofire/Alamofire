@@ -701,6 +701,7 @@ public struct StreamOf<Element>: AsyncSequence {
     }
 }
 
+#if compiler(>=5.7.0)
 extension DataRequest: @unchecked Sendable {}
 extension UploadRequest: @unchecked Sendable {}
 extension DownloadRequest: @unchecked Sendable {}
@@ -708,5 +709,6 @@ extension DataStreamRequest: @unchecked Sendable {}
 extension AFError: @unchecked Sendable {}
 extension DataResponse: @unchecked Sendable where Success: Sendable, Failure: Sendable {}
 extension DownloadResponse: @unchecked Sendable where Success: Sendable, Failure: Sendable {}
+#endif
 
 #endif
