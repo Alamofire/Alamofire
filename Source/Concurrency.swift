@@ -112,7 +112,7 @@ extension Request {
 
 /// Value used to `await` a `DataResponse` and associated values.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DataTask<Value> {
+public struct DataTask<Value>: Sendable where Value: Sendable {
     /// `DataResponse` produced by the `DataRequest` and its response handler.
     public var response: DataResponse<Value, AFError> {
         get async {
@@ -283,7 +283,7 @@ extension DataRequest {
     }
 
     private func dataTask<Value>(automaticallyCancelling shouldAutomaticallyCancel: Bool,
-                                 forResponse onResponse: @escaping (@escaping (DataResponse<Value, AFError>) -> Void) -> Void)
+                                 forResponse onResponse: @Sendable @escaping (@escaping (DataResponse<Value, AFError>) -> Void) -> Void)
         -> DataTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
@@ -305,7 +305,7 @@ extension DataRequest {
 
 /// Value used to `await` a `DownloadResponse` and associated values.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DownloadTask<Value> {
+public struct DownloadTask<Value>: Sendable where Value: Sendable {
     /// `DownloadResponse` produced by the `DownloadRequest` and its response handler.
     public var response: DownloadResponse<Value, AFError> {
         get async {
@@ -492,7 +492,7 @@ extension DownloadRequest {
     }
 
     private func downloadTask<Value>(automaticallyCancelling shouldAutomaticallyCancel: Bool,
-                                     forResponse onResponse: @escaping (@escaping (DownloadResponse<Value, AFError>) -> Void) -> Void)
+                                     forResponse onResponse: @Sendable @escaping (@escaping (DownloadResponse<Value, AFError>) -> Void) -> Void)
         -> DownloadTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
@@ -700,5 +700,13 @@ public struct StreamOf<Element>: AsyncSequence {
         }
     }
 }
+
+extension DataRequest: @unchecked Sendable {}
+extension UploadRequest: @unchecked Sendable {}
+extension DownloadRequest: @unchecked Sendable {}
+extension DataStreamRequest: @unchecked Sendable {}
+extension AFError: @unchecked Sendable {}
+extension DataResponse: @unchecked Sendable where Success: Sendable, Failure: Sendable {}
+extension DownloadResponse: @unchecked Sendable where Success: Sendable, Failure: Sendable {}
 
 #endif
