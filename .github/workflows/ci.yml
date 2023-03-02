@@ -231,20 +231,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: swift:5.7.3-bionic
           - image: swift:5.7.3-focal
           - image: swift:5.7.3-centos7
           - image: swift:5.7.3-amazonlinux2
-          # - image: swiftlang/swift:nightly-bionic
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
-          - image: swiftlang/swift:nightly-centos7
-          - image: swiftlang/swift:nightly-centos8
           - image: swiftlang/swift:nightly-amazonlinux2
           - image: swiftlang/swift:nightly-5.8-focal
           - image: swiftlang/swift:nightly-5.8-jammy
-          - image: swiftlang/swift:nightly-5.8-centos7
-          - image: swiftlang/swift:nightly-5.8-centos8
           - image: swiftlang/swift:nightly-5.8-amazonlinux2
     container:
       image: ${{ matrix.image }}
