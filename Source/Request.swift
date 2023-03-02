@@ -1166,17 +1166,17 @@ public class DataRequest: Request {
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
-            guard self.error == nil, let response = self.response else { return }
+            guard error == nil, let response = response else { return }
 
-            let result = validation(self.request, response, self.data)
+            let result = validation(request, response, data)
 
             if case let .failure(error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
 
-            self.eventMonitor?.request(self,
-                                       didValidateRequest: self.request,
-                                       response: response,
-                                       data: self.data,
-                                       withResult: result)
+            eventMonitor?.request(self,
+                                  didValidateRequest: request,
+                                  response: response,
+                                  data: data,
+                                  withResult: result)
         }
 
         $validators.write { $0.append(validator) }
@@ -1337,18 +1337,18 @@ public final class DataStreamRequest: Request {
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
-            guard self.error == nil, let response = self.response else { return }
+            guard error == nil, let response = response else { return }
 
-            let result = validation(self.request, response)
+            let result = validation(request, response)
 
             if case let .failure(error) = result {
                 self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error)))
             }
 
-            self.eventMonitor?.request(self,
-                                       didValidateRequest: self.request,
-                                       response: response,
-                                       withResult: result)
+            eventMonitor?.request(self,
+                                  didValidateRequest: request,
+                                  response: response,
+                                  withResult: result)
         }
 
         $validators.write { $0.append(validator) }
@@ -1739,19 +1739,19 @@ public class DownloadRequest: Request {
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
-            guard self.error == nil, let response = self.response else { return }
+            guard error == nil, let response = response else { return }
 
-            let result = validation(self.request, response, self.fileURL)
+            let result = validation(request, response, fileURL)
 
             if case let .failure(error) = result {
                 self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error)))
             }
 
-            self.eventMonitor?.request(self,
-                                       didValidateRequest: self.request,
-                                       response: response,
-                                       fileURL: self.fileURL,
-                                       withResult: result)
+            eventMonitor?.request(self,
+                                  didValidateRequest: request,
+                                  response: response,
+                                  fileURL: fileURL,
+                                  withResult: result)
         }
 
         $validators.write { $0.append(validator) }

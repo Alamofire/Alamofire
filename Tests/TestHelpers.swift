@@ -243,7 +243,7 @@ extension Endpoint: URLRequestConvertible {
     var urlRequest: URLRequest { try! asURLRequest() }
 
     func asURLRequest() throws -> URLRequest {
-        var request = URLRequest(url: try asURL())
+        var request = try URLRequest(url: asURL())
         request.method = method
         request.headers = headers
         request.timeoutInterval = timeout

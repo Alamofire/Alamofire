@@ -30,7 +30,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Button(action: { self.networking.performRequest() },
+            Button(action: { networking.performRequest() },
                    label: { Text("Perform Request") })
             Text(networking.message)
         }

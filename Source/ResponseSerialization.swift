@@ -1172,7 +1172,7 @@ extension DataStreamRequest {
                                                                  on queue: DispatchQueue = .main,
                                                                  stream: @escaping Handler<Serializer.SerializedObject, AFError>) -> Self {
         let parser = { [unowned self] (data: Data) in
-            self.serializationQueue.async {
+            serializationQueue.async {
                 // Start work on serialization queue.
                 let result = Result { try serializer.serialize(data) }
                     .mapError { $0.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: $0))) }
@@ -1212,7 +1212,7 @@ extension DataStreamRequest {
     public func responseStreamString(on queue: DispatchQueue = .main,
                                      stream: @escaping Handler<String, Never>) -> Self {
         let parser = { [unowned self] (data: Data) in
-            self.serializationQueue.async {
+            serializationQueue.async {
                 // Start work on serialization queue.
                 let string = String(decoding: data, as: UTF8.self)
                 // End work on serialization queue.

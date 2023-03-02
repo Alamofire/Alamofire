@@ -800,7 +800,7 @@ extension DataRequest {
 extension DownloadRequest {
     func validateDataExists() -> Self {
         validate { [unowned self] _, _, _ in
-            let fileURL = self.fileURL
+            let fileURL = fileURL
 
             guard let validFileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
