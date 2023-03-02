@@ -31,6 +31,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.3.app"
+            runsOn: firebreak
+            name: "macOS 13, Xcode 14.3, Swift 5.8.0"
+            testPlan: "macOS"
           - xcode: "Xcode_14.2.app"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.2, Swift 5.7.2"
