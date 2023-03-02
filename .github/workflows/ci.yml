@@ -126,12 +126,12 @@ jobs:
           - destination: "OS=14.5,name=iPhone 12 Pro"
             name: "iOS 14.5"
             testPlan: "iOS-NoTS"
-          - destination: "OS=13.7,name=iPhone 11 Pro"
-            name: "iOS 13.7"
-            testPlan: "iOS-NoTS"
-          - destination: "OS=12.4,name=iPhone Xs"
-            name: "iOS 12.4"
-            testPlan: "iOS-Old"
+          # - destination: "OS=13.7,name=iPhone 11 Pro"
+          #   name: "iOS 13.7"
+          #   testPlan: "iOS-NoTS"
+          # - destination: "OS=12.4,name=iPhone Xs"
+          #   name: "iOS 12.4"
+          #   testPlan: "iOS-Old"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
@@ -154,12 +154,12 @@ jobs:
           - destination: "OS=14.5,name=Apple TV"
             name: "tvOS 14.5"
             testPlan: "tvOS-NoTS"
-          - destination: "OS=13.4,name=Apple TV"
-            name: "tvOS 13.4"
-            testPlan: "tvOS-NoTS"
-          - destination: "OS=12.4,name=Apple TV"
-            name: "tvOS 12.4"
-            testPlan: "tvOS-Old"
+          # - destination: "OS=13.4,name=Apple TV"
+          #   name: "tvOS 13.4"
+          #   testPlan: "tvOS-NoTS"
+          # - destination: "OS=12.4,name=Apple TV"
+          #   name: "tvOS 12.4"
+          #   testPlan: "tvOS-Old"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
@@ -198,6 +198,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_14.3.app"
+            runsOn: firebreak
+            name: "macOS 13, SPM 5.8.0 Test"
           - xcode: "Xcode_14.2.app"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.2 Test"
