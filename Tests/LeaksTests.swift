@@ -37,7 +37,7 @@ final class LeaksTests: XCTestCase {
             func leaksTo(_ file: String) -> Process {
                 let out = FileHandle(forWritingAtPath: file)!
                 defer {
-                    if #available(OSX 10.15, *) {
+                    if #available(macOS 10.15, *) {
                         try! out.close()
                     } else {
                         // Fallback on earlier versions

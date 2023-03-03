@@ -120,7 +120,7 @@ public struct DataTask<Value> {
                 return await withTaskCancellationHandler {
                     await task.value
                 } onCancel: {
-                    self.cancel()
+                    cancel()
                 }
             } else {
                 return await task.value
@@ -313,7 +313,7 @@ public struct DownloadTask<Value> {
                 return await withTaskCancellationHandler {
                     await task.value
                 } onCancel: {
-                    self.cancel()
+                    cancel()
                 }
             } else {
                 return await task.value
@@ -533,7 +533,7 @@ public struct DataStreamTask {
     /// - Returns:                   The `Stream`.
     public func streamingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true, bufferingPolicy: Stream<Data, Never>.BufferingPolicy = .unbounded) -> Stream<Data, Never> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
-            self.request.responseStream(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
+            request.responseStream(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
         }
     }
 
@@ -546,7 +546,7 @@ public struct DataStreamTask {
     /// - Returns:
     public func streamingStrings(automaticallyCancelling shouldAutomaticallyCancel: Bool = true, bufferingPolicy: Stream<String, Never>.BufferingPolicy = .unbounded) -> Stream<String, Never> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
-            self.request.responseStreamString(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
+            request.responseStreamString(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
         }
     }
 
@@ -582,9 +582,9 @@ public struct DataStreamTask {
                                                                      bufferingPolicy: Stream<Serializer.SerializedObject, AFError>.BufferingPolicy = .unbounded)
         -> Stream<Serializer.SerializedObject, AFError> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
-            self.request.responseStream(using: serializer,
-                                        on: .streamCompletionQueue(forRequestID: request.id),
-                                        stream: onStream)
+            request.responseStream(using: serializer,
+                                   on: .streamCompletionQueue(forRequestID: request.id),
+                                   stream: onStream)
         }
     }
 
@@ -670,7 +670,7 @@ public struct StreamOf<Element>: AsyncSequence {
 
         return Iterator(iterator: stream.makeAsyncIterator()) {
             continuation?.finish()
-            self.onTermination?()
+            onTermination?()
         }
     }
 
