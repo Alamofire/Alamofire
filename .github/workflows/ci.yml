@@ -25,45 +25,45 @@ jobs:
     name: Test macOS, All Xcodes and Swifts
     runs-on: ${{ matrix.runsOn }}
     env:
-      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_14.3.app"
+          - xcode: "Xcode_14.3"
             runsOn: firebreak
             name: "macOS 13, Xcode 14.3, Swift 5.8.0"
             testPlan: "macOS"
-          - xcode: "Xcode_14.2.app"
+          - xcode: "Xcode_14.2"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.2, Swift 5.7.2"
             testPlan: "macOS"
-          - xcode: "Xcode_14.1.app"
+          - xcode: "Xcode_14.1"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.1, Swift 5.7.1"
             testPlan: "macOS"
-          - xcode: "Xcode_14.0.1.app"
+          - xcode: "Xcode_14.0.1"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.0.1, Swift 5.7.0"
             testPlan: "macOS"
-          - xcode: "Xcode_13.4.1.app"
+          - xcode: "Xcode_13.4.1"
             runsOn: macOS-12
             name: "macOS 12, Xcode 13.4.1, Swift 5.6.1"
             testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.3.1.app"
+          - xcode: "Xcode_13.3.1"
             runsOn: macOS-12
             name: "macOS 12, Xcode 13.3.1, Swift 5.6.0"
             testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.2.1.app"
+          - xcode: "Xcode_13.2.1"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
             testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.1.app"
+          - xcode: "Xcode_13.1"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.1, Swift 5.5.1"
             testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.0.app"
+          - xcode: "Xcode_13.0"
             runsOn: macOS-11
             name: "macOS 11, Xcode 13.0, Swift 5.5.0"
             testPlan: "macOS-NoTS"
@@ -186,37 +186,37 @@ jobs:
     name: Test with SPM
     runs-on: ${{ matrix.runsOn }}
     env:
-      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_14.3.app"
+          - xcode: "Xcode_14.3"
             runsOn: firebreak
             name: "macOS 13, SPM 5.8.0 Test"
-          - xcode: "Xcode_14.2.app"
+          - xcode: "Xcode_14.2"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.2 Test"
-          - xcode: "Xcode_14.1.app"
+          - xcode: "Xcode_14.1"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.1 Test"
-          - xcode: "Xcode_14.0.1.app"
+          - xcode: "Xcode_14.0.1"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.0 Test"
-          - xcode: "Xcode_13.4.1.app"
+          - xcode: "Xcode_13.4.1"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6.1 Test"
-          - xcode: "Xcode_13.3.1.app"
+          - xcode: "Xcode_13.3.1"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.6.0 Test"
-          - xcode: "Xcode_13.2.1.app"
+          - xcode: "Xcode_13.2.1"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.2 Test"
-          - xcode: "Xcode_13.1.app"
+          - xcode: "Xcode_13.1"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.1 Test"
-          - xcode: "Xcode_13.0.app"
+          - xcode: "Xcode_13.0"
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.0 Test"
     steps:
