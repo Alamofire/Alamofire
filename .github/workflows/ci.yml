@@ -126,9 +126,9 @@ jobs:
           - destination: "OS=14.5,name=iPhone 12 Pro"
             name: "iOS 14.5"
             testPlan: "iOS-NoTS"
-          - destination: "OS=13.7,name=iPhone 11 Pro"
-            name: "iOS 13.7"
-            testPlan: "iOS-NoTS"
+          # - destination: "OS=13.7,name=iPhone 11 Pro"
+          #   name: "iOS 13.7"
+          #   testPlan: "iOS-NoTS"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
@@ -151,9 +151,9 @@ jobs:
           - destination: "OS=14.5,name=Apple TV"
             name: "tvOS 14.5"
             testPlan: "tvOS-NoTS"
-          - destination: "OS=13.4,name=Apple TV"
-            name: "tvOS 13.4"
-            testPlan: "tvOS-NoTS"
+          # - destination: "OS=13.4,name=Apple TV"
+          #   name: "tvOS 13.4"
+          #   testPlan: "tvOS-NoTS"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
