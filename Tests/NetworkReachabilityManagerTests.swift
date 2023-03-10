@@ -22,6 +22,8 @@
 //  THE SOFTWARE.
 //
 
+#if canImport(SytemConfiguration)
+
 @testable import Alamofire
 import Foundation
 import SystemConfiguration
@@ -127,24 +129,40 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
 
     func testThatHostManagerCanBeDeinitialized() {
         // Given
+        let expect = expectation(description: "reachability queue should clear")
         var manager: NetworkReachabilityManager? = NetworkReachabilityManager(host: "localhost")
+        weak var weakManager = manager
 
         // When
+        manager?.startListening(onUpdatePerforming: { _ in })
+        manager?.stopListening()
+        manager?.reachabilityQueue.async { expect.fulfill() }
         manager = nil
 
+        waitForExpectations(timeout: timeout)
+
         // Then
-        XCTAssertNil(manager)
+        XCTAssertNil(manager, "strong reference should be nil")
+        XCTAssertNil(weakManager, "weak reference should be nil")
     }
 
     func testThatAddressManagerCanBeDeinitialized() {
         // Given
+        let expect = expectation(description: "reachability queue should clear")
         var manager: NetworkReachabilityManager? = NetworkReachabilityManager()
+        weak var weakManager = manager
 
         // When
+        manager?.startListening(onUpdatePerforming: { _ in })
+        manager?.stopListening()
+        manager?.reachabilityQueue.async { expect.fulfill() }
         manager = nil
 
+        waitForExpectations(timeout: timeout)
+
         // Then
-        XCTAssertNil(manager)
+        XCTAssertNil(manager, "strong reference should be nil")
+        XCTAssertNil(weakManager, "weak reference should be nil")
     }
 
     // MARK: - Listener
@@ -156,7 +174,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
             return
         }
 
-        let expectation = self.expectation(description: "listener closure should be executed")
+        let expectation = expectation(description: "listener closure should be executed")
         var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
         // When
@@ -165,7 +183,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
             networkReachabilityStatus = status
             expectation.fulfill()
         }
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))
@@ -174,7 +192,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
     func testThatAddressManagerIsNotifiedWhenStartListeningIsCalled() {
         // Given
         let manager = NetworkReachabilityManager()
-        let expectation = self.expectation(description: "listener closure should be executed")
+        let expectation = expectation(description: "listener closure should be executed")
 
         var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
@@ -183,7 +201,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
             networkReachabilityStatus = status
             expectation.fulfill()
         }
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))
@@ -281,3 +299,5 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
     }
     #endif
 }
+
+#endif

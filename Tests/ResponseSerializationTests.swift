@@ -1,7 +1,7 @@
 //
 //  ResponseSerializationTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -93,7 +93,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -109,7 +109,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -125,7 +125,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -273,7 +273,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -289,7 +289,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -305,7 +305,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -320,6 +320,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
 
     // MARK: JSONResponseSerializer
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -334,6 +335,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsEmpty() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -348,6 +350,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -362,6 +365,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -378,6 +382,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual((result.failure?.asAFError?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -392,6 +397,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -407,10 +413,11 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -423,10 +430,11 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.success as? NSNull, NSNull())
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -439,10 +447,11 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.success as? NSNull, NSNull())
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -453,6 +462,109 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.success)
         XCTAssertNil(result.failure)
         XCTAssertEqual(result.success as? NSNull, NSNull())
+    }
+}
+
+final class StaticSerializationTests: BaseTestCase {
+    func consumeDownloadResponseSerializer<Serializer: DownloadResponseSerializerProtocol>(_ responseSerializer: Serializer) {
+        _ = responseSerializer
+    }
+
+    func consumeStreamSerializer<Serializer: DataStreamSerializer>(_ serializer: Serializer) {
+        _ = serializer
+    }
+
+    func consumeResponseSerializer<Serializer: ResponseSerializer>(_ responseSerializer: Serializer) {
+        _ = responseSerializer
+    }
+
+    func testThatURLSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeDownloadResponseSerializer(.url)
+    }
+
+    func testThatDataSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeResponseSerializer(.data())
+    }
+
+    func testThatStringSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeResponseSerializer(.string())
+    }
+
+    func testThatDecodableSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeResponseSerializer(.decodable(of: TestResponse.self))
+    }
+
+    func testThatPassthroughStreamSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeStreamSerializer(.passthrough)
+    }
+
+    func testThatStringStreamSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeStreamSerializer(.string)
+    }
+
+    func testThatDecodableStreamSerializerCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeStreamSerializer(.decodable(of: TestResponse.self))
+    }
+}
+
+// MARK: -
+
+final class URLResponseSerializerTests: BaseTestCase {
+    func testThatURLResponseSerializerProducesURLOnSuccess() {
+        // Given
+        let serializer = URLResponseSerializer()
+        let request = Endpoint().urlRequest
+        let response = HTTPURLResponse(statusCode: 200)
+        let url = URL(fileURLWithPath: "/")
+
+        // When
+        let result = Result { try serializer.serializeDownload(request: request,
+                                                               response: response,
+                                                               fileURL: url,
+                                                               error: nil) }
+
+        // Then
+        XCTAssertEqual(result.success, url)
+    }
+
+    func testThatURLResponseSerializerProducesErrorFromIncomingErrors() {
+        // Given
+        let serializer = URLResponseSerializer()
+        let request = Endpoint().urlRequest
+        let response = HTTPURLResponse(statusCode: 200)
+        let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 404))
+
+        // When
+        let result = Result { try serializer.serializeDownload(request: request,
+                                                               response: response,
+                                                               fileURL: nil,
+                                                               error: error) }
+
+        // Then
+        XCTAssertEqual(result.failure?.localizedDescription, error.localizedDescription)
+    }
+
+    func testThatURLResponseSerializerProducesInputFileNilErrorWhenNoURL() {
+        // Given
+        let serializer = URLResponseSerializer()
+        let request = Endpoint().urlRequest
+        let response = HTTPURLResponse(statusCode: 200)
+
+        // When
+        let result = Result { try serializer.serializeDownload(request: request,
+                                                               response: response,
+                                                               fileURL: nil,
+                                                               error: nil) }
+
+        // Then
+        XCTAssertTrue(result.failure?.asAFError?.isInputFileNil == true)
     }
 }
 
@@ -593,7 +705,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -608,7 +720,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.makeHTTPBinRequest()
+        let request = Endpoint().urlRequest
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -623,7 +735,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.makeHTTPBinRequest(method: .head)
+        let request = Endpoint(method: .head).urlRequest
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -667,7 +779,6 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 
 // MARK: -
 
-#if !SWIFT_PACKAGE
 final class DownloadResponseSerializationTestCase: BaseTestCase {
     // MARK: Properties
 
@@ -945,6 +1056,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
 
     // MARK: Tests - JSON Response Serializer
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenFileURLIsNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -959,6 +1071,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileNil, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenFileURLIsInvalid() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -973,6 +1086,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileReadFailed, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenFileDataIsEmpty() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -987,6 +1101,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputDataNilOrZeroLength, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1000,6 +1115,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1015,6 +1131,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual((result.failure?.asAFError?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1029,6 +1146,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileNil, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1044,6 +1162,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.failure?.asAFError?.isInputFileNil, true)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
@@ -1060,7 +1179,6 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertEqual(result.success as? NSNull, NSNull())
     }
 }
-#endif
 
 final class CustomResponseSerializerTests: BaseTestCase {
     func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
@@ -1071,16 +1189,16 @@ final class CustomResponseSerializerTests: BaseTestCase {
             }
         }
         let serializer = UselessResponseSerializer()
-        let expectation = self.expectation(description: "request should finish")
+        let expectation = expectation(description: "request should finish")
         var data: Data?
 
         // When
-        AF.request(URLRequest.makeHTTPBinRequest()).response(responseSerializer: serializer) { response in
+        AF.request(.default).response(responseSerializer: serializer) { response in
             data = response.data
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertNotNil(data)
@@ -1162,6 +1280,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
         XCTAssertNotNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
         // Given
         let preprocessor = DropFirst()
@@ -1177,6 +1296,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
         XCTAssertNil(result.failure)
     }
 
+    @available(*, deprecated)
     func testThatJSONResponseSerializerProperlyReceivesErrorFromFailingDataPreprocessor() {
         // Given
         let preprocessor = Throwing()
@@ -1261,9 +1381,30 @@ final class DataPreprocessorTests: BaseTestCase {
     }
 }
 
+final class StaticDataPreprocessorTests: BaseTestCase {
+    func consumeDataPreprocessor(_ dataPreprocessor: DataPreprocessor) {
+        _ = dataPreprocessor
+    }
+
+    func testThatPassthroughCanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeDataPreprocessor(.passthrough)
+    }
+
+    func testThatGoogleXSSICanBeCreatedStaticallyFromProtocol() {
+        // Given, When, Then
+        consumeDataPreprocessor(.googleXSSI)
+    }
+}
+
 extension HTTPURLResponse {
     convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {
-        let url = URL(string: "https://httpbin.org/get")!
-        self.init(url: url, statusCode: statusCode, httpVersion: "HTTP/1.1", headerFields: headers?.dictionary)!
+        let url = Endpoint().url
+        #if os(watchOS) || os(Linux) || os(Windows)
+        let httpVersion = "HTTP/1.1"
+        #else
+        let httpVersion = String(kCFHTTPVersion1_1)
+        #endif
+        self.init(url: url, statusCode: statusCode, httpVersion: httpVersion, headerFields: headers?.dictionary)!
     }
 }

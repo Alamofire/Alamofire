@@ -91,31 +91,30 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
         "\(result)"
     }
 
-    /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the server data, the duration of the network and serialization actions, and the response serialization
-    /// result.
+    /// The debug textual representation used when written to an output stream, which includes (if available) a summary
+    /// of the `URLRequest`, the request's headers and body (if decodable as a `String` below 100KB); the
+    /// `HTTPURLResponse`'s status code, headers, and body; the duration of the network and serialization actions; and
+    /// the `Result` of serialization.
     public var debugDescription: String {
-        let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
-        let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
+        guard let urlRequest = request else { return "[Request]: None\n[Result]: \(result)" }
+
+        let requestDescription = DebugDescription.description(of: urlRequest)
+
         let responseDescription = response.map { response in
-            let sortedHeaders = response.headers.sorted()
+            let responseBodyDescription = DebugDescription.description(for: data, headers: response.headers)
 
             return """
-            [Status Code]: \(response.statusCode)
-            [Headers]:
-            \(sortedHeaders)
+            \(DebugDescription.description(of: response))
+                \(responseBodyDescription.indentingNewlines())
             """
-        } ?? "nil"
-        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+        } ?? "[Response]: None"
+
+        let networkDuration = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
 
         return """
-        [Request]: \(requestDescription)
-        [Request Body]: \n\(requestBody)
-        [Response]: \n\(responseDescription)
-        [Response Body]: \n\(responseBody)
-        [Data]: \(data?.description ?? "None")
-        [Network Duration]: \(metricsDescription)
+        \(requestDescription)
+        \(responseDescription)
+        [Network Duration]: \(networkDuration)
         [Serialization Duration]: \(serializationDuration)s
         [Result]: \(result)
         """
@@ -249,8 +248,7 @@ public struct DownloadResponse<Success, Failure: Error> {
     /// - Parameters:
     ///   - request:               The `URLRequest` sent to the server.
     ///   - response:              The `HTTPURLResponse` from the server.
-    ///   - temporaryURL:          The temporary destination `URL` of the data returned from the server.
-    ///   - destinationURL:        The final destination `URL` of the data returned from the server, if it was moved.
+    ///   - fileURL:               The final destination URL of the data returned from the server after it is moved.
     ///   - resumeData:            The resume `Data` generated if the request was cancelled.
     ///   - metrics:               The `URLSessionTaskMetrics` of the `DownloadRequest`.
     ///   - serializationDuration: The duration taken by serialization.
@@ -285,27 +283,19 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     /// response, the temporary and destination URLs, the resume data, the durations of the network and serialization
     /// actions, and the response serialization result.
     public var debugDescription: String {
-        let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
-        let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        let responseDescription = response.map { response in
-            let sortedHeaders = response.headers.sorted()
+        guard let urlRequest = request else { return "[Request]: None\n[Result]: \(result)" }
 
-            return """
-            [Status Code]: \(response.statusCode)
-            [Headers]:
-            \(sortedHeaders)
-            """
-        } ?? "nil"
-        let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+        let requestDescription = DebugDescription.description(of: urlRequest)
+        let responseDescription = response.map(DebugDescription.description(of:)) ?? "[Response]: None"
+        let networkDuration = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
         let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
 
         return """
-        [Request]: \(requestDescription)
-        [Request Body]: \n\(requestBody)
-        [Response]: \n\(responseDescription)
-        [File URL]: \(fileURL?.path ?? "nil")
-        [ResumeData]: \(resumeDataDescription)
-        [Network Duration]: \(metricsDescription)
+        \(requestDescription)
+        \(responseDescription)
+        [File URL]: \(fileURL?.path ?? "None")
+        [Resume Data]: \(resumeDataDescription)
+        [Network Duration]: \(networkDuration)
         [Serialization Duration]: \(serializationDuration)s
         [Result]: \(result)
         """
@@ -401,5 +391,63 @@ extension DownloadResponse {
                                          metrics: metrics,
                                          serializationDuration: serializationDuration,
                                          result: result.tryMapError(transform))
+    }
+}
+
+private enum DebugDescription {
+    static func description(of request: URLRequest) -> String {
+        let requestSummary = "\(request.httpMethod!) \(request)"
+        let requestHeadersDescription = DebugDescription.description(for: request.headers)
+        let requestBodyDescription = DebugDescription.description(for: request.httpBody, headers: request.headers)
+
+        return """
+        [Request]: \(requestSummary)
+            \(requestHeadersDescription.indentingNewlines())
+            \(requestBodyDescription.indentingNewlines())
+        """
+    }
+
+    static func description(of response: HTTPURLResponse) -> String {
+        """
+        [Response]:
+            [Status Code]: \(response.statusCode)
+            \(DebugDescription.description(for: response.headers).indentingNewlines())
+        """
+    }
+
+    static func description(for headers: HTTPHeaders) -> String {
+        guard !headers.isEmpty else { return "[Headers]: None" }
+
+        let headerDescription = "\(headers.sorted())".indentingNewlines()
+        return """
+        [Headers]:
+            \(headerDescription)
+        """
+    }
+
+    static func description(for data: Data?,
+                            headers: HTTPHeaders,
+                            allowingPrintableTypes printableTypes: [String] = ["json", "xml", "text"],
+                            maximumLength: Int = 100_000) -> String {
+        guard let data = data, !data.isEmpty else { return "[Body]: None" }
+
+        guard
+            data.count <= maximumLength,
+            printableTypes.compactMap({ headers["Content-Type"]?.contains($0) }).contains(true)
+        else { return "[Body]: \(data.count) bytes" }
+
+        return """
+        [Body]:
+            \(String(decoding: data, as: UTF8.self)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .indentingNewlines())
+        """
+    }
+}
+
+extension String {
+    fileprivate func indentingNewlines(by spaceCount: Int = 4) -> String {
+        let spaces = String(repeating: " ", count: spaceCount)
+        return replacingOccurrences(of: "\n", with: "\n\(spaces)")
     }
 }

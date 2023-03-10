@@ -20,27 +20,27 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire Docs
+          Alamofire 5.6.4 Docs
         </a>
          (97% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/Alamofire/Alamofire">
-            <img class="header-icon" src="img/gh.png"/>
+            <img class="header-icon" src="img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
     
         <p class="header-col header-col--secondary">
-          <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire%2Egithub%2Eio%2FAlamofire%2Fdocsets%2FAlamofire%2Exml">
-            <img class="header-icon" src="img/dash.png"/>
+          <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire.github.io%2FAlamofire%2Fdocsets%2FAlamofire.xml">
+            <img class="header-icon" src="img/dash.png" alt="Dash"/>
             Install in Dash
           </a>
         </p>
@@ -48,7 +48,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="index.html">Alamofire Reference</a>
-      <img class="carat" src="img/carat.png" />
+      <img class="carat" src="img/carat.png" alt=""/>
       Alamofire  Reference
     </p>
 
@@ -63,6 +63,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/AlamofireNotifications.html">AlamofireNotifications</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/AuthenticationInterceptor.html">AuthenticationInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/AuthenticationInterceptor/RefreshWindow.html">– RefreshWindow</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/ClosureEventMonitor.html">ClosureEventMonitor</a>
@@ -104,7 +110,7 @@
                 <a class="nav-group-task-link" href="Classes/DefaultTrustEvaluator.html">DefaultTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/DisabledEvaluator.html">DisabledEvaluator</a>
+                <a class="nav-group-task-link" href="Classes/DisabledTrustEvaluator.html">DisabledTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/DownloadRequest.html">DownloadRequest</a>
@@ -225,6 +231,9 @@
                 <a class="nav-group-task-link" href="Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AFError/UnexpectedInputStreamLength.html">– UnexpectedInputStreamLength</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
@@ -241,6 +250,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/RetryResult.html">RetryResult</a>
@@ -273,6 +285,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:@T@OSStatus">OSStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -308,6 +323,12 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/AlamofireExtended.html">AlamofireExtended</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/AuthenticationCredential.html">AuthenticationCredential</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/Authenticator.html">Authenticator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/CachedResponseHandler.html">CachedResponseHandler</a>
@@ -384,10 +405,28 @@
                 <a class="nav-group-task-link" href="Structs/DataResponse.html">DataResponse</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DataResponsePublisher.html">DataResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DataStreamPublisher.html">DataStreamPublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DataStreamTask.html">DataStreamTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DataTask.html">DataTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DownloadResponse.html">DownloadResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DownloadTask.html">DownloadTask</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/Empty.html">Empty</a>
@@ -408,7 +447,13 @@
                 <a class="nav-group-task-link" href="Structs/JSONEncoding.html">JSONEncoding</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/JSONEncoding/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/PassthroughStreamSerializer.html">PassthroughStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/Redirector.html">Redirector</a>
@@ -417,10 +462,22 @@
                 <a class="nav-group-task-link" href="Structs/Redirector/Behavior.html">– Behavior</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/RequestAdapterState.html">RequestAdapterState</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ResponseCacher.html">ResponseCacher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ResponseCacher/Behavior.html">– Behavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/StreamOf.html">StreamOf</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/StreamOf/Iterator.html">– Iterator</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/StringStreamSerializer.html">StringStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/URLEncoding.html">URLEncoding</a>
@@ -433,6 +490,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/URLEncoding/BoolEncoding.html">– BoolEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/URLResponseSerializer.html">URLResponseSerializer</a>
               </li>
             </ul>
           </li>
@@ -452,6 +512,9 @@
                 <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire12AdaptHandlera">AdaptHandler</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire17DisabledEvaluatora">DisabledEvaluator</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a>
               </li>
               <li class="nav-group-task">
@@ -466,15 +529,15 @@
         <section class="section">
           <div class="section-content top-matter">
             
-            <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/alamofire.png" alt="Alamofire: Elegant Networking in Swift"></p>
+            <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/AlamofireLogo.png" alt="Alamofire: Elegant Networking in Swift"></p>
 
-<p><a href="https://github.com/Alamofire/Alamofire/actions"><img src="https://github.com/Alamofire/Alamofire/workflows/Alamofire%20CI/badge.svg?branch=master" alt="Build Status"></a>
-<a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg" alt="CocoaPods Compatible"></a>
-<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage Compatible"></a>
-<a href="https://alamofire.github.io/Alamofire"><img src="https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat" alt="Platform"></a>
-<a href="https://twitter.com/AlamofireSF"><img src="https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat" alt="Twitter"></a>
-<a href="https://gitter.im/Alamofire/Alamofire?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/Alamofire/Alamofire.svg" alt="Gitter"></a>
-<a href="https://www.codetriage.com/alamofire/alamofire"><img src="https://www.codetriage.com/alamofire/alamofire/badges/users.svg" alt="Open Source Helpers"></a></p>
+<p><a href="https://img.shields.io/badge/Swift-5.3_5.4_5.5_5.6-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.3_5.4_5.5_5.6-orange?style=flat-square" alt="Swift"></a>
+<a href="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-Green?style=flat-square"><img src="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-yellowgreen?style=flat-square" alt="Platforms"></a>
+<a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square" alt="CocoaPods Compatible"></a>
+<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square" alt="Carthage Compatible"></a>
+<a href="https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square"><img src="https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square" alt="Swift Package Manager"></a>
+<a href="https://twitter.com/AlamofireSF"><img src="https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat-square" alt="Twitter"></a>
+<a href="https://forums.swift.org/c/related-projects/alamofire/37"><img src="https://img.shields.io/badge/Swift_Forums-Alamofire-orange?style=flat-square" alt="Swift Forums"></a></p>
 
 <p>Alamofire is an HTTP networking library written in Swift.</p>
 
@@ -485,6 +548,7 @@
 <li><a href="#migration-guides">Migration Guides</a></li>
 <li><a href="#communication">Communication</a></li>
 <li><a href="#installation">Installation</a></li>
+<li><a href="#contributing">Contributing</a></li>
 <li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#using-alamofire">Usage</a>
 
 <ul>
@@ -497,8 +561,9 @@
 
 <ul>
 <li><strong>URL Session -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session">Session Manager</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#sessiondelegate">Session Delegate</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request">Request</a></li>
-<li><strong>Routing -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#routing-requests">Routing Requests</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#adapting-and-retrying-requests">Adapting and Retrying Requests</a></li>
-<li><strong>Model Objects -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#custom-response-serialization">Custom Response Serialization</a></li>
+<li><strong>Routing -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#routing-requests">Routing Requests</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#adapting-and-retrying-requests-with-requestinterceptor">Adapting and Retrying Requests</a></li>
+<li><strong>Model Objects -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#customizing-response-handlers">Custom Response Handlers</a></li>
+<li><strong>Advanced Concurrency -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#using-alamofire-with-swift-concurrency">Swift Concurrency</a> and <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#using-alamofire-with-combine">Combine</a></li>
 <li><strong>Connection -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#security">Security</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#network-reachability">Network Reachability</a></li>
 </ul></li>
 <li><a href="#open-radars">Open Radars</a></li>
@@ -511,10 +576,12 @@
 
 <ul>
 <li>[x] Chainable Request / Response Methods</li>
+<li>[x] Swift Concurrency Support Back to iOS 13, macOS 10.15, tvOS 13, and watchOS 6.</li>
+<li>[x] Combine Support</li>
 <li>[x] URL / JSON Parameter Encoding</li>
 <li>[x] Upload File / Data / Stream / MultipartFormData</li>
 <li>[x] Download File using Request or Resume Data</li>
-<li>[x] Authentication with URLCredential</li>
+<li>[x] Authentication with <code>URLCredential</code></li>
 <li>[x] HTTP Response Validation</li>
 <li>[x] Upload and Download Progress Closures with Progress</li>
 <li>[x] cURL Command Output</li>
@@ -529,16 +596,50 @@
 <p>In order to keep Alamofire focused specifically on core networking implementations, additional component libraries have been created by the <a href="https://github.com/Alamofire/Foundation">Alamofire Software Foundation</a> to bring additional functionality to the Alamofire ecosystem.</p>
 
 <ul>
-<li><a href="https://github.com/Alamofire/AlamofireImage">AlamofireImage</a> - An image library including image response serializers, <code>UIImage</code> and <code>UIImageView</code> extensions, custom image filters, an auto-purging in-memory cache and a priority-based image downloading system.</li>
+<li><a href="https://github.com/Alamofire/AlamofireImage">AlamofireImage</a> - An image library including image response serializers, <code>UIImage</code> and <code>UIImageView</code> extensions, custom image filters, an auto-purging in-memory cache, and a priority-based image downloading system.</li>
 <li><a href="https://github.com/Alamofire/AlamofireNetworkActivityIndicator">AlamofireNetworkActivityIndicator</a> - Controls the visibility of the network activity indicator on iOS using Alamofire. It contains configurable delay timers to help mitigate flicker and can support <code>URLSession</code> instances not managed by Alamofire.</li>
 </ul>
 <h2 id='requirements' class='heading'>Requirements</h2>
 
+<table><thead>
+<tr>
+<th>Platform</th>
+<th>Minimum Swift Version</th>
+<th>Installation</th>
+<th>Status</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</td>
+<td>5.3</td>
+<td><a href="#cocoapods">CocoaPods</a>, <a href="#carthage">Carthage</a>, <a href="#swift-package-manager">Swift Package Manager</a>, <a href="#manually">Manual</a></td>
+<td>Fully Tested</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>Latest Only</td>
+<td><a href="#swift-package-manager">Swift Package Manager</a></td>
+<td>Building But Unsupported</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>Latest Only</td>
+<td><a href="#swift-package-manager">Swift Package Manager</a></td>
+<td>Building But Unsupported</td>
+</tr>
+</tbody></table>
+<h4 id='known-issues-on-linux-and-windows' class='heading'>Known Issues on Linux and Windows</h4>
+
+<p>Alamofire builds on Linux and Windows but there are missing features and many issues in the underlying <code>swift-corelibs-foundation</code> that prevent full functionality and may cause crashes. These include:</p>
+
 <ul>
-<li>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</li>
-<li>Xcode 11+</li>
-<li>Swift 5.1+</li>
+<li><code><a href="Classes/ServerTrustManager.html">ServerTrustManager</a></code> and associated certificate functionality is unavailable, so there is no certificate pinning and no client certificate support.</li>
+<li>Various methods of HTTP authentication may crash, including HTTP Basic and HTTP Digest. Crashes may occur if responses contain server challenges.</li>
+<li>Cache control through <code><a href="Protocols/CachedResponseHandler.html">CachedResponseHandler</a></code> and associated APIs is unavailable, as the underlying delegate methods aren&rsquo;t called.</li>
+<li><code>URLSessionTaskMetrics</code> are never gathered.</li>
 </ul>
+
+<p>Due to these issues, Alamofire is unsupported on Linux and Windows. Please report any crashes to the <a href="https://bugs.swift.org">Swift bug reporter</a>.</p>
 <h2 id='migration-guides' class='heading'>Migration Guides</h2>
 
 <ul>
@@ -556,26 +657,25 @@
 <li>If you&rsquo;d like to <strong>discuss Alamofire best practices</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you&rsquo;d like to <strong>discuss a feature request</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you <strong>found a bug</strong>, open an issue here on GitHub and follow the guide. The more detail the better!</li>
-<li>If you <strong>want to contribute</strong>, submit a pull request!</li>
 </ul>
 <h2 id='installation' class='heading'>Installation</h2>
 <h3 id='cocoapods' class='heading'>CocoaPods</h3>
 
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
-<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.1'</span>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span>
 </code></pre>
 <h3 id='carthage' class='heading'>Carthage</h3>
 
 <p><a href="https://github.com/Carthage/Carthage">Carthage</a> is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
-<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" ~&gt; 5.1
+<pre class="highlight plaintext"><code>github "Alamofire/Alamofire"
 </code></pre>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
-<p>The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for automating the distribution of Swift code and is integrated into the <code>swift</code> compiler. It is in early development, but Alamofire does support its use on supported platforms.</p>
+<p>The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for automating the distribution of Swift code and is integrated into the <code>swift</code> compiler. </p>
 
 <p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
 <pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.1.0"</span><span class="p">))</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.6.1"</span><span class="p">))</span>
 <span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
@@ -613,7 +713,7 @@
 <li><p>Select the top <code>Alamofire.framework</code> for iOS and the bottom one for macOS.</p>
 
 <blockquote>
-<p>You can verify which one you selected by inspecting the build log for your project. The build target for <code>Alamofire</code> will be listed as either <code>Alamofire iOS</code>, <code>Alamofire macOS</code>, <code>Alamofire tvOS</code> or <code>Alamofire watchOS</code>.</p>
+<p>You can verify which one you selected by inspecting the build log for your project. The build target for <code>Alamofire</code> will be listed as <code>Alamofire iOS</code>, <code>Alamofire macOS</code>, <code>Alamofire tvOS</code>, or <code>Alamofire watchOS</code>.</p>
 </blockquote></li>
 <li><p>And that&rsquo;s it!</p></li>
 </ul>
@@ -621,15 +721,17 @@
 <blockquote>
 <p>The <code>Alamofire.framework</code> is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.</p>
 </blockquote>
+<h2 id='contributing' class='heading'>Contributing</h2>
+
+<p>Before contributing to Alamofire, please read the instructions detailed in our <a href="https://github.com/Alamofire/Alamofire/blob/master/CONTRIBUTING.md">contribution guide</a>.</p>
 <h2 id='open-radars' class='heading'>Open Radars</h2>
 
 <p>The following radars have some effect on the current implementation of Alamofire.</p>
 
 <ul>
-<li><a href="http://www.openradar.me/radar?id=5517037090635776"><code>rdar://21349340</code></a> - Compiler throwing warning due to toll-free bridging issue in test case</li>
+<li><a href="http://www.openradar.me/radar?id=5517037090635776"><code>rdar://21349340</code></a> - Compiler throwing warning due to toll-free bridging issue in the test case</li>
 <li><code>rdar://26870455</code> - Background URL Session Configurations do not work in the simulator</li>
 <li><code>rdar://26849668</code> - Some URLProtocol APIs do not properly handle <code>URLRequest</code></li>
-<li><code>FB7624529</code> - <code>urlSession(_:task:didFinishCollecting:)</code> never called on watchOS</li>
 </ul>
 <h2 id='resolved-radars' class='heading'>Resolved Radars</h2>
 
@@ -646,11 +748,11 @@
 <ul>
 <li>(Resolved): Just add <code>CFNetwork</code> to your linked frameworks.</li>
 </ul></li>
-</ul>
-<h2 id='workarounds' class='heading'>Workarounds</h2>
+<li><code>FB7624529</code> - <code>urlSession(_:task:didFinishCollecting:)</code> never called on watchOS
 
 <ul>
-<li>Collection of <code>URLSessionTaskMetrics</code> is currently disabled on watchOS due to <code>FB7624529</code>.</li>
+<li>(Resolved): Metrics now collected on watchOS 7+.</li>
+</ul></li>
 </ul>
 <h2 id='faq' class='heading'>FAQ</h2>
 <h3 id='what-39-s-the-origin-of-the-name-alamofire' class='heading'>What&rsquo;s the origin of the name Alamofire?</h3>
@@ -662,11 +764,11 @@
 <h3 id='security-disclosure' class='heading'>Security Disclosure</h3>
 
 <p>If you believe you have identified a security vulnerability with Alamofire, you should report it as soon as possible via email to <a href="mailto:security@alamofire.org">security@alamofire.org</a>. Please do not post it to a public issue tracker.</p>
-<h2 id='donations' class='heading'>Donations</h2>
+<h2 id='sponsorship' class='heading'>Sponsorship</h2>
 
 <p>The <a href="https://github.com/Alamofire/Foundation#members">ASF</a> is looking to raise money to officially stay registered as a federal non-profit organization.
-Registering will allow us members to gain some legal protections and also allow us to put donations to use, tax-free.
-Donating to the ASF will enable us to:</p>
+Registering will allow Foundation members to gain some legal protections and also allow us to put donations to use, tax-free.
+Sponsoring the ASF will enable us to:</p>
 
 <ul>
 <li>Pay our yearly legal fees to keep the non-profit in good status</li>
@@ -679,9 +781,14 @@ Donating to the ASF will enable us to:</p>
 We are greatly humbled by your enthusiasm around the projects and want to continue to do everything we can to move the needle forward.
 With your continued support, the ASF will be able to improve its reach and also provide better legal safety for the core members.
 If you use any of our libraries for work, see if your employers would be interested in donating.
-Any amount you can donate today to help us reach our goal would be greatly appreciated.</p>
+Any amount you can donate, whether once or monthly, to help us reach our goal would be greatly appreciated.</p>
 
-<p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W34WPEE74APJQ"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="paypal"></a></p>
+<p><a href="https://github.com/sponsors/Alamofire">Sponsor Alamofire</a></p>
+<h2 id='supporters' class='heading'>Supporters</h2>
+
+<p><a href="https://macstadium.com">MacStadium</a> provides Alamofire with a free, hosted Mac mini.</p>
+
+<p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/MacStadiumLogo.png" alt="Powered by MacStadium"></p>
 <h2 id='license' class='heading'>License</h2>
 
 <p>Alamofire is released under the MIT license. <a href="https://github.com/Alamofire/Alamofire/blob/master/LICENSE">See LICENSE</a> for details.</p>
@@ -693,9 +800,8 @@ Any amount you can donate today to help us reach our goal would be greatly appre
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-04-04)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2022-11-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>

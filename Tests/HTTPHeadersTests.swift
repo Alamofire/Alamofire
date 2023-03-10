@@ -65,10 +65,10 @@ class HTTPHeadersTests: BaseTestCase {
         headersCreatedManually.update(name: "a", value: "")
 
         // When
-        let dictionaryLiteralNames = headersFromDictionaryLiteral.map { $0.name }
-        let arrayLiteralNames = headersFromArrayLiteral.map { $0.name }
-        let arrayNames = headersFromArray.map { $0.name }
-        let manualNames = headersCreatedManually.map { $0.name }
+        let dictionaryLiteralNames = headersFromDictionaryLiteral.map(\.name)
+        let arrayLiteralNames = headersFromArrayLiteral.map(\.name)
+        let arrayNames = headersFromArray.map(\.name)
+        let manualNames = headersCreatedManually.map(\.name)
 
         // Then
         XCTAssertEqual(dictionaryLiteralNames, ["c", "a", "b"])
@@ -85,8 +85,8 @@ class HTTPHeadersTests: BaseTestCase {
         let sortedHeaders = headers.sorted()
 
         // Then
-        XCTAssertEqual(headers.map { $0.name }, ["c", "a", "b"])
-        XCTAssertEqual(sortedHeaders.map { $0.name }, ["a", "b", "c"])
+        XCTAssertEqual(headers.map(\.name), ["c", "a", "b"])
+        XCTAssertEqual(sortedHeaders.map(\.name), ["a", "b", "c"])
     }
 
     func testHeadersCanInsensitivelyGetAndSetThroughSubscript() {
@@ -100,7 +100,7 @@ class HTTPHeadersTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(headers["c"], "c")
-        XCTAssertEqual(headers.map { $0.value }, ["c", "a", "b"])
+        XCTAssertEqual(headers.map(\.value), ["c", "a", "b"])
         XCTAssertEqual(headers.count, 3)
     }
 

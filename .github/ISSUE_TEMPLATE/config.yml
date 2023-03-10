@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: General Questions
+    url: https://stackoverflow.com/questions/tagged/alamofire
+    about: Please ask and answer questions here.
+  - name: Discuss Alamofire
+    url: https://forums.swift.org/c/related-projects/alamofire/
+    about: Discuss Alamofire best practices, advanced usage, and ideas for new features.
+  - name: Report Security Issues
+    url: mailto://security@alamofire.org
+    about: Please report security vulnerabilities here.

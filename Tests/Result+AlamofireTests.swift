@@ -1,7 +1,7 @@
 //
-//  Alamofire.h
+//  Result+AlamofireTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,25 @@
 //  THE SOFTWARE.
 //
 
-@import Foundation;
+import Foundation
 
-FOUNDATION_EXPORT double AlamofireVersionNumber;
-FOUNDATION_EXPORT const unsigned char AlamofireVersionString[];
+extension Result {
+    var isSuccess: Bool {
+        guard case .success = self else { return false }
+        return true
+    }
+
+    var isFailure: Bool {
+        !isSuccess
+    }
+
+    var success: Success? {
+        guard case let .success(value) = self else { return nil }
+        return value
+    }
+
+    var failure: Failure? {
+        guard case let .failure(error) = self else { return nil }
+        return error
+    }
+}

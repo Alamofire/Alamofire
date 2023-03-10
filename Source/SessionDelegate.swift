@@ -91,11 +91,15 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         let evaluation: ChallengeEvaluation
         switch challenge.protectionSpace.authenticationMethod {
+        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
+             NSURLAuthenticationMethodNegotiate:
+            evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
+        #if !(os(Linux) || os(Windows))
         case NSURLAuthenticationMethodServerTrust:
             evaluation = attemptServerTrustAuthentication(with: challenge)
-        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
-             NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodClientCertificate:
+        case NSURLAuthenticationMethodClientCertificate:
             evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
+        #endif
         default:
             evaluation = (.performDefaultHandling, nil, nil)
         }
@@ -107,6 +111,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(evaluation.disposition, evaluation.credential)
     }
 
+    #if !(os(Linux) || os(Windows))
     /// Evaluates the server trust `URLAuthenticationChallenge` received.
     ///
     /// - Parameter challenge: The `URLAuthenticationChallenge`.
@@ -116,7 +121,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         let host = challenge.protectionSpace.host
 
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-            let trust = challenge.protectionSpace.serverTrust
+              let trust = challenge.protectionSpace.serverTrust
         else {
             return (.performDefaultHandling, nil, nil)
         }
@@ -133,6 +138,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
             return (.cancelAuthenticationChallenge, nil, error.asAFError(or: .serverTrustEvaluationFailed(reason: .customEvaluationFailed(error: error))))
         }
     }
+    #endif
 
     /// Evaluates the credential-based authentication `URLAuthenticationChallenge` received for `task`.
     ///
@@ -298,11 +304,13 @@ extension SessionDelegate: URLSessionDownloadDelegate {
             return
         }
 
-        guard let response = request.response else {
-            fatalError("URLSessionDownloadTask finished downloading with no response.")
+        let (destination, options): (URL, DownloadRequest.Options)
+        if let response = request.response {
+            (destination, options) = request.destination(location, response)
+        } else {
+            // If there's no response this is likely a local file download, so generate the temporary URL directly.
+            (destination, options) = (DownloadRequest.defaultDestinationURL(location), [])
         }
-
-        let (destination, options) = (request.destination)(location, response)
 
         eventMonitor?.request(request, didCreateDestinationURL: destination)
 

@@ -29,19 +29,51 @@ import XCTest
 class BaseTestCase: XCTestCase {
     let timeout: TimeInterval = 10
 
-    static var testDirectoryURL: URL { FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
-    var testDirectoryURL: URL { BaseTestCase.testDirectoryURL }
+    var testDirectoryURL: URL {
+        FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests")
+    }
+
+    var temporaryFileURL: URL {
+        testDirectoryURL.appendingPathComponent(UUID().uuidString)
+    }
+
+    private var session: Session?
 
     override func setUp() {
-        super.setUp()
-
-        FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
         FileManager.createDirectory(at: testDirectoryURL)
+
+        super.setUp()
+    }
+
+    override func tearDown() {
+        session = nil
+        FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
+        clearCredentials()
+        clearCookies()
+
+        super.tearDown()
+    }
+
+    func clearCookies(for storage: HTTPCookieStorage = .shared) {
+        storage.cookies?.forEach { storage.deleteCookie($0) }
+    }
+
+    func clearCredentials(for storage: URLCredentialStorage = .shared) {
+        for (protectionSpace, credentials) in storage.allCredentials {
+            for (_, credential) in credentials {
+                storage.remove(credential, for: protectionSpace)
+            }
+        }
     }
 
     func url(forResource fileName: String, withExtension ext: String) -> URL {
-        let bundle = Bundle(for: BaseTestCase.self)
-        return bundle.url(forResource: fileName, withExtension: ext)!
+        Bundle.test.url(forResource: fileName, withExtension: ext)!
+    }
+
+    func stored(_ session: Session) -> Session {
+        self.session = session
+
+        return session
     }
 
     /// Runs assertions on a particular `DispatchQueue`.

@@ -1,8 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
-`Alamofire` adheres to [Semantic Versioning](https://semver.org/).
+Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
+[🔥 Experimental 🔥] features may require breaking changes in minor, rather than major, releases. This will be rare and 
+compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
+- `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563) | [5.6.4](#564)
+- `5.5.x` Releases - [5.5.0](#550)
+- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
+- `5.3.x` Releases - [5.3.0](#530)
+- `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
 - `5.1.x` Releases - [5.1.0](#510)
 - `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
 - `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
@@ -39,6 +46,275 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [5.6.4](https://github.com/Alamofire/Alamofire/releases/tag/5.6.4)
+Released on 2022-11-21. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/84?closed=1).
+
+#### Fixed
+- Deprecated OS version support in Swift 5.7 SPM Package.
+  - Fixed by [Guglielmo Faglioni](https://github.com/guidev) in Pull Request [#3665](https://github.com/Alamofire/Alamofire/pull/3665).
+
+## [5.6.3](https://github.com/Alamofire/Alamofire/releases/tag/5.6.3)
+Released on 2022-11-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/83?closed=1).
+
+#### Updated
+- Swift package to 5.7, CI to Xcode 14.1.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3653](https://github.com/Alamofire/Alamofire/pull/3653).
+
+#### Fixed
+- Calls to deprecated cancellation handler function.
+  - Fixed by [Sven Münnich](https://github.com/svenmuennich) in Pull Request [#3657](https://github.com/Alamofire/Alamofire/pull/3657).
+- Unnecessary protocol conformance on Combine publishers.
+  - Fixed by [MoonkiKim(김문기)](https://github.com/tedKim5178) in Pull Request [#3650](https://github.com/Alamofire/Alamofire/pull/3650).
+- Don't attempt retry when `Request` has already been cancelled.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3641](https://github.com/Alamofire/Alamofire/pull/3641).
+
+## [5.6.2](https://github.com/Alamofire/Alamofire/releases/tag/5.6.2)
+Released on 2022-07-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/82?closed=1).
+
+#### Added
+- Error when object provided to `JSONEcoding` contains values that can't be passed through `JSONSerialization`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3624](https://github.com/Alamofire/Alamofire/pull/3624).
+
+#### Updated
+- CI support for all supported Xcode, macOS, and Linux versions.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3607](https://github.com/Alamofire/Alamofire/pull/3607) and [#3622](https://github.com/Alamofire/Alamofire/pull/3622).
+- Support for various Xcode version.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3616](https://github.com/Alamofire/Alamofire/pull/3616) and [#3632](https://github.com/Alamofire/Alamofire/pull/3632).
+- `Cache-Control` header tests to not require hard-coded delays.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3601](https://github.com/Alamofire/Alamofire/pull/3601).
+
+#### Fixed
+- Swift version check for `SecTrustCopyCertificateChain`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3606](https://github.com/Alamofire/Alamofire/pull/3606).
+- Various documentation issues.
+  - Fixed by [Jacob Lange](https://github.com/jacoblange-dev), [rain2540](https://github.com/rain2540), [bondxf](https://github.com/bondxf), [Ikko Ashimine](https://github.com/eltociear), and [Elon Park](https://github.com/ElonPark) in various Pull Requests.
+
+## [5.6.1](https://github.com/Alamofire/Alamofire/releases/tag/5.6.1)
+Released on 2022-04-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/81?closed=1).
+
+#### Fixed
+- Missing `automaticallyCancelling` parameter in `serializingDownloadedFileURL`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3597](https://github.com/Alamofire/Alamofire/pull/3597).
+
+## [5.6.0](https://github.com/Alamofire/Alamofire/releases/tag/5.6.0)
+Released on 2022-04-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/80?closed=1).
+
+#### Added
+- Support for `HTTPMethod.query` to support the [upcoming standard](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-safe-method-w-body-02).
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3553](https://github.com/Alamofire/Alamofire/pull/3553).
+- Compile-time Swift version check to enforce minimum supported Swift version.
+  - Added by [Dave Verwer](https://github.com/daveverwer) in Pull Request [#3549](https://github.com/Alamofire/Alamofire/pull/3549).
+- GitHub Sponsors support. You can now sponsor Alamofire directly through GitHub.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3543](https://github.com/Alamofire/Alamofire/pull/3543).
+
+#### Updated
+- Swift version required to build [🔥 Experimental 🔥] Swift Concurrency support to 5.6.0 to avoid various Apple bugs with Xcode 13.2.0 and 13.2.1. Support now requires Xcode 13.3.1.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3590](https://github.com/Alamofire/Alamofire/pull/3590).
+- `DownloadRequest` to avoid producing resume data when not explicitly requested on cancellation.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3538](https://github.com/Alamofire/Alamofire/pull/3538).
+- Testing infrastructure to use XCTestPlans on Apple platforms.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3538](https://github.com/Alamofire/Alamofire/pull/3538).
+- GitHub Actions support for greater OS coverage, more SPM platforms, and Swift 5.6.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3534](https://github.com/Alamofire/Alamofire/pull/3534), [#3545](https://github.com/Alamofire/Alamofire/pull/3545), [#3570](https://github.com/Alamofire/Alamofire/pull/3570), and [#3587](https://github.com/Alamofire/Alamofire/pull/3587).
+
+#### Fixed
+- Various Security framework deprecation warnings when deploying to newer OSes.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3555](https://github.com/Alamofire/Alamofire/pull/3555).
+- Various documentation issues.
+  - Fixed by [Jon Shier](https://github.com/jshier), [Emanuele Fumagalli](https://github.com/emanuelef), [Huang-Libo](https://github.com/Huang-Libo), and [rain2540](https://github.com/rain2540) in Pull Requests [#3548](https://github.com/Alamofire/Alamofire/pull/3548), [#3562](https://github.com/Alamofire/Alamofire/pull/3562), [#3573](https://github.com/Alamofire/Alamofire/pull/3573), [#3574](https://github.com/Alamofire/Alamofire/pull/3574), and [#3585](https://github.com/Alamofire/Alamofire/pull/3585).
+
+---
+
+## [5.5.0](https://github.com/Alamofire/Alamofire/releases/tag/5.5.0)
+Released on 2021-12-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/79?closed=1).
+
+#### Added
+- [🔥 Experimental 🔥] support for Swift Concurrency, including `async`-`await` for requests and `StreamOf` for streaming values.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3463](https://github.com/Alamofire/Alamofire/pull/3463).
+- Generic static accessors for various protocols types for Swift 5.5.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3499](https://github.com/Alamofire/Alamofire/pull/3499).
+- `.indexInBrackets` options for array encoding in query parameters.
+  - Added by [Tiago Lopes](https://github.com/TiagoMaiaL) in Pull Request [#3516](https://github.com/Alamofire/Alamofire/pull/3516).
+- `RequestAdapterState` and new protocol requirements for `RequestAdapter` to allow for additional state to be available.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#3504](https://github.com/Alamofire/Alamofire/pull/3504).
+
+#### Updated
+- `Session` to more safely target provided custom `DispatchQueue`s for internal use.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3523](https://github.com/Alamofire/Alamofire/pull/3523).
+- `AFError` message regarding unacceptable `Content-Type`s to sort the types.
+  - Updated by [Timur Yusipov](https://github.com/Usipov) in Pull Request [#3518](https://github.com/Alamofire/Alamofire/pull/3518).
+- Base Swift language version requirement to 5.3.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3495](https://github.com/Alamofire/Alamofire/pull/3495).
+- Sample app to show proper loading state for requests.
+  - Updated by [Tiago Lopes](https://github.com/TiagoMaiaL) in Pull Request [#3514](https://github.com/Alamofire/Alamofire/pull/3514).
+
+#### Deprecated
+- `responseJSON` and associated methods, in preference to `responseDecodable`.
+  - Deprecated by [Jon Shier](https://github.com/jshier) in Pull Request [#3502](https://github.com/Alamofire/Alamofire/pull/3502).
+
+#### Fixed
+- Use of `Protected` wrapper when accessing properties of the wrapped values to ensure proper thread-safety.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3505](https://github.com/Alamofire/Alamofire/pull/3505).
+- Various documentation typos.
+  - Fixed by [Christos Koninis](https://github.com/csknns), [Tiago Lopes](https://github.com/TiagoMaiaL), and [Eugene Berdnikov](https://github.com/evnik) in various Pull Requests.
+
+---
+
+## [5.4.4](https://github.com/Alamofire/Alamofire/releases/tag/5.4.4)
+Released on 2021-09-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/78?closed=1).
+
+#### Added
+- Support for Xcode 13, including a workaround for Combine compilation on older architectures.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3486](https://github.com/Alamofire/Alamofire/pull/3486).
+- Testing on watchOS.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3449](https://github.com/Alamofire/Alamofire/pull/3449).
+- Support for building on Windows and Linux. Alamofire is unsupported on these platforms but should build correctly.
+  - Added by [Jon Shier](https://github.com/jshier) and [Alex Taffe](https://github.com/alex-taffe) in Pull Requests [#3446](https://github.com/Alamofire/Alamofire/pull/3446) and [#3462](https://github.com/Alamofire/Alamofire/pull/3462).
+
+#### Updated
+- Usage of `.count >= 0` to `!.isEmpty`.
+  - Updated by [Shafeer P](https://github.com/shafeerp) in Pull Request [#3478](https://github.com/Alamofire/Alamofire/pull/3478).
+
+#### Fixed
+- Async navigation title updating in example app.
+  - Fixed by [Tiago Maia](https://github.com/TiagoMaiaL) in Pull Request [3494](https://github.com/Alamofire/Alamofire/pull/3494).
+- Various documentation bugs.
+  - Fixed by [Jordan de Laune](https://github.com/jdelaune), [Cédric Luthi](https://github.com/0xced), [Romain Bertozzi](https://github.com/r-mckay), and [Tiago Maia](https://github.com/TiagoMaiaL).
+
+## [5.4.3](https://github.com/Alamofire/Alamofire/releases/tag/5.4.3)
+Released on 2021-04-21. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/77?closed=1).
+
+#### Fixed
+- Change in multipart upload creation order.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#3438](https://github.com/Alamofire/Alamofire/pull/3438).
+- Typo in Alamofire 5 migration guide.
+  - Fixed by [DevYeom](https://github.com/DevYeom) in Pull Request [#3431](https://github.com/Alamofire/Alamofire/pull/3431).
+
+## [5.4.2](https://github.com/Alamofire/Alamofire/releases/tag/5.4.2)
+Released on 2021-04-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/76?closed=1).
+
+#### Updated
+- Resume data handling for `DownloadRequest`s to access resume data from errors as well as cancellation.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3419](https://github.com/Alamofire/Alamofire/pull/3419).
+- Project files and templates for Xcode 12.4 and GitHub templates.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3414](https://github.com/Alamofire/Alamofire/pull/3414).
+
+#### Fixed
+- `MultipartUpload` thread-safety.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3421](https://github.com/Alamofire/Alamofire/pull/3421).
+- Multipart body stream length handling to better handle partial streams.
+  - Fixed by [Yu Ao](https://github.com/YuAo) and [Jon Shier](https://github.com/jshier) in Pull Requests [#3380](https://github.com/Alamofire/Alamofire/pull/3380) and [#3420](https://github.com/Alamofire/Alamofire/pull/3420).
+
+## [5.4.1](https://github.com/Alamofire/Alamofire/releases/tag/5.4.1)
+Released on 2020-12-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/75?closed=1).
+
+#### Updated
+- Project and CocoaPods installation of Obj-C header.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3378](https://github.com/Alamofire/Alamofire/pull/3378).
+
+## [5.4.0](https://github.com/Alamofire/Alamofire/releases/tag/5.4.0)
+Released on 2020-10-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/74?closed=1).
+
+#### Added
+- `URLResponseSerializer` and attendant convenience methods so downloads can produce a non-optional `URL`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3343](https://github.com/Alamofire/Alamofire/pull/3343).
+
+#### Updated
+- Handing of `file://` `URL`s, removing error added in 5.3.0 and adding support for `DownloadRequest`.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3342](https://github.com/Alamofire/Alamofire/pull/3342).
+
+---
+
+## [5.3.0](https://github.com/Alamofire/Alamofire/releases/tag/5.3.0)
+Released on 2020-10-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/73?closed=1).
+
+#### Added
+- Closure callback APIs for the production of `URLRequest`s and `URLSessionTask`s.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3219](https://github.com/Alamofire/Alamofire/pull/3219).
+- `URLSessionTaskMetrics` gathering on watchOS 7+.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3321](https://github.com/Alamofire/Alamofire/pull/3321).
+
+#### Updated
+- Project settings, GitHub Actions, tests, and formatting for newer Xcodes.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3278](https://github.com/Alamofire/Alamofire/pull/3278), [#3284](https://github.com/Alamofire/Alamofire/pull/3284), [#3285](https://github.com/Alamofire/Alamofire/pull/3285), [#3309](https://github.com/Alamofire/Alamofire/pull/3309), and  [#3320](https://github.com/Alamofire/Alamofire/pull/3320).
+- Use of `URLRequest.headers` extension property in `URLEncoding`.
+  - Updated by [tomisacat](https://github.com/tomisacat) in Pull Request [#3264](https://github.com/Alamofire/Alamofire/pull/3264).
+- iOS example app.
+  - Updated by [rain2540](https://github.com/rain2540) in Pull Request [#3268](https://github.com/Alamofire/Alamofire/pull/3268).
+- Various documentation.
+  - Updated by [Jaydeep Vora](https://github.com/jaydeep-vora), [Minhyuk Kim](https://github.com/mininny), and [Tieda](https://github.com/weitieda) in Pull Requests [#3274](https://github.com/Alamofire/Alamofire/pull/3274), [#3292](https://github.com/Alamofire/Alamofire/pull/3292), and [#3317](https://github.com/Alamofire/Alamofire/pull/3317).
+
+#### Fixed
+- Double lock crash in `AuthenticationInterceptor` caused by synchronous `refresh` implementations.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3322](https://github.com/Alamofire/Alamofire/pull/3322).
+- Crash when requesting `file://` `URL`s by producing validation error.
+  - Fixed by [hyotak.yun](https://github.com/devtak) in Pull Request [#3318](https://github.com/Alamofire/Alamofire/pull/3318).
+- Missing rethrow of error produced when writing temporary multipart files fails.
+  - Fixed by [sudo.park](https://github.com/sudopark) in Pull Request [#3306](https://github.com/Alamofire/Alamofire/pull/3306).
+- Objective-C module conflicts in Xcode 12 by removing Obj-C module support.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3308](https://github.com/Alamofire/Alamofire/pull/3308).
+
+---
+
+## [5.2.2](https://github.com/Alamofire/Alamofire/releases/tag/5.2.2)
+Released on 2020-07-17. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/72?closed=1).
+
+#### Added
+- `macOS(Catalyst)` `User-Agent` string.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3236](https://github.com/Alamofire/Alamofire/pull/3236).
+
+#### Updated
+- `debugDescription` of `DataRequest` and `DownloadRequest` to better handle non-text and long content, with better formatting.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3256](https://github.com/Alamofire/Alamofire/pull/3256).
+- Code to use `switch` instead of `if else` statement.
+  - Updated by [dirtmelon](https://github.com/dirtmelon) in Pull Request [#3214](https://github.com/Alamofire/Alamofire/pull/3214).
+
+#### Fixed
+- Linking on some Apple OS versions when using Swift Package Manager.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3259](https://github.com/Alamofire/Alamofire/pull/3259).
+- Reliability issues with `DataStreamRequest`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3216](https://github.com/Alamofire/Alamofire/pull/3216).
+
+## [5.2.1](https://github.com/Alamofire/Alamofire/releases/tag/5.2.1)
+Released on 2020-05-25. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/71?closed=1).
+
+#### Updated
+- Usage of `.background` `DispatchQoS` to `.utility` to avoid low-power issues.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3207](https://github.com/Alamofire/Alamofire/pull/3207).
+
+#### Fixed
+- Various memory leaks.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3199](https://github.com/Alamofire/Alamofire/pull/3199).
+
+## [5.2.0](https://github.com/Alamofire/Alamofire/releases/tag/5.2.0)
+Released on 2020-05-16. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/70?closed=1).
+
+#### Added
+- Combine support! `DataResponsePublisher`, `DownloadResponsePublisher`, and `DataStreamPublisher` to stream Alamofire responses.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3160](https://github.com/Alamofire/Alamofire/pull/3160).
+- `AuthenticationInterceptor`, for easier adaptation and retry of requests with credentials.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#3164](https://github.com/Alamofire/Alamofire/pull/3164).
+
+#### Updated
+- Response handlers to take all serializer parameters.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3188](https://github.com/Alamofire/Alamofire/pull/3188).
+- `DisabledEvaluator` to `DisabledTrustEvaluator`, deprecating the previous name.
+  - Updated by [Florian Petit](https://github.com/MrCloud) in Pull Request [#3162](https://github.com/Alamofire/Alamofire/pull/3162).
+- `Interceptor` to be initialized with multiple `RequestInterceptor`s, in addition to `RequestAdapter`s and `RequestRetrier`s.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3155](https://github.com/Alamofire/Alamofire/pull/3155).
+
+#### Fixed
+- Minor documentation issues.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3187](https://github.com/Alamofire/Alamofire/pull/3187).
+- Encoding of `Decimal` values in `URLEncodedFormEncoder`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3185](https://github.com/Alamofire/Alamofire/pull/3185).
+- Thread-safety issue in `Session`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3179](https://github.com/Alamofire/Alamofire/pull/3179).
+- Memory leak in `NetworkReachabilityManager`.
+  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Reqeust [#3180](https://github.com/Alamofire/Alamofire/pull/3180).
 
 ---
 

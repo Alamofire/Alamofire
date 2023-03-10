@@ -45,11 +45,11 @@ import CoreServices
 open class MultipartFormData {
     // MARK: - Helper Types
 
-    struct EncodingCharacters {
+    enum EncodingCharacters {
         static let crlf = "\r\n"
     }
 
-    struct BoundaryGenerator {
+    enum BoundaryGenerator {
         enum BoundaryType {
             case initial, encapsulated, final
         }
@@ -213,6 +213,7 @@ open class MultipartFormData {
         //              Check 2 - is file URL reachable?
         //============================================================
 
+        #if !(os(Linux) || os(Windows))
         do {
             let isReachable = try fileURL.checkPromisedItemIsReachable()
             guard isReachable else {
@@ -223,6 +224,7 @@ open class MultipartFormData {
             setBodyPartError(withReason: .bodyPartFileNotReachableWithError(atURL: fileURL, error: error))
             return
         }
+        #endif
 
         //============================================================
         //            Check 3 - is file URL a directory?
@@ -419,6 +421,12 @@ open class MultipartFormData {
             }
         }
 
+        guard UInt64(encoded.count) == bodyPart.bodyContentLength else {
+            let error = AFError.UnexpectedInputStreamLength(bytesExpected: bodyPart.bodyContentLength,
+                                                            bytesRead: UInt64(encoded.count))
+            throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: error))
+        }
+
         return encoded
     }
 
@@ -500,18 +508,6 @@ open class MultipartFormData {
         }
     }
 
-    // MARK: - Private - Mime Type
-
-    private func mimeType(forPathExtension pathExtension: String) -> String {
-        if
-            let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
-            let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {
-            return contentType as String
-        }
-
-        return "application/octet-stream"
-    }
-
     // MARK: - Private - Content Headers
 
     private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
@@ -545,3 +541,44 @@ open class MultipartFormData {
         bodyPartError = AFError.multipartEncodingFailed(reason: reason)
     }
 }
+
+#if canImport(UniformTypeIdentifiers)
+import UniformTypeIdentifiers
+
+extension MultipartFormData {
+    // MARK: - Private - Mime Type
+
+    private func mimeType(forPathExtension pathExtension: String) -> String {
+        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) {
+            return UTType(filenameExtension: pathExtension)?.preferredMIMEType ?? "application/octet-stream"
+        } else {
+            if
+                let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
+                let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {
+                return contentType as String
+            }
+
+            return "application/octet-stream"
+        }
+    }
+}
+
+#else
+
+extension MultipartFormData {
+    // MARK: - Private - Mime Type
+
+    private func mimeType(forPathExtension pathExtension: String) -> String {
+        #if !(os(Linux) || os(Windows))
+        if
+            let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
+            let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {
+            return contentType as String
+        }
+        #endif
+
+        return "application/octet-stream"
+    }
+}
+
+#endif

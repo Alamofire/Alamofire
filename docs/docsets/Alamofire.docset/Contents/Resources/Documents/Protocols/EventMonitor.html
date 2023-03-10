@@ -21,27 +21,27 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire Docs
+          Alamofire 5.6.4 Docs
         </a>
          (97% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/Alamofire/Alamofire">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
     
         <p class="header-col header-col--secondary">
-          <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire%2Egithub%2Eio%2FAlamofire%2Fdocsets%2FAlamofire%2Exml">
-            <img class="header-icon" src="../img/dash.png"/>
+          <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire.github.io%2FAlamofire%2Fdocsets%2FAlamofire.xml">
+            <img class="header-icon" src="../img/dash.png" alt="Dash"/>
             Install in Dash
           </a>
         </p>
@@ -49,7 +49,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       EventMonitor Protocol Reference
     </p>
 
@@ -64,6 +64,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/AlamofireNotifications.html">AlamofireNotifications</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AuthenticationInterceptor.html">AuthenticationInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AuthenticationInterceptor/RefreshWindow.html">– RefreshWindow</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ClosureEventMonitor.html">ClosureEventMonitor</a>
@@ -105,7 +111,7 @@
                 <a class="nav-group-task-link" href="../Classes/DefaultTrustEvaluator.html">DefaultTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DisabledEvaluator.html">DisabledEvaluator</a>
+                <a class="nav-group-task-link" href="../Classes/DisabledTrustEvaluator.html">DisabledTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/DownloadRequest.html">DownloadRequest</a>
@@ -226,6 +232,9 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/UnexpectedInputStreamLength.html">– UnexpectedInputStreamLength</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
@@ -242,6 +251,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
@@ -274,6 +286,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@OSStatus">OSStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -309,6 +324,12 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/AlamofireExtended.html">AlamofireExtended</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/AuthenticationCredential.html">AuthenticationCredential</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/Authenticator.html">Authenticator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a>
@@ -385,10 +406,28 @@
                 <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataResponsePublisher.html">DataResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataStreamPublisher.html">DataStreamPublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataStreamTask.html">DataStreamTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataTask.html">DataTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DownloadResponsePublisher.html">DownloadResponsePublisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DownloadTask.html">DownloadTask</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
@@ -409,7 +448,13 @@
                 <a class="nav-group-task-link" href="../Structs/JSONEncoding.html">JSONEncoding</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/JSONEncoding/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PassthroughStreamSerializer.html">PassthroughStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Redirector.html">Redirector</a>
@@ -418,10 +463,22 @@
                 <a class="nav-group-task-link" href="../Structs/Redirector/Behavior.html">– Behavior</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RequestAdapterState.html">RequestAdapterState</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher.html">ResponseCacher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ResponseCacher/Behavior.html">– Behavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf.html">StreamOf</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StreamOf/Iterator.html">– Iterator</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/StringStreamSerializer.html">StringStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/URLEncoding.html">URLEncoding</a>
@@ -434,6 +491,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/URLEncoding/BoolEncoding.html">– BoolEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/URLResponseSerializer.html">URLResponseSerializer</a>
               </li>
             </ul>
           </li>
@@ -453,6 +513,9 @@
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire12AdaptHandlera">AdaptHandler</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire17DisabledEvaluatora">DisabledEvaluator</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a>
               </li>
               <li class="nav-group-task">
@@ -469,6 +532,7 @@
             <h1>EventMonitor</h1>
               <div class="declaration">
                 <div class="language">
+                  
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">EventMonitor</span></code></pre>
 
                 </div>
@@ -526,7 +590,7 @@
                 <a name="//apple_ref/swift/Section/URLSessionDelegate Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/URLSessionDelegate%20Events"></a>
-                  <h3 class="section-name"><p>URLSessionDelegate Events</p>
+                  <h3 class="section-name"><span>URLSessionDelegate Events</span>
 </h3>
                 </div>
               </div>
@@ -573,7 +637,7 @@
                 <a name="//apple_ref/swift/Section/URLSessionTaskDelegate Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/URLSessionTaskDelegate%20Events"></a>
-                  <h3 class="section-name"><p>URLSessionTaskDelegate Events</p>
+                  <h3 class="section-name"><span>URLSessionTaskDelegate Events</span>
 </h3>
                 </div>
               </div>
@@ -816,7 +880,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(OSX 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)</span>
 <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="n">taskIsWaitingForConnectivity</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">)</span></code></pre>
 
                         </div>
@@ -832,7 +896,7 @@
                 <a name="//apple_ref/swift/Section/URLSessionDataDelegate Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/URLSessionDataDelegate%20Events"></a>
-                  <h3 class="section-name"><p>URLSessionDataDelegate Events</p>
+                  <h3 class="section-name"><span>URLSessionDataDelegate Events</span>
 </h3>
                 </div>
               </div>
@@ -913,7 +977,7 @@
                 <a name="//apple_ref/swift/Section/URLSessionDownloadDelegate Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/URLSessionDownloadDelegate%20Events"></a>
-                  <h3 class="section-name"><p>URLSessionDownloadDelegate Events</p>
+                  <h3 class="section-name"><span>URLSessionDownloadDelegate Events</span>
 </h3>
                 </div>
               </div>
@@ -1035,7 +1099,7 @@
                 <a name="//apple_ref/swift/Section/Request Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Request%20Events"></a>
-                  <h3 class="section-name"><p>Request Events</p>
+                  <h3 class="section-name"><span>Request Events</span>
 </h3>
                 </div>
               </div>
@@ -1628,7 +1692,7 @@ multiple times if it is retried.</p>
                 <a name="//apple_ref/swift/Section/DataRequest Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/DataRequest%20Events"></a>
-                  <h3 class="section-name"><p>DataRequest Events</p>
+                  <h3 class="section-name"><span>DataRequest Events</span>
 </h3>
                 </div>
               </div>
@@ -1741,7 +1805,7 @@ multiple times if it is retried.</p>
                 <a name="//apple_ref/swift/Section/DataStreamRequest Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/DataStreamRequest%20Events"></a>
-                  <h3 class="section-name"><p>DataStreamRequest Events</p>
+                  <h3 class="section-name"><span>DataStreamRequest Events</span>
 </h3>
                 </div>
               </div>
@@ -1911,7 +1975,7 @@ multiple times if it is retried.</p>
                 <a name="//apple_ref/swift/Section/UploadRequest Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/UploadRequest%20Events"></a>
-                  <h3 class="section-name"><p>UploadRequest Events</p>
+                  <h3 class="section-name"><span>UploadRequest Events</span>
 </h3>
                 </div>
               </div>
@@ -2027,7 +2091,7 @@ the <code>InputStream</code> does not wrap a <code>Data</code> value or file <co
                 <a name="//apple_ref/swift/Section/DownloadRequest Events" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/DownloadRequest%20Events"></a>
-                  <h3 class="section-name"><p>DownloadRequest Events</p>
+                  <h3 class="section-name"><span>DownloadRequest Events</span>
 </h3>
                 </div>
               </div>
@@ -2201,9 +2265,8 @@ downloaded file will be moved to.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-04-04)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2022-11-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>

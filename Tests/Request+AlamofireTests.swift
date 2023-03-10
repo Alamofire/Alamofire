@@ -1,7 +1,7 @@
 //
-//  Result+Alamofire.swift
+//  Request+AlamofireTests.swift
 //
-//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2022 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,19 @@
 //  THE SOFTWARE.
 //
 
-import Foundation
+import Alamofire
 
-extension Result {
-    var isSuccess: Bool {
-        guard case .success = self else { return false }
-        return true
-    }
+extension DataRequest {
+    /// Adds a validator which executes a closure before calling `validate()`.
+    ///
+    /// - Parameter closure: Closure to perform before validation.
+    /// - Returns:           The `DataRequest`.
+    func validate(performing closure: @escaping () -> Void) -> Self {
+        validate { _, _, _ in
+            closure()
 
-    var isFailure: Bool {
-        !isSuccess
-    }
-
-    var success: Success? {
-        guard case let .success(value) = self else { return nil }
-        return value
-    }
-
-    var failure: Failure? {
-        guard case let .failure(error) = self else { return nil }
-        return error
+            return .success(())
+        }
+        .validate()
     }
 }

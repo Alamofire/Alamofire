@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "06BDBD92-3173-4395-90BF-851B80FF1162",
+      "name" : "Default",
+      "options" : {
+        "threadSanitizerEnabled" : true
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Alamofire.xcodeproj",
+        "identifier" : "F8111E3D19A95C8B0040E7D1",
+        "name" : "Alamofire iOS Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

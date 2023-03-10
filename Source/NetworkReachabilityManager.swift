@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if !(os(watchOS) || os(Linux))
+#if !(os(watchOS) || os(Linux) || os(Windows))
 
 import Foundation
 import SystemConfiguration
@@ -173,16 +173,33 @@ open class NetworkReachabilityManager {
             state.listener = listener
         }
 
-        var context = SCNetworkReachabilityContext(version: 0,
-                                                   info: Unmanaged.passRetained(self).toOpaque(),
-                                                   retain: nil,
-                                                   release: nil,
-                                                   copyDescription: nil)
+        let weakManager = WeakManager(manager: self)
+
+        var context = SCNetworkReachabilityContext(
+            version: 0,
+            info: Unmanaged.passUnretained(weakManager).toOpaque(),
+            retain: { info in
+                let unmanaged = Unmanaged<WeakManager>.fromOpaque(info)
+                _ = unmanaged.retain()
+
+                return UnsafeRawPointer(unmanaged.toOpaque())
+            },
+            release: { info in
+                let unmanaged = Unmanaged<WeakManager>.fromOpaque(info)
+                unmanaged.release()
+            },
+            copyDescription: { info in
+                let unmanaged = Unmanaged<WeakManager>.fromOpaque(info)
+                let weakManager = unmanaged.takeUnretainedValue()
+                let description = weakManager.manager?.flags?.readableDescription ?? "nil"
+
+                return Unmanaged.passRetained(description as CFString)
+            })
         let callback: SCNetworkReachabilityCallBack = { _, flags, info in
             guard let info = info else { return }
 
-            let instance = Unmanaged<NetworkReachabilityManager>.fromOpaque(info).takeUnretainedValue()
-            instance.notifyListener(flags)
+            let weakManager = Unmanaged<WeakManager>.fromOpaque(info).takeUnretainedValue()
+            weakManager.manager?.notifyListener(flags)
         }
 
         let queueAdded = SCNetworkReachabilitySetDispatchQueue(reachability, reachabilityQueue)
@@ -226,6 +243,14 @@ open class NetworkReachabilityManager {
 
             let listener = state.listener
             state.listenerQueue?.async { listener?(newStatus) }
+        }
+    }
+
+    private final class WeakManager {
+        weak var manager: NetworkReachabilityManager?
+
+        init(manager: NetworkReachabilityManager?) {
+            self.manager = manager
         }
     }
 }

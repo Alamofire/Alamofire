@@ -26,19 +26,29 @@ import Foundation
 
 /// An object that encodes instances into URL-encoded query strings.
 ///
-/// There is no published specification for how to encode collection types. By default, the convention of appending
-/// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
-/// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
-/// square brackets appended to array keys.
+/// `ArrayEncoding` can be used to configure how `Array` values are encoded. By default, the `.brackets` encoding is
+/// used, encoding array values with brackets for each value. e.g `array[]=1&array[]=2`.
 ///
-/// `BoolEncoding` can be used to configure how `Bool` values are encoded. The default behavior is to encode
-/// `true` as 1 and `false` as 0.
+/// `BoolEncoding` can be used to configure how `Bool` values are encoded. By default, the `.numeric` encoding is used,
+/// encoding `true` as `1` and `false` as `0`.
+///
+/// `DataEncoding` can be used to configure how `Data` values are encoded. By default, the `.deferredToData` encoding is
+/// used, which encodes `Data` values using their default `Encodable` implementation.
 ///
 /// `DateEncoding` can be used to configure how `Date` values are encoded. By default, the `.deferredToDate`
-/// strategy is used, which formats dates from their structure.
+/// encoding is used, which encodes `Date`s using their default `Encodable` implementation.
 ///
-/// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (`%20`),
-/// while older encodings may expect spaces to be replaced with `+`.
+/// `KeyEncoding` can be used to configure how keys are encoded. By default, the `.useDefaultKeys` encoding is used,
+/// which encodes the keys directly from the `Encodable` implementation.
+///
+/// `KeyPathEncoding` can be used to configure how paths within nested objects are encoded. By default, the `.brackets`
+/// encoding is used, which encodes each sub-key in brackets. e.g. `parent[child][grandchild]=value`.
+///
+/// `NilEncoding` can be used to configure how `nil` `Optional` values are encoded. By default, the `.dropKey` encoding
+/// is used, which drops `nil` key / value pairs from the output entirely.
+///
+/// `SpaceEncoding` can be used to configure how spaces are encoded. By default, the `.percentEscaped` encoding is used,
+/// replacing spaces with `%20`.
 ///
 /// This type is largely based on Vapor's [`url-encoded-form`](https://github.com/vapor/url-encoded-form) project.
 public final class URLEncodedFormEncoder {
@@ -48,15 +58,21 @@ public final class URLEncodedFormEncoder {
         case brackets
         /// No brackets are appended to the key and the key is encoded as is.
         case noBrackets
+        /// Brackets containing the item index are appended. This matches the jQuery and Node.js behavior.
+        case indexInBrackets
 
         /// Encodes the key according to the encoding.
         ///
-        /// - Parameter key: The `key` to encode.
-        /// - Returns:       The encoded key.
-        func encode(_ key: String) -> String {
+        /// - Parameters:
+        ///     - key:   The `key` to encode.
+        ///     - index: When this enum instance is `.indexInBrackets`, the `index` to encode.
+        ///
+        /// - Returns:   The encoded key.
+        func encode(_ key: String, atIndex index: Int) -> String {
             switch self {
             case .brackets: return "\(key)[]"
             case .noBrackets: return key
+            case .indexInBrackets: return "\(key)[\(index)]"
             }
         }
     }
@@ -228,13 +244,13 @@ public final class URLEncodedFormEncoder {
             var searchRange = key.index(after: wordStart)..<key.endIndex
 
             // Find next uppercase character
-            while let upperCaseRange = key.rangeOfCharacter(from: CharacterSet.uppercaseLetters, options: [], range: searchRange) {
+            while let upperCaseRange = key.rangeOfCharacter(from: .uppercaseLetters, options: [], range: searchRange) {
                 let untilUpperCase = wordStart..<upperCaseRange.lowerBound
                 words.append(untilUpperCase)
 
                 // Find next lowercase character
                 searchRange = upperCaseRange.lowerBound..<searchRange.upperBound
-                guard let lowerCaseRange = key.rangeOfCharacter(from: CharacterSet.lowercaseLetters, options: [], range: searchRange) else {
+                guard let lowerCaseRange = key.rangeOfCharacter(from: .lowercaseLetters, options: [], range: searchRange) else {
                     // There are no more lower case letters. Just end here.
                     wordStart = searchRange.lowerBound
                     break
@@ -249,7 +265,8 @@ public final class URLEncodedFormEncoder {
                     // Continue searching for the next upper case for the boundary.
                     wordStart = upperCaseRange.lowerBound
                 } else {
-                    // There was a range of >1 capital letters. Turn those into a word, stopping at the capital before the lower case character.
+                    // There was a range of >1 capital letters. Turn those into a word, stopping at the capital before
+                    // the lower case character.
                     let beforeLowerIndex = key.index(before: lowerCaseRange.lowerBound)
                     words.append(upperCaseRange.lowerBound..<beforeLowerIndex)
 
@@ -267,11 +284,62 @@ public final class URLEncodedFormEncoder {
         }
     }
 
+    /// Encoding to use for nested object and `Encodable` value key paths.
+    ///
+    /// ```
+    /// ["parent" : ["child" : ["grandchild": "value"]]]
+    /// ```
+    ///
+    /// This encoding affects how the `parent`, `child`, `grandchild` path is encoded. Brackets are used by default.
+    /// e.g. `parent[child][grandchild]=value`.
+    public struct KeyPathEncoding {
+        /// Encodes key paths by wrapping each component in brackets. e.g. `parent[child][grandchild]`.
+        public static let brackets = KeyPathEncoding { "[\($0)]" }
+        /// Encodes key paths by separating each component with dots. e.g. `parent.child.grandchild`.
+        public static let dots = KeyPathEncoding { ".\($0)" }
+
+        private let encoding: (_ subkey: String) -> String
+
+        /// Creates an instance with the encoding closure called for each sub-key in a key path.
+        ///
+        /// - Parameter encoding: Closure used to perform the encoding.
+        public init(encoding: @escaping (_ subkey: String) -> String) {
+            self.encoding = encoding
+        }
+
+        func encodeKeyPath(_ keyPath: String) -> String {
+            encoding(keyPath)
+        }
+    }
+
+    /// Encoding to use for `nil` values.
+    public struct NilEncoding {
+        /// Encodes `nil` by dropping the entire key / value pair.
+        public static let dropKey = NilEncoding { nil }
+        /// Encodes `nil` by dropping only the value. e.g. `value1=one&nilValue=&value2=two`.
+        public static let dropValue = NilEncoding { "" }
+        /// Encodes `nil` as `null`.
+        public static let null = NilEncoding { "null" }
+
+        private let encoding: () -> String?
+
+        /// Creates an instance with the encoding closure called for `nil` values.
+        ///
+        /// - Parameter encoding: Closure used to perform the encoding.
+        public init(encoding: @escaping () -> String?) {
+            self.encoding = encoding
+        }
+
+        func encodeNil() -> String? {
+            encoding()
+        }
+    }
+
     /// Encoding to use for spaces.
     public enum SpaceEncoding {
-        /// Encodes spaces according to normal percent escaping rules (%20).
+        /// Encodes spaces using percent escaping (`%20`).
         case percentEscaped
-        /// Encodes spaces as `+`,
+        /// Encodes spaces as `+`.
         case plusReplaced
 
         /// Encodes the string according to the encoding.
@@ -316,6 +384,10 @@ public final class URLEncodedFormEncoder {
     public let dateEncoding: DateEncoding
     /// The `KeyEncoding` to use.
     public let keyEncoding: KeyEncoding
+    /// The `KeyPathEncoding` to use.
+    public let keyPathEncoding: KeyPathEncoding
+    /// The `NilEncoding` to use.
+    public let nilEncoding: NilEncoding
     /// The `SpaceEncoding` to use.
     public let spaceEncoding: SpaceEncoding
     /// The `CharacterSet` of allowed (non-escaped) characters.
@@ -330,6 +402,7 @@ public final class URLEncodedFormEncoder {
     ///   - dataEncoding:             The `DataEncoding` to use. `.base64` by default.
     ///   - dateEncoding:             The `DateEncoding` to use. `.deferredToDate` by default.
     ///   - keyEncoding:              The `KeyEncoding` to use. `.useDefaultKeys` by default.
+    ///   - nilEncoding:              The `NilEncoding` to use. `.drop` by default.
     ///   - spaceEncoding:            The `SpaceEncoding` to use. `.percentEscaped` by default.
     ///   - allowedCharacters:        The `CharacterSet` of allowed (non-escaped) characters. `.afURLQueryAllowed` by
     ///                               default.
@@ -339,6 +412,8 @@ public final class URLEncodedFormEncoder {
                 dataEncoding: DataEncoding = .base64,
                 dateEncoding: DateEncoding = .deferredToDate,
                 keyEncoding: KeyEncoding = .useDefaultKeys,
+                keyPathEncoding: KeyPathEncoding = .brackets,
+                nilEncoding: NilEncoding = .dropKey,
                 spaceEncoding: SpaceEncoding = .percentEscaped,
                 allowedCharacters: CharacterSet = .afURLQueryAllowed) {
         self.alphabetizeKeyValuePairs = alphabetizeKeyValuePairs
@@ -347,6 +422,8 @@ public final class URLEncodedFormEncoder {
         self.dataEncoding = dataEncoding
         self.dateEncoding = dateEncoding
         self.keyEncoding = keyEncoding
+        self.keyPathEncoding = keyPathEncoding
+        self.nilEncoding = nilEncoding
         self.spaceEncoding = spaceEncoding
         self.allowedCharacters = allowedCharacters
     }
@@ -356,7 +433,8 @@ public final class URLEncodedFormEncoder {
         let encoder = _URLEncodedFormEncoder(context: context,
                                              boolEncoding: boolEncoding,
                                              dataEncoding: dataEncoding,
-                                             dateEncoding: dateEncoding)
+                                             dateEncoding: dateEncoding,
+                                             nilEncoding: nilEncoding)
         try value.encode(to: encoder)
 
         return context.component
@@ -378,6 +456,7 @@ public final class URLEncodedFormEncoder {
         let serializer = URLEncodedFormSerializer(alphabetizeKeyValuePairs: alphabetizeKeyValuePairs,
                                                   arrayEncoding: arrayEncoding,
                                                   keyEncoding: keyEncoding,
+                                                  keyPathEncoding: keyPathEncoding,
                                                   spaceEncoding: spaceEncoding,
                                                   allowedCharacters: allowedCharacters)
         let query = serializer.serialize(object)
@@ -410,17 +489,20 @@ final class _URLEncodedFormEncoder {
     private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
     private let dataEncoding: URLEncodedFormEncoder.DataEncoding
     private let dateEncoding: URLEncodedFormEncoder.DateEncoding
+    private let nilEncoding: URLEncodedFormEncoder.NilEncoding
 
     init(context: URLEncodedFormContext,
          codingPath: [CodingKey] = [],
          boolEncoding: URLEncodedFormEncoder.BoolEncoding,
          dataEncoding: URLEncodedFormEncoder.DataEncoding,
-         dateEncoding: URLEncodedFormEncoder.DateEncoding) {
+         dateEncoding: URLEncodedFormEncoder.DateEncoding,
+         nilEncoding: URLEncodedFormEncoder.NilEncoding) {
         self.context = context
         self.codingPath = codingPath
         self.boolEncoding = boolEncoding
         self.dataEncoding = dataEncoding
         self.dateEncoding = dateEncoding
+        self.nilEncoding = nilEncoding
     }
 }
 
@@ -430,7 +512,8 @@ extension _URLEncodedFormEncoder: Encoder {
                                                                    codingPath: codingPath,
                                                                    boolEncoding: boolEncoding,
                                                                    dataEncoding: dataEncoding,
-                                                                   dateEncoding: dateEncoding)
+                                                                   dateEncoding: dateEncoding,
+                                                                   nilEncoding: nilEncoding)
         return KeyedEncodingContainer(container)
     }
 
@@ -439,7 +522,8 @@ extension _URLEncodedFormEncoder: Encoder {
                                                 codingPath: codingPath,
                                                 boolEncoding: boolEncoding,
                                                 dataEncoding: dataEncoding,
-                                                dateEncoding: dateEncoding)
+                                                dateEncoding: dateEncoding,
+                                                nilEncoding: nilEncoding)
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
@@ -447,7 +531,8 @@ extension _URLEncodedFormEncoder: Encoder {
                                                     codingPath: codingPath,
                                                     boolEncoding: boolEncoding,
                                                     dataEncoding: dataEncoding,
-                                                    dateEncoding: dateEncoding)
+                                                    dateEncoding: dateEncoding,
+                                                    nilEncoding: nilEncoding)
     }
 }
 
@@ -495,7 +580,7 @@ enum URLEncodedFormComponent {
 
     /// Recursive backing method to `set(to:at:)`.
     private func set(_ context: inout URLEncodedFormComponent, to value: URLEncodedFormComponent, at path: [CodingKey]) {
-        guard path.count >= 1 else {
+        guard !path.isEmpty else {
             context = value
             return
         }
@@ -578,17 +663,20 @@ extension _URLEncodedFormEncoder {
         private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
         private let dataEncoding: URLEncodedFormEncoder.DataEncoding
         private let dateEncoding: URLEncodedFormEncoder.DateEncoding
+        private let nilEncoding: URLEncodedFormEncoder.NilEncoding
 
         init(context: URLEncodedFormContext,
              codingPath: [CodingKey],
              boolEncoding: URLEncodedFormEncoder.BoolEncoding,
              dataEncoding: URLEncodedFormEncoder.DataEncoding,
-             dateEncoding: URLEncodedFormEncoder.DateEncoding) {
+             dateEncoding: URLEncodedFormEncoder.DateEncoding,
+             nilEncoding: URLEncodedFormEncoder.NilEncoding) {
             self.context = context
             self.codingPath = codingPath
             self.boolEncoding = boolEncoding
             self.dataEncoding = dataEncoding
             self.dateEncoding = dateEncoding
+            self.nilEncoding = nilEncoding
         }
 
         private func nestedCodingPath(for key: CodingKey) -> [CodingKey] {
@@ -599,9 +687,9 @@ extension _URLEncodedFormEncoder {
 
 extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     func encodeNil(forKey key: Key) throws {
-        let context = EncodingError.Context(codingPath: codingPath,
-                                            debugDescription: "URLEncodedFormEncoder cannot encode nil values.")
-        throw EncodingError.invalidValue("\(key): nil", context)
+        guard let nilValue = nilEncoding.encodeNil() else { return }
+
+        try encode(nilValue, forKey: key)
     }
 
     func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
@@ -614,7 +702,8 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
                                                                     codingPath: nestedCodingPath(for: key),
                                                                     boolEncoding: boolEncoding,
                                                                     dataEncoding: dataEncoding,
-                                                                    dateEncoding: dateEncoding)
+                                                                    dateEncoding: dateEncoding,
+                                                                    nilEncoding: nilEncoding)
 
         return container
     }
@@ -624,7 +713,8 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
                                                                 codingPath: nestedCodingPath(for: key),
                                                                 boolEncoding: boolEncoding,
                                                                 dataEncoding: dataEncoding,
-                                                                dateEncoding: dateEncoding)
+                                                                dateEncoding: dateEncoding,
+                                                                nilEncoding: nilEncoding)
 
         return container
     }
@@ -634,7 +724,8 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
                                                                          codingPath: nestedCodingPath(for: key),
                                                                          boolEncoding: boolEncoding,
                                                                          dataEncoding: dataEncoding,
-                                                                         dateEncoding: dateEncoding)
+                                                                         dateEncoding: dateEncoding,
+                                                                         nilEncoding: nilEncoding)
 
         return KeyedEncodingContainer(container)
     }
@@ -644,7 +735,8 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
                                codingPath: codingPath,
                                boolEncoding: boolEncoding,
                                dataEncoding: dataEncoding,
-                               dateEncoding: dateEncoding)
+                               dateEncoding: dateEncoding,
+                               nilEncoding: nilEncoding)
     }
 
     func superEncoder(forKey key: Key) -> Encoder {
@@ -652,7 +744,8 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
                                codingPath: nestedCodingPath(for: key),
                                boolEncoding: boolEncoding,
                                dataEncoding: dataEncoding,
-                               dateEncoding: dateEncoding)
+                               dateEncoding: dateEncoding,
+                               nilEncoding: nilEncoding)
     }
 }
 
@@ -666,17 +759,20 @@ extension _URLEncodedFormEncoder {
         private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
         private let dataEncoding: URLEncodedFormEncoder.DataEncoding
         private let dateEncoding: URLEncodedFormEncoder.DateEncoding
+        private let nilEncoding: URLEncodedFormEncoder.NilEncoding
 
         init(context: URLEncodedFormContext,
              codingPath: [CodingKey],
              boolEncoding: URLEncodedFormEncoder.BoolEncoding,
              dataEncoding: URLEncodedFormEncoder.DataEncoding,
-             dateEncoding: URLEncodedFormEncoder.DateEncoding) {
+             dateEncoding: URLEncodedFormEncoder.DateEncoding,
+             nilEncoding: URLEncodedFormEncoder.NilEncoding) {
             self.context = context
             self.codingPath = codingPath
             self.boolEncoding = boolEncoding
             self.dataEncoding = dataEncoding
             self.dateEncoding = dateEncoding
+            self.nilEncoding = nilEncoding
         }
 
         private func checkCanEncode(value: Any?) throws {
@@ -691,12 +787,9 @@ extension _URLEncodedFormEncoder {
 
 extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContainer {
     func encodeNil() throws {
-        try checkCanEncode(value: nil)
-        defer { canEncodeNewValue = false }
+        guard let nilValue = nilEncoding.encodeNil() else { return }
 
-        let context = EncodingError.Context(codingPath: codingPath,
-                                            debugDescription: "URLEncodedFormEncoder cannot encode nil values.")
-        throw EncodingError.invalidValue("nil", context)
+        try encode(nilValue)
     }
 
     func encode(_ value: Bool) throws {
@@ -778,6 +871,9 @@ extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContai
             }
 
             try encode(value, as: string)
+        case let decimal as Decimal:
+            // Decimal's `Encodable` implementation returns an object, not a single value, so override it.
+            try encode(value, as: String(describing: decimal))
         default:
             try attemptToEncode(value)
         }
@@ -791,7 +887,8 @@ extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContai
                                              codingPath: codingPath,
                                              boolEncoding: boolEncoding,
                                              dataEncoding: dataEncoding,
-                                             dateEncoding: dateEncoding)
+                                             dateEncoding: dateEncoding,
+                                             nilEncoding: nilEncoding)
         try value.encode(to: encoder)
     }
 }
@@ -809,26 +906,29 @@ extension _URLEncodedFormEncoder {
         private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
         private let dataEncoding: URLEncodedFormEncoder.DataEncoding
         private let dateEncoding: URLEncodedFormEncoder.DateEncoding
+        private let nilEncoding: URLEncodedFormEncoder.NilEncoding
 
         init(context: URLEncodedFormContext,
              codingPath: [CodingKey],
              boolEncoding: URLEncodedFormEncoder.BoolEncoding,
              dataEncoding: URLEncodedFormEncoder.DataEncoding,
-             dateEncoding: URLEncodedFormEncoder.DateEncoding) {
+             dateEncoding: URLEncodedFormEncoder.DateEncoding,
+             nilEncoding: URLEncodedFormEncoder.NilEncoding) {
             self.context = context
             self.codingPath = codingPath
             self.boolEncoding = boolEncoding
             self.dataEncoding = dataEncoding
             self.dateEncoding = dateEncoding
+            self.nilEncoding = nilEncoding
         }
     }
 }
 
 extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
     func encodeNil() throws {
-        let context = EncodingError.Context(codingPath: codingPath,
-                                            debugDescription: "URLEncodedFormEncoder cannot encode nil values.")
-        throw EncodingError.invalidValue("nil", context)
+        guard let nilValue = nilEncoding.encodeNil() else { return }
+
+        try encode(nilValue)
     }
 
     func encode<T>(_ value: T) throws where T: Encodable {
@@ -843,7 +943,8 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
                                                            codingPath: nestedCodingPath,
                                                            boolEncoding: boolEncoding,
                                                            dataEncoding: dataEncoding,
-                                                           dateEncoding: dateEncoding)
+                                                           dateEncoding: dateEncoding,
+                                                           nilEncoding: nilEncoding)
     }
 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
@@ -852,7 +953,8 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
                                                                          codingPath: nestedCodingPath,
                                                                          boolEncoding: boolEncoding,
                                                                          dataEncoding: dataEncoding,
-                                                                         dateEncoding: dateEncoding)
+                                                                         dateEncoding: dateEncoding,
+                                                                         nilEncoding: nilEncoding)
 
         return KeyedEncodingContainer(container)
     }
@@ -864,7 +966,8 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
                                                        codingPath: nestedCodingPath,
                                                        boolEncoding: boolEncoding,
                                                        dataEncoding: dataEncoding,
-                                                       dateEncoding: dateEncoding)
+                                                       dateEncoding: dateEncoding,
+                                                       nilEncoding: nilEncoding)
     }
 
     func superEncoder() -> Encoder {
@@ -874,7 +977,8 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
                                       codingPath: codingPath,
                                       boolEncoding: boolEncoding,
                                       dataEncoding: dataEncoding,
-                                      dateEncoding: dateEncoding)
+                                      dateEncoding: dateEncoding,
+                                      nilEncoding: nilEncoding)
     }
 }
 
@@ -882,17 +986,20 @@ final class URLEncodedFormSerializer {
     private let alphabetizeKeyValuePairs: Bool
     private let arrayEncoding: URLEncodedFormEncoder.ArrayEncoding
     private let keyEncoding: URLEncodedFormEncoder.KeyEncoding
+    private let keyPathEncoding: URLEncodedFormEncoder.KeyPathEncoding
     private let spaceEncoding: URLEncodedFormEncoder.SpaceEncoding
     private let allowedCharacters: CharacterSet
 
     init(alphabetizeKeyValuePairs: Bool,
          arrayEncoding: URLEncodedFormEncoder.ArrayEncoding,
          keyEncoding: URLEncodedFormEncoder.KeyEncoding,
+         keyPathEncoding: URLEncodedFormEncoder.KeyPathEncoding,
          spaceEncoding: URLEncodedFormEncoder.SpaceEncoding,
          allowedCharacters: CharacterSet) {
         self.alphabetizeKeyValuePairs = alphabetizeKeyValuePairs
         self.arrayEncoding = arrayEncoding
         self.keyEncoding = keyEncoding
+        self.keyPathEncoding = keyPathEncoding
         self.spaceEncoding = spaceEncoding
         self.allowedCharacters = allowedCharacters
     }
@@ -918,7 +1025,7 @@ final class URLEncodedFormSerializer {
 
     func serialize(_ object: URLEncodedFormComponent.Object, forKey key: String) -> String {
         var segments: [String] = object.map { subKey, value in
-            let keyPath = "[\(subKey)]"
+            let keyPath = keyPathEncoding.encodeKeyPath(subKey)
             return serialize(value, forKey: key + keyPath)
         }
         segments = alphabetizeKeyValuePairs ? segments.sorted() : segments
@@ -927,8 +1034,8 @@ final class URLEncodedFormSerializer {
     }
 
     func serialize(_ array: [URLEncodedFormComponent], forKey key: String) -> String {
-        var segments: [String] = array.map { component in
-            let keyPath = arrayEncoding.encode(key)
+        var segments: [String] = array.enumerated().map { index, component in
+            let keyPath = arrayEncoding.encode(key, atIndex: index)
             return serialize(component, forKey: keyPath)
         }
         segments = alphabetizeKeyValuePairs ? segments.sorted() : segments
@@ -952,7 +1059,7 @@ extension Array where Element == String {
     }
 }
 
-public extension CharacterSet {
+extension CharacterSet {
     /// Creates a CharacterSet from RFC 3986 allowed characters.
     ///
     /// RFC 3986 states that the following characters are "reserved" characters.
@@ -963,7 +1070,7 @@ public extension CharacterSet {
     /// In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
     /// query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
     /// should be percent-escaped in the query string.
-    static let afURLQueryAllowed: CharacterSet = {
+    public static let afURLQueryAllowed: CharacterSet = {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
         let encodableDelimiters = CharacterSet(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")

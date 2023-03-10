@@ -27,23 +27,24 @@ Most APIs have changed in Alamofire 5, so this list is not complete. While most 
 - `TaskDelegate` and the various `*TaskDelegate` classes have been removed. All `URLSession*Delegate` handling is now performed by `SessionDelegate`.
 - `Result` has been removed. Alamofire now uses Swift’s `Result` type.
 - Global `Alamofire` namespace usage, which was never really necessary, has been removed and replaced with a single `AF` reference to `Session.default`.
-- `ServerTrustPolicyManager` has been renamed `ServerTrustManager` and now requires every evaluated request to match one of the provided hosts. This can be disabled by initializing an instance with `allHostsMustBeEvaluted: false`.
+- `ServerTrustPolicyManager` has been renamed `ServerTrustManager` and now requires every evaluated request to match one of the provided hosts. This can be disabled by initializing an instance with `allHostsMustBeEvaluated: false`.
 - `ServerTrustPolicy` has be separated into a protocol, `ServerTrustEvaluating`, and several conforming types. Each case of `ServerTrustPolicy` now has equivalent types:
-	- `.performDefaultEvaluation` is replaced by `DefaultTrustEvaluator`.
-	- `.performRevokedEvaluation	` is replaced by `RevocationTrustEvaluator`.
-	- `.pinCertificates` is replaced by `PinnedCertificatesTrustEvaluator`.
-	- `.pinPublicKeys` is replaced by `PublicKeysTrustEvaluator`.
-	- `.disableEvalution` is replaced by `DisabledTrustEvalutor`.
-	- `.customEvaluation` is replaced by either using `CompositeTrustEvalutor` to combine existing `ServerTrustEvaluating` types or by creating a new type that conforms to `ServerTrustEvaluating`.
+  - `.performDefaultEvaluation` is replaced by `DefaultTrustEvaluator`.
+  - `.performRevokedEvaluation` is replaced by `RevocationTrustEvaluator`.
+  - `.pinCertificates` is replaced by `PinnedCertificatesTrustEvaluator`.
+  - `.pinPublicKeys` is replaced by `PublicKeysTrustEvaluator`.
+  - `.disableEvaluation` is replaced by `DisabledTrustEvaluator`.
+  - `.customEvaluation` is replaced by either using `CompositeTrustEvalutor` to combine existing `ServerTrustEvaluating` types or by creating a new type that conforms to `ServerTrustEvaluating`.
 - `DataResponse` and `DownloadResponse` are now both doubly generic to both the response type as well as the error type. By default all Alamofire APIs return a `AF` prefixed response type, which defaults the `Error` type to `AFError`.
 - Alamofire now returns `AFError` for all of its APIs, wrapping any underlying system or custom APIs in `AFError` instances.
 - `HTTPMethod` is now a `struct` and not an `enum` and can be expanded to provide custom methods.
+- `HTTPHeaders` and other types are now native Swift types rather than `typealias`es, so care must be taken when passing them to Obj-C bridged collections.
 - `AFError` now has several new cases, so switching over it exhaustively will have to be updated.
 - `Notification`s provided by Alamofire have had their keys renamed. You can now subscribe to:
-	- `Request.didResumeNotification` and `Request.didResumeTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `resume()` called.
-	- `Request.didSuspendNotification` and `Request.didSuspendTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `suspend()` called.
-	- `Request.didCancelNotification` and `Request.didCancelTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `cancel()` called.
-	- `Request.didFinishNotification` and `Request.didCompleteTaskNotification` to be notified when `Request`s have `finish()` called and when `URLSessionTask`s trigger the `didComplete` delegate method.
+  - `Request.didResumeNotification` and `Request.didResumeTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `resume()` called.
+  - `Request.didSuspendNotification` and `Request.didSuspendTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `suspend()` called.
+  - `Request.didCancelNotification` and `Request.didCancelTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `cancel()` called.
+  - `Request.didFinishNotification` and `Request.didCompleteTaskNotification` to be notified when `Request`s have `finish()` called and when `URLSessionTask`s trigger the `didComplete` delegate method.
 - `MultipartFormData`’s API has changed and the top level `upload` methods to create and upload `MultipartFormData` have been updated to match other request APIs, so it’s not longer necessary to deal with the `Result` of the multipart encoding.
 - `NetworkReachabilityManager` has been refactored for greater reliability and simplicity. Instead of setting an update closure and then starting the listener, the closure is provided to the `startListening` method.
 - `Request` and its various subclasses have been rewritten and the public API completely changed. Please see the documentation for an exhaustive list of the current functionality.
@@ -57,7 +58,7 @@ Most APIs have changed in Alamofire 5, so this list is not complete. While most 
 - Alamofire now vends its extensions of Swift and Foundation types through an `af` namespace.
 - Serializers updated with more configuration options, including allowed empty response methods and codes, as well as the `DataPreprocessor` protocol, to prepare the received `Data` for serialization.
 - **`RetryPolicy`:** A `RequestRetrier` to retry requests which failed due to system errors, such as network connectivity. Configurable with custom debounce settings and defaults to an extensive set of errors to make your requests more reliable.
-- **`CachedResponseHandler `:** New protocol that provides control over whether a response is cached or not. The `ResponseCacher` type is provided as an easy to use implementation of the protocol.
+- **`CachedResponseHandler`:** New protocol that provides control over whether a response is cached or not. The `ResponseCacher` type is provided as an easy to use implementation of the protocol.
 - **`RedirectHandler`:** New protocol that provides control over a request’s redirect behavior. The `Redirector` type is provided as an easy to use implementation of the protocol.
 - **`ParameterEncoder`:** New protocol that provides support for encoding `Encodable` values into `URLRequest`s. `JSONParameterEncoder` and `URLEncodedFormParameterEncoder` are included with Alamofire.
 - **`URLEncodedFormEncoder`:** An `Encoder` that produced `URLEncodedForm` strings.

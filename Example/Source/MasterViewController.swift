@@ -31,7 +31,6 @@ class MasterViewController: UITableViewController {
     @IBOutlet var titleImageView: UIImageView!
 
     var detailViewController: DetailViewController?
-    var objects = NSMutableArray()
 
     private var reachability: NetworkReachabilityManager!
 
