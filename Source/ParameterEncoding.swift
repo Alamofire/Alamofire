@@ -98,7 +98,8 @@ public struct URLEncoding: ParameterEncoding {
                 return key
             case .indexInBrackets:
                 return "\(key)[\(index)]"
-            case let .custom(encoding): return encoding(key, index)
+            case let .custom(encoding): 
+                return encoding(key, index)
             }
         }
     }
