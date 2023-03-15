@@ -60,6 +60,8 @@ public final class URLEncodedFormEncoder {
         case noBrackets
         /// Brackets containing the item index are appended. This matches the jQuery and Node.js behavior.
         case indexInBrackets
+        /// Provide a custom array key encoding with the given closure.
+        case custom((String, Int) -> String)
 
         /// Encodes the key according to the encoding.
         ///
@@ -73,6 +75,7 @@ public final class URLEncodedFormEncoder {
             case .brackets: return "\(key)[]"
             case .noBrackets: return key
             case .indexInBrackets: return "\(key)[\(index)]"
+            case let .custom(encoding): return encoding(key, index)
             }
         }
     }

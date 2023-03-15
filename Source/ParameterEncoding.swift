@@ -87,6 +87,8 @@ public struct URLEncoding: ParameterEncoding {
         case noBrackets
         /// Brackets containing the item index are appended. This matches the jQuery and Node.js behavior.
         case indexInBrackets
+        /// Provide a custom array key encoding with the given closure.
+        case custom((String, Int) -> String)
 
         func encode(key: String, atIndex index: Int) -> String {
             switch self {
@@ -96,6 +98,7 @@ public struct URLEncoding: ParameterEncoding {
                 return key
             case .indexInBrackets:
                 return "\(key)[\(index)]"
+            case let .custom(encoding): return encoding(key, index)
             }
         }
     }

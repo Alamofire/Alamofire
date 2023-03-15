@@ -624,6 +624,20 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "array=1&array=2")
     }
 
+    func testThatArraysCanBeEncodedWithCustomClosure() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .custom({ key, index in
+          "\(key).\(index+1)"
+        }))
+        let parameters = ["array": [1, 2]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "array.1=1&array.2=2")
+    }
+
     func testThatBoolsCanBeLiteralEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder(boolEncoding: .literal)
