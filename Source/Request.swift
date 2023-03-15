@@ -1338,13 +1338,10 @@ public final class DataStreamRequest: Request {
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
             guard error == nil, let response = response else { return }
-
             let result = validation(request, response)
-
             if case let .failure(error) = result {
                 self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error)))
             }
-
             eventMonitor?.request(self,
                                   didValidateRequest: request,
                                   response: response,
@@ -1633,7 +1630,6 @@ public class DownloadRequest: Request {
     func updateDownloadProgress(bytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         downloadProgress.totalUnitCount = totalBytesExpectedToWrite
         downloadProgress.completedUnitCount += bytesWritten
-
         downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress) }
     }
 
@@ -1700,11 +1696,8 @@ public class DownloadRequest: Request {
     private func cancel(optionallyProducingResumeData completionHandler: ((_ resumeData: Data?) -> Void)?) -> Self {
         $mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
-
             mutableState.state = .cancelled
-
             underlyingQueue.async { self.didCancel() }
-
             guard let task = mutableState.tasks.last as? URLSessionDownloadTask, task.state != .completed else {
                 underlyingQueue.async { self.finish() }
                 return
@@ -1740,9 +1733,7 @@ public class DownloadRequest: Request {
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
             guard error == nil, let response = response else { return }
-
             let result = validation(request, response, fileURL)
-
             if case let .failure(error) = result {
                 self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error)))
             }
@@ -1836,9 +1827,7 @@ public class UploadRequest: DataRequest {
     /// - Parameter error: `AFError` produced by the failure.
     func didFailToCreateUploadable(with error: AFError) {
         self.error = error
-
         eventMonitor?.request(self, didFailToCreateUploadableWithError: error)
-
         retryOrFinish(error: error)
     }
 
