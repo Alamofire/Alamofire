@@ -280,3 +280,22 @@ jobs:
           set SDKROOT=%SystemDrive%\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk
           %SystemDrive%\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin\swift-build.exe --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
           if not exist .build\x86_64-unknown-windows-msvc\debug\Alamofire.swiftmodule exit 1
+  CodeQL:
+    name: Analyze with CodeQL
+    runs-on: macOS-12
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
+      CODEQL_ENABLE_EXPERIMENTAL_FEATURES_SWIFT: true
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: swift
+      - name: Build macOS
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean build | xcpretty
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:swift"

@@ -212,6 +212,10 @@
 		315A4C57241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
 		315A4C58241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
 		315A4C59241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
+		3165407329AEBC0400C9BE08 /* RequestCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3165407229AEBC0400C9BE08 /* RequestCompression.swift */; };
+		3165407429AEBC0400C9BE08 /* RequestCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3165407229AEBC0400C9BE08 /* RequestCompression.swift */; };
+		3165407529AEBC0400C9BE08 /* RequestCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3165407229AEBC0400C9BE08 /* RequestCompression.swift */; };
+		3165407629AEBC0400C9BE08 /* RequestCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3165407229AEBC0400C9BE08 /* RequestCompression.swift */; };
 		31727418218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
 		31727419218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
 		3172741A218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
@@ -510,6 +514,7 @@
 		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
 		31577E0A2676E72D001C7532 /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringEncoding+Alamofire.swift"; sourceTree = "<group>"; };
+		3165407229AEBC0400C9BE08 /* RequestCompression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestCompression.swift; sourceTree = "<group>"; };
 		31727417218BAEC90039FFCC /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		3172741C218BB1790039FFCC /* ParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoder.swift; sourceTree = "<group>"; };
 		31727421218BB9A50039FFCC /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
@@ -907,6 +912,7 @@
 				311B198F20B0D3B40036823B /* MultipartUpload.swift */,
 				4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */,
 				4C0CB645220CA8A400604EDC /* RedirectHandler.swift */,
+				3165407229AEBC0400C9BE08 /* RequestCompression.swift */,
 				4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */,
 				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
 				4C256A1921F1449C00AD5D87 /* RetryPolicy.swift */,
@@ -1194,8 +1200,9 @@
 		F8111E2A19A95C8B0040E7D1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					31293064263E17D600473CEA = {
@@ -1511,6 +1518,7 @@
 				4C0CB643220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */,
 				4C256A0821EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
+				3165407529AEBC0400C9BE08 /* RequestCompression.swift in Sources */,
 				4C43669D1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				315A4C58241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				4C3D00561C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
@@ -1599,6 +1607,7 @@
 				31FB2F8822C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */,
 				4C0CB642220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				3165407429AEBC0400C9BE08 /* RequestCompression.swift in Sources */,
 				4C256A0721EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				315A4C57241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				4C43669C1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
@@ -1642,6 +1651,7 @@
 				31FB2F8A22C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */,
 				4C0CB644220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C256A0921EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
+				3165407629AEBC0400C9BE08 /* RequestCompression.swift in Sources */,
 				4C43669E1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				315A4C59241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
@@ -1685,6 +1695,7 @@
 				31FB2F8722C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */,
 				4C0CB641220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */,
+				3165407329AEBC0400C9BE08 /* RequestCompression.swift in Sources */,
 				4C256A0621EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				315A4C56241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				4C43669B1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
@@ -1884,6 +1895,7 @@
 		4CF627001BA7CB3E0011A099 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1901,6 +1913,7 @@
 		4CF627011BA7CB3E0011A099 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1988,6 +2001,7 @@
 		E4202FDE1B667AA100C997FB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2006,6 +2020,7 @@
 		E4202FDF1B667AA100C997FB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2164,6 +2179,7 @@
 		F8111E4719A95C8B0040E7D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2182,6 +2198,7 @@
 		F8111E4819A95C8B0040E7D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

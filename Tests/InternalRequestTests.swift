@@ -47,4 +47,31 @@ final class InternalRequestTests: BaseTestCase {
         // Then
         XCTAssertNotNil(response)
     }
+
+    #if canImport(zlib)
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func testThatRequestCompressorProperlyCalculatesAdler32() {
+        // Given
+        let compressor = DeflateRequestCompressor()
+
+        // When
+        let checksum = compressor.adler32Checksum(of: Data("Wikipedia".utf8))
+
+        // Then
+        // From https://en.wikipedia.org/wiki/Adler-32
+        XCTAssertEqual(checksum, 300_286_872)
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func testThatRequestCompressorDeflatesDataCorrectly() throws {
+        // Given
+        let compressor = DeflateRequestCompressor()
+
+        // When
+        let compressedData = try compressor.deflate(Data([0]))
+
+        // Then
+        XCTAssertEqual(compressedData, Data([0x78, 0x5E, 0x63, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01]))
+    }
+    #endif
 }
