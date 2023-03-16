@@ -1334,8 +1334,28 @@ final class RequestCompressionTests: BaseTestCase {
             .result
 
         // Then
-        // Request fails as the server expect gzip compression.
+        // Request fails as the server expects gzip compression.
         XCTAssertFalse(result.isSuccess)
+    }
+
+    func testThatDeflateCompressorDoesNotCompressDataWhenClosureReturnsFalse() async {
+        // Given
+        let url = Endpoint.method(.post).url
+        let parameters = TestParameters(property: "compressed")
+
+        // When
+        let result = await AF.request(url,
+                                      method: .post,
+                                      parameters: parameters,
+                                      encoder: .json,
+                                      interceptor: .deflateCompressor { _ in false })
+            .serializingDecodable(TestResponse.self)
+            .result
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        // With no compression, request headers reflected from server should have no Content-Encoding.
+        XCTAssertNil(result.success?.headers["Content-Encoding"])
     }
 }
 #endif

@@ -129,20 +129,25 @@ public struct DeflateRequestCompressor: RequestInterceptor {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension RequestInterceptor where Self == DeflateRequestCompressor {
-    /// Create a `DeflateRequestCompressor` with default `duplicateHeaderBehavior`.
+    /// Create a `DeflateRequestCompressor` with default `duplicateHeaderBehavior` and `shouldCompressBodyData` values.
     public static var deflateCompressor: DeflateRequestCompressor {
         DeflateRequestCompressor()
     }
 
-    /// Creates a `DeflateRequestCompressor` with the provided `DuplicateHeaderBehavior`.
+    /// Creates a `DeflateRequestCompressor` with the provided `DuplicateHeaderBehavior` and `shouldCompressBodyData`
+    /// closure.
     ///
-    /// - Parameter duplicateHeaderBehavior: `DuplicateHeaderBehavior` to use.
+    /// - Parameters:
+    ///   - duplicateHeaderBehavior: `DuplicateHeaderBehavior` to use.
+    ///   - shouldCompressBodyData: Closure which determines whether the outgoing body data should be compressed. `true` by default.
     ///
     /// - Returns: The `DeflateRequestCompressor`.
     public static func deflateCompressor(
-        duplicateHeaderBehavior: DeflateRequestCompressor.DuplicateHeaderBehavior
+        duplicateHeaderBehavior: DeflateRequestCompressor.DuplicateHeaderBehavior = .error,
+        shouldCompressBodyData: @escaping (_ bodyData: Data) -> Bool = { _ in true }
     ) -> DeflateRequestCompressor {
-        DeflateRequestCompressor(duplicateHeaderBehavior: duplicateHeaderBehavior)
+        DeflateRequestCompressor(duplicateHeaderBehavior: duplicateHeaderBehavior,
+                                 shouldCompressBodyData: shouldCompressBodyData)
     }
 }
 #endif
