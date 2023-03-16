@@ -294,7 +294,7 @@ jobs:
         with:
           languages: swift
       - name: Build macOS
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan macOS clean build | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean build | xcpretty
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
         with:
