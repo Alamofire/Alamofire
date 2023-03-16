@@ -48,6 +48,7 @@ final class InternalRequestTests: BaseTestCase {
         XCTAssertNotNil(response)
     }
 
+    #if canImport(zlib)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func testThatRequestCompressorProperlyCalculatesAdler32() {
         // Given
@@ -72,4 +73,5 @@ final class InternalRequestTests: BaseTestCase {
         // Then
         XCTAssertEqual(compressedData, Data([0x78, 0x5E, 0x63, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01]))
     }
+    #endif
 }
