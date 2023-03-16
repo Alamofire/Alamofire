@@ -121,7 +121,7 @@ public struct DeflateRequestCompressor: RequestInterceptor {
         #else
         data.withUnsafeBytes { buffer in
             let buffer = buffer.bindMemory(to: UInt8.self)
-            UInt32(adler32(1, buffer.baseAddress, UInt32(buffer.count)))
+            return UInt32(adler32(1, buffer.baseAddress, UInt32(buffer.count)))
         }
         #endif
     }
