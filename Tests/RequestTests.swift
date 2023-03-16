@@ -1237,3 +1237,105 @@ final class RequestInvalidURLTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
     }
 }
+
+#if canImport(zlib) // Same condition as `DeflateRequestCompressor`.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+final class RequestCompressionTests: BaseTestCase {
+    func testThatRequestsCanBeCompressed() async {
+        // Given
+        let url = Endpoint.method(.post).url
+        let parameters = TestParameters(property: "compressed")
+
+        // When
+        let result = await AF.request(url,
+                                      method: .post,
+                                      parameters: parameters,
+                                      encoder: .json,
+                                      interceptor: .deflateCompressor)
+            .serializingDecodable(TestResponse.self)
+            .result
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+    }
+
+    func testThatDeflateCompressorThrowsErrorByDefaultWhenRequestAlreadyHasHeader() async {
+        // Given
+        let url = Endpoint.method(.post).url
+        let parameters = TestParameters(property: "compressed")
+
+        // When
+        let result = await AF.request(url,
+                                      method: .post,
+                                      parameters: parameters,
+                                      encoder: .json,
+                                      headers: [.contentEncoding("value")],
+                                      interceptor: .deflateCompressor)
+            .serializingDecodable(TestResponse.self)
+            .result
+
+        // Then
+        XCTAssertFalse(result.isSuccess)
+        XCTAssertNotNil(result.failure?.underlyingError as? DeflateRequestCompressor.DuplicateHeaderError)
+    }
+
+    func testThatDeflateCompressorThrowsErrorWhenConfigured() async {
+        // Given
+        let url = Endpoint.method(.post).url
+        let parameters = TestParameters(property: "compressed")
+
+        // When
+        let result = await AF.request(url,
+                                      method: .post,
+                                      parameters: parameters,
+                                      encoder: .json,
+                                      headers: [.contentEncoding("value")],
+                                      interceptor: .deflateCompressor(duplicateHeaderBehavior: .error))
+            .serializingDecodable(TestResponse.self)
+            .result
+
+        // Then
+        XCTAssertFalse(result.isSuccess)
+        XCTAssertNotNil(result.failure?.underlyingError as? DeflateRequestCompressor.DuplicateHeaderError)
+    }
+
+    func testThatDeflateCompressorReplacesHeaderWhenConfigured() async {
+        // Given
+        let url = Endpoint.method(.post).url
+        let parameters = TestParameters(property: "compressed")
+
+        // When
+        let result = await AF.request(url,
+                                      method: .post,
+                                      parameters: parameters,
+                                      encoder: .json,
+                                      headers: [.contentEncoding("value")],
+                                      interceptor: .deflateCompressor(duplicateHeaderBehavior: .replace))
+            .serializingDecodable(TestResponse.self)
+            .result
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+    }
+
+    func testThatDeflateCompressorSkipsCompressionWhenConfigured() async {
+        // Given
+        let url = Endpoint.method(.post).url
+        let parameters = TestParameters(property: "compressed")
+
+        // When
+        let result = await AF.request(url,
+                                      method: .post,
+                                      parameters: parameters,
+                                      encoder: .json,
+                                      headers: [.contentEncoding("gzip")],
+                                      interceptor: .deflateCompressor(duplicateHeaderBehavior: .skip))
+            .serializingDecodable(TestResponse.self)
+            .result
+
+        // Then
+        // Request fails as the server expect gzip compression.
+        XCTAssertFalse(result.isSuccess)
+    }
+}
+#endif
