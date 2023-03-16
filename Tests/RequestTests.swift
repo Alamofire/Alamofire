@@ -1238,7 +1238,7 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     }
 }
 
-#if canImport(zlib) // Same condition as `DeflateRequestCompressor`.
+#if canImport(zlib) && swift(>=5.6) // Same condition as `DeflateRequestCompressor`.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class RequestCompressionTests: BaseTestCase {
     func testThatRequestsCanBeCompressed() async {

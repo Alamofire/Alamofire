@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if canImport(zlib)
+#if canImport(zlib) && swift(>=5.6)
 import Foundation
 import zlib
 
