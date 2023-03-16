@@ -48,7 +48,7 @@ final class InternalRequestTests: BaseTestCase {
         XCTAssertNotNil(response)
     }
 
-    #if canImport(zlib) && swift(>=5.6)
+    #if canImport(zlib)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func testThatRequestCompressorProperlyCalculatesAdler32() {
         // Given
