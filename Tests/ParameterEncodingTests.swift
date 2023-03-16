@@ -186,6 +186,20 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(urlRequest.url?.query, "foo=a&foo=1&foo=1")
     }
 
+    func testURLParameterEncodeStringKeyArrayValueParameterWithCustomClosure() throws {
+        // Given
+        let encoding = URLEncoding(arrayEncoding: .custom({ key, index in
+          "\(key).\(index + 1)"
+        }))
+        let parameters = ["foo": ["a", 1, true]]
+
+        // When
+        let urlRequest = try encoding.encode(urlRequest, with: parameters)
+
+        // Then
+        XCTAssertEqual(urlRequest.url?.query, "foo.1=a&foo.2=1&foo.3=1")
+    }
+
     func testURLParameterEncodeStringKeyDictionaryValueParameter() throws {
         // Given
         let parameters = ["foo": ["bar": 1]]
