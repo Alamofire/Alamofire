@@ -3,7 +3,7 @@ GEM
   specs:
     CFPropertyList (3.0.6)
       rexml
-    activesupport (7.0.4.2)
+    activesupport (7.0.4.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -77,7 +77,7 @@ GEM
     json (2.6.3)
     liferaft (0.0.6)
     mini_portile2 (2.8.1)
-    minitest (5.17.0)
+    minitest (5.18.0)
     molinillo (0.8.0)
     mustache (1.1.1)
     nanaimo (0.3.0)
