@@ -31,10 +31,11 @@ import zlib
 ///
 /// - Note: Most requests to most APIs are small and so would only be slowed down by applying this adapter. Measure the
 ///         size of your request bodies and the performance impact of using this adapter before use. Using this adapter
-///         with already compressed data, such as images, will, at best, have no effect. Additionally, body compression
-///         is a synchronous operation, so measuring the performance impact may be important to determine whether you
-///         want to use a dedicated `requestQueue` in your `Session` instance. Finally, not all servers support request
-///         compression, so test with all of your server configurations before deploying.
+///         with already compressed data, such as images, will, at best, have no effect but could actually make requests
+///         larger. Additionally, not all servers support request compression, so test with all of your server
+///         configurations before deploying. Finally, body compression is a synchronous operation, so measuring the
+///         performance impact may be important to determine whether you want to use a dedicated `requestQueue` in your
+///         `Session` instance.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public struct DeflateRequestCompressor: RequestInterceptor {
     /// Type that determines the action taken when the `URLRequest` already has a `Content-Encoding` header.
@@ -54,7 +55,7 @@ public struct DeflateRequestCompressor: RequestInterceptor {
     /// Behavior to use when the outgoing `URLRequest` already has a `Content-Encoding` header.
     public let duplicateHeaderBehavior: DuplicateHeaderBehavior
     /// Closure which determines whether the outgoing body data should be compressed.
-    public let shouldCompressBodyData: (_ bodyData: Data) -> Bool
+    public let shouldCompressBodyData: (_ request: URLRequest) -> Bool
 
     /// Creates an instance with the provided parameters.
     ///
@@ -62,7 +63,7 @@ public struct DeflateRequestCompressor: RequestInterceptor {
     ///   - duplicateHeaderBehavior: `DuplicateHeaderBehavior` to use. `.error` by default.
     ///   - shouldCompressBodyData:  Closure which determines whether the outgoing body data should be compressed. `true` by default.
     public init(duplicateHeaderBehavior: DuplicateHeaderBehavior = .error,
-                shouldCompressBodyData: @escaping (_ bodyData: Data) -> Bool = { _ in true }) {
+                shouldCompressBodyData: @escaping (_ request: URLRequest) -> Bool = { _ in true }) {
         self.duplicateHeaderBehavior = duplicateHeaderBehavior
         self.shouldCompressBodyData = shouldCompressBodyData
     }
@@ -74,7 +75,7 @@ public struct DeflateRequestCompressor: RequestInterceptor {
             return
         }
 
-        guard shouldCompressBodyData(bodyData) else {
+        guard shouldCompressBodyData(urlRequest) else {
             completion(.success(urlRequest))
             return
         }
@@ -144,7 +145,7 @@ extension RequestInterceptor where Self == DeflateRequestCompressor {
     /// - Returns: The `DeflateRequestCompressor`.
     public static func deflateCompressor(
         duplicateHeaderBehavior: DeflateRequestCompressor.DuplicateHeaderBehavior = .error,
-        shouldCompressBodyData: @escaping (_ bodyData: Data) -> Bool = { _ in true }
+        shouldCompressBodyData: @escaping (_ request: URLRequest) -> Bool = { _ in true }
     ) -> DeflateRequestCompressor {
         DeflateRequestCompressor(duplicateHeaderBehavior: duplicateHeaderBehavior,
                                  shouldCompressBodyData: shouldCompressBodyData)

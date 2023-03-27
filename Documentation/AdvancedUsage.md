@@ -765,8 +765,10 @@ session.request(..., interceptor: .deflateCompressor(duplicateHeaderBehavior: .r
 Adding a compressor is only suggested for requests which are known to produce large body data, but the compressor can also be added `Session` instances directly. In that case the `shouldCompressBodyData` closure should be used to determine whether or not to apply compression. This would usually be based on the overall size of the body data.
 
 ```swift
-let compressor = DeflateRequestCompressor { bodyData in
-  bodyData.count > 100 * 1024 // Only compress when bodyData exceeds 100KB.
+let compressor = DeflateRequestCompressor { request in
+  // Only compress when bodyData exceeds 100KB. This limit should be determined by testing the implementation under real 
+  // conditions. e.g. Device on cellular to a remote server with a typical payload.
+  (request.httpBody?.count ?? 0) > 100 * 1024
 }
 
 let session = Session(..., interceptor: compressor)
