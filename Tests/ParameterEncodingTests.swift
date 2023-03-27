@@ -188,9 +188,9 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeStringKeyArrayValueParameterWithCustomClosure() throws {
         // Given
-        let encoding = URLEncoding(arrayEncoding: .custom({ key, index in
-          "\(key).\(index + 1)"
-        }))
+        let encoding = URLEncoding(arrayEncoding: .custom { key, index in
+            "\(key).\(index + 1)"
+        })
         let parameters = ["foo": ["a", 1, true]]
 
         // When

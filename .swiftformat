@@ -10,7 +10,7 @@
 
 # format options
 
---closingparen same-line
+--closingparen balanced
 --commas inline
 --comments indent
 --decimalgrouping 3,5

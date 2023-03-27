@@ -626,9 +626,9 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
     func testThatArraysCanBeEncodedWithCustomClosure() {
         // Given
-        let encoder = URLEncodedFormEncoder(arrayEncoding: .custom({ key, index in
-          "\(key).\(index + 1)"
-        }))
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .custom { key, index in
+            "\(key).\(index + 1)"
+        })
         let parameters = ["array": [1, 2]]
 
         // When
