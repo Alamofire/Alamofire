@@ -98,7 +98,7 @@ jobs:
           - destination: "OS=16.4,name=iPhone 14 Pro"
             name: "iOS"
             scheme: "Alamofire iOS"
-          - destination: "OS=16.1,name=Apple TV"
+          - destination: "OS=16.4,name=Apple TV"
             name: "tvOS"
             scheme: "Alamofire tvOS"
           - destination: "OS=9.4,name=Apple Watch Series 8 (45mm)"
