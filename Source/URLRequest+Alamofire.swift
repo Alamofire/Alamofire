@@ -27,7 +27,7 @@ import Foundation
 extension URLRequest {
     /// Returns the `httpMethod` as Alamofire's `HTTPMethod` type.
     public var method: HTTPMethod? {
-        get { httpMethod.flatMap(HTTPMethod.init) }
+        get { httpMethod.map(HTTPMethod.init) }
         set { httpMethod = newValue?.rawValue }
     }
 
