@@ -219,7 +219,7 @@ public class Request {
     public var tasks: [URLSessionTask] { $mutableState.tasks }
     /// First `URLSessionTask` created on behalf of the `Request`.
     public var firstTask: URLSessionTask? { tasks.first }
-    /// Last `URLSessionTask` crated on behalf of the `Request`.
+    /// Last `URLSessionTask` created on behalf of the `Request`.
     public var lastTask: URLSessionTask? { tasks.last }
     /// Current `URLSessionTask` created on behalf of the `Request`.
     public var task: URLSessionTask? { lastTask }
