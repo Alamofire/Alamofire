@@ -65,7 +65,6 @@ public protocol EventMonitor {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?)
 
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:taskIsWaitingForConnectivity:)` method.
-    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask)
 
     // MARK: URLSessionDataDelegate Events
@@ -376,7 +375,6 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, task: task, didCompleteWithError: error) }
     }
 
-    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         performEvent { $0.urlSession(session, taskIsWaitingForConnectivity: task) }
     }
