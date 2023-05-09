@@ -91,7 +91,7 @@ open class NetworkReachabilityManager {
     open var flags: SCNetworkReachabilityFlags? {
         var flags = SCNetworkReachabilityFlags()
 
-        return (SCNetworkReachabilityGetFlags(reachability, &flags)) ? flags : nil
+        return SCNetworkReachabilityGetFlags(reachability, &flags) ? flags : nil
     }
 
     /// The current network reachability status.

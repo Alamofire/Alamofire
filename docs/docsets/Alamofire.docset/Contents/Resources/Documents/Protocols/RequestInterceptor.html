@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.6.4 Docs
+          Alamofire 5.7.0 Docs
         </a>
          (97% documented)
       </p>
@@ -193,6 +193,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyPathEncoding.html">– KeyPathEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/NilEncoding.html">– NilEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -421,6 +427,15 @@
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor/DuplicateHeaderBehavior.html">– DuplicateHeaderBehavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html#/s:9Alamofire24DeflateRequestCompressorV20DuplicateHeaderErrorV">– DuplicateHeaderError</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -603,6 +618,118 @@
                   <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60DeflateRequestCompressor%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `DeflateRequestCompressor`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60DeflateRequestCompressor%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18RequestInterceptorPA2A07DeflateB10CompressorVRszrlE07deflateE0AEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/deflateCompressor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18RequestInterceptorPA2A07DeflateB10CompressorVRszrlE07deflateE0AEvpZ">deflateCompressor</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a <code><a href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a></code> with default <code>duplicateHeaderBehavior</code> and <code>shouldCompressBodyData</code> values.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">deflateCompressor</span><span class="p">:</span> <span class="kt"><a href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18RequestInterceptorPA2A07DeflateB10CompressorVRszrlE07deflateE023duplicateHeaderBehavior22shouldCompressBodyDataA2E09DuplicatehI0O_Sb10Foundation0M0VctFZ"></a>
+                    <a name="//apple_ref/swift/Method/deflateCompressor(duplicateHeaderBehavior:shouldCompressBodyData:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18RequestInterceptorPA2A07DeflateB10CompressorVRszrlE07deflateE023duplicateHeaderBehavior22shouldCompressBodyDataA2E09DuplicatehI0O_Sb10Foundation0M0VctFZ">deflateCompressor(duplicateHeaderBehavior:<wbr>shouldCompressBodyData:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a></code> with the provided <code>DuplicateHeaderBehavior</code> and <code>shouldCompressBodyData</code>
+closure.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">deflateCompressor</span><span class="p">(</span>
+    <span class="nv">duplicateHeaderBehavior</span><span class="p">:</span> <span class="kt"><a href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a></span><span class="o">.</span><span class="kt">DuplicateHeaderBehavior</span> <span class="o">=</span> <span class="o">.</span><span class="n">error</span><span class="p">,</span>
+    <span class="nv">shouldCompressBodyData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">bodyData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="kc">true</span> <span class="p">}</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>duplicateHeaderBehavior</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DuplicateHeaderBehavior</code> to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>shouldCompressBodyData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure which determines whether the outgoing body data should be compressed. <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1140,7 +1267,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2022-11-21)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-09)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

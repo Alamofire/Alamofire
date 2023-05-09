@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.6.4 Docs
+          Alamofire 5.7.0 Docs
         </a>
          (97% documented)
       </p>
@@ -193,6 +193,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/KeyPathEncoding.html">– KeyPathEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/NilEncoding.html">– NilEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -419,6 +425,15 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor/DuplicateHeaderBehavior.html">– DuplicateHeaderBehavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor.html#/s:9Alamofire24DeflateRequestCompressorV20DuplicateHeaderErrorV">– DuplicateHeaderError</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DownloadResponse.html">DownloadResponse</a>
@@ -885,6 +900,34 @@ which will then require a refresh of the credential using the refresh token to g
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire18RequestInterceptorP"></a>
+                    <a name="//apple_ref/swift/Protocol/RequestInterceptor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18RequestInterceptorP">RequestInterceptor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Type that provides both <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> and <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code> functionality.</p>
+
+                        <a href="Protocols/RequestInterceptor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">RequestInterceptor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">,</span> <span class="kt"><a href="Protocols/RequestRetrier.html">RequestRetrier</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire14RequestAdapterP"></a>
                     <a name="//apple_ref/swift/Protocol/RequestAdapter" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire14RequestAdapterP">RequestAdapter</a>
@@ -933,34 +976,6 @@ and encountering an error.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">RequestRetrier</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire18RequestInterceptorP"></a>
-                    <a name="//apple_ref/swift/Protocol/RequestInterceptor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire18RequestInterceptorP">RequestInterceptor</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Type that provides both <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> and <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code> functionality.</p>
-
-                        <a href="Protocols/RequestInterceptor.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">RequestInterceptor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">,</span> <span class="kt"><a href="Protocols/RequestRetrier.html">RequestRetrier</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1312,7 +1327,7 @@ and encountering an error.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2022-11-21)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-09)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

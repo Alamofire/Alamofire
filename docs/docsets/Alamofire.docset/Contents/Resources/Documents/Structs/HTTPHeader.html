@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.6.4 Docs
+          Alamofire 5.7.0 Docs
         </a>
          (97% documented)
       </p>
@@ -193,6 +193,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyPathEncoding.html">– KeyPathEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/NilEncoding.html">– NilEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -419,6 +425,15 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor/DuplicateHeaderBehavior.html">– DuplicateHeaderBehavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html#/s:9Alamofire24DeflateRequestCompressorV20DuplicateHeaderErrorV">– DuplicateHeaderError</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
@@ -1123,6 +1138,56 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire10HTTPHeaderV15contentEncodingyACSSFZ"></a>
+                    <a name="//apple_ref/swift/Method/contentEncoding(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV15contentEncodingyACSSFZ">contentEncoding(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a <code>Content-Encoding</code> header.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">contentEncoding</span><span class="p">(</span><span class="n">_</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">HTTPHeader</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>value</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>Content-Encoding</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The header.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire10HTTPHeaderV11contentTypeyACSSFZ"></a>
                     <a name="//apple_ref/swift/Method/contentType(_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire10HTTPHeaderV11contentTypeyACSSFZ">contentType(_:<wbr>)</a>
@@ -1135,8 +1200,8 @@ Use <code><a href="../Structs/HTTPHeader.html#/s:9Alamofire10HTTPHeaderV21defaul
                       <div class="abstract">
                         <p>Returns a <code>Content-Type</code> header.</p>
 
-<p>All Alamofire <code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code>s and <code><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></code>s set the <code>Content-Type</code> of the request, so it may not be necessary to manually
-set this value.</p>
+<p>All Alamofire <code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code>s and <code><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></code>s set the <code>Content-Type</code> of the request, so it may not
+be necessary to manually set this value.</p>
 
                       </div>
                       <div class="declaration">
@@ -1335,7 +1400,7 @@ versions.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2022-11-21)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-09)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
