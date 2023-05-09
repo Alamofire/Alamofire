@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.6.4 Docs
+          Alamofire 5.7.0 Docs
         </a>
          (97% documented)
       </p>
@@ -193,6 +193,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/KeyPathEncoding.html">– KeyPathEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/NilEncoding.html">– NilEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -419,6 +425,15 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor/DuplicateHeaderBehavior.html">– DuplicateHeaderBehavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor.html#/s:9Alamofire24DeflateRequestCompressorV20DuplicateHeaderErrorV">– DuplicateHeaderError</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DownloadResponse.html">DownloadResponse</a>
@@ -1627,19 +1642,29 @@ cache handling.</p>
                       <div class="abstract">
                         <p>An object that encodes instances into URL-encoded query strings.</p>
 
-<p>There is no published specification for how to encode collection types. By default, the convention of appending
-<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
-nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
-square brackets appended to array keys.</p>
+<p><code>ArrayEncoding</code> can be used to configure how <code>Array</code> values are encoded. By default, the <code>.brackets</code> encoding is
+used, encoding array values with brackets for each value. e.g <code>array[]=1&amp;array[]=2</code>.</p>
 
-<p><code>BoolEncoding</code> can be used to configure how <code>Bool</code> values are encoded. The default behavior is to encode
-<code>true</code> as 1 and <code>false</code> as 0.</p>
+<p><code>BoolEncoding</code> can be used to configure how <code>Bool</code> values are encoded. By default, the <code>.numeric</code> encoding is used,
+encoding <code>true</code> as <code>1</code> and <code>false</code> as <code>0</code>.</p>
+
+<p><code>DataEncoding</code> can be used to configure how <code>Data</code> values are encoded. By default, the <code>.deferredToData</code> encoding is
+used, which encodes <code>Data</code> values using their default <code>Encodable</code> implementation.</p>
 
 <p><code>DateEncoding</code> can be used to configure how <code>Date</code> values are encoded. By default, the <code>.deferredToDate</code>
-strategy is used, which formats dates from their structure.</p>
+encoding is used, which encodes <code>Date</code>s using their default <code>Encodable</code> implementation.</p>
 
-<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. Modern encodings use percent replacement (<code>%20</code>),
-while older encodings may expect spaces to be replaced with <code>+</code>.</p>
+<p><code>KeyEncoding</code> can be used to configure how keys are encoded. By default, the <code>.useDefaultKeys</code> encoding is used,
+which encodes the keys directly from the <code>Encodable</code> implementation.</p>
+
+<p><code>KeyPathEncoding</code> can be used to configure how paths within nested objects are encoded. By default, the <code>.brackets</code>
+encoding is used, which encodes each sub-key in brackets. e.g. <code>parent[child][grandchild]=value</code>.</p>
+
+<p><code>NilEncoding</code> can be used to configure how <code>nil</code> <code>Optional</code> values are encoded. By default, the <code>.dropKey</code> encoding
+is used, which drops <code>nil</code> key / value pairs from the output entirely.</p>
+
+<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. By default, the <code>.percentEscaped</code> encoding is used,
+replacing spaces with <code>%20</code>.</p>
 
 <p>This type is largely based on Vapor&rsquo;s <a href="https://github.com/vapor/url-encoded-form"><code>url-encoded-form</code></a> project.</p>
 
@@ -1664,7 +1689,7 @@ while older encodings may expect spaces to be replaced with <code>+</code>.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2022-11-21)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-09)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

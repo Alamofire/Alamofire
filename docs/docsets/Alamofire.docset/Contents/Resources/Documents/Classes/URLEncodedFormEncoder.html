@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.6.4 Docs
+          Alamofire 5.7.0 Docs
         </a>
          (97% documented)
       </p>
@@ -193,6 +193,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyPathEncoding.html">– KeyPathEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/NilEncoding.html">– NilEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -421,6 +427,15 @@
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor/DuplicateHeaderBehavior.html">– DuplicateHeaderBehavior</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html#/s:9Alamofire24DeflateRequestCompressorV20DuplicateHeaderErrorV">– DuplicateHeaderError</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -539,19 +554,29 @@
               </div>
             <p>An object that encodes instances into URL-encoded query strings.</p>
 
-<p>There is no published specification for how to encode collection types. By default, the convention of appending
-<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
-nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
-square brackets appended to array keys.</p>
+<p><code>ArrayEncoding</code> can be used to configure how <code>Array</code> values are encoded. By default, the <code>.brackets</code> encoding is
+used, encoding array values with brackets for each value. e.g <code>array[]=1&amp;array[]=2</code>.</p>
 
-<p><code>BoolEncoding</code> can be used to configure how <code>Bool</code> values are encoded. The default behavior is to encode
-<code>true</code> as 1 and <code>false</code> as 0.</p>
+<p><code>BoolEncoding</code> can be used to configure how <code>Bool</code> values are encoded. By default, the <code>.numeric</code> encoding is used,
+encoding <code>true</code> as <code>1</code> and <code>false</code> as <code>0</code>.</p>
+
+<p><code>DataEncoding</code> can be used to configure how <code>Data</code> values are encoded. By default, the <code>.deferredToData</code> encoding is
+used, which encodes <code>Data</code> values using their default <code>Encodable</code> implementation.</p>
 
 <p><code>DateEncoding</code> can be used to configure how <code>Date</code> values are encoded. By default, the <code>.deferredToDate</code>
-strategy is used, which formats dates from their structure.</p>
+encoding is used, which encodes <code>Date</code>s using their default <code>Encodable</code> implementation.</p>
 
-<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. Modern encodings use percent replacement (<code>%20</code>),
-while older encodings may expect spaces to be replaced with <code>+</code>.</p>
+<p><code>KeyEncoding</code> can be used to configure how keys are encoded. By default, the <code>.useDefaultKeys</code> encoding is used,
+which encodes the keys directly from the <code>Encodable</code> implementation.</p>
+
+<p><code>KeyPathEncoding</code> can be used to configure how paths within nested objects are encoded. By default, the <code>.brackets</code>
+encoding is used, which encodes each sub-key in brackets. e.g. <code>parent[child][grandchild]=value</code>.</p>
+
+<p><code>NilEncoding</code> can be used to configure how <code>nil</code> <code>Optional</code> values are encoded. By default, the <code>.dropKey</code> encoding
+is used, which drops <code>nil</code> key / value pairs from the output entirely.</p>
+
+<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. By default, the <code>.percentEscaped</code> encoding is used,
+replacing spaces with <code>%20</code>.</p>
 
 <p>This type is largely based on Vapor&rsquo;s <a href="https://github.com/vapor/url-encoded-form"><code>url-encoded-form</code></a> project.</p>
 
@@ -699,6 +724,67 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">KeyEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC15KeyPathEncodingV"></a>
+                    <a name="//apple_ref/swift/Struct/KeyPathEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC15KeyPathEncodingV">KeyPathEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Encoding to use for nested object and <code>Encodable</code> value key paths.</p>
+<pre class="highlight swift"><code><span class="p">[</span><span class="s">"parent"</span> <span class="p">:</span> <span class="p">[</span><span class="s">"child"</span> <span class="p">:</span> <span class="p">[</span><span class="s">"grandchild"</span><span class="p">:</span> <span class="s">"value"</span><span class="p">]]]</span>
+</code></pre>
+
+<p>This encoding affects how the <code>parent</code>, <code>child</code>, <code>grandchild</code> path is encoded. Brackets are used by default.
+e.g. <code>parent[child][grandchild]=value</code>.</p>
+
+                        <a href="../Classes/URLEncodedFormEncoder/KeyPathEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">KeyPathEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC11NilEncodingV"></a>
+                    <a name="//apple_ref/swift/Struct/NilEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC11NilEncodingV">NilEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Encoding to use for <code>nil</code> values.</p>
+
+                        <a href="../Classes/URLEncodedFormEncoder/NilEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">NilEncoding</span></code></pre>
 
                         </div>
                       </div>
@@ -933,6 +1019,60 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC15keyPathEncodingAC03KeyfG0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/keyPathEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC15keyPathEncodingAC03KeyfG0Vvp">keyPathEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code><a href="../Classes/URLEncodedFormEncoder/KeyPathEncoding.html">KeyPathEncoding</a></code> to use.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">keyPathEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/KeyPathEncoding.html">KeyPathEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC11nilEncodingAC03NilF0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/nilEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC11nilEncodingAC03NilF0Vvp">nilEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code><a href="../Classes/URLEncodedFormEncoder/NilEncoding.html">NilEncoding</a></code> to use.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">nilEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/NilEncoding.html">NilEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire21URLEncodedFormEncoderC13spaceEncodingAC05SpaceF0Ovp"></a>
                     <a name="//apple_ref/swift/Property/spaceEncoding" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13spaceEncodingAC05SpaceF0Ovp">spaceEncoding</a>
@@ -987,9 +1127,9 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairs13arrayEncoding04boolJ004dataJ004dateJ003keyJ005spaceJ017allowedCharactersACSb_AC05ArrayJ0OAC04BoolJ0OAC04DataJ0OAC04DateJ0OAC0fJ0OAC05SpaceJ0O10Foundation12CharacterSetVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(alphabetizeKeyValuePairs:arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:spaceEncoding:allowedCharacters:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairs13arrayEncoding04boolJ004dataJ004dateJ003keyJ005spaceJ017allowedCharactersACSb_AC05ArrayJ0OAC04BoolJ0OAC04DataJ0OAC04DateJ0OAC0fJ0OAC05SpaceJ0O10Foundation12CharacterSetVtcfc">init(alphabetizeKeyValuePairs:<wbr>arrayEncoding:<wbr>boolEncoding:<wbr>dataEncoding:<wbr>dateEncoding:<wbr>keyEncoding:<wbr>spaceEncoding:<wbr>allowedCharacters:<wbr>)</a>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairs13arrayEncoding04boolJ004dataJ004dateJ003keyJ00n4PathJ003nilJ005spaceJ017allowedCharactersACSb_AC05ArrayJ0OAC04BoolJ0OAC04DataJ0OAC04DateJ0OAC0fJ0OAC0foJ0VAC03NilJ0VAC05SpaceJ0O10Foundation12CharacterSetVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(alphabetizeKeyValuePairs:arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:keyPathEncoding:nilEncoding:spaceEncoding:allowedCharacters:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairs13arrayEncoding04boolJ004dataJ004dateJ003keyJ00n4PathJ003nilJ005spaceJ017allowedCharactersACSb_AC05ArrayJ0OAC04BoolJ0OAC04DataJ0OAC04DateJ0OAC0fJ0OAC0foJ0VAC03NilJ0VAC05SpaceJ0O10Foundation12CharacterSetVtcfc">init(alphabetizeKeyValuePairs:<wbr>arrayEncoding:<wbr>boolEncoding:<wbr>dataEncoding:<wbr>dateEncoding:<wbr>keyEncoding:<wbr>keyPathEncoding:<wbr>nilEncoding:<wbr>spaceEncoding:<wbr>allowedCharacters:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1010,6 +1150,8 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
             <span class="nv">dataEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DataEncoding.html">DataEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">base64</span><span class="p">,</span>
             <span class="nv">dateEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DateEncoding.html">DateEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">deferredToDate</span><span class="p">,</span>
             <span class="nv">keyEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">KeyEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">useDefaultKeys</span><span class="p">,</span>
+            <span class="nv">keyPathEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/KeyPathEncoding.html">KeyPathEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">brackets</span><span class="p">,</span>
+            <span class="nv">nilEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/NilEncoding.html">NilEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">dropKey</span><span class="p">,</span>
             <span class="nv">spaceEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">SpaceEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">percentEscaped</span><span class="p">,</span>
             <span class="nv">allowedCharacters</span><span class="p">:</span> <span class="kt">CharacterSet</span> <span class="o">=</span> <span class="o">.</span><span class="n">afURLQueryAllowed</span><span class="p">)</span></code></pre>
 
@@ -1088,6 +1230,18 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                               <td>
                                 <div>
                                   <p>The <code><a href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">KeyEncoding</a></code> to use. <code>.useDefaultKeys</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>nilEncoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/NilEncoding.html">NilEncoding</a></code> to use. <code>.drop</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1241,7 +1395,7 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2022-11-21)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-09)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
