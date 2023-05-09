@@ -70,14 +70,14 @@ Released on 2023-05-09. All issues associated with this milestone can be found u
   - Updated by [kati](https://github.com/kati-kms) in Pull Request [#3704](https://github.com/Alamofire/Alamofire/pull/3704).
 - Various CI integrations.
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3685](https://github.com/Alamofire/Alamofire/pull/3685) and [#3712](https://github.com/Alamofire/Alamofire/pull/3712).
-- Various documentation typos.
-  - Updated by [Timo Wälisch](https://github.com/TimoWaelischIdealo), [Tony](https://github.com/iamtony), and [uhooi](https://github.com/uhooi) in various PRs.
 
 #### Fixed
 - Reachability API usage safety.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3684](https://github.com/Alamofire/Alamofire/pull/3684).
 - Unused `bufferingPolicy` in `StreamOf`.
   - Fixed by [Duc](https://github.com/trungducc) in Pull Request [#3668](https://github.com/Alamofire/Alamofire/pull/3668).
+- Various documentation typos.
+  - Fixed by [Timo Wälisch](https://github.com/TimoWaelischIdealo), [Tony](https://github.com/iamtony), and [uhooi](https://github.com/uhooi) in various PRs.
 
 ---
 
