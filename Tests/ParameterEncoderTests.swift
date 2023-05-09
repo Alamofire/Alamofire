@@ -107,7 +107,6 @@ final class JSONParameterEncoderTests: BaseTestCase {
 
 final class SortedKeysJSONParameterEncoderTests: BaseTestCase {
     func testTestJSONEncoderSortedKeysHasSortedKeys() throws {
-        guard #available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *) else { return }
         // Given
         let encoder = JSONParameterEncoder.sortedKeys
         let request = Endpoint().urlRequest
