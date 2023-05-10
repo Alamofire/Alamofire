@@ -54,6 +54,7 @@ open class JSONParameterEncoder: ParameterEncoder {
     }
 
     /// Returns an encoder with `JSONEncoder.outputFormatting` set to `.sortedKeys`.
+    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public static var sortedKeys: JSONParameterEncoder {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys

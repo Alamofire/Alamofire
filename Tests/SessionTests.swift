@@ -359,7 +359,12 @@ final class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertTrue(brotliResponse?.result.isSuccess == true)
+        if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
+            XCTAssertTrue(brotliResponse?.result.isSuccess == true)
+        } else {
+            XCTAssertTrue(brotliResponse?.result.isFailure == true)
+        }
+
         XCTAssertTrue(gzipResponse?.result.isSuccess == true)
         XCTAssertTrue(deflateResponse?.result.isSuccess == true)
     }
