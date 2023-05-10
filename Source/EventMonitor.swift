@@ -375,6 +375,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, task: task, didCompleteWithError: error) }
     }
 
+    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         performEvent { $0.urlSession(session, taskIsWaitingForConnectivity: task) }
     }
@@ -735,6 +736,7 @@ open class ClosureEventMonitor: EventMonitor {
         taskDidComplete?(session, task, error)
     }
 
+    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     open func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         taskIsWaitingForConnectivity?(session, task)
     }
