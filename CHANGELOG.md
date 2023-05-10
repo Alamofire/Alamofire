@@ -5,7 +5,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
-- `5.7.x` Releases - [5.7.0](#570)
+- `5.7.x` Releases - [5.7.0](#570) | [5.7.1](#571)
 - `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563) | [5.6.4](#564)
 - `5.5.x` Releases - [5.5.0](#550)
 - `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
@@ -49,6 +49,13 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.7.1](https://github.com/Alamofire/Alamofire/releases/tag/5.7.1)
+Released on 2023-05-09. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/86?closed=1).
+
+#### Updated
+- Deployment targets reverted to (macOS 10.12, iOS 10, tvOS 10, and watchOS 3)+
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3720](https://github.com/Alamofire/Alamofire/pull/3720).
 
 ## [5.7.0](https://github.com/Alamofire/Alamofire/releases/tag/5.7.0)
 Released on 2023-05-09. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/84?closed=1).
