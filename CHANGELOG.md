@@ -51,7 +51,7 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 ---
 
 ## [5.7.1](https://github.com/Alamofire/Alamofire/releases/tag/5.7.1)
-Released on 2023-05-09. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/86?closed=1).
+Released on 2023-05-10. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/86?closed=1).
 
 #### Updated
 - Deployment targets reverted to (macOS 10.12, iOS 10, tvOS 10, and watchOS 3)+
