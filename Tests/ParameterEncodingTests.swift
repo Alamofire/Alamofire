@@ -153,7 +153,7 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeStringKeyArrayValueParameter() throws {
         // Given
-        let parameters = ["foo": ["a", 1, true]]
+        let parameters: [String: [Any]] = ["foo": ["a", 1, true]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -165,7 +165,7 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testURLParameterEncodeArrayNestedDictionaryValueParameterWithIndex() throws {
         // Given
         let encoding = URLEncoding(arrayEncoding: .indexInBrackets)
-        let parameters = ["foo": ["a", 1, true, ["bar": 2], ["qux": 3], ["quy": ["quz": 3]]]]
+        let parameters: [String: [Any]] = ["foo": ["a", 1, true, ["bar": 2], ["qux": 3], ["quy": ["quz": 3]]]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -177,7 +177,7 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testURLParameterEncodeStringKeyArrayValueParameterWithoutBrackets() throws {
         // Given
         let encoding = URLEncoding(arrayEncoding: .noBrackets)
-        let parameters = ["foo": ["a", 1, true]]
+        let parameters: [String: [Any]] = ["foo": ["a", 1, true]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -191,7 +191,7 @@ final class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let encoding = URLEncoding(arrayEncoding: .custom { key, index in
             "\(key).\(index + 1)"
         })
-        let parameters = ["foo": ["a", 1, true]]
+        let parameters: [String: [Any]] = ["foo": ["a", 1, true]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
