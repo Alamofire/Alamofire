@@ -455,9 +455,11 @@ open class MultipartFormData {
         inputStream.open()
         defer { inputStream.close() }
 
-        while inputStream.hasBytesAvailable {
-            var buffer = [UInt8](repeating: 0, count: streamBufferSize)
-            let bytesRead = inputStream.read(&buffer, maxLength: streamBufferSize)
+        var bytesLeftToRead = bodyPart.bodyContentLength
+        while inputStream.hasBytesAvailable && bytesLeftToRead > 0 {
+            let bufferSize = min(streamBufferSize, Int(bytesLeftToRead))
+            var buffer = [UInt8](repeating: 0, count: bufferSize)
+            let bytesRead = inputStream.read(&buffer, maxLength: bufferSize)
 
             if let streamError = inputStream.streamError {
                 throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: streamError))
@@ -469,6 +471,7 @@ open class MultipartFormData {
                 }
 
                 try write(&buffer, to: outputStream)
+                bytesLeftToRead -= UInt64(bytesRead)
             } else {
                 break
             }
