@@ -1152,7 +1152,7 @@ func response<Serializer: DownloadResponseSerializerProtocol>(
 
 Alamofire includes a few common responses handlers, including:
 
-- `responseData(queue:completionHandler)`: Validates and preprocesses the response `Data` using `DataResponseSerializer`.
+- `responseData(queue:completionHandler:)`: Validates and preprocesses the response `Data` using `DataResponseSerializer`.
 - `responseString(queue:encoding:completionHandler:)`: Parses the response `Data` as a `String` using the provided `String.Encoding`.
 - `responseDecodable(of:queue:decoder:completionHandler:)`: Parses the response `Data` into the provided or inferred `Decodable` type using the provided `DataDecoder`. Uses `JSONDecoder` by default. Recommend method for JSON and generic response parsing.
 
@@ -1162,11 +1162,11 @@ Calling `responseData(queue:completionHandler:)` on `DataRequest` or `DownloadRe
 
 #### `StringResponseSerializer`
 
-Calling `responseString(queue:encoding:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `StringResponseSerializer` to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then used to initialize a `String` using the `String.Encoding` parsed from the `HTTPURLResponse`.
+Calling `responseString(queue:encoding:completionHandler:)` on `DataRequest` or `DownloadRequest` uses a `StringResponseSerializer` to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then used to initialize a `String` using the `String.Encoding` parsed from the `HTTPURLResponse`.
 
 #### `DecodableResponseSerializer`
 
-Calling `responseDecodable(of:queue:decoder:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `DecodableResponseSerializer`to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then passed through the provided `DataDecoder` and parsed into the provided or inferred `Decodable` type.
+Calling `responseDecodable(of:queue:decoder:completionHandler:)` on `DataRequest` or `DownloadRequest` uses a `DecodableResponseSerializer`to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then passed through the provided `DataDecoder` and parsed into the provided or inferred `Decodable` type.
 
 ### Customizing Response Handlers
 
