@@ -531,7 +531,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
-        let url = Endpoint().url.absoluteString.appending("/äëïöü")
+        let url = ""
         let expectation = expectation(description: "Request should fail with error")
 
         var response: DataResponse<Data?, AFError>?
@@ -556,7 +556,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatDownloadRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
-        let url = Endpoint().url.absoluteString.appending("/äëïöü")
+        let url = ""
         let expectation = expectation(description: "Download should fail with error")
 
         var response: DownloadResponse<URL?, AFError>?
@@ -582,7 +582,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatUploadDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
-        let url = Endpoint().url.absoluteString.appending("/äëïöü")
+        let url = ""
         let expectation = expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?, AFError>?
@@ -607,7 +607,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatUploadFileRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
-        let url = Endpoint().url.absoluteString.appending("/äëïöü")
+        let url = ""
         let expectation = expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?, AFError>?
@@ -632,7 +632,7 @@ final class SessionTestCase: BaseTestCase {
     func testThatUploadStreamRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
-        let url = Endpoint().url.absoluteString.appending("/äëïöü")
+        let url = ""
         let expectation = expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?, AFError>?
