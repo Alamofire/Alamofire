@@ -498,7 +498,7 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
                      tasks: [URLSessionTask],
                      descriptions: [String],
                      response: AFDataResponse<TestResponse>)
-        #if swift(>=5.9)
+        #if swift(>=5.10)
         values = try! await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)
         #else
         values = await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)

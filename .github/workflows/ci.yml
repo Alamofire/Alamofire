@@ -114,7 +114,7 @@ jobs:
     name: "Test Old iOS"
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_14.3.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -135,11 +135,30 @@ jobs:
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
+  Beta:
+    name: "Test Beta iOS"
+    runs-on: firebreak
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_15.0.app/Contents/Developer"
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "OS=17.0,name=iPhone 14 Pro"
+            name: "iOS 17.0"
+            testPlan: "iOS"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Firewalk
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+      - name: ${{ matrix.name }}
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   tvOS:
     name: Test Old tvOS
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.3.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -164,7 +183,7 @@ jobs:
     name: Test Old watchOS
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.3.app/Contents/Developer
     timeout-minutes: 10
     strategy:
       fail-fast: false
