@@ -91,10 +91,6 @@ final class Protected<T> {
     #endif
     private var value: T
 
-    init(_ value: T) {
-        self.value = value
-    }
-
     /// The contained value. Unsafe for anything more than direct read or write.
     var wrappedValue: T {
         get { lock.around { value } }
