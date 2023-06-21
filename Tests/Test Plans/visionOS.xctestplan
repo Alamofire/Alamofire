@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "D2E9E261-0428-48C6-A483-07B3473E499C",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "threadSanitizerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Alamofire.xcodeproj",
+        "identifier" : "317338F32A43BE5F00D4EA0A",
+        "name" : "Alamofire visionOS Tests"
+      }
+    }
+  ],
+  "version" : 1
+}
