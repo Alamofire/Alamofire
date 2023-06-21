@@ -148,12 +148,17 @@ jobs:
           - destination: "OS=17.0,name=iPhone 14 Pro"
             name: "iOS 17.0"
             testPlan: "iOS"
+            scheme: "Alamofire iOS"
+          - destination: "OS=1.0,name=Vision Pro"
+            name: "visionOS 1.0"
+            testPlan: "visionOS"
+            scheme: "Alamofire visionOS"
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
   tvOS:
     name: Test Old tvOS
     runs-on: firebreak
