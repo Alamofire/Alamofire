@@ -149,7 +149,7 @@ jobs:
             name: "iOS 17.0"
             testPlan: "iOS"
             scheme: "Alamofire iOS"
-          - destination: "OS=1.0,name=Vision Pro"
+          - destination: "OS=1.0,name=Apple Vision Pro"
             name: "visionOS 1.0"
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
