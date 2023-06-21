@@ -179,7 +179,7 @@ extension DataRequest {
     ///   - emptyRequestMethods:       `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///
     /// - Returns: The `DataTask`.
-    public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = false,
+    public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                 dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataTask<Data> {
@@ -204,7 +204,7 @@ extension DataRequest {
     ///
     /// - Returns: The `DataTask`.
     public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
-                                                       automaticallyCancelling shouldAutomaticallyCancel: Bool = false,
+                                                       automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                                        dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
                                                        decoder: DataDecoder = JSONDecoder(),
                                                        emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
@@ -231,7 +231,7 @@ extension DataRequest {
     ///   - emptyRequestMethods:       `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///
     /// - Returns: The `DataTask`.
-    public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = false,
+    public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                   dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                   encoding: String.Encoding? = nil,
                                   emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
@@ -253,7 +253,7 @@ extension DataRequest {
     ///
     /// - Returns: The `DataTask`.
     public func serializingResponse<Serializer: ResponseSerializer>(using serializer: Serializer,
-                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = false)
+                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DataTask<Serializer.SerializedObject> {
         dataTask(automaticallyCancelling: shouldAutomaticallyCancel) {
             self.response(queue: .singleEventQueue,
@@ -273,7 +273,7 @@ extension DataRequest {
     ///
     /// - Returns: The `DataTask`.
     public func serializingResponse<Serializer: DataResponseSerializerProtocol>(using serializer: Serializer,
-                                                                                automaticallyCancelling shouldAutomaticallyCancel: Bool = false)
+                                                                                automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DataTask<Serializer.SerializedObject> {
         dataTask(automaticallyCancelling: shouldAutomaticallyCancel) {
             self.response(queue: .singleEventQueue,
@@ -372,7 +372,7 @@ extension DownloadRequest {
     ///   - emptyRequestMethods:       `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///
     /// - Returns:                   The `DownloadTask`.
-    public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = false,
+    public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                 dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DownloadTask<Data> {
@@ -399,7 +399,7 @@ extension DownloadRequest {
     ///
     /// - Returns:                   The `DownloadTask`.
     public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
-                                                       automaticallyCancelling shouldAutomaticallyCancel: Bool = false,
+                                                       automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                                        dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
                                                        decoder: DataDecoder = JSONDecoder(),
                                                        emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
@@ -419,7 +419,7 @@ extension DownloadRequest {
     ///                                properties. `false` by default.
     ///
     /// - Returns: The `DownloadTask`.
-    public func serializingDownloadedFileURL(automaticallyCancelling shouldAutomaticallyCancel: Bool = false) -> DownloadTask<URL> {
+    public func serializingDownloadedFileURL(automaticallyCancelling shouldAutomaticallyCancel: Bool = true) -> DownloadTask<URL> {
         serializingDownload(using: URLResponseSerializer(),
                             automaticallyCancelling: shouldAutomaticallyCancel)
     }
@@ -439,7 +439,7 @@ extension DownloadRequest {
     ///   - emptyRequestMethods:       `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///
     /// - Returns:                   The `DownloadTask`.
-    public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = false,
+    public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                   dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                   encoding: String.Encoding? = nil,
                                   emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
@@ -461,7 +461,7 @@ extension DownloadRequest {
     ///
     /// - Returns: The `DownloadTask`.
     public func serializingDownload<Serializer: ResponseSerializer>(using serializer: Serializer,
-                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = false)
+                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DownloadTask<Serializer.SerializedObject> {
         downloadTask(automaticallyCancelling: shouldAutomaticallyCancel) {
             self.response(queue: .singleEventQueue,
@@ -482,7 +482,7 @@ extension DownloadRequest {
     ///
     /// - Returns: The `DownloadTask`.
     public func serializingDownload<Serializer: DownloadResponseSerializerProtocol>(using serializer: Serializer,
-                                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = false)
+                                                                                    automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DownloadTask<Serializer.SerializedObject> {
         downloadTask(automaticallyCancelling: shouldAutomaticallyCancel) {
             self.response(queue: .singleEventQueue,
