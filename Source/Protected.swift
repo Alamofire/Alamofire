@@ -91,6 +91,7 @@ final class Protected<T> {
     #endif
     private var value: T
 
+    /// Use this initializer if you want to use the wrapper directly rather than as a property wrapper
     init(_ value: T) {
         self.value = value
     }
