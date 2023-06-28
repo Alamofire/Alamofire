@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if !(os(watchOS) || os(Linux) || os(Windows))
+#if canImport(SystemConfiguration)
 
 import Foundation
 import SystemConfiguration

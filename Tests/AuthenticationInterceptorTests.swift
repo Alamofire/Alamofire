@@ -289,7 +289,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
     // MARK: - Tests - Retry
 
-    #if !(os(Linux) || os(Windows)) // URLRequest to /invalid/path is a fatal error.
+    #if canImport(Darwin) // URLRequest to /invalid/path is a fatal error.
     func testThatInterceptorDoesNotRetryWithoutResponse() {
         // Given
         let credential = TestCredential()

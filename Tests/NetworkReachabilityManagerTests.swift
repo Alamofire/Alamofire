@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if canImport(SytemConfiguration)
+#if canImport(SystemConfiguration)
 
 @testable import Alamofire
 import Foundation

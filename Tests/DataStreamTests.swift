@@ -321,7 +321,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertNil(decodingError)
     }
 
-    #if !(os(Linux) || os(Windows))
+    #if canImport(Darwin)
     func testThatDataStreamRequestProducesWorkingInputStream() {
         // Given
         let expect = expectation(description: "stream complete")
