@@ -1400,7 +1400,7 @@ final class StaticDataPreprocessorTests: BaseTestCase {
 extension HTTPURLResponse {
     convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {
         let url = Endpoint().url
-        #if os(watchOS) || os(Linux) || os(Windows)
+        #if os(watchOS) || os(Linux) || os(Windows) || os(Android)
         let httpVersion = "HTTP/1.1"
         #else
         let httpVersion = String(kCFHTTPVersion1_1)

@@ -405,6 +405,8 @@ extension HTTPHeader {
                 return "Linux"
                 #elseif os(Windows)
                 return "Windows"
+                #elseif os(Android)
+                return "Android"
                 #else
                 return "Unknown"
                 #endif

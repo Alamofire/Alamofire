@@ -557,7 +557,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(download.resumeData)
-        #if !(os(Linux) || os(Windows))
+        #if !(os(Linux) || os(Windows) || os(Android))
         XCTAssertNotNil(download.error?.downloadResumeData)
         XCTAssertEqual(download.error?.downloadResumeData, response?.resumeData)
         #endif

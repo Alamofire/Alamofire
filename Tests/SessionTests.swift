@@ -313,6 +313,8 @@ final class SessionTestCase: BaseTestCase {
                 return "macOS"
                 #elseif os(Linux)
                 return "Linux"
+                #elseif os(Android)
+                return "Android"
                 #else
                 return "Unknown"
                 #endif

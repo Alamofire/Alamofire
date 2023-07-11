@@ -335,7 +335,7 @@ extension AFError.ResponseValidationFailureReason {
 
 // MARK: -
 
-#if !(os(Linux) || os(Windows))
+#if !(os(Linux) || os(Windows) || os(Android))
 extension AFError.ServerTrustFailureReason {
     var isNoRequiredEvaluator: Bool {
         if case .noRequiredEvaluator = self { return true }
