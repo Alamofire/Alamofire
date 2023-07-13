@@ -267,6 +267,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
+  Android:
+    name: Android
+    uses: Swift-Commons/swift-android-sdk/.github/workflows/sdks.yml@ci
+    strategy:
+      fail-fast: false
+    with:
+      target-repo: ${{ github.repository }}
+      checkout-hash: ${{ github.sha }}
   Windows:
     name: Windows
     runs-on: windows-latest
