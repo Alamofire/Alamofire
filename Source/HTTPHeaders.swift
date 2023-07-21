@@ -34,16 +34,12 @@ public struct HTTPHeaders {
     /// Creates an instance from an array of `HTTPHeader`s. Duplicate case-insensitive names are collapsed into the last
     /// name and value encountered.
     public init(_ headers: [HTTPHeader]) {
-        self.init()
-
         headers.forEach { update($0) }
     }
 
     /// Creates an instance from a `[String: String]`. Duplicate case-insensitive names are collapsed into the last name
     /// and value encountered.
     public init(_ dictionary: [String: String]) {
-        self.init()
-
         dictionary.forEach { update(HTTPHeader(name: $0.key, value: $0.value)) }
     }
 
@@ -145,8 +141,6 @@ public struct HTTPHeaders {
 
 extension HTTPHeaders: ExpressibleByDictionaryLiteral {
     public init(dictionaryLiteral elements: (String, String)...) {
-        self.init()
-
         elements.forEach { update(name: $0.0, value: $0.1) }
     }
 }
