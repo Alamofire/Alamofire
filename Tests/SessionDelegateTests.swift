@@ -26,7 +26,6 @@
 import Foundation
 import XCTest
 
-@MainActor
 final class SessionDelegateTestCase: BaseTestCase {
     // MARK: - Tests - Redirects
 
