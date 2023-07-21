@@ -550,7 +550,7 @@ extension MultipartFormData {
 
     private func mimeType(forPathExtension pathExtension: String) -> String {
         #if swift(>=5.9)
-        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, xrOS 1, *) {
+        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, visionOS 1, *) {
             return UTType(filenameExtension: pathExtension)?.preferredMIMEType ?? "application/octet-stream"
         } else {
             if
