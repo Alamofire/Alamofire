@@ -182,7 +182,7 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
         }
 
         #if swift(>=5.9)
-        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, xrOS 1, *) {
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, visionOS 1, *) {
             try trust.af.evaluate(afterApplying: SecPolicy.af.revocation(options: options))
         } else {
             try trust.af.validate(policy: SecPolicy.af.revocation(options: options)) { status, result in
@@ -607,7 +607,7 @@ extension AlamofireExtension where ExtendedType == SecTrust {
     /// The `SecCertificate`s contained in `self`.
     public var certificates: [SecCertificate] {
         #if swift(>=5.9)
-        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, xrOS 1, *) {
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, visionOS 1, *) {
             return (SecTrustCopyCertificateChain(type) as? [SecCertificate]) ?? []
         } else {
             return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
@@ -640,7 +640,7 @@ extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Throws: An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     public func performDefaultValidation(forHost host: String) throws {
         #if swift(>=5.9)
-        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, xrOS 1, *) {
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, visionOS 1, *) {
             try evaluate(afterApplying: SecPolicy.af.default)
         } else {
             try validate(policy: SecPolicy.af.default) { status, result in
@@ -665,7 +665,7 @@ extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Throws:         An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     public func performValidation(forHost host: String) throws {
         #if swift(>=5.9)
-        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, xrOS 1, *) {
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, visionOS 1, *) {
             try evaluate(afterApplying: SecPolicy.af.hostname(host))
         } else {
             try validate(policy: SecPolicy.af.hostname(host)) { status, result in
@@ -741,7 +741,7 @@ extension AlamofireExtension where ExtendedType == SecCertificate {
         guard let createdTrust = trust, trustCreationStatus == errSecSuccess else { return nil }
 
         #if swift(>=5.9)
-        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, xrOS 1, *) {
+        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, visionOS 1, *) {
             return SecTrustCopyKey(createdTrust)
         } else {
             return SecTrustCopyPublicKey(createdTrust)
