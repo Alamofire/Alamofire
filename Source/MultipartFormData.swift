@@ -147,8 +147,20 @@ open class MultipartFormData {
     ///   - name:     Name to associate with the `Data` in the `Content-Disposition` HTTP header.
     ///   - fileName: Filename to associate with the `Data` in the `Content-Disposition` HTTP header.
     ///   - mimeType: MIME type to associate with the data in the `Content-Type` HTTP header.
-    public func append(_ data: Data, withName name: String, fileName: String? = nil, mimeType: String? = nil) {
-        let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
+    ///   - encoding: Encoding for the `Content-Type` HTTP header.
+    public func append(
+        _ data: Data,
+        withName name: String,
+        fileName: String? = nil,
+        mimeType: String? = nil,
+        encoding: ContentHeaderEncoding? = nil
+    ) {
+        let headers = contentHeaders(
+            withName: name,
+            fileName: fileName,
+            mimeType: mimeType,
+            encoding: encoding
+        )
         let stream = InputStream(data: data)
         let length = UInt64(data.count)
 
@@ -197,8 +209,19 @@ open class MultipartFormData {
     ///   - name:     Name to associate with the file content in the `Content-Disposition` HTTP header.
     ///   - fileName: Filename to associate with the file content in the `Content-Disposition` HTTP header.
     ///   - mimeType: MIME type to associate with the file content in the `Content-Type` HTTP header.
-    public func append(_ fileURL: URL, withName name: String, fileName: String, mimeType: String) {
-        let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
+    public func append(
+        _ fileURL: URL,
+        withName name: String,
+        fileName: String,
+        mimeType: String,
+        encoding: ContentHeaderEncoding? = nil
+    ) {
+        let headers = contentHeaders(
+            withName: name,
+            fileName: fileName,
+            mimeType: mimeType,
+            encoding: encoding
+        )
 
         //============================================================
         //                 Check 1 - is file URL?
@@ -283,12 +306,21 @@ open class MultipartFormData {
     ///   - name:     Name to associate with the stream content in the `Content-Disposition` HTTP header.
     ///   - fileName: Filename to associate with the stream content in the `Content-Disposition` HTTP header.
     ///   - mimeType: MIME type to associate with the stream content in the `Content-Type` HTTP header.
-    public func append(_ stream: InputStream,
-                       withLength length: UInt64,
-                       name: String,
-                       fileName: String,
-                       mimeType: String) {
-        let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
+    ///   - encoding: Encoding for the `Content-Type` HTTP header.
+    public func append(
+        _ stream: InputStream,
+        withLength length: UInt64,
+        name: String,
+        fileName: String,
+        mimeType: String,
+        encoding: ContentHeaderEncoding? = nil
+    ) {
+        let headers = contentHeaders(
+            withName: name,
+            fileName: fileName,
+            mimeType: mimeType,
+            encoding: encoding
+        )
         append(stream, withLength: length, headers: headers)
     }
 
@@ -367,6 +399,22 @@ open class MultipartFormData {
 
         for bodyPart in bodyParts {
             try write(bodyPart, to: outputStream)
+        }
+    }
+
+    // MARK: - Public - Content Header Encoding
+
+    public enum ContentHeaderEncoding: String {
+        case iso88591 = "iso-8859-1"
+        case utf8 = "UTF-8"
+
+        var stringEncoding: String.Encoding {
+            switch self {
+            case .iso88591:
+                return .isoLatin1
+            case .utf8:
+                return .utf8
+            }
         }
     }
 
@@ -510,9 +558,28 @@ open class MultipartFormData {
 
     // MARK: - Private - Content Headers
 
-    private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
+    private func contentHeaders(
+        withName name: String,
+        fileName: String? = nil,
+        mimeType: String? = nil,
+        encoding: ContentHeaderEncoding?
+    ) -> HTTPHeaders {
         var disposition = "form-data; name=\"\(name)\""
-        if let fileName = fileName { disposition += "; filename=\"\(fileName)\"" }
+
+        if let fileName = fileName {
+            let encodingPrefix: String
+            let fileNameEncoded: String
+            if let encoding = encoding {
+                encodingPrefix = "*=\(encoding.rawValue)"
+                fileNameEncoded = String(
+                    describing: fileName.cString(using: encoding.stringEncoding)
+                )
+            } else {
+                encodingPrefix = "="
+                fileNameEncoded = fileName
+            }
+            disposition += "; filename\(encodingPrefix)\"\(fileNameEncoded)\""
+        }
 
         var headers: HTTPHeaders = [.contentDisposition(disposition)]
         if let mimeType = mimeType { headers.add(.contentType(mimeType)) }
