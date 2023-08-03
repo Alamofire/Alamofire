@@ -274,7 +274,7 @@ jobs:
         run: swift build --build-tests -c debug
   Android:
     name: Android
-    uses: Swift-Commons/swift-android-sdk/.github/workflows/sdks.yml@ci
+    uses: hggz/swift-android-sdk/.github/workflows/sdks.yml@ci
     strategy:
       fail-fast: false
     with:
