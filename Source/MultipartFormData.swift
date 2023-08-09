@@ -24,12 +24,10 @@
 
 import Foundation
 
-#if canImport(Darwin)
-#if os(iOS) || os(watchOS) || os(tvOS)
+#if canImport(MobileCoreServices)
 import MobileCoreServices
-#else
+#elseif canImport(CoreServices)
 import CoreServices
-#endif
 #endif
 
 /// Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body. There are currently two ways to encode
@@ -585,7 +583,7 @@ extension MultipartFormData {
     // MARK: - Private - Mime Type
 
     private func mimeType(forPathExtension pathExtension: String) -> String {
-        #if canImport(Darwin)
+        #if canImport(CoreServices) || canImport(MobileCoreServices)
         if
             let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
             let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {

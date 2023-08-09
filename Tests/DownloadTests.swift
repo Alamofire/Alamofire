@@ -557,7 +557,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(download.resumeData)
-        #if canImport(Darwin)
+        #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
         XCTAssertNotNil(download.error?.downloadResumeData)
         XCTAssertEqual(download.error?.downloadResumeData, response?.resumeData)
         #endif
