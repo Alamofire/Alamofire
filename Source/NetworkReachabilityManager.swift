@@ -266,10 +266,18 @@ extension SCNetworkReachabilityFlags {
     var canConnectWithoutUserInteraction: Bool { canConnectAutomatically && !contains(.interventionRequired) }
     var isActuallyReachable: Bool { isReachable && (!isConnectionRequired || canConnectWithoutUserInteraction) }
     var isCellular: Bool {
+        #if swift(>=5.9)
         #if os(iOS) || os(tvOS) || os(visionOS)
         return contains(.isWWAN)
         #else
         return false
+        #endif
+        #else
+        #if os(iOS) || os(tvOS)
+        return contains(.isWWAN)
+        #else
+        return false
+        #endif
         #endif
     }
 
