@@ -632,7 +632,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectedFileData.append(BoundaryGenerator.boundaryData(boundaryType: .initial, boundaryKey: boundary))
             expectedFileData.append(Data((
                 "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(crlf)" +
-                "Content-Type: image/png\(crlf)\(crlf)").utf8
+                    "Content-Type: image/png\(crlf)\(crlf)").utf8
             ))
             expectedFileData.append(unicornImageData.prefix(Int(expectedFileStreamUploadLength)))
             expectedFileData.append(BoundaryGenerator.boundaryData(boundaryType: .final, boundaryKey: boundary))
