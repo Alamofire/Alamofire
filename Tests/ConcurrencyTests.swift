@@ -505,13 +505,13 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
         #endif
 
         // Then
-        XCTAssertTrue(values.uploadProgresses.isEmpty)
-        XCTAssertNotNil(values.downloadProgresses.last)
-        XCTAssertTrue(values.downloadProgresses.last?.isFinished == true)
-        XCTAssertNotNil(values.requests.last)
-        XCTAssertNotNil(values.tasks.last)
-        XCTAssertNotNil(values.descriptions.last)
-        XCTAssertTrue(values.response.result.isSuccess)
+        XCTAssertTrue(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
+        XCTAssertNotNil(values.downloadProgresses.last, "downloadProgresses should not be empty")
+        XCTAssertTrue(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")
+        XCTAssertNotNil(values.requests.last, "requests should not be empty")
+        XCTAssertNotNil(values.tasks.last, "tasks should not be empty")
+        XCTAssertNotNil(values.descriptions.last, "descriptions should not be empty")
+        XCTAssertTrue(values.response.result.isSuccess, "request should succeed")
     }
 }
 
