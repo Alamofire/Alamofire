@@ -48,7 +48,7 @@ open class ServerTrustManager {
         self.evaluators = evaluators
     }
 
-    #if !(os(Linux) || os(Windows))
+    #if canImport(Security)
     /// Returns the `ServerTrustEvaluating` value for the given host, if one is set.
     ///
     /// By default, this method will return the policy that perfectly matches the given host. Subclasses could override
@@ -91,7 +91,7 @@ public protocol ServerTrustEvaluating {
 
 // MARK: - Server Trust Evaluators
 
-#if !(os(Linux) || os(Windows))
+#if canImport(Security)
 /// An evaluator which uses the default server trust evaluation while allowing you to control whether to validate the
 /// host provided by the challenge. Applications are encouraged to always validate the host in production environments
 /// to guarantee the validity of the server's certificate chain.

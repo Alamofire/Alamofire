@@ -24,9 +24,9 @@
 
 import Foundation
 
-#if os(iOS) || os(watchOS) || os(tvOS)
+#if canImport(MobileCoreServices)
 import MobileCoreServices
-#elseif os(macOS)
+#elseif canImport(CoreServices)
 import CoreServices
 #endif
 
@@ -586,7 +586,7 @@ extension MultipartFormData {
     // MARK: - Private - Mime Type
 
     private func mimeType(forPathExtension pathExtension: String) -> String {
-        #if !(os(Linux) || os(Windows))
+        #if canImport(CoreServices) || canImport(MobileCoreServices)
         if
             let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
             let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {

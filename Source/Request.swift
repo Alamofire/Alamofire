@@ -1315,7 +1315,7 @@ public final class DataStreamRequest: Request {
 
     func didReceive(data: Data) {
         $streamMutableState.write { state in
-            #if !(os(Linux) || os(Windows))
+            #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
             if let stream = state.outputStream {
                 underlyingQueue.async {
                     var bytes = Array(data)
@@ -1356,7 +1356,7 @@ public final class DataStreamRequest: Request {
         return self
     }
 
-    #if !(os(Linux) || os(Windows))
+    #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
     /// Produces an `InputStream` that receives the `Data` received by the instance.
     ///
     /// - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`.
@@ -1554,7 +1554,7 @@ public class DownloadRequest: Request {
     ///
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
     public var resumeData: Data? {
-        #if !(os(Linux) || os(Windows))
+        #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
         return $mutableDownloadState.resumeData ?? error?.downloadResumeData
         #else
         return $mutableDownloadState.resumeData
