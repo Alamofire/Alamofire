@@ -255,10 +255,10 @@ extension DataRequest {
     public func serializingResponse<Serializer: ResponseSerializer>(using serializer: Serializer,
                                                                     automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DataTask<Serializer.SerializedObject> {
-        dataTask(automaticallyCancelling: shouldAutomaticallyCancel) {
-            self.response(queue: .singleEventQueue,
-                          responseSerializer: serializer,
-                          completionHandler: $0)
+        dataTask(automaticallyCancelling: shouldAutomaticallyCancel) { [self] in
+            response(queue: underlyingQueue,
+                     responseSerializer: serializer,
+                     completionHandler: $0)
         }
     }
 
@@ -275,10 +275,10 @@ extension DataRequest {
     public func serializingResponse<Serializer: DataResponseSerializerProtocol>(using serializer: Serializer,
                                                                                 automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DataTask<Serializer.SerializedObject> {
-        dataTask(automaticallyCancelling: shouldAutomaticallyCancel) {
-            self.response(queue: .singleEventQueue,
-                          responseSerializer: serializer,
-                          completionHandler: $0)
+        dataTask(automaticallyCancelling: shouldAutomaticallyCancel) { [self] in
+            response(queue: underlyingQueue,
+                     responseSerializer: serializer,
+                     completionHandler: $0)
         }
     }
 
@@ -463,10 +463,10 @@ extension DownloadRequest {
     public func serializingDownload<Serializer: ResponseSerializer>(using serializer: Serializer,
                                                                     automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DownloadTask<Serializer.SerializedObject> {
-        downloadTask(automaticallyCancelling: shouldAutomaticallyCancel) {
-            self.response(queue: .singleEventQueue,
-                          responseSerializer: serializer,
-                          completionHandler: $0)
+        downloadTask(automaticallyCancelling: shouldAutomaticallyCancel) { [self] in
+            response(queue: underlyingQueue,
+                     responseSerializer: serializer,
+                     completionHandler: $0)
         }
     }
 
@@ -484,10 +484,10 @@ extension DownloadRequest {
     public func serializingDownload<Serializer: DownloadResponseSerializerProtocol>(using serializer: Serializer,
                                                                                     automaticallyCancelling shouldAutomaticallyCancel: Bool = true)
         -> DownloadTask<Serializer.SerializedObject> {
-        downloadTask(automaticallyCancelling: shouldAutomaticallyCancel) {
-            self.response(queue: .singleEventQueue,
-                          responseSerializer: serializer,
-                          completionHandler: $0)
+        downloadTask(automaticallyCancelling: shouldAutomaticallyCancel) { [self] in
+            response(queue: underlyingQueue,
+                     responseSerializer: serializer,
+                     completionHandler: $0)
         }
     }
 
