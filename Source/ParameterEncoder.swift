@@ -156,6 +156,13 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
         self.destination = destination
     }
 
+    /// Encodes the given parameters into the provided URLRequest.
+    ///
+    /// - Parameters:
+    ///   - parameters: The parameters to be encoded. Can be nil.
+    ///   - request: The URLRequest to which the parameters will be added.
+    /// - Returns: A modified URLRequest with encoded parameters, if any.
+    /// - Throws: AFError.parameterEncoderFailed if encoding fails or required components are missing.
     open func encode<Parameters: Encodable>(_ parameters: Parameters?,
                                             into request: URLRequest) throws -> URLRequest {
         guard let parameters = parameters else { return request }
