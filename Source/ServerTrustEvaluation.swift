@@ -75,8 +75,8 @@ open class ServerTrustManager {
 
 /// A protocol describing the API used to evaluate server trusts.
 public protocol ServerTrustEvaluating {
-    #if os(Linux) || os(Windows)
-    // Implement this once Linux/Windows has API for evaluating server trusts.
+    #if !canImport(Security)
+    // Implement this once other platforms have API for evaluating server trusts.
     #else
     /// Evaluates the given `SecTrust` value for the given `host`.
     ///
@@ -457,7 +457,7 @@ public final class DisabledTrustEvaluator: ServerTrustEvaluating {
 // MARK: - Extensions
 
 extension Array where Element == ServerTrustEvaluating {
-    #if os(Linux) || os(Windows)
+    #if os(Linux) || os(Windows) || os(Android)
     // Add this same convenience method for Linux/Windows.
     #else
     /// Evaluates the given `SecTrust` value for the given `host`.

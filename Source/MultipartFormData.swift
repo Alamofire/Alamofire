@@ -213,7 +213,7 @@ open class MultipartFormData {
         //              Check 2 - is file URL reachable?
         //============================================================
 
-        #if !(os(Linux) || os(Windows))
+        #if !(os(Linux) || os(Windows) || os(Android))
         do {
             let isReachable = try fileURL.checkPromisedItemIsReachable()
             guard isReachable else {

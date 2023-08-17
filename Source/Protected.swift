@@ -49,7 +49,7 @@ extension Lock {
     }
 }
 
-#if os(Linux) || os(Windows)
+#if os(Linux) || os(Windows) || os(Android)
 
 extension NSLock: Lock {}
 
@@ -86,7 +86,7 @@ final class UnfairLock: Lock {
 final class Protected<T> {
     #if canImport(Darwin)
     private let lock = UnfairLock()
-    #elseif os(Linux) || os(Windows)
+    #elseif os(Linux) || os(Windows) || os(Android)
     private let lock = NSLock()
     #endif
     private var value: T
