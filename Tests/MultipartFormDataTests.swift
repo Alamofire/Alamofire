@@ -596,6 +596,53 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         }
     }
 
+    func testWritingEncodedStreamBodyPartToDiskRespectingBodyLength() {
+        // Given
+        let destinationFileURL = temporaryFileURL
+        let multipartFormData = MultipartFormData()
+
+        let unicornImageURL = url(forResource: "unicorn", withExtension: "png")
+        let unicornImageData = try! Data(contentsOf: unicornImageURL)
+        let unicornDataLength = unicornImageData.count
+
+        // Write only PART of the file
+        let expectedFileStreamUploadLength = UInt64(unicornDataLength / 2)
+        multipartFormData.append(InputStream(url: unicornImageURL)!,
+                                 withLength: expectedFileStreamUploadLength,
+                                 name: "unicorn",
+                                 fileName: "unicorn.png",
+                                 mimeType: "image/png")
+
+        var encodingError: Error?
+
+        // When
+        do {
+            try multipartFormData.writeEncodedData(to: destinationFileURL)
+        } catch {
+            encodingError = error
+        }
+
+        // Then
+        XCTAssertNil(encodingError, "encoding error should be nil")
+
+        if let destinationFileData = try? Data(contentsOf: destinationFileURL) {
+            let boundary = multipartFormData.boundary
+
+            var expectedFileData = Data()
+            expectedFileData.append(BoundaryGenerator.boundaryData(boundaryType: .initial, boundaryKey: boundary))
+            expectedFileData.append(Data((
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(crlf)" +
+                    "Content-Type: image/png\(crlf)\(crlf)").utf8
+            ))
+            expectedFileData.append(unicornImageData.prefix(Int(expectedFileStreamUploadLength)))
+            expectedFileData.append(BoundaryGenerator.boundaryData(boundaryType: .final, boundaryKey: boundary))
+
+            XCTAssertEqual(destinationFileData, expectedFileData, "file data should match expected file data")
+        } else {
+            XCTFail("file data should not be nil")
+        }
+    }
+
     func testWritingEncodedStreamBodyPartToDisk() {
         // Given
         let fileURL = temporaryFileURL

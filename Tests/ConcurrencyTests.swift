@@ -127,14 +127,14 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         XCTAssertTrue(request.isCancelled, "Underlying DataRequest should be cancelled.")
     }
 
-    func testThatDataTaskIsAutomaticallyCancelledInTaskWhenEnabled() async {
+    func testThatDataTaskIsAutomaticallyCancelledInTask() async {
         // Given
         let session = stored(Session())
         let request = session.request(.get)
 
         // When
         let task = Task {
-            await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).result
+            await request.serializingDecodable(TestResponse.self).result
         }
 
         task.cancel()
@@ -146,7 +146,26 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         XCTAssertTrue(request.isCancelled, "Underlying DataRequest should be cancelled.")
     }
 
-    func testThatDataTaskIsAutomaticallyCancelledInTaskGroupWhenEnabled() async {
+    func testThatDataTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
+        // Given
+        let session = stored(Session())
+        let request = session.request(.get)
+
+        // When
+        let task = Task {
+            await request.serializingDecodable(TestResponse.self, automaticallyCancelling: false).result
+        }
+
+        task.cancel()
+        let result = await task.value
+
+        // Then
+        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
+        XCTAssertFalse(request.isCancelled, "Underlying DataRequest should not be cancelled.")
+        XCTAssertTrue(result.isSuccess, "DataRequest should succeed.")
+    }
+
+    func testThatDataTaskIsAutomaticallyCancelledInTaskGroup() async {
         // Given
         let session = stored(Session())
         let request = session.request(.get)
@@ -155,7 +174,7 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         let task = Task {
             await withTaskGroup(of: Result<TestResponse, AFError>.self) { group -> Result<TestResponse, AFError> in
                 group.addTask {
-                    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).result
+                    await request.serializingDecodable(TestResponse.self).result
                 }
 
                 return await group.first(where: { _ in true })!
@@ -169,6 +188,31 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
         XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
         XCTAssertTrue(request.isCancelled, "Underlying DataRequest should be cancelled.")
+    }
+
+    func testThatDataTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
+        // Given
+        let session = stored(Session())
+        let request = session.request(.get)
+
+        // When
+        let task = Task {
+            await withTaskGroup(of: Result<TestResponse, AFError>.self) { group -> Result<TestResponse, AFError> in
+                group.addTask {
+                    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: false).result
+                }
+
+                return await group.first(where: { _ in true })!
+            }
+        }
+
+        task.cancel()
+        let result = await task.value
+
+        // Then
+        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
+        XCTAssertFalse(request.isCancelled, "Underlying DataRequest should not be cancelled.")
+        XCTAssertTrue(result.isSuccess, "DataRequest should succeed.")
     }
 }
 
@@ -282,14 +326,14 @@ final class DownloadConcurrencyTests: BaseTestCase {
         XCTAssertTrue(response.error?.isExplicitlyCancelledError == true)
     }
 
-    func testThatDownloadTaskIsAutomaticallyCancelledInTaskWhenEnabled() async {
+    func testThatDownloadTaskIsAutomaticallyCancelledInTask() async {
         // Given
         let session = stored(Session())
         let request = session.download(.get)
 
         // When
         let task = Task {
-            await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).result
+            await request.serializingDecodable(TestResponse.self).result
         }
 
         task.cancel()
@@ -301,7 +345,26 @@ final class DownloadConcurrencyTests: BaseTestCase {
         XCTAssertTrue(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
     }
 
-    func testThatDownloadTaskIsAutomaticallyCancelledInTaskGroupWhenEnabled() async {
+    func testThatDownloadTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
+        // Given
+        let session = stored(Session())
+        let request = session.download(.get)
+
+        // When
+        let task = Task {
+            await request.serializingDecodable(TestResponse.self, automaticallyCancelling: false).result
+        }
+
+        task.cancel()
+        let result = await task.value
+
+        // Then
+        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
+        XCTAssertFalse(request.isCancelled, "Underlying DownloadRequest should not be cancelled.")
+        XCTAssertTrue(result.isSuccess, "DownloadRequest should succeed.")
+    }
+
+    func testThatDownloadTaskIsAutomaticallyCancelledInTaskGroup() async {
         // Given
         let session = stored(Session())
         let request = session.download(.get)
@@ -310,7 +373,7 @@ final class DownloadConcurrencyTests: BaseTestCase {
         let task = Task {
             await withTaskGroup(of: Result<TestResponse, AFError>.self) { group -> Result<TestResponse, AFError> in
                 group.addTask {
-                    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: true).result
+                    await request.serializingDecodable(TestResponse.self).result
                 }
 
                 return await group.first(where: { _ in true })!
@@ -324,6 +387,31 @@ final class DownloadConcurrencyTests: BaseTestCase {
         XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
         XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
         XCTAssertTrue(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
+    }
+
+    func testThatDownloadTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
+        // Given
+        let session = stored(Session())
+        let request = session.download(.get)
+
+        // When
+        let task = Task {
+            await withTaskGroup(of: Result<TestResponse, AFError>.self) { group -> Result<TestResponse, AFError> in
+                group.addTask {
+                    await request.serializingDecodable(TestResponse.self, automaticallyCancelling: false).result
+                }
+
+                return await group.first(where: { _ in true })!
+            }
+        }
+
+        task.cancel()
+        let result = await task.value
+
+        // Then
+        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
+        XCTAssertFalse(request.isCancelled, "Underlying DownloadRequest should not be cancelled.")
+        XCTAssertTrue(result.isSuccess, "DownloadRequest should succeed.")
     }
 }
 
@@ -505,13 +593,13 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
         #endif
 
         // Then
-        XCTAssertTrue(values.uploadProgresses.isEmpty)
-        XCTAssertNotNil(values.downloadProgresses.last)
-        XCTAssertTrue(values.downloadProgresses.last?.isFinished == true)
-        XCTAssertNotNil(values.requests.last)
-        XCTAssertNotNil(values.tasks.last)
-        XCTAssertNotNil(values.descriptions.last)
-        XCTAssertTrue(values.response.result.isSuccess)
+        XCTAssertTrue(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
+        XCTAssertNotNil(values.downloadProgresses.last, "downloadProgresses should not be empty")
+        XCTAssertTrue(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")
+        XCTAssertNotNil(values.requests.last, "requests should not be empty")
+        XCTAssertNotNil(values.tasks.last, "tasks should not be empty")
+        XCTAssertNotNil(values.descriptions.last, "descriptions should not be empty")
+        XCTAssertTrue(values.response.result.isSuccess, "request should succeed")
     }
 }
 

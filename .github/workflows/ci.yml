@@ -301,10 +301,9 @@ jobs:
           if not exist .build\x86_64-unknown-windows-msvc\debug\Alamofire.swiftmodule exit 1
   CodeQL:
     name: Analyze with CodeQL
-    runs-on: macOS-12
+    runs-on: macOS-13
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
-      CODEQL_ENABLE_EXPERIMENTAL_FEATURES_SWIFT: true
+      DEVELOPER_DIR: "/Applications/Xcode_14.3.1.app/Contents/Developer"
     timeout-minutes: 10
     steps:
       - name: Clone

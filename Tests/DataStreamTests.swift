@@ -321,7 +321,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertNil(decodingError)
     }
 
-    #if !(os(Linux) || os(Windows) || os(Android))
+    #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
     func testThatDataStreamRequestProducesWorkingInputStream() {
         // Given
         let expect = expectation(description: "stream complete")

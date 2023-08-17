@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if !(os(Linux) || os(Windows) || os(Android))
+#if canImport(Security)
 
 import Alamofire
 import Foundation

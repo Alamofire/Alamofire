@@ -863,13 +863,7 @@ public class Request {
     /// - Returns:           The instance.
     @discardableResult
     public func cURLDescription(calling handler: @escaping (String) -> Void) -> Self {
-        $mutableState.write { mutableState in
-            if mutableState.requests.last != nil {
-                underlyingQueue.async { handler(self.cURLDescription()) }
-            } else {
-                mutableState.cURLHandler = (underlyingQueue, handler)
-            }
-        }
+        cURLDescription(on: underlyingQueue, calling: handler)
 
         return self
     }
@@ -935,12 +929,13 @@ public class Request {
 
     /// Final cleanup step executed when the instance finishes response serialization.
     func cleanup() {
-        delegate?.cleanup(after: self)
         let handlers = $mutableState.finishHandlers
         handlers.forEach { $0() }
         $mutableState.write { state in
             state.finishHandlers.removeAll()
         }
+
+        delegate?.cleanup(after: self)
     }
 }
 
@@ -1315,7 +1310,7 @@ public final class DataStreamRequest: Request {
 
     func didReceive(data: Data) {
         $streamMutableState.write { state in
-            #if !(os(Linux) || os(Windows) || os(Android))
+            #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
             if let stream = state.outputStream {
                 underlyingQueue.async {
                     var bytes = Array(data)
@@ -1356,7 +1351,7 @@ public final class DataStreamRequest: Request {
         return self
     }
 
-    #if !(os(Linux) || os(Windows) || os(Android))
+    #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
     /// Produces an `InputStream` that receives the `Data` received by the instance.
     ///
     /// - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`.
@@ -1554,7 +1549,7 @@ public class DownloadRequest: Request {
     ///
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
     public var resumeData: Data? {
-        #if !(os(Linux) || os(Windows) || os(Android))
+        #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
         return $mutableDownloadState.resumeData ?? error?.downloadResumeData
         #else
         return $mutableDownloadState.resumeData

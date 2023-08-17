@@ -288,8 +288,9 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     }
 
     // MARK: - Tests - Retry
-
-    #if !(os(Linux) || os(Windows) || os(Android)) // URLRequest to /invalid/path is a fatal error.
+  
+    // If we not using swift-corelibs-foundation where URLRequest to /invalid/path is a fatal error.
+    #if !canImport(FoundationNetworking)
     func testThatInterceptorDoesNotRetryWithoutResponse() {
         // Given
         let credential = TestCredential()
