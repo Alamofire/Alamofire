@@ -863,13 +863,7 @@ public class Request {
     /// - Returns:           The instance.
     @discardableResult
     public func cURLDescription(calling handler: @escaping (String) -> Void) -> Self {
-        $mutableState.write { mutableState in
-            if mutableState.requests.last != nil {
-                underlyingQueue.async { handler(self.cURLDescription()) }
-            } else {
-                mutableState.cURLHandler = (underlyingQueue, handler)
-            }
-        }
+        cURLDescription(on: underlyingQueue, calling: handler)
 
         return self
     }
@@ -935,12 +929,13 @@ public class Request {
 
     /// Final cleanup step executed when the instance finishes response serialization.
     func cleanup() {
-        delegate?.cleanup(after: self)
         let handlers = $mutableState.finishHandlers
         handlers.forEach { $0() }
         $mutableState.write { state in
             state.finishHandlers.removeAll()
         }
+
+        delegate?.cleanup(after: self)
     }
 }
 
