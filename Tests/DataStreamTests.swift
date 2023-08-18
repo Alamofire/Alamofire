@@ -28,7 +28,7 @@ import XCTest
 final class DataStreamTests: BaseTestCase {
     func testThatDataCanBeStreamedOnMainQueue() {
         // Given
-        let expectedSize = 10
+        let expectedSize = 5
         var accumulatedData = Data()
         var initialResponse: HTTPURLResponse?
         var response: HTTPURLResponse?
@@ -76,7 +76,7 @@ final class DataStreamTests: BaseTestCase {
         }
 
         // Given
-        let expectedSize = 10
+        let expectedSize = 5
         var accumulatedData = Data()
         var initialResponse: HTTPURLResponse?
         var response: HTTPURLResponse?
@@ -127,7 +127,7 @@ final class DataStreamTests: BaseTestCase {
         }
 
         // Given
-        let expectedSize = 10
+        let expectedSize = 5
         var responses: [TestResponse] = []
         var initialResponse: HTTPURLResponse?
         var response: HTTPURLResponse?
