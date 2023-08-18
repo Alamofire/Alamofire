@@ -288,7 +288,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     }
 
     // MARK: - Tests - Retry
-  
+
     // If we not using swift-corelibs-foundation where URLRequest to /invalid/path is a fatal error.
     #if !canImport(FoundationNetworking)
     func testThatInterceptorDoesNotRetryWithoutResponse() {
