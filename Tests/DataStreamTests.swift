@@ -85,6 +85,7 @@ final class DataStreamTests: BaseTestCase {
         var streamCalled = 0
         let didReceiveResponse = expectation(description: "stream should receive response once")
         let didReceive = expectation(description: "stream should receive once")
+        didReceive.expectedFulfillmentCount = expectedSize
         let didComplete = expectation(description: "stream should complete")
 
         // When
@@ -114,7 +115,7 @@ final class DataStreamTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(streamCalled, 1)
+        XCTAssertEqual(streamCalled, expectedSize)
         XCTAssertEqual(initialResponse, response)
         XCTAssertEqual(accumulatedData.count, expectedSize)
         XCTAssertTrue(streamOnMain)
