@@ -69,6 +69,9 @@ public protocol EventMonitor {
 
     // MARK: URLSessionDataDelegate Events
 
+    /// Event called during `URLSessionDataDelegate`'s `urlSession(_:dataTask:didReceive:completionHandler:)` method.
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse)
+
     /// Event called during `URLSessionDataDelegate`'s `urlSession(_:dataTask:didReceive:)` method.
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data)
 
@@ -244,6 +247,7 @@ extension EventMonitor {
                            didFinishCollecting metrics: URLSessionTaskMetrics) {}
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {}
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {}
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse) {}
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {}
     public func urlSession(_ session: URLSession,
                            dataTask: URLSessionDataTask,
@@ -378,6 +382,10 @@ public final class CompositeEventMonitor: EventMonitor {
     @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         performEvent { $0.urlSession(session, taskIsWaitingForConnectivity: task) }
+    }
+
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse) {
+        performEvent { $0.urlSession(session, dataTask: dataTask, didReceive: response) }
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
@@ -593,6 +601,9 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:taskIsWaitingForConnectivity:)` event.
     open var taskIsWaitingForConnectivity: ((URLSession, URLSessionTask) -> Void)?
 
+    /// Closure called on the `urlSession(_:dataTask:didReceive:completionHandler:)` event.
+    open var dataTaskDidReceiveResponse: ((URLSession, URLSessionDataTask, URLResponse) -> Void)?
+
     /// Closure that receives the `urlSession(_:dataTask:didReceive:)` event.
     open var dataTaskDidReceiveData: ((URLSession, URLSessionDataTask, Data) -> Void)?
 
@@ -739,6 +750,10 @@ open class ClosureEventMonitor: EventMonitor {
     @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     open func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         taskIsWaitingForConnectivity?(session, task)
+    }
+
+    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse) {
+        dataTaskDidReceiveResponse?(session, dataTask, response)
     }
 
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {

@@ -1080,11 +1080,15 @@ public class DataRequest: Request {
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     public let convertible: URLRequestConvertible
     /// `Data` read from the server so far.
-    public var data: Data? { mutableData }
+    public var data: Data? { $dataMutableState.data }
 
-    /// Protected storage for the `Data` read by the instance.
+    private struct DataMutableState {
+        var data: Data?
+        var initialResponseHandler: (queue: DispatchQueue, handler: (HTTPURLResponse) -> ResponseDisposition)?
+    }
+
     @Protected
-    private var mutableData: Data? = nil
+    private var dataMutableState = DataMutableState()
 
     /// Creates a `DataRequest` using the provided parameters.
     ///
@@ -1117,7 +1121,9 @@ public class DataRequest: Request {
     override func reset() {
         super.reset()
 
-        mutableData = nil
+        $dataMutableState.write { mutableState in
+            mutableState.data = nil
+        }
     }
 
     /// Called when `Data` is received by this instance.
@@ -1126,13 +1132,37 @@ public class DataRequest: Request {
     ///
     /// - Parameter data: The `Data` received.
     func didReceive(data: Data) {
-        if self.data == nil {
-            mutableData = data
-        } else {
-            $mutableData.write { $0?.append(data) }
+        $dataMutableState.write { mutableState in
+            if mutableState.data == nil {
+                mutableState.data = data
+            } else {
+                mutableState.data?.append(data)
+            }
         }
 
         updateDownloadProgress()
+    }
+
+    func didReceiveResponse(_ response: HTTPURLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        $dataMutableState.read { dataMutableState in
+            guard let initialResponseHandler = dataMutableState.initialResponseHandler else {
+                underlyingQueue.async { completionHandler(.allow) }
+                return
+            }
+
+            initialResponseHandler.queue.async {
+                let disposition = initialResponseHandler.handler(response)
+                if disposition == .cancel {
+                    self.$mutableState.write { mutableState in
+                        mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+                    }
+                }
+
+                self.underlyingQueue.async {
+                    completionHandler(disposition.sessionDisposition)
+                }
+            }
+        }
     }
 
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
@@ -1175,6 +1205,28 @@ public class DataRequest: Request {
         }
 
         $validators.write { $0.append(validator) }
+
+        return self
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func onResponse(on queue: DispatchQueue = .main,
+                           perform handler: @escaping (HTTPURLResponse) -> ResponseDisposition) -> Self {
+        $dataMutableState.write { mutableState in
+            mutableState.initialResponseHandler = (queue, handler)
+        }
+
+        return self
+    }
+
+    @discardableResult
+    public func onResponse(on queue: DispatchQueue = .main,
+                           perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
+        onResponse(on: queue) { response in
+            handler(response)
+            return .allow
+        }
 
         return self
     }
@@ -1254,6 +1306,8 @@ public final class DataStreamRequest: Request {
         var numberOfExecutingStreams = 0
         /// Completion calls enqueued while streams are still executing.
         var enqueuedCompletionEvents: [() -> Void] = []
+
+        var initialResponseHandler: (queue: DispatchQueue, handler: (HTTPURLResponse) -> ResponseDisposition)?
     }
 
     @Protected
@@ -1324,6 +1378,28 @@ public final class DataStreamRequest: Request {
         }
     }
 
+    func didReceiveResponse(_ response: HTTPURLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        $streamMutableState.read { dataMutableState in
+            guard let initialResponseHandler = dataMutableState.initialResponseHandler else {
+                underlyingQueue.async { completionHandler(.allow) }
+                return
+            }
+
+            initialResponseHandler.queue.async {
+                let disposition = initialResponseHandler.handler(response)
+                if disposition == .cancel {
+                    self.$mutableState.write { mutableState in
+                        mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+                    }
+                }
+
+                self.underlyingQueue.async {
+                    completionHandler(disposition.sessionDisposition)
+                }
+            }
+        }
+    }
+
     /// Validates the `URLRequest` and `HTTPURLResponse` received for the instance using the provided `Validation` closure.
     ///
     /// - Parameter validation: `Validation` closure used to validate the request and response.
@@ -1375,6 +1451,26 @@ public final class DataStreamRequest: Request {
         return inputStream
     }
     #endif
+
+    @_disfavoredOverload
+    @discardableResult
+    public func onResponse(on queue: DispatchQueue = .main, perform handler: @escaping (HTTPURLResponse) -> ResponseDisposition) -> Self {
+        $streamMutableState.write { mutableState in
+            mutableState.initialResponseHandler = (queue, handler)
+        }
+
+        return self
+    }
+
+    @discardableResult
+    public func onResponse(on queue: DispatchQueue = .main, perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
+        onResponse(on: queue) { response in
+            handler(response)
+            return .allow
+        }
+
+        return self
+    }
 
     func capturingError(from closure: () throws -> Void) {
         do {
@@ -1905,3 +2001,16 @@ extension UploadRequest.Uploadable: UploadableConvertible {
 
 /// A type that can be converted to an upload, whether from an `UploadRequest.Uploadable` or `URLRequestConvertible`.
 public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible {}
+
+public enum ResponseDisposition {
+    case allow
+    case cancel
+    case end
+
+    var sessionDisposition: URLSession.ResponseDisposition {
+        switch self {
+        case .allow: return .allow
+        case .cancel, .end: return .cancel
+        }
+    }
+}

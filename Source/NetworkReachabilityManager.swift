@@ -194,7 +194,8 @@ open class NetworkReachabilityManager {
                 let description = weakManager.manager?.flags?.readableDescription ?? "nil"
 
                 return Unmanaged.passRetained(description as CFString)
-            })
+            }
+        )
         let callback: SCNetworkReachabilityCallBack = { _, flags, info in
             guard let info = info else { return }
 
