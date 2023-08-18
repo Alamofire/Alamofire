@@ -1223,7 +1223,7 @@ public class DataRequest: Request {
     @discardableResult
     public func onResponse(on queue: DispatchQueue = .main,
                            perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
-        onResponse(on: queue) { response in
+        onResponse(on: queue) { response -> ResponseDisposition in
             handler(response)
             return .allow
         }
@@ -1464,7 +1464,7 @@ public final class DataStreamRequest: Request {
 
     @discardableResult
     public func onResponse(on queue: DispatchQueue = .main, perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
-        onResponse(on: queue) { response in
+        onResponse(on: queue) { response -> ResponseDisposition in
             handler(response)
             return .allow
         }
