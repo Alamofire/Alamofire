@@ -35,10 +35,6 @@ final class DataRequestConcurrencyTests: BaseTestCase {
 
         // When
         let value = try await session.request(.get)
-            .onResponse { response in
-                debugPrint(response)
-                return .cancel
-            }
             .serializingResponse(using: .data)
             .value
 
