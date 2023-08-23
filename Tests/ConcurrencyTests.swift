@@ -565,6 +565,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
     }
 }
 
+#if !canImport(FoundationNetworking) // Avoid when using swift-corelibs-foundation
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class UploadConcurrencyTests: BaseTestCase {
     func testThatDelayedUploadStreamResultsInMultipleProgressValues() async throws {
@@ -652,6 +653,7 @@ final class UploadConcurrencyTests: BaseTestCase {
         XCTAssertEqual(response?.value?.bytes, baseData.count * count)
     }
 }
+#endif
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class ClosureAPIConcurrencyTests: BaseTestCase {
