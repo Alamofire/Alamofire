@@ -566,6 +566,94 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+final class UploadConcurrencyTests: BaseTestCase {
+    func testThatDelayedUploadStreamResultsInMultipleProgressValues() async throws {
+        // Given
+        let count = 75
+        let baseString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+        let baseData = Data(baseString.utf8)
+        var request = Endpoint.upload.urlRequest
+        request.headers.add(name: "Content-Length", value: "\(baseData.count * count)")
+        let expectation = expectation(description: "Bytes upload progress should be reported: \(request.url!)")
+
+        var uploadProgressValues: [Double] = []
+        var downloadProgressValues: [Double] = []
+
+        var response: DataResponse<UploadResponse, AFError>?
+
+        var inputStream: InputStream!
+        var outputStream: OutputStream!
+        Stream.getBoundStreams(withBufferSize: baseData.count, inputStream: &inputStream, outputStream: &outputStream)
+        CFWriteStreamSetDispatchQueue(outputStream, .main)
+        outputStream.open()
+
+        // When
+        AF.upload(inputStream, with: request)
+            .uploadProgress { progress in
+                uploadProgressValues.append(progress.fractionCompleted)
+            }
+            .downloadProgress { progress in
+                downloadProgressValues.append(progress.fractionCompleted)
+            }
+            .responseDecodable(of: UploadResponse.self) { resp in
+                response = resp
+                expectation.fulfill()
+                inputStream.close()
+            }
+
+        func sendData() {
+            baseData.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+                let bytesStreamed = outputStream.write(pointer.baseAddress!, maxLength: baseData.count)
+                switch bytesStreamed {
+                case baseData.count:
+                    // Successfully sent.
+                    break
+                case 0:
+                    XCTFail("outputStream somehow reached end")
+                case -1:
+                    if let streamError = outputStream.streamError {
+                        XCTFail("outputStream.write failed with error: \(streamError)")
+                    } else {
+                        XCTFail("outputStream.write failed with unknown error")
+                    }
+                default:
+                    XCTFail("outputStream failed to send \(baseData.count) bytes, sent \(bytesStreamed) instead.")
+                }
+            }
+        }
+
+        for _ in 0..<count {
+            sendData()
+
+            try await Task.sleep(nanoseconds: 3 * 1_000_000) // milliseconds
+        }
+
+        outputStream.close()
+
+        await fulfillment(of: [expectation], timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+
+        for (progress, nextProgress) in zip(uploadProgressValues, uploadProgressValues.dropFirst()) {
+            XCTAssertGreaterThanOrEqual(nextProgress, progress)
+        }
+
+        XCTAssertGreaterThan(uploadProgressValues.count, 1, "there should more than 1 uploadProgressValues")
+
+        for (progress, nextProgress) in zip(downloadProgressValues, downloadProgressValues.dropFirst()) {
+            XCTAssertGreaterThanOrEqual(nextProgress, progress)
+        }
+
+        XCTAssertEqual(downloadProgressValues.last, 1.0, "last item in downloadProgressValues should equal 1.0")
+        XCTAssertEqual(response?.value?.bytes, baseData.count * count)
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class ClosureAPIConcurrencyTests: BaseTestCase {
     func testThatDownloadProgressStreamReturnsProgress() async {
         // Given
