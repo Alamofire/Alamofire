@@ -77,6 +77,7 @@ struct Endpoint {
         case responseHeaders
         case status(Int)
         case stream(count: Int)
+        case upload
         case xml
 
         var string: String {
@@ -117,6 +118,8 @@ struct Endpoint {
                 return "/status/\(code)"
             case let .stream(count):
                 return "/stream/\(count)"
+            case .upload:
+                return "/upload"
             case .xml:
                 return "/xml"
             }
@@ -216,6 +219,8 @@ struct Endpoint {
     static func stream(_ count: Int) -> Endpoint {
         Endpoint(path: .stream(count: count))
     }
+
+    static let upload: Endpoint = .init(path: .upload, method: .post, headers: [.contentType("application/octet-stream")])
 
     static var xml: Endpoint {
         Endpoint(path: .xml, headers: [.contentType("application/xml")])
@@ -405,4 +410,8 @@ struct TestParameters: Encodable {
     static let `default` = TestParameters(property: "property")
 
     let property: String
+}
+
+struct UploadResponse: Decodable {
+    let bytes: Int
 }
