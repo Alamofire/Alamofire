@@ -565,7 +565,9 @@ final class DataStreamConcurrencyTests: BaseTestCase {
     }
 }
 
-#if !canImport(FoundationNetworking) // Avoid when using swift-corelibs-foundation
+// Avoid when using swift-corelibs-foundation.
+// Older Xcodes don't have async fulfillment.
+#if !canImport(FoundationNetworking) && swift(>=5.7)
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class UploadConcurrencyTests: BaseTestCase {
     func testThatDelayedUploadStreamResultsInMultipleProgressValues() async throws {
