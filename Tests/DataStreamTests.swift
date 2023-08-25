@@ -40,7 +40,7 @@ final class DataStreamTests: BaseTestCase {
 
         // When
         AF.streamRequest(.bytes(expectedSize))
-            .onResponse { response in
+            .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
             }
@@ -90,7 +90,7 @@ final class DataStreamTests: BaseTestCase {
 
         // When
         AF.streamRequest(.chunked(expectedSize))
-            .onResponse { response in
+            .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
             }
@@ -142,7 +142,7 @@ final class DataStreamTests: BaseTestCase {
 
         // When
         AF.streamRequest(.payloads(expectedSize))
-            .onResponse { response in
+            .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
             }
@@ -190,7 +190,7 @@ final class DataStreamTests: BaseTestCase {
 
         // When
         AF.streamRequest(.bytes(expectedSize))
-            .onResponse { response in
+            .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
             }

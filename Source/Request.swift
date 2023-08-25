@@ -1084,7 +1084,9 @@ public class DataRequest: Request {
 
     private struct DataMutableState {
         var data: Data?
-        var initialResponseHandler: (queue: DispatchQueue, handler: (HTTPURLResponse) -> ResponseDisposition)?
+        var httpResponseHandler: (queue: DispatchQueue,
+                                  handler: (_ response: HTTPURLResponse,
+                                            _ completionHandler: @escaping (ResponseDisposition) -> Void) -> Void)?
     }
 
     @Protected
@@ -1145,21 +1147,22 @@ public class DataRequest: Request {
 
     func didReceiveResponse(_ response: HTTPURLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         $dataMutableState.read { dataMutableState in
-            guard let initialResponseHandler = dataMutableState.initialResponseHandler else {
+            guard let httpResponseHandler = dataMutableState.httpResponseHandler else {
                 underlyingQueue.async { completionHandler(.allow) }
                 return
             }
 
-            initialResponseHandler.queue.async {
-                let disposition = initialResponseHandler.handler(response)
-                if disposition == .cancel {
-                    self.$mutableState.write { mutableState in
-                        mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+            httpResponseHandler.queue.async {
+                httpResponseHandler.handler(response) { disposition in
+                    if disposition == .cancel {
+                        self.$mutableState.write { mutableState in
+                            mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+                        }
                     }
-                }
 
-                self.underlyingQueue.async {
-                    completionHandler(disposition.sessionDisposition)
+                    self.underlyingQueue.async {
+                        completionHandler(disposition.sessionDisposition)
+                    }
                 }
             }
         }
@@ -1209,23 +1212,25 @@ public class DataRequest: Request {
         return self
     }
 
-    @_disfavoredOverload
     @discardableResult
-    public func onResponse(on queue: DispatchQueue = .main,
-                           perform handler: @escaping (HTTPURLResponse) -> ResponseDisposition) -> Self {
+    public func onHTTPResponse(
+        on queue: DispatchQueue = .main,
+        perform handler: @escaping (_ response: HTTPURLResponse,
+                                    _ completionHandler: @escaping (ResponseDisposition) -> Void) -> Void
+    ) -> Self {
         $dataMutableState.write { mutableState in
-            mutableState.initialResponseHandler = (queue, handler)
+            mutableState.httpResponseHandler = (queue, handler)
         }
 
         return self
     }
 
     @discardableResult
-    public func onResponse(on queue: DispatchQueue = .main,
-                           perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
-        onResponse(on: queue) { response -> ResponseDisposition in
+    public func onHTTPResponse(on queue: DispatchQueue = .main,
+                               perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
+        onHTTPResponse(on: queue) { response, completionHandler in
             handler(response)
-            return .allow
+            completionHandler(.allow)
         }
 
         return self
@@ -1306,8 +1311,10 @@ public final class DataStreamRequest: Request {
         var numberOfExecutingStreams = 0
         /// Completion calls enqueued while streams are still executing.
         var enqueuedCompletionEvents: [() -> Void] = []
-
-        var initialResponseHandler: (queue: DispatchQueue, handler: (HTTPURLResponse) -> ResponseDisposition)?
+        /// Handler for any `HTTPURLResponse`s received.
+        var httpResponseHandler: (queue: DispatchQueue,
+                                  handler: (_ response: HTTPURLResponse,
+                                            _ completionHandler: @escaping (ResponseDisposition) -> Void) -> Void)?
     }
 
     @Protected
@@ -1380,21 +1387,22 @@ public final class DataStreamRequest: Request {
 
     func didReceiveResponse(_ response: HTTPURLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         $streamMutableState.read { dataMutableState in
-            guard let initialResponseHandler = dataMutableState.initialResponseHandler else {
+            guard let httpResponseHandler = dataMutableState.httpResponseHandler else {
                 underlyingQueue.async { completionHandler(.allow) }
                 return
             }
 
-            initialResponseHandler.queue.async {
-                let disposition = initialResponseHandler.handler(response)
-                if disposition == .cancel {
-                    self.$mutableState.write { mutableState in
-                        mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+            httpResponseHandler.queue.async {
+                httpResponseHandler.handler(response) { disposition in
+                    if disposition == .cancel {
+                        self.$mutableState.write { mutableState in
+                            mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+                        }
                     }
-                }
 
-                self.underlyingQueue.async {
-                    completionHandler(disposition.sessionDisposition)
+                    self.underlyingQueue.async {
+                        completionHandler(disposition.sessionDisposition)
+                    }
                 }
             }
         }
@@ -1452,21 +1460,25 @@ public final class DataStreamRequest: Request {
     }
     #endif
 
-    @_disfavoredOverload
     @discardableResult
-    public func onResponse(on queue: DispatchQueue = .main, perform handler: @escaping (HTTPURLResponse) -> ResponseDisposition) -> Self {
+    public func onHTTPResponse(
+        on queue: DispatchQueue = .main,
+        perform handler: @escaping (_ response: HTTPURLResponse,
+                                    _ completionHandler: @escaping (ResponseDisposition) -> Void) -> Void
+    ) -> Self {
         $streamMutableState.write { mutableState in
-            mutableState.initialResponseHandler = (queue, handler)
+            mutableState.httpResponseHandler = (queue, handler)
         }
 
         return self
     }
 
     @discardableResult
-    public func onResponse(on queue: DispatchQueue = .main, perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
-        onResponse(on: queue) { response -> ResponseDisposition in
+    public func onHTTPResponse(on queue: DispatchQueue = .main,
+                               perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
+        onHTTPResponse(on: queue) { response, completionHandler in
             handler(response)
-            return .allow
+            completionHandler(.allow)
         }
 
         return self

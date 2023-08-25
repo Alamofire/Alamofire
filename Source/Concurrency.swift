@@ -95,9 +95,9 @@ extension Request {
         }
     }
 
-    private func stream<T>(of type: T.Type = T.self,
-                           bufferingPolicy: StreamOf<T>.BufferingPolicy = .unbounded,
-                           yielder: @escaping (StreamOf<T>.Continuation) -> Void) -> StreamOf<T> {
+    fileprivate func stream<T>(of type: T.Type = T.self,
+                               bufferingPolicy: StreamOf<T>.BufferingPolicy = .unbounded,
+                               yielder: @escaping (StreamOf<T>.Continuation) -> Void) -> StreamOf<T> {
         StreamOf<T>(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             yielder(continuation)
             // Must come after serializers run in order to catch retry progress.
@@ -168,6 +168,36 @@ public struct DataTask<Value> {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension DataRequest {
+    public func httpResponses(bufferingPolicy: StreamOf<HTTPURLResponse>.BufferingPolicy = .unbounded) -> StreamOf<HTTPURLResponse> {
+        stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
+            onHTTPResponse(on: underlyingQueue) { response in
+                continuation.yield(response)
+            }
+        }
+    }
+
+    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> ResponseDisposition) -> Self {
+        onHTTPResponse { response, completionHandler in
+            Task {
+                let disposition = await handler(response)
+                completionHandler(disposition)
+            }
+        }
+
+        return self
+    }
+
+    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> Void) -> Self {
+        onHTTPResponse { response, completionHandler in
+            Task {
+                await handler(response)
+                completionHandler(.allow)
+            }
+        }
+
+        return self
+    }
+
     /// Creates a `DataTask` to `await` a `Data` value.
     ///
     /// - Parameters:
@@ -625,6 +655,36 @@ public struct DataStreamTask {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension DataStreamRequest {
+    public func httpResponses(bufferingPolicy: StreamOf<HTTPURLResponse>.BufferingPolicy = .unbounded) -> StreamOf<HTTPURLResponse> {
+        stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
+            onHTTPResponse(on: underlyingQueue) { response in
+                continuation.yield(response)
+            }
+        }
+    }
+
+    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> ResponseDisposition) -> Self {
+        onHTTPResponse { response, completionHandler in
+            Task {
+                let disposition = await handler(response)
+                completionHandler(disposition)
+            }
+        }
+
+        return self
+    }
+
+    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> Void) -> Self {
+        onHTTPResponse { response, completionHandler in
+            Task {
+                await handler(response)
+                completionHandler(.allow)
+            }
+        }
+
+        return self
+    }
+
     /// Creates a `DataStreamTask` used to `await` streams of serialized values.
     ///
     /// - Returns: The `DataStreamTask`.

@@ -573,6 +573,7 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
 
         // When
         let request = session.request(.get)
+        async let httpResponses = request.httpResponses().collect()
         async let uploadProgress = request.uploadProgress().collect()
         async let downloadProgress = request.downloadProgress().collect()
         async let requests = request.urlRequests().collect()
@@ -580,7 +581,8 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
         async let descriptions = request.cURLDescriptions().collect()
         async let response = request.serializingDecodable(TestResponse.self).response
 
-        let values: (uploadProgresses: [Progress],
+        let values: (httpResponses: [HTTPURLResponse],
+                     uploadProgresses: [Progress],
                      downloadProgresses: [Progress],
                      requests: [URLRequest],
                      tasks: [URLSessionTask],
@@ -589,10 +591,11 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
         #if swift(>=5.10)
         values = try! await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)
         #else
-        values = await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)
+        values = await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
         #endif
 
         // Then
+        XCTAssertTrue(values.httpResponses.count == 1, "httpResponses should have one response")
         XCTAssertTrue(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
         XCTAssertNotNil(values.downloadProgresses.last, "downloadProgresses should not be empty")
         XCTAssertTrue(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")
