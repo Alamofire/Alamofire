@@ -412,13 +412,6 @@ open class MultipartFormData {
 
     public enum ContentHeaderEncoding: String {
         case utf8 = "UTF-8"
-
-        var stringEncoding: String.Encoding {
-            switch self {
-            case .utf8:
-                return .utf8
-            }
-        }
     }
 
     // MARK: - Private - Body Part Encoding
