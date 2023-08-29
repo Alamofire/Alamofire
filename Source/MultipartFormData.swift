@@ -568,17 +568,12 @@ open class MultipartFormData {
 
         if let fileName = fileName {
             let encodingPrefix: String
-            let fileNameEncoded: String
             if let encoding = encoding {
                 encodingPrefix = "*=\(encoding.rawValue)"
-                fileNameEncoded = String(
-                    describing: fileName.cString(using: encoding.stringEncoding)
-                )
             } else {
                 encodingPrefix = "="
-                fileNameEncoded = fileName
             }
-            disposition += "; filename\(encodingPrefix)\"\(fileNameEncoded)\""
+            disposition += "; filename\(encodingPrefix)\"\(fileName)\""
         }
 
         var headers: HTTPHeaders = [.contentDisposition(disposition)]
