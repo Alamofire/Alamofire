@@ -168,6 +168,11 @@ public struct DataTask<Value> {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension DataRequest {
+    /// Creates a `StreamOf<HTTPURLResponse>` for the instance's responses.
+    ///
+    /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
+    ///
+    /// - Returns:                   The `StreamOf<HTTPURLResponse>`.
     public func httpResponses(bufferingPolicy: StreamOf<HTTPURLResponse>.BufferingPolicy = .unbounded) -> StreamOf<HTTPURLResponse> {
         stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             onHTTPResponse(on: underlyingQueue) { response in
@@ -176,8 +181,25 @@ extension DataRequest {
         }
     }
 
-    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> ResponseDisposition) -> Self {
-        onHTTPResponse { response, completionHandler in
+    /// Sets an async closure returning a `Request.ResponseDisposition`, called whenever the `DataRequest` produces an
+    /// `HTTPURLResponse`.
+    ///
+    /// - Note: Most requests will only produce a single response for each outgoing attempt (initial + retries).
+    ///         However, some types of response may trigger multiple `HTTPURLResponse`s, such as multipart streams,
+    ///         where responses after the first will contain the part headers.
+    ///
+    /// - Parameters:
+    ///   - handler: Async closure executed when a new `HTTPURLResponse` is received and returning a
+    ///              `ResponseDisposition` value. This value determines whether to continue the request or cancel it as
+    ///              if `cancel()` had been called on the instance. Note, this closure is called on an arbitrary thread,
+    ///              so any synchronous calls in it will execute in that context.
+    ///
+    /// - Returns:   The instance.
+    @discardableResult
+    public func onHTTPResponse(
+        perform handler: @escaping @Sendable (_ response: HTTPURLResponse) async -> ResponseDisposition
+    ) -> Self {
+        onHTTPResponse(on: underlyingQueue) { response, completionHandler in
             Task {
                 let disposition = await handler(response)
                 completionHandler(disposition)
@@ -187,12 +209,22 @@ extension DataRequest {
         return self
     }
 
-    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> Void) -> Self {
-        onHTTPResponse { response, completionHandler in
-            Task {
-                await handler(response)
-                completionHandler(.allow)
-            }
+    /// Sets an async closure called whenever the `DataRequest` produces an `HTTPURLResponse`.
+    ///
+    /// - Note: Most requests will only produce a single response for each outgoing attempt (initial + retries).
+    ///         However, some types of response may trigger multiple `HTTPURLResponse`s, such as multipart streams,
+    ///         where responses after the first will contain the part headers.
+    ///
+    /// - Parameters:
+    ///   - handler: Async closure executed when a new `HTTPURLResponse` is received. Note, this closure is called on an
+    ///              arbitrary thread, so any synchronous calls in it will execute in that context.
+    ///
+    /// - Returns:   The instance.
+    @discardableResult
+    public func onHTTPResponse(perform handler: @escaping @Sendable (_ response: HTTPURLResponse) async -> Void) -> Self {
+        onHTTPResponse { response in
+            await handler(response)
+            return .allow
         }
 
         return self
@@ -655,6 +687,11 @@ public struct DataStreamTask {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension DataStreamRequest {
+    /// Creates a `StreamOf<HTTPURLResponse>` for the instance's responses.
+    ///
+    /// - Parameter bufferingPolicy: `BufferingPolicy` that determines the stream's buffering behavior.`.unbounded` by default.
+    ///
+    /// - Returns:                   The `StreamOf<HTTPURLResponse>`.
     public func httpResponses(bufferingPolicy: StreamOf<HTTPURLResponse>.BufferingPolicy = .unbounded) -> StreamOf<HTTPURLResponse> {
         stream(bufferingPolicy: bufferingPolicy) { [unowned self] continuation in
             onHTTPResponse(on: underlyingQueue) { response in
@@ -663,6 +700,21 @@ extension DataStreamRequest {
         }
     }
 
+    /// Sets an async closure returning a `Request.ResponseDisposition`, called whenever the `DataStreamRequest`
+    /// produces an `HTTPURLResponse`.
+    ///
+    /// - Note: Most requests will only produce a single response for each outgoing attempt (initial + retries).
+    ///         However, some types of response may trigger multiple `HTTPURLResponse`s, such as multipart streams,
+    ///         where responses after the first will contain the part headers.
+    ///
+    /// - Parameters:
+    ///   - handler: Async closure executed when a new `HTTPURLResponse` is received and returning a
+    ///              `ResponseDisposition` value. This value determines whether to continue the request or cancel it as
+    ///              if `cancel()` had been called on the instance. Note, this closure is called on an arbitrary thread,
+    ///              so any synchronous calls in it will execute in that context.
+    ///
+    /// - Returns:   The instance.
+    @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> ResponseDisposition) -> Self {
         onHTTPResponse { response, completionHandler in
             Task {
@@ -674,12 +726,22 @@ extension DataStreamRequest {
         return self
     }
 
+    /// Sets an async closure called whenever the `DataStreamRequest` produces an `HTTPURLResponse`.
+    ///
+    /// - Note: Most requests will only produce a single response for each outgoing attempt (initial + retries).
+    ///         However, some types of response may trigger multiple `HTTPURLResponse`s, such as multipart streams,
+    ///         where responses after the first will contain the part headers.
+    ///
+    /// - Parameters:
+    ///   - handler: Async closure executed when a new `HTTPURLResponse` is received. Note, this closure is called on an
+    ///              arbitrary thread, so any synchronous calls in it will execute in that context.
+    ///
+    /// - Returns:   The instance.
+    @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> Void) -> Self {
-        onHTTPResponse { response, completionHandler in
-            Task {
-                await handler(response)
-                completionHandler(.allow)
-            }
+        onHTTPResponse { response in
+            await handler(response)
+            return .allow
         }
 
         return self

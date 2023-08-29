@@ -939,6 +939,23 @@ public class Request {
     }
 }
 
+extension Request {
+    /// Type indicating how a `DataRequest` or `DataStreamRequest` should proceed after receiving an `HTTPURLResponse`.
+    public enum ResponseDisposition {
+        /// Allow the request to continue normally.
+        case allow
+        /// Cancel the request, similar to calling `cancel()`.
+        case cancel
+
+        var sessionDisposition: URLSession.ResponseDisposition {
+            switch self {
+            case .allow: return .allow
+            case .cancel: return .cancel
+            }
+        }
+    }
+}
+
 // MARK: - Protocol Conformances
 
 extension Request: Equatable {
@@ -1212,6 +1229,15 @@ public class DataRequest: Request {
         return self
     }
 
+    /// Sets a closure called whenever the `DataRequest` produces an `HTTPURLResponse` and providing a completion
+    /// handler to return a `ResponseDisposition` value.
+    ///
+    /// - Parameters:
+    ///   - queue:   `DispatchQueue` on which the closure will be called. `.main` by default.
+    ///   - handler: Closure called when the instance produces an `HTTPURLResponse`. The `completionHandler` provided
+    ///              MUST be called, otherwise the request will never complete.
+    ///
+    /// - Returns:   The instance.
     @discardableResult
     public func onHTTPResponse(
         on queue: DispatchQueue = .main,
@@ -1225,6 +1251,13 @@ public class DataRequest: Request {
         return self
     }
 
+    /// Sets a closure called whenever the `DataRequest` produces an `HTTPURLResponse`.
+    ///
+    /// - Parameters:
+    ///   - queue:   `DispatchQueue` on which the closure will be called. `.main` by default.
+    ///   - handler: Closure called when the instance produces an `HTTPURLResponse`.
+    ///
+    /// - Returns:   The instance.
     @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main,
                                perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
@@ -1460,6 +1493,15 @@ public final class DataStreamRequest: Request {
     }
     #endif
 
+    /// Sets a closure called whenever the `DataRequest` produces an `HTTPURLResponse` and providing a completion
+    /// handler to return a `ResponseDisposition` value.
+    ///
+    /// - Parameters:
+    ///   - queue:   `DispatchQueue` on which the closure will be called. `.main` by default.
+    ///   - handler: Closure called when the instance produces an `HTTPURLResponse`. The `completionHandler` provided
+    ///              MUST be called, otherwise the request will never complete.
+    ///
+    /// - Returns:   The instance.
     @discardableResult
     public func onHTTPResponse(
         on queue: DispatchQueue = .main,
@@ -1473,6 +1515,13 @@ public final class DataStreamRequest: Request {
         return self
     }
 
+    /// Sets a closure called whenever the `DataRequest` produces an `HTTPURLResponse`.
+    ///
+    /// - Parameters:
+    ///   - queue:   `DispatchQueue` on which the closure will be called. `.main` by default.
+    ///   - handler: Closure called when the instance produces an `HTTPURLResponse`.
+    ///
+    /// - Returns:   The instance.
     @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main,
                                perform handler: @escaping (HTTPURLResponse) -> Void) -> Self {
@@ -2013,16 +2062,3 @@ extension UploadRequest.Uploadable: UploadableConvertible {
 
 /// A type that can be converted to an upload, whether from an `UploadRequest.Uploadable` or `URLRequestConvertible`.
 public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible {}
-
-public enum ResponseDisposition {
-    case allow
-    case cancel
-    case end
-
-    var sessionDisposition: URLSession.ResponseDisposition {
-        switch self {
-        case .allow: return .allow
-        case .cancel, .end: return .cancel
-        }
-    }
-}
