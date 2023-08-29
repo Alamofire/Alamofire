@@ -183,13 +183,18 @@ open class MultipartFormData {
     /// - Parameters:
     ///   - fileURL: `URL` of the file whose content will be encoded into the instance.
     ///   - name:    Name to associate with the file content in the `Content-Disposition` HTTP header.
-    public func append(_ fileURL: URL, withName name: String) {
+    ///   - encoding: Encoding for the `Content-Type` HTTP header.
+    public func append(
+        _ fileURL: URL,
+        withName name: String,
+        encoding: ContentHeaderEncoding? = nil
+    ) {
         let fileName = fileURL.lastPathComponent
         let pathExtension = fileURL.pathExtension
 
         if !fileName.isEmpty && !pathExtension.isEmpty {
             let mime = mimeType(forPathExtension: pathExtension)
-            append(fileURL, withName: name, fileName: fileName, mimeType: mime)
+            append(fileURL, withName: name, fileName: fileName, mimeType: mime, encoding: encoding)
         } else {
             setBodyPartError(withReason: .bodyPartFilenameInvalid(in: fileURL))
         }
@@ -209,6 +214,7 @@ open class MultipartFormData {
     ///   - name:     Name to associate with the file content in the `Content-Disposition` HTTP header.
     ///   - fileName: Filename to associate with the file content in the `Content-Disposition` HTTP header.
     ///   - mimeType: MIME type to associate with the file content in the `Content-Type` HTTP header.
+    ///   - encoding: Encoding for the `Content-Type` HTTP header.
     public func append(
         _ fileURL: URL,
         withName name: String,
@@ -405,13 +411,10 @@ open class MultipartFormData {
     // MARK: - Public - Content Header Encoding
 
     public enum ContentHeaderEncoding: String {
-        case iso88591 = "iso-8859-1"
         case utf8 = "UTF-8"
 
         var stringEncoding: String.Encoding {
             switch self {
-            case .iso88591:
-                return .isoLatin1
             case .utf8:
                 return .utf8
             }

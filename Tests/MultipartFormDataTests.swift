@@ -209,6 +209,88 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         }
     }
 
+    func testEncodingFileBodyPartUTF8() {
+        // Given
+        let multipartFormData = MultipartFormData()
+
+        let unicornImageURL = url(forResource: "unicorn", withExtension: "png")
+        multipartFormData.append(
+            unicornImageURL,
+            withName: "unicorn",
+            encoding: .utf8
+        )
+
+        var encodedData: Data?
+
+        // When
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
+
+        // Then
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
+            let boundary = multipartFormData.boundary
+
+            var expectedData = Data()
+            expectedData.append(BoundaryGenerator.boundaryData(boundaryType: .initial, boundaryKey: boundary))
+            expectedData.append(Data((
+                "Content-Disposition: form-data; name=\"unicorn\"; filename*=UTF-8\"unicorn.png\"\(crlf)" +
+                    "Content-Type: image/png\(crlf)\(crlf)").utf8
+            )
+            )
+            expectedData.append(try! Data(contentsOf: unicornImageURL))
+            expectedData.append(BoundaryGenerator.boundaryData(boundaryType: .final, boundaryKey: boundary))
+
+            XCTAssertEqual(encodedData, expectedData, "data should match expected data")
+        }
+    }
+
+    func testEncodingFileBodyPartFileNameMimeTypeUTF8() {
+        // Given
+        let multipartFormData = MultipartFormData()
+
+        let unicornImageURL = url(forResource: "unicorn", withExtension: "png")
+        multipartFormData.append(
+            unicornImageURL,
+            withName: "unicorn",
+            fileName: "unicorn",
+            mimeType: "image/png",
+            encoding: .utf8
+        )
+
+        var encodedData: Data?
+
+        // When
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
+
+        // Then
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
+            let boundary = multipartFormData.boundary
+
+            var expectedData = Data()
+            expectedData.append(BoundaryGenerator.boundaryData(boundaryType: .initial, boundaryKey: boundary))
+            expectedData.append(Data((
+                "Content-Disposition: form-data; name=\"unicorn\"; filename*=UTF-8\"unicorn.png\"\(crlf)" +
+                    "Content-Type: image/png\(crlf)\(crlf)").utf8
+            )
+            )
+            expectedData.append(try! Data(contentsOf: unicornImageURL))
+            expectedData.append(BoundaryGenerator.boundaryData(boundaryType: .final, boundaryKey: boundary))
+
+            XCTAssertEqual(encodedData, expectedData, "data should match expected data")
+        }
+    }
+
     func testEncodingMultipleFileBodyParts() {
         // Given
         let multipartFormData = MultipartFormData()
