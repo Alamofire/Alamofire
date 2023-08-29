@@ -223,6 +223,8 @@ final class DataStreamTests: BaseTestCase {
     func testThatDataCanBeStreamedManyTimes() {
         // Given
         let expectedSize = 1
+        var initialResponse: HTTPURLResponse?
+        let onHTTPResponse = expectation(description: "onHTTPResponse should be called")
         var firstAccumulatedData = Data()
         var firstResponse: HTTPURLResponse?
         var firstStreamOnMain = false
@@ -238,6 +240,10 @@ final class DataStreamTests: BaseTestCase {
 
         // When
         AF.streamRequest(.bytes(expectedSize))
+            .onHTTPResponse { response in
+                initialResponse = response
+                onHTTPResponse.fulfill()
+            }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -269,10 +275,12 @@ final class DataStreamTests: BaseTestCase {
                 }
             }
 
-        wait(for: [firstReceive, firstCompletion], timeout: timeout, enforceOrder: true)
+        wait(for: [onHTTPResponse, firstReceive, firstCompletion], timeout: timeout, enforceOrder: true)
         wait(for: [secondReceive, secondCompletion], timeout: timeout, enforceOrder: true)
 
         // Then
+        XCTAssertEqual(initialResponse, firstResponse)
+        XCTAssertEqual(initialResponse, secondResponse)
         XCTAssertTrue(firstStreamOnMain)
         XCTAssertTrue(firstCompleteOnMain)
         XCTAssertEqual(firstResponse?.statusCode, 200)
@@ -285,6 +293,8 @@ final class DataStreamTests: BaseTestCase {
 
     func testThatDataCanBeStreamedAndDecodedAtTheSameTime() {
         // Given
+        var initialResponse: HTTPURLResponse?
+        let onHTTPResponse = expectation(description: "onHTTPResponse should be called")
         var firstAccumulatedData = Data()
         var firstResponse: HTTPURLResponse?
         var firstStreamOnMain = false
@@ -301,6 +311,10 @@ final class DataStreamTests: BaseTestCase {
 
         // When
         AF.streamRequest(.stream(1))
+            .onHTTPResponse { response in
+                initialResponse = response
+                onHTTPResponse.fulfill()
+            }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -338,6 +352,8 @@ final class DataStreamTests: BaseTestCase {
         wait(for: [secondReceive, secondCompletion], timeout: timeout, enforceOrder: true)
 
         // Then
+        XCTAssertEqual(initialResponse, firstResponse)
+        XCTAssertEqual(initialResponse, secondResponse)
         XCTAssertTrue(firstStreamOnMain)
         XCTAssertTrue(firstCompleteOnMain)
         XCTAssertEqual(firstResponse?.statusCode, 200)
@@ -362,7 +378,8 @@ final class DataStreamTests: BaseTestCase {
                     expect.fulfill()
                 default: break
                 }
-            }.asInputStream()
+            }
+            .asInputStream()
 
         waitForExpectations(timeout: timeout)
 
@@ -518,6 +535,89 @@ final class DataStreamTests: BaseTestCase {
                       error is not explicitly cancelled, instead: \(completion?.error?.localizedDescription ?? "none").
                       response is: \(completion?.response?.description ?? "none").
                       """)
+    }
+
+    func testThatOnHTTPResponseCanContinueStream() {
+        // Given
+        let expectedSize = 5
+        var accumulatedData = Data()
+        var initialResponse: HTTPURLResponse?
+        var response: HTTPURLResponse?
+        var streamOnMain = false
+        var completeOnMain = false
+        let didReceiveResponse = expectation(description: "stream should receive response once")
+        let didReceive = expectation(description: "stream should receive once")
+        let didComplete = expectation(description: "stream should complete")
+
+        // When
+        AF.streamRequest(.bytes(expectedSize))
+            .onHTTPResponse { response, completionHandler in
+                initialResponse = response
+                didReceiveResponse.fulfill()
+                completionHandler(.allow)
+            }
+            .responseStream { stream in
+                switch stream.event {
+                case let .stream(result):
+                    streamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(data):
+                        accumulatedData.append(data)
+                    }
+                    didReceive.fulfill()
+                case let .complete(completion):
+                    completeOnMain = Thread.isMainThread
+                    response = completion.response
+                    didComplete.fulfill()
+                }
+            }
+
+        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertEqual(initialResponse, response)
+        XCTAssertEqual(accumulatedData.count, expectedSize)
+        XCTAssertTrue(streamOnMain)
+        XCTAssertTrue(completeOnMain)
+    }
+
+    func testThatOnHTTPResponseCanCancelStream() {
+        // Given
+        let expectedSize = 5
+        var initialResponse: HTTPURLResponse?
+        var response: HTTPURLResponse?
+        var completion: DataStreamRequest.Completion?
+        var didCompleteOnMain = false
+        let didReceiveResponse = expectation(description: "stream should receive response once")
+        let didComplete = expectation(description: "stream should complete")
+
+        // When
+        AF.streamRequest(.bytes(expectedSize))
+            .onHTTPResponse { response, completionHandler in
+                initialResponse = response
+                didReceiveResponse.fulfill()
+                completionHandler(.cancel)
+            }
+            .responseStream { stream in
+                switch stream.event {
+                case .stream:
+                    XCTFail("should never receive stream in a cancelled request")
+                case let .complete(comp):
+                    didCompleteOnMain = Thread.isMainThread
+                    completion = comp
+                    response = comp.response
+                    didComplete.fulfill()
+                }
+            }
+
+        wait(for: [didReceiveResponse, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertEqual(initialResponse, response)
+        XCTAssertTrue(didCompleteOnMain)
+        XCTAssertTrue(completion?.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled stream should be explicitly cancelled")
     }
 }
 

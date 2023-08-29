@@ -416,7 +416,9 @@ public class Request {
     func didCancel() {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        error = error ?? AFError.explicitlyCancelled
+        $mutableState.write { mutableState in
+            mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+        }
 
         eventMonitor?.requestDidCancel(self)
     }
@@ -1173,6 +1175,7 @@ public class DataRequest: Request {
                 httpResponseHandler.handler(response) { disposition in
                     if disposition == .cancel {
                         self.$mutableState.write { mutableState in
+                            mutableState.state = .cancelled
                             mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
                         }
                     }
@@ -1430,6 +1433,7 @@ public final class DataStreamRequest: Request {
                 httpResponseHandler.handler(response) { disposition in
                     if disposition == .cancel {
                         self.$mutableState.write { mutableState in
+                            mutableState.state = .cancelled
                             mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
                         }
                     }
