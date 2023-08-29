@@ -1238,6 +1238,7 @@ public class DataRequest: Request {
     ///              MUST be called, otherwise the request will never complete.
     ///
     /// - Returns:   The instance.
+    @_disfavoredOverload
     @discardableResult
     public func onHTTPResponse(
         on queue: DispatchQueue = .main,
@@ -1502,6 +1503,7 @@ public final class DataStreamRequest: Request {
     ///              MUST be called, otherwise the request will never complete.
     ///
     /// - Returns:   The instance.
+    @_disfavoredOverload
     @discardableResult
     public func onHTTPResponse(
         on queue: DispatchQueue = .main,

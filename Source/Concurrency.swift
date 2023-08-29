@@ -195,6 +195,7 @@ extension DataRequest {
     ///              so any synchronous calls in it will execute in that context.
     ///
     /// - Returns:   The instance.
+    @_disfavoredOverload
     @discardableResult
     public func onHTTPResponse(
         perform handler: @escaping @Sendable (_ response: HTTPURLResponse) async -> ResponseDisposition
@@ -714,6 +715,7 @@ extension DataStreamRequest {
     ///              so any synchronous calls in it will execute in that context.
     ///
     /// - Returns:   The instance.
+    @_disfavoredOverload
     @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> ResponseDisposition) -> Self {
         onHTTPResponse { response, completionHandler in
