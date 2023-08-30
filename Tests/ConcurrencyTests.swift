@@ -433,7 +433,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertEqual(datas.count, 2)
     }
 
-    #if swift(>=5.8)
+    #if swift(>=5.8) && canImport(Darwin)
     func testThatDataStreamHasAsyncOnHTTPResponse() async {
         // Given
         let session = stored(Session())
