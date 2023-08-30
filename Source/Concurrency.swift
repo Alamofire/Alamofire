@@ -717,8 +717,8 @@ extension DataStreamRequest {
     /// - Returns:   The instance.
     @_disfavoredOverload
     @discardableResult
-    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> ResponseDisposition) -> Self {
-        onHTTPResponse { response, completionHandler in
+    public func onHTTPResponse(perform handler: @escaping @Sendable (HTTPURLResponse) async -> ResponseDisposition) -> Self {
+        onHTTPResponse(on: underlyingQueue) { response, completionHandler in
             Task {
                 let disposition = await handler(response)
                 completionHandler(disposition)
@@ -740,7 +740,7 @@ extension DataStreamRequest {
     ///
     /// - Returns:   The instance.
     @discardableResult
-    public func onHTTPResponse(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (HTTPURLResponse) async -> Void) -> Self {
+    public func onHTTPResponse(perform handler: @escaping @Sendable (HTTPURLResponse) async -> Void) -> Self {
         onHTTPResponse { response in
             await handler(response)
             return .allow
