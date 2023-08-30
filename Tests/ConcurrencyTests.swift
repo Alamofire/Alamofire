@@ -433,6 +433,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertEqual(datas.count, 2)
     }
 
+    #if swift(>=5.8)
     func testThatDataStreamHasAsyncOnHTTPResponse() async {
         // Given
         let session = stored(Session())
@@ -519,6 +520,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertTrue(request.isCancelled, "onHTTPResponse cancelled request isCancelled should be true")
         XCTAssertTrue(request.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled request error should be explicitly cancelled")
     }
+    #endif
 
     func testThatDataStreamTaskCanStreamStrings() async {
         // Given
