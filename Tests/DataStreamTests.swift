@@ -348,7 +348,7 @@ final class DataStreamTests: BaseTestCase {
                 }
             }
 
-        wait(for: [firstReceive, firstCompletion], timeout: timeout, enforceOrder: true)
+        wait(for: [onHTTPResponse, firstReceive, firstCompletion], timeout: timeout, enforceOrder: true)
         wait(for: [secondReceive, secondCompletion], timeout: timeout, enforceOrder: true)
 
         // Then
