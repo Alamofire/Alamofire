@@ -216,8 +216,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: "Xcode_14.3"
+          - xcode: "Xcode_15.0"
             runsOn: firebreak
+            name: "macOS 13, SPM 5.9.0 Test"
+          - xcode: "Xcode_14.3"
+            runsOn: macOS-13
             name: "macOS 13, SPM 5.8.0 Test"
           - xcode: "Xcode_14.2"
             runsOn: macOS-12
