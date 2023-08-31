@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.7.1 Docs
+          Alamofire 5.8.0 Docs
         </a>
          (97% documented)
       </p>
@@ -151,6 +151,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Request/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Request/ResponseDisposition.html">– ResponseDisposition</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Retrier.html">Retrier</a>
@@ -1761,7 +1764,7 @@ the response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serializingData</span><span class="p">(</span><span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serializingData</span><span class="p">(</span><span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
                             <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
                             <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadTask.html">DownloadTask</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span></code></pre>
@@ -1782,7 +1785,7 @@ the response.</p>
                                 <div>
                                   <p><code>Bool</code> determining whether or not the request should be cancelled when the
                        enclosing async context is cancelled. Only applies to <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code>&lsquo;s async
-                       properties. <code>false</code> by default.</p>
+                       properties. <code>true</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1858,7 +1861,7 @@ the response.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">serializingDecodable</span><span class="o">&lt;</span><span class="kt">Value</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">type</span><span class="p">:</span> <span class="kt">Value</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">Value</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
-                                                   <span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+                                                   <span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
                                                    <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
                                                    <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
                                                    <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
@@ -1892,7 +1895,7 @@ the response.</p>
                                 <div>
                                   <p><code>Bool</code> determining whether or not the request should be cancelled when the
                        enclosing async context is cancelled. Only applies to <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code>&lsquo;s async
-                       properties. <code>false</code> by default.</p>
+                       properties. <code>true</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1975,7 +1978,7 @@ the response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serializingDownloadedFileURL</span><span class="p">(</span><span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadTask.html">DownloadTask</a></span><span class="o">&lt;</span><span class="kt">URL</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serializingDownloadedFileURL</span><span class="p">(</span><span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadTask.html">DownloadTask</a></span><span class="o">&lt;</span><span class="kt">URL</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1993,7 +1996,7 @@ the response.</p>
                                 <div>
                                   <p><code>Bool</code> determining whether or not the request should be cancelled when the
                        enclosing async context is cancelled. Only applies to <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code>&lsquo;s async
-                       properties. <code>false</code> by default.</p>
+                       properties. <code>true</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2027,7 +2030,7 @@ the response.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serializingString</span><span class="p">(</span><span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serializingString</span><span class="p">(</span><span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
                               <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
                               <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                               <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
@@ -2049,7 +2052,7 @@ the response.</p>
                                 <div>
                                   <p><code>Bool</code> determining whether or not the request should be cancelled when the
                        enclosing async context is cancelled. Only applies to <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code>&lsquo;s async
-                       properties. <code>false</code> by default.</p>
+                       properties. <code>true</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2135,7 +2138,7 @@ the response.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">serializingDownload</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
-                                                                <span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span>
+                                                                <span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadTask.html">DownloadTask</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -2166,7 +2169,7 @@ the response.</p>
                                 <div>
                                   <p><code>Bool</code> determining whether or not the request should be cancelled when the
                        enclosing async context is cancelled. Only applies to <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code>&lsquo;s async
-                       properties. <code>false</code> by default.</p>
+                       properties. <code>true</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2202,7 +2205,7 @@ instance.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">serializingDownload</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
-                                                                                <span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span>
+                                                                                <span class="n">automaticallyCancelling</span> <span class="nv">shouldAutomaticallyCancel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DownloadTask.html">DownloadTask</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -2234,7 +2237,7 @@ instance.</p>
                                 <div>
                                   <p><code>Bool</code> determining whether or not the request should be cancelled when the
                        enclosing async context is cancelled. Only applies to <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code>&lsquo;s async
-                       properties. <code>false</code> by default.</p>
+                       properties. <code>true</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3268,7 +3271,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-10)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-08-31)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
