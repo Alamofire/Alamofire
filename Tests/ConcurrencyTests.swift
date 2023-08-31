@@ -433,6 +433,95 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertEqual(datas.count, 2)
     }
 
+    #if swift(>=5.8) && canImport(Darwin)
+    func testThatDataStreamHasAsyncOnHTTPResponse() async {
+        // Given
+        let session = stored(Session())
+        let functionCalled = expectation(description: "doNothing called")
+        @Sendable @MainActor func fulfill() async {
+            functionCalled.fulfill()
+        }
+
+        // When
+        let task = session.streamRequest(.payloads(2))
+            .onHTTPResponse { _ in
+                await fulfill()
+            }
+            .streamTask()
+        var datas: [Data] = []
+
+        for await data in task.streamingData().compactMap(\.value) {
+            datas.append(data)
+        }
+
+        await fulfillment(of: [functionCalled], timeout: timeout)
+
+        // Then
+        XCTAssertEqual(datas.count, 2)
+    }
+
+    func testThatDataOnHTTPResponseCanAllow() async {
+        // Given
+        let session = stored(Session())
+        let functionCalled = expectation(description: "doNothing called")
+        @Sendable @MainActor func fulfill() async {
+            functionCalled.fulfill()
+        }
+
+        // When
+        let task = session.streamRequest(.payloads(2))
+            .onHTTPResponse { _ in
+                await fulfill()
+                return .allow
+            }
+            .streamTask()
+        var datas: [Data] = []
+
+        for await data in task.streamingData().compactMap(\.value) {
+            datas.append(data)
+        }
+
+        await fulfillment(of: [functionCalled], timeout: timeout)
+
+        // Then
+        XCTAssertEqual(datas.count, 2)
+    }
+
+    func testThatDataOnHTTPResponseCanCancel() async {
+        // Given
+        let session = stored(Session())
+        var receivedCompletion: DataStreamRequest.Completion?
+        let functionCalled = expectation(description: "doNothing called")
+        @Sendable @MainActor func fulfill() async {
+            functionCalled.fulfill()
+        }
+
+        // When
+        let request = session.streamRequest(.payloads(2))
+            .onHTTPResponse { _ in
+                await fulfill()
+                return .cancel
+            }
+        let task = request.streamTask()
+
+        for await stream in task.streamingResponses(serializedUsing: .passthrough) {
+            switch stream.event {
+            case .stream:
+                XCTFail("cancelled stream should receive no data")
+            case let .complete(completion):
+                receivedCompletion = completion
+            }
+        }
+
+        await fulfillment(of: [functionCalled], timeout: timeout)
+
+        // Then
+        XCTAssertEqual(receivedCompletion?.response?.statusCode, 200)
+        XCTAssertTrue(request.isCancelled, "onHTTPResponse cancelled request isCancelled should be true")
+        XCTAssertTrue(request.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled request error should be explicitly cancelled")
+    }
+    #endif
+
     func testThatDataStreamTaskCanStreamStrings() async {
         // Given
         let session = stored(Session())
@@ -665,6 +754,7 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
 
         // When
         let request = session.request(.get)
+        async let httpResponses = request.httpResponses().collect()
         async let uploadProgress = request.uploadProgress().collect()
         async let downloadProgress = request.downloadProgress().collect()
         async let requests = request.urlRequests().collect()
@@ -672,19 +762,21 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
         async let descriptions = request.cURLDescriptions().collect()
         async let response = request.serializingDecodable(TestResponse.self).response
 
-        let values: (uploadProgresses: [Progress],
+        let values: (httpResponses: [HTTPURLResponse],
+                     uploadProgresses: [Progress],
                      downloadProgresses: [Progress],
                      requests: [URLRequest],
                      tasks: [URLSessionTask],
                      descriptions: [String],
                      response: AFDataResponse<TestResponse>)
         #if swift(>=5.10)
-        values = try! await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)
+        values = try! await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
         #else
-        values = await (uploadProgress, downloadProgress, requests, tasks, descriptions, response)
+        values = await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
         #endif
 
         // Then
+        XCTAssertTrue(values.httpResponses.count == 1, "httpResponses should have one response")
         XCTAssertTrue(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
         XCTAssertNotNil(values.downloadProgresses.last, "downloadProgresses should not be empty")
         XCTAssertTrue(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")

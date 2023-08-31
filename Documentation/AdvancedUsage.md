@@ -435,9 +435,64 @@ AF.request(...)
     }
 ```
 
-#### Response
+#### `HTTPURLResponse`s
 
-Each `Request` may have an `HTTPURLResponse` value available once the request is complete. This value is only available if the request wasn’t cancelled and didn’t fail to make the network request. Additionally, if the request is retried, only the _last_ response is available. Intermediate responses can be derived from the `URLSessionTask`s in the `tasks` property.
+Alamofire receives `HTTPURLResponse` values from its underlying `URLSession` as the session starts the connection to the server. These values can be received in an `onHTTPResponse` closure and used to determine whether the request should continue or be cancelled. Both `DataRequest` / `UploadRequest` and `DataStreamRequest` provide these hooks. 
+
+In the case of `DataStreamRequest`, this event can be used in conjunction with the stream handlers to parse `HTTPURLResponse`s as part of the stream handling. To guarantee proper event ordering in that case, ensure the same `DispatchQueue` is used for both APIs. By default both APIs use `.main` for the completion handler, so this should only be a concern if you customize the queue used in either case.
+
+In the case of multiple `.onHTTPResponse` calls on a request, only the last one will be called.
+
+In it's simplest form `onHTTPResponse` simply provides the `HTTPURLResponse` value.
+
+```swift
+AF.request(...)
+    .onHTTPResponse { response in
+        print(response)
+    }
+```
+
+If control over the future of the request is desired, a completion handler value is provided which returns a `Request.ResponseDisposition` value.
+
+```swift
+AF.request(...)
+    .onHTTPResponse { response, completionHandler in
+        print(response)
+        completionHandler(.allow)
+    }
+```
+
+> The `completionHandler` MUST be called otherwise the request will hang until it times out.
+
+The `completionHandler` can also be used to cancel the request. This acts much like `cancel()` being called on the request itself.
+
+```swift
+AF.request(...)
+    .onHTTPResponse { response, completionHandler in
+        print(response)
+        completionHandler(.cancel)
+    }
+```
+
+Additionally, there are forms of both versions of `onHTTPResponse` available which provide `async` closures, allowing the use of `await` in the body. These versions are available on Swift 5.7 and above.
+
+```swift
+AF.request(...)
+    .onHTTPResponse { response in
+        await someAsyncMethod()
+        return .allow
+    }
+```
+
+Finally, an async stream of `HTTPURLResponse` values can also be used.
+
+```swift
+let responses = AF.request(...).httpResponses()
+
+for await response in responses {
+    print(response)
+}
+```
 
 #### `URLSessionTaskMetrics`
 

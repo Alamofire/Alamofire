@@ -230,6 +230,25 @@ extension SessionDelegate: URLSessionTaskDelegate {
 // MARK: URLSessionDataDelegate
 
 extension SessionDelegate: URLSessionDataDelegate {
+    open func urlSession(_ session: URLSession,
+                         dataTask: URLSessionDataTask,
+                         didReceive response: URLResponse,
+                         completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: response)
+
+        guard let response = response as? HTTPURLResponse else { completionHandler(.allow); return }
+
+        if let request = request(for: dataTask, as: DataRequest.self) {
+            request.didReceiveResponse(response, completionHandler: completionHandler)
+        } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
+            request.didReceiveResponse(response, completionHandler: completionHandler)
+        } else {
+            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive response")
+            completionHandler(.allow)
+            return
+        }
+    }
+
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
 
@@ -238,7 +257,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
             request.didReceive(data: data)
         } else {
-            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive")
+            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive data")
             return
         }
     }
