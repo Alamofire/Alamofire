@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.7.1 Docs
+          Alamofire 5.8.0 Docs
         </a>
          (97% documented)
       </p>
@@ -151,6 +151,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Request/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Request/ResponseDisposition.html">– ResponseDisposition</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Retrier.html">Retrier</a>
@@ -864,6 +867,140 @@ to stop the stream at any time.</p>
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC14onHTTPResponse0E07performACXDSo17OS_dispatch_queueC_ySo17NSHTTPURLResponseC_yAA0D0C19ResponseDispositionOctctF"></a>
+                    <a name="//apple_ref/swift/Method/onHTTPResponse(on:perform:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC14onHTTPResponse0E07performACXDSo17OS_dispatch_queueC_ySo17NSHTTPURLResponseC_yAA0D0C19ResponseDispositionOctctF">onHTTPResponse(on:<wbr>perform:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets a closure called whenever the <code><a href="../Classes/DataRequest.html">DataRequest</a></code> produces an <code>HTTPURLResponse</code> and providing a completion
+handler to return a <code>ResponseDisposition</code> value.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@_disfavoredOverload</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">onHTTPResponse</span><span class="p">(</span>
+    <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+    <span class="n">perform</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">,</span>
+                                <span class="n">_</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">ResponseDisposition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which the closure will be called. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>handler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure called when the instance produces an <code>HTTPURLResponse</code>. The <code>completionHandler</code> provided
+     MUST be called, otherwise the request will never complete.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC14onHTTPResponse0E07performACXDSo17OS_dispatch_queueC_ySo17NSHTTPURLResponseCctF"></a>
+                    <a name="//apple_ref/swift/Method/onHTTPResponse(on:perform:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC14onHTTPResponse0E07performACXDSo17OS_dispatch_queueC_ySo17NSHTTPURLResponseCctF">onHTTPResponse(on:<wbr>perform:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets a closure called whenever the <code><a href="../Classes/DataRequest.html">DataRequest</a></code> produces an <code>HTTPURLResponse</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">onHTTPResponse</span><span class="p">(</span><span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                           <span class="n">perform</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">HTTPURLResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which the closure will be called. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>handler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure called when the instance produces an <code>HTTPURLResponse</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -1150,6 +1287,178 @@ parameters to serialize stream <code>Data</code> values into the provided type.<
                 </div>
               </div>
               <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC13httpResponses15bufferingPolicyAA0C2OfVySo17NSHTTPURLResponseCGScS12ContinuationV09BufferingH0OyAI__G_tF"></a>
+                    <a name="//apple_ref/swift/Method/httpResponses(bufferingPolicy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC13httpResponses15bufferingPolicyAA0C2OfVySo17NSHTTPURLResponseCGScS12ContinuationV09BufferingH0OyAI__G_tF">httpResponses(bufferingPolicy:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code><a href="../Structs/StreamOf.html">StreamOf&lt;HTTPURLResponse&gt;</a></code> for the instance&rsquo;s responses.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpResponses</span><span class="p">(</span><span class="nv">bufferingPolicy</span><span class="p">:</span> <span class="kt"><a href="../Structs/StreamOf.html">StreamOf</a></span><span class="o">&lt;</span><span class="kt">HTTPURLResponse</span><span class="o">&gt;.</span><span class="kt">BufferingPolicy</span> <span class="o">=</span> <span class="o">.</span><span class="n">unbounded</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/StreamOf.html">StreamOf</a></span><span class="o">&lt;</span><span class="kt">HTTPURLResponse</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>bufferingPolicy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>BufferingPolicy</code> that determines the stream&rsquo;s buffering behavior.<code>.unbounded</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code><a href="../Structs/StreamOf.html">StreamOf&lt;HTTPURLResponse&gt;</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC14onHTTPResponse7performACXDAA0D0C19ResponseDispositionOSo17NSHTTPURLResponseCYaYbc_tF"></a>
+                    <a name="//apple_ref/swift/Method/onHTTPResponse(perform:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC14onHTTPResponse7performACXDAA0D0C19ResponseDispositionOSo17NSHTTPURLResponseCYaYbc_tF">onHTTPResponse(perform:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets an async closure returning a <code><a href="../Classes/Request/ResponseDisposition.html">Request.ResponseDisposition</a></code>, called whenever the <code>DataStreamRequest</code>
+produces an <code>HTTPURLResponse</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Most requests will only produce a single response for each outgoing attempt (initial + retries).
+    However, some types of response may trigger multiple <code>HTTPURLResponse</code>s, such as multipart streams,
+    where responses after the first will contain the part headers.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@_disfavoredOverload</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">onHTTPResponse</span><span class="p">(</span><span class="n">perform</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="kt">HTTPURLResponse</span><span class="p">)</span> <span class="n">async</span> <span class="o">-&gt;</span> <span class="kt">ResponseDisposition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>handler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Async closure executed when a new <code>HTTPURLResponse</code> is received and returning a
+     <code>ResponseDisposition</code> value. This value determines whether to continue the request or cancel it as
+     if <code>cancel()</code> had been called on the instance. Note, this closure is called on an arbitrary thread,
+     so any synchronous calls in it will execute in that context.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC14onHTTPResponse7performACXDySo17NSHTTPURLResponseCYaYbc_tF"></a>
+                    <a name="//apple_ref/swift/Method/onHTTPResponse(perform:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC14onHTTPResponse7performACXDySo17NSHTTPURLResponseCYaYbc_tF">onHTTPResponse(perform:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets an async closure called whenever the <code>DataStreamRequest</code> produces an <code>HTTPURLResponse</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Most requests will only produce a single response for each outgoing attempt (initial + retries).
+    However, some types of response may trigger multiple <code>HTTPURLResponse</code>s, such as multipart streams,
+    where responses after the first will contain the part headers.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">onHTTPResponse</span><span class="p">(</span><span class="n">perform</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="kt">HTTPURLResponse</span><span class="p">)</span> <span class="n">async</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>handler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Async closure executed when a new <code>HTTPURLResponse</code> is received. Note, this closure is called on an
+     arbitrary thread, so any synchronous calls in it will execute in that context.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1682,7 +1991,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-10)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-08-31)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

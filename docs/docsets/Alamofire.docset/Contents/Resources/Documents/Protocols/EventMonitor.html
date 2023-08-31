@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.7.1 Docs
+          Alamofire 5.8.0 Docs
         </a>
          (97% documented)
       </p>
@@ -151,6 +151,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Request/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Request/ResponseDisposition.html">– ResponseDisposition</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Retrier.html">Retrier</a>
@@ -918,9 +921,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF"></a>
+                    <a name="/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0CSo13NSURLResponseCtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:dataTask:didReceive:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF">urlSession(_:<wbr>dataTask:<wbr>didReceive:<wbr>)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0CSo13NSURLResponseCtF">urlSession(_:<wbr>dataTask:<wbr>didReceive:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Default implementation
@@ -931,12 +934,40 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Event called during <code>URLSessionDataDelegate</code>&lsquo;s <code>urlSession(_:dataTask:didReceive:)</code> method.</p>
+                        <p>Event called during <code>URLSessionDataDelegate</code>&lsquo;s <code>urlSession(_:dataTask:didReceive:completionHandler:)</code> method.</p>
 
                       </div>
                       <h4>Default Implementation</h4>
                       <div class="default_impl abstract">
-                        
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="nv">dataTask</span><span class="p">:</span> <span class="kt">URLSessionDataTask</span><span class="p">,</span> <span class="n">didReceive</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">URLResponse</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF"></a>
+                    <a name="//apple_ref/swift/Method/urlSession(_:dataTask:didReceive:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF">urlSession(_:<wbr>dataTask:<wbr>didReceive:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Event called during <code>URLSessionDataDelegate</code>&lsquo;s <code><a href="../Protocols/EventMonitor.html#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0CSo13NSURLResponseCtF">urlSession(_:dataTask:didReceive:)</a></code> method.</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -2279,7 +2310,7 @@ downloaded file will be moved to.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-05-10)</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-08-31)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
