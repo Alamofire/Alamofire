@@ -1,7 +1,7 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/AlamofireLogo.png)
 
 [![Swift](https://img.shields.io/badge/Swift-5.6_5.7_5.8_5.9-orange?style=flat-square)](https://img.shields.io/badge/Swift-5.6_5.7_5.8_5.9-Orange?style=flat-square)
-[![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows_Android-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows_Android-Green?style=flat-square)
+[![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS_Linux_Windows_Android-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_vision_OS_Linux_Windows_Android-Green?style=flat-square)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square)](https://img.shields.io/cocoapods/v/Alamofire.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square)](https://github.com/Carthage/Carthage)
 [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
@@ -50,6 +50,33 @@ Alamofire is an HTTP networking library written in Swift.
 - [x] Network Reachability
 - [x] Comprehensive Unit and Integration Test Coverage
 - [x] [Complete Documentation](https://alamofire.github.io/Alamofire)
+
+## Write Requests Fast!
+
+Alamofire's compact syntax and extensive feature set allow requests with powerful features like automatic retry to be written in just a few lines of code.
+
+```swift
+// Automatic String to URL conversion, Swift concurrency support, and automatic retry.
+let response = await AF.request("https://httpbin.org/get", interceptor: .retryPolicy)
+                       // Automatic HTTP Basic Auth.
+                       .authenticate(username: "user", password: "pass")
+                       // Caching customization.
+                       .cacheResponse(using: .cache)
+                       // Redirect customization.
+                       .redirect(using: .follow)
+                       // Validate response code and Content-Type.
+                       .validate()
+                       // Produce a cURL command for the request.
+                       .cURLDescription { description in
+                         print(description)
+                       }
+                       // Automatic Decodable support with background parsing.
+                       .serializingDecodable(DecodableType.self)
+                       // Await the full response with metrics and a parsed body.
+                       .response
+// Detailed response description for easy debugging.
+debugPrint(response)
+```
 
 ## Component Libraries
 
