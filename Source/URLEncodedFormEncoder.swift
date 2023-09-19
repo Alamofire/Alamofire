@@ -695,6 +695,74 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
         try encode(nilValue, forKey: key)
     }
 
+    func encodeIfPresent(_ value: Bool?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: String?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: Double?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: Float?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: Int?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: Int8?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: Int16?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: Int32?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: Int64?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: UInt?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: UInt8?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: UInt16?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: UInt32?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent(_ value: UInt64?, forKey key: Key) throws {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func encodeIfPresent<Value>(_ value: Value?, forKey key: Key) throws where Value: Encodable {
+        try _encodeIfPresent(value, forKey: key)
+    }
+
+    func _encodeIfPresent<Value>(_ value: Value?, forKey key: Key) throws where Value: Encodable {
+        if let value = value {
+            try encode(value, forKey: key)
+        } else {
+            try encodeNil(forKey: key)
+        }
+    }
+
     func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
         var container = nestedSingleValueEncoder(for: key)
         try container.encode(value)

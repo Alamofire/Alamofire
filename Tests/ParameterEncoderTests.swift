@@ -852,6 +852,17 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "")
     }
 
+    func testThatNilCanBeEncodedInSynthesizedEncodableByDroppingTheKeyByDefault() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(OptionalEncodableStruct()) }
+
+        // Then
+        XCTAssertEqual(result.success, "one=one")
+    }
+
     func testThatNilCanBeEncodedAsNull() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .null)
@@ -862,6 +873,17 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result.success, "a=null")
+    }
+
+    func testThatNilCanBeEncodedInSynthesizedEncodableAsNull() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .null)
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(OptionalEncodableStruct()) }
+
+        // Then
+        XCTAssertEqual(result.success, "one=one&two=null")
     }
 
     func testThatNilCanBeEncodedByDroppingTheKey() {
@@ -876,6 +898,17 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "")
     }
 
+    func testThatNilCanBeEncodedInSynthesizedEncodableByDroppingTheKey() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .dropKey)
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(OptionalEncodableStruct()) }
+
+        // Then
+        XCTAssertEqual(result.success, "one=one")
+    }
+
     func testThatNilCanBeEncodedByDroppingTheValue() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .dropValue)
@@ -886,6 +919,17 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result.success, "a=")
+    }
+
+    func testThatNilCanBeEncodedInSynthesizedEncodableByDroppingTheValue() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .dropValue)
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(OptionalEncodableStruct()) }
+
+        // Then
+        XCTAssertEqual(result.success, "one=one&two=")
     }
 
     func testThatSpacesCanBeEncodedAsPluses() {
@@ -1091,6 +1135,11 @@ private struct EncodableStruct: Encodable {
 
 private struct NestedEncodableStruct: Encodable {
     let a = "a"
+}
+
+private struct OptionalEncodableStruct: Encodable {
+    let one = "one"
+    let two: String? = nil
 }
 
 private class EncodableSuperclass: Encodable {
