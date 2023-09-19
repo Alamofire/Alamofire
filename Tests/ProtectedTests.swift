@@ -70,16 +70,16 @@ final class ProtectedWrapperTests: BaseTestCase {
 
     func testThatWrappedValuesAreAccessedSafely() {
         // Given
-        let initialValue = value
+        let initialValue = value.read { $0 }
 
         // When
         DispatchQueue.concurrentPerform(iterations: 10_000) { i in
-            _ = value
+            _ = value.read { $0 }
             value.write("\(i)")
         }
 
         // Then
-        XCTAssertNotEqual(value, initialValue)
+        XCTAssertNotEqual(value.read { $0 }, initialValue)
     }
 
     func testThatDynamicMembersAreSetSafely() {
