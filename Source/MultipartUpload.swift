@@ -28,8 +28,8 @@ import Foundation
 final class MultipartUpload {
     lazy var result = Result { try build() }
 
-    @Protected
-    private(set) var multipartFormData: MultipartFormData
+    private let multipartFormData: Protected<MultipartFormData>
+
     let encodingMemoryThreshold: UInt64
     let request: URLRequestConvertible
     let fileManager: FileManager
@@ -40,13 +40,13 @@ final class MultipartUpload {
         self.encodingMemoryThreshold = encodingMemoryThreshold
         self.request = request
         fileManager = multipartFormData.fileManager
-        self.multipartFormData = multipartFormData
+        self.multipartFormData = Protected(multipartFormData)
     }
 
     func build() throws -> UploadRequest.Uploadable {
         let uploadable: UploadRequest.Uploadable
-        if $multipartFormData.contentLength < encodingMemoryThreshold {
-            let data = try $multipartFormData.read { try $0.encode() }
+        if multipartFormData.contentLength < encodingMemoryThreshold {
+            let data = try multipartFormData.read { try $0.encode() }
 
             uploadable = .data(data)
         } else {
@@ -58,7 +58,7 @@ final class MultipartUpload {
             try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
 
             do {
-                try $multipartFormData.read { try $0.writeEncodedData(to: fileURL) }
+                try multipartFormData.read { try $0.writeEncodedData(to: fileURL) }
             } catch {
                 // Cleanup after attempted write if it fails.
                 try? fileManager.removeItem(at: fileURL)
@@ -76,7 +76,7 @@ extension MultipartUpload: UploadConvertible {
     func asURLRequest() throws -> URLRequest {
         var urlRequest = try request.asURLRequest()
 
-        $multipartFormData.read { multipartFormData in
+        multipartFormData.read { multipartFormData in
             urlRequest.headers.add(.contentType(multipartFormData.contentType))
         }
 

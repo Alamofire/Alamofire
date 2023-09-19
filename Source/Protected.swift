@@ -49,12 +49,6 @@ extension Lock {
     }
 }
 
-#if os(Linux) || os(Windows) || os(Android)
-
-extension NSLock: Lock {}
-
-#endif
-
 #if canImport(Darwin)
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock: Lock {
@@ -78,33 +72,27 @@ final class UnfairLock: Lock {
         os_unfair_lock_unlock(unfairLock)
     }
 }
+
+#elseif canImport(Foundation)
+extension NSLock: Lock {}
+#else
+#error("This platform needs a Lock-conforming type without Foundation.")
 #endif
 
 /// A thread-safe wrapper around a value.
-@propertyWrapper
 @dynamicMemberLookup
-final class Protected<T> {
+final class Protected<Value> {
     #if canImport(Darwin)
     private let lock = UnfairLock()
-    #elseif os(Linux) || os(Windows) || os(Android)
+    #elseif canImport(Foundation)
     private let lock = NSLock()
+    #else
+    #error("This platform needs a Lock-conforming type without Foundation.")
     #endif
-    private var value: T
+    private var value: Value
 
-    init(_ value: T) {
+    init(_ value: Value) {
         self.value = value
-    }
-
-    /// The contained value. Unsafe for anything more than direct read or write.
-    var wrappedValue: T {
-        get { lock.around { value } }
-        set { lock.around { value = newValue } }
-    }
-
-    var projectedValue: Protected<T> { self }
-
-    init(wrappedValue: T) {
-        value = wrappedValue
     }
 
     /// Synchronously read or transform the contained value.
@@ -112,7 +100,7 @@ final class Protected<T> {
     /// - Parameter closure: The closure to execute.
     ///
     /// - Returns:           The return value of the closure passed.
-    func read<U>(_ closure: (T) throws -> U) rethrows -> U {
+    func read<U>(_ closure: (Value) throws -> U) rethrows -> U {
         try lock.around { try closure(self.value) }
     }
 
@@ -122,21 +110,28 @@ final class Protected<T> {
     ///
     /// - Returns:           The modified value.
     @discardableResult
-    func write<U>(_ closure: (inout T) throws -> U) rethrows -> U {
+    func write<U>(_ closure: (inout Value) throws -> U) rethrows -> U {
         try lock.around { try closure(&self.value) }
     }
 
-    subscript<Property>(dynamicMember keyPath: WritableKeyPath<T, Property>) -> Property {
+    /// Synchronously update the protected value.
+    ///
+    /// - Parameter value: The `Value`.
+    func write(_ value: Value) {
+        write { $0 = value }
+    }
+
+    subscript<Property>(dynamicMember keyPath: WritableKeyPath<Value, Property>) -> Property {
         get { lock.around { value[keyPath: keyPath] } }
         set { lock.around { value[keyPath: keyPath] = newValue } }
     }
 
-    subscript<Property>(dynamicMember keyPath: KeyPath<T, Property>) -> Property {
+    subscript<Property>(dynamicMember keyPath: KeyPath<Value, Property>) -> Property {
         lock.around { value[keyPath: keyPath] }
     }
 }
 
-extension Protected where T == Request.MutableState {
+extension Protected where Value == Request.MutableState {
     /// Attempts to transition to the passed `State`.
     ///
     /// - Parameter state: The `State` to attempt transition to.
@@ -157,5 +152,17 @@ extension Protected where T == Request.MutableState {
     /// - Parameter perform: The closure to perform while locked.
     func withState(perform: (Request.State) -> Void) {
         lock.around { perform(value.state) }
+    }
+}
+
+extension Protected: Equatable where Value: Equatable {
+    static func ==(lhs: Protected<Value>, rhs: Protected<Value>) -> Bool {
+        lhs.read { left in rhs.read { right in left == right }}
+    }
+}
+
+extension Protected: Hashable where Value: Hashable {
+    func hash(into hasher: inout Hasher) {
+        read { hasher.combine($0) }
     }
 }

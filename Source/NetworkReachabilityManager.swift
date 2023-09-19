@@ -113,8 +113,7 @@ open class NetworkReachabilityManager {
     private let reachability: SCNetworkReachability
 
     /// Protected storage for mutable state.
-    @Protected
-    private var mutableState = MutableState()
+    private let mutableState = Protected(MutableState())
 
     // MARK: - Initialization
 
@@ -168,7 +167,7 @@ open class NetworkReachabilityManager {
                              onUpdatePerforming listener: @escaping Listener) -> Bool {
         stopListening()
 
-        $mutableState.write { state in
+        mutableState.write { state in
             state.listenerQueue = queue
             state.listener = listener
         }
@@ -220,7 +219,7 @@ open class NetworkReachabilityManager {
     open func stopListening() {
         SCNetworkReachabilitySetCallback(reachability, nil, nil)
         SCNetworkReachabilitySetDispatchQueue(reachability, nil)
-        $mutableState.write { state in
+        mutableState.write { state in
             state.listener = nil
             state.listenerQueue = nil
             state.previousStatus = nil
@@ -237,7 +236,7 @@ open class NetworkReachabilityManager {
     func notifyListener(_ flags: SCNetworkReachabilityFlags) {
         let newStatus = NetworkReachabilityStatus(flags)
 
-        $mutableState.write { state in
+        mutableState.write { state in
             guard state.previousStatus != newStatus else { return }
 
             state.previousStatus = newStatus
@@ -267,18 +266,10 @@ extension SCNetworkReachabilityFlags {
     var canConnectWithoutUserInteraction: Bool { canConnectAutomatically && !contains(.interventionRequired) }
     var isActuallyReachable: Bool { isReachable && (!isConnectionRequired || canConnectWithoutUserInteraction) }
     var isCellular: Bool {
-        #if swift(>=5.9)
-        #if os(iOS) || os(tvOS) || os(visionOS)
+        #if os(iOS) || os(tvOS) || (swift(>=5.9) && os(visionOS))
         return contains(.isWWAN)
         #else
         return false
-        #endif
-        #else
-        #if os(iOS) || os(tvOS)
-        return contains(.isWWAN)
-        #else
-        return false
-        #endif
         #endif
     }
 
