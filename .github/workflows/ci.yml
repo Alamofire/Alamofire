@@ -183,12 +183,12 @@ jobs:
             name: "tvOS 15.4"
             testPlan: "tvOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: firebreak
           - destination: "OS=14.5,name=Apple TV"
             name: "tvOS 14.5"
             testPlan: "tvOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: firebreak
           # - destination: "OS=13.4,name=Apple TV"
           #   name: "tvOS 13.4"
           #   testPlan: "tvOS-NoTS"
