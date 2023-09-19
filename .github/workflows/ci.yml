@@ -72,11 +72,11 @@ jobs:
             name: "macOS 11, Xcode 13.0, Swift 5.5.0"
             testPlan: "macOS-NoTS"
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Firewalk & xcbeautify
-        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+      - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcbeautify --renderer github-actions
+        run: |
+          "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+          set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcbeautify --renderer github-actions
   Catalyst:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
@@ -94,7 +94,7 @@ jobs:
             name: "Catalyst 14.3.1"
             runsOn: macOS-13
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Firewalk & xcbeautify
         run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: Catalyst
@@ -114,7 +114,7 @@ jobs:
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Firewalk & xcbeautify
         run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name }}
@@ -153,7 +153,7 @@ jobs:
           #   name: "iOS 13.7"
           #   testPlan: "iOS-NoTS"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Firewalk & xcbeautify
         run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name }}
@@ -192,7 +192,7 @@ jobs:
           #   name: "tvOS 13.4"
           #   testPlan: "tvOS-NoTS"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Firewalk & xcbeautify
         run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name }}
@@ -228,10 +228,10 @@ jobs:
             xcode: "Xcode_14.3.1"
             runsOn: firebreak
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Firewalk & xcbeautify
         run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
-      - name: ${{ matrix.name}}
+      - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   SPM:
     name: ${{ matrix.name }}
@@ -274,11 +274,11 @@ jobs:
             runsOn: macOS-11
             name: "macOS 11, SPM 5.5.0 Test"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Firewalk & xcbeautify
         run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: Test SPM
-        run: swift test -c debug | xcbeautify --renderer github-actions
+        run: swift test -c debug 2>&1 | xcbeautify --renderer github-actions
   Linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -305,7 +305,7 @@ jobs:
       image: ${{ matrix.image }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
   Android:
@@ -327,7 +327,7 @@ jobs:
           branch: swift-5.8-release
           tag: 5.8-RELEASE
       - name: Clone
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: SPM Windows Build
         run: |
           swift build --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
@@ -339,7 +339,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Clone
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
