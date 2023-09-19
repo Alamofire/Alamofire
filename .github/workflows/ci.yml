@@ -74,7 +74,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk & xcbeautify
-        run: "brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcbeautify --renderer github-actions
   Catalyst:
@@ -96,7 +96,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk & xcbeautify
-        run: "brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: Catalyst
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test 2>&1 | xcbeautify --renderer github-actions
   Beta:
@@ -116,7 +116,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk & xcbeautify
-        run: "brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   iOS:
@@ -155,7 +155,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk & xcbeautify
-        run: "brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   tvOS:
@@ -194,7 +194,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk & xcbeautify
-        run: "brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   watchOS:
@@ -230,7 +230,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk & xcbeautify
-        run: "brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: ${{ matrix.name}}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   SPM:
@@ -276,7 +276,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk & xcbeautify
-        run: "brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
+        run: "brew update && brew install alamofire/alamofire/firewalk xcbeautify || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &"
       - name: Test SPM
         run: swift test -c debug | xcbeautify --renderer github-actions
   Linux:
