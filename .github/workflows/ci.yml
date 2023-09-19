@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   macOS:
-    name: Test macOS, All Xcodes and Swifts
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
@@ -247,7 +247,7 @@ jobs:
           - xcode: "Xcode_15.0"
             runsOn: firebreak
             name: "macOS 13, SPM 5.9.0 Test"
-          - xcode: "Xcode_14.3"
+          - xcode: "Xcode_14.3.1"
             runsOn: macOS-13
             name: "macOS 13, SPM 5.8.0 Test"
           - xcode: "Xcode_14.2"
