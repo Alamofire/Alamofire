@@ -222,12 +222,12 @@ jobs:
             name: "watchOS 8.5"
             testPlan: "watchOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: firebreak
           - destination: "OS=7.4,name=Apple Watch Series 6 (44mm)"
             name: "watchOS 7.4"
             testPlan: "watchOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: firebreak
     steps:
       - uses: actions/checkout@v3
       - name: Install Firewalk
