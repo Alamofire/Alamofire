@@ -91,23 +91,22 @@ public struct DataResponsePublisher<Value>: Publisher {
         where Downstream.Input == Output {
         typealias Failure = Downstream.Failure
 
-        @Protected
-        private var downstream: Downstream?
+        private let downstream: Protected<Downstream?>
         private let request: DataRequest
         private let responseHandler: Handler
 
         init(request: DataRequest, responseHandler: @escaping Handler, downstream: Downstream) {
             self.request = request
             self.responseHandler = responseHandler
-            self.downstream = downstream
+            self.downstream = Protected(downstream)
         }
 
         func request(_ demand: Subscribers.Demand) {
             assert(demand > 0)
 
-            guard let downstream = downstream else { return }
+            guard let downstream = downstream.read({ $0 }) else { return }
 
-            self.downstream = nil
+            self.downstream.write(nil)
             responseHandler { response in
                 _ = downstream.receive(response)
                 downstream.receive(completion: .finished)
@@ -116,7 +115,7 @@ public struct DataResponsePublisher<Value>: Publisher {
 
         func cancel() {
             request.cancel()
-            downstream = nil
+            downstream.write(nil)
         }
     }
 }
@@ -312,23 +311,22 @@ public struct DataStreamPublisher<Value>: Publisher {
         where Downstream.Input == Output {
         typealias Failure = Downstream.Failure
 
-        @Protected
-        private var downstream: Downstream?
+        private let downstream: Protected<Downstream?>
         private let request: DataStreamRequest
         private let streamHandler: Handler
 
         init(request: DataStreamRequest, streamHandler: @escaping Handler, downstream: Downstream) {
             self.request = request
             self.streamHandler = streamHandler
-            self.downstream = downstream
+            self.downstream = Protected(downstream)
         }
 
         func request(_ demand: Subscribers.Demand) {
             assert(demand > 0)
 
-            guard let downstream = downstream else { return }
+            guard let downstream = downstream.read({ $0 }) else { return }
 
-            self.downstream = nil
+            self.downstream.write(nil)
             streamHandler { stream in
                 _ = downstream.receive(stream)
                 if case .complete = stream.event {
@@ -339,7 +337,7 @@ public struct DataStreamPublisher<Value>: Publisher {
 
         func cancel() {
             request.cancel()
-            downstream = nil
+            downstream.write(nil)
         }
     }
 }
@@ -462,23 +460,22 @@ public struct DownloadResponsePublisher<Value>: Publisher {
         where Downstream.Input == Output {
         typealias Failure = Downstream.Failure
 
-        @Protected
-        private var downstream: Downstream?
+        private let downstream: Protected<Downstream?>
         private let request: DownloadRequest
         private let responseHandler: Handler
 
         init(request: DownloadRequest, responseHandler: @escaping Handler, downstream: Downstream) {
             self.request = request
             self.responseHandler = responseHandler
-            self.downstream = downstream
+            self.downstream = Protected(downstream)
         }
 
         func request(_ demand: Subscribers.Demand) {
             assert(demand > 0)
 
-            guard let downstream = downstream else { return }
+            guard let downstream = downstream.read({ $0 }) else { return }
 
-            self.downstream = nil
+            self.downstream.write(nil)
             responseHandler { response in
                 _ = downstream.receive(response)
                 downstream.receive(completion: .finished)
@@ -487,7 +484,7 @@ public struct DownloadResponsePublisher<Value>: Publisher {
 
         func cancel() {
             request.cancel()
-            downstream = nil
+            downstream.write(nil)
         }
     }
 }

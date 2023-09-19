@@ -35,12 +35,12 @@ final class ProtectedTests: BaseTestCase {
 
         // When
         DispatchQueue.concurrentPerform(iterations: 10_000) { i in
-            _ = protected.wrappedValue
-            protected.wrappedValue = "\(i)"
+            _ = protected.read { $0 }
+            protected.write("\(i)")
         }
 
         // Then
-        XCTAssertNotEqual(protected.wrappedValue, initialValue)
+        XCTAssertNotEqual(protected.read { $0 }, initialValue)
     }
 
     func testThatProtectedAPIIsSafe() {
@@ -51,90 +51,35 @@ final class ProtectedTests: BaseTestCase {
         // When
         DispatchQueue.concurrentPerform(iterations: 10_000) { i in
             _ = protected.read { $0 }
-            protected.write { $0 = "\(i)" }
+            protected.write("\(i)")
         }
 
         // Then
-        XCTAssertNotEqual(protected.wrappedValue, initialValue)
+        XCTAssertNotEqual(protected.read { $0 }, initialValue)
     }
 }
 
 final class ProtectedWrapperTests: BaseTestCase {
-    @Protected var value = "value"
+    let value = Protected("value")
 
     override func setUp() {
         super.setUp()
 
-        value = "value"
+        value.write("value")
     }
 
     func testThatWrappedValuesAreAccessedSafely() {
         // Given
-        let initialValue = value
+        let initialValue = value.read { $0 }
 
         // When
         DispatchQueue.concurrentPerform(iterations: 10_000) { i in
-            _ = value
-            value = "\(i)"
+            _ = value.read { $0 }
+            value.write("\(i)")
         }
 
         // Then
-        XCTAssertNotEqual(value, initialValue)
-    }
-
-    func testThatProjectedAPIIsAccessedSafely() {
-        // Given
-        let initialValue = value
-
-        // When
-        DispatchQueue.concurrentPerform(iterations: 10_000) { i in
-            _ = $value.read { $0 }
-            $value.write { $0 = "\(i)" }
-        }
-
-        // Then
-        XCTAssertNotEqual(value, initialValue)
-    }
-
-    func testThatDynamicMembersAreAccessedSafely() {
-        // Given
-        let count = Protected<Int>(0)
-
-        // When
-        DispatchQueue.concurrentPerform(iterations: 10_000) { _ in
-            count.wrappedValue = value.count
-        }
-
-        // Then
-        XCTAssertEqual(count.wrappedValue, 5)
-    }
-
-    func testThatDynamicMemberPropertiesAreAccessedSafely() {
-        // Given
-        let string = Protected<String>("test")
-        let count = Protected<Int>(0)
-
-        // When
-        DispatchQueue.concurrentPerform(iterations: 10_000) { _ in
-            count.wrappedValue = string.wrappedValue.count
-        }
-
-        // Then
-        XCTAssertEqual(string.wrappedValue.count, count.wrappedValue)
-    }
-
-    func testThatLocalWrapperInstanceWorkCorrectly() {
-        // Given
-        @Protected var string = "test"
-        @Protected var count = 0
-
-        // When
-        DispatchQueue.concurrentPerform(iterations: 10_000) { _ in
-            count = string.count
-        }
-
-        // Then
-        XCTAssertEqual(string.count, count)
+        XCTAssertNotEqual(value.read { $0 }, initialValue)
     }
 
     func testThatDynamicMembersAreSetSafely() {
@@ -148,7 +93,7 @@ final class ProtectedWrapperTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertNotEqual(mutable.wrappedValue.value, "value")
+        XCTAssertNotEqual(mutable.value, "value")
     }
 }
 
@@ -176,9 +121,9 @@ final class ProtectedHighContentionTests: BaseTestCase {
 
     // MARK: - Properties
 
-    @Protected var stringContainer = StringContainer()
-    @Protected var stringContainerWrite = StringContainerWriteState()
-    @Protected var stringContainerRead = StringContainerReadState()
+    let stringContainer = Protected(StringContainer())
+    let stringContainerWrite = Protected(StringContainerWriteState())
+    let stringContainerRead = Protected(StringContainerReadState())
 
     func testConcurrentReadWriteBlocks() {
         // Given
@@ -228,7 +173,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
         for _ in 1...totalOperations {
             queue1.async {
                 // Moves the last string element to the beginning of the string array
-                let result: Int = self.$stringContainer.write { stringContainer in
+                let result: Int = self.stringContainer.write { stringContainer in
                     let lastElement = stringContainer.stringArray.removeLast()
                     stringContainer.totalStrings = stringContainer.stringArray.count
 
@@ -238,7 +183,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
                     return stringContainer.totalStrings
                 }
 
-                self.$stringContainerWrite.write { mutableState in
+                self.stringContainerWrite.write { mutableState in
                     mutableState.results.append(result)
 
                     if mutableState.results.count == totalOperations {
@@ -253,7 +198,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
 
             queue2.async {
                 // Moves the first string element to the end of the string array
-                self.$stringContainer.write { stringContainer in
+                self.stringContainer.write { stringContainer in
                     let firstElement = stringContainer.stringArray.remove(at: 0)
                     stringContainer.totalStrings = stringContainer.stringArray.count
 
@@ -261,7 +206,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
                     stringContainer.totalStrings = stringContainer.stringArray.count
                 }
 
-                self.$stringContainerWrite.write { mutableState in
+                self.stringContainerWrite.write { mutableState in
                     mutableState.completedWrites += 1
 
                     if mutableState.completedWrites == totalOperations {
@@ -285,9 +230,9 @@ final class ProtectedHighContentionTests: BaseTestCase {
             queue1.async {
                 // Reads the total string count in the string array
                 // Using the wrapped value (no $) instead of the wrapper itself triggers the thread sanitizer.
-                let result = self.$stringContainer.totalStrings
+                let result = self.stringContainer.totalStrings
 
-                self.$stringContainerRead.write {
+                self.stringContainerRead.write {
                     $0.results1.append(result)
 
                     if $0.results1.count == totalOperations {
@@ -302,9 +247,9 @@ final class ProtectedHighContentionTests: BaseTestCase {
 
             queue2.async {
                 // Reads the total string count in the string array
-                let result = self.$stringContainer.read { $0.totalStrings }
+                let result = self.stringContainer.read { $0.totalStrings }
 
-                self.$stringContainerRead.write {
+                self.stringContainerRead.write {
                     $0.results2.append(result)
 
                     if $0.results2.count == totalOperations {

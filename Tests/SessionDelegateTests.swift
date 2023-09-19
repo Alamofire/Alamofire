@@ -130,25 +130,25 @@ final class SessionDelegateTestCase: BaseTestCase {
         expectation(forNotification: Request.didResumeNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            resumedRequest.write { $0 = notification.request }
+            resumedRequest.write(notification.request)
             return true
         }
         expectation(forNotification: Request.didResumeTaskNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            resumedTaskRequest.write { $0 = notification.request }
+            resumedTaskRequest.write(notification.request)
             return true
         }
         expectation(forNotification: Request.didCompleteTaskNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            completedTaskRequest.write { $0 = notification.request }
+            completedTaskRequest.write(notification.request)
             return true
         }
         expectation(forNotification: Request.didFinishNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            completedRequest.write { $0 = notification.request }
+            completedRequest.write(notification.request)
             return true
         }
 
@@ -161,8 +161,8 @@ final class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(resumedTaskRequest)
         XCTAssertNotNil(completedTaskRequest)
         XCTAssertNotNil(completedRequest)
-        XCTAssertEqual(resumedRequest.wrappedValue, completedRequest.wrappedValue)
-        XCTAssertEqual(resumedTaskRequest.wrappedValue, completedTaskRequest.wrappedValue)
+        XCTAssertEqual(resumedRequest, completedRequest)
+        XCTAssertEqual(resumedTaskRequest, completedTaskRequest)
         XCTAssertEqual(requestResponse?.response?.statusCode, 200)
     }
 
@@ -184,25 +184,25 @@ final class SessionDelegateTestCase: BaseTestCase {
         expectation(forNotification: Request.didResumeNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            resumedRequest.write { $0 = notification.request }
+            resumedRequest.write(notification.request)
             return true
         }
         expectation(forNotification: Request.didResumeTaskNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            resumedTaskRequest.write { $0 = notification.request }
+            resumedTaskRequest.write(notification.request)
             return true
         }
         expectation(forNotification: Request.didCompleteTaskNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            completedTaskRequest.write { $0 = notification.request }
+            completedTaskRequest.write(notification.request)
             return true
         }
         expectation(forNotification: Request.didFinishNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
-            completedRequest.write { $0 = notification.request }
+            completedRequest.write(notification.request)
             return true
         }
 
@@ -215,8 +215,8 @@ final class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(resumedTaskRequest)
         XCTAssertNotNil(completedTaskRequest)
         XCTAssertNotNil(completedRequest)
-        XCTAssertEqual(resumedRequest.wrappedValue, completedRequest.wrappedValue)
-        XCTAssertEqual(resumedTaskRequest.wrappedValue, completedTaskRequest.wrappedValue)
+        XCTAssertEqual(resumedRequest, completedRequest)
+        XCTAssertEqual(resumedTaskRequest, completedTaskRequest)
         XCTAssertEqual(requestResponse?.response?.statusCode, 200)
     }
 }
