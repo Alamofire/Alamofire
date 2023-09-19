@@ -210,12 +210,12 @@ jobs:
         include:
           - destination: "OS=10.0,name=Apple Watch Series 9 (45mm)"
             name: "watchOS 10.0"
-            scheme: "watchOS"
+            testPlan: "watchOS"
             xcode: "Xcode_15.0"
             runsOn: firewalk
           - destination: "OS=9.4,name=Apple Watch Series 8 (45mm)"
             name: "watchOS 9.4"
-            scheme: "watchOS"
+            testPlan: "watchOS"
             xcode: "Xcode_14.3.1"
             runsOn: macOS-13
           - destination: "OS=8.5,name=Apple Watch Series 7 (45mm)"
