@@ -290,16 +290,14 @@ jobs:
         include:
           - image: swift:5.8.1-focal
           - image: swift:5.8.1-jammy
-          - image: swift:5.8.1-bionic
           - image: swift:5.8.1-centos7
           - image: swift:5.8.1-amazonlinux2
           - image: swift:5.8.1-rhel-ubi9
-          # - image: swift:5.9.0-focal
-          # - image: swift:5.9.0-jammy
-          # - image: swift:5.9.0-bionic
-          # - image: swift:5.9.0-centos7
-          # - image: swift:5.9.0-amazonlinux2
-          # - image: swift:5.9.0-rhel-ubi9
+          - image: swift:5.9.0-focal
+          - image: swift:5.9.0-jammy
+          - image: swift:5.9.0-centos7
+          - image: swift:5.9.0-amazonlinux2
+          - image: swift:5.9.0-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
           - image: swiftlang/swift:nightly-amazonlinux2
