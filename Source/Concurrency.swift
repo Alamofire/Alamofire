@@ -761,7 +761,7 @@ extension DataStreamRequest {
     }
 }
 
-#if !(os(Linux) || os(Windows))
+#if canImport(Darwin) && !canImport(FoundationNetworking)
 // - MARK: WebSocketTask
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
