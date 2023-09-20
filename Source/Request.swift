@@ -1612,6 +1612,412 @@ extension DataStreamRequest.Stream {
     }
 }
 
+// MARK: - WebSocketRequest
+
+#if !(os(Linux) || os(Windows))
+
+/// `Request` subclass which manages a WebSocket connection using `URLSessionWebSocketTask`.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public final class WebSocketRequest: Request {
+    enum IncomingEvent {
+        case connected(protocol: String?)
+        case receivedMessage(URLSessionWebSocketTask.Message)
+        case disconnected(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+        case completed(Completion)
+    }
+
+    public struct Event<Success, Failure: Error> {
+        public enum Kind {
+            case connected(protocol: String?)
+            case receivedMessage(Success)
+            // Only received if the server disconnects or we cancel with code, not if we do a simple cancel or error.
+            case disconnected(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+            case completed(Completion)
+        }
+
+        weak var socket: WebSocketRequest?
+
+        public let kind: Kind
+        public var message: Success? {
+            guard case let .receivedMessage(message) = kind else { return nil }
+
+            return message
+        }
+
+        init(socket: WebSocketRequest, kind: Kind) {
+            self.socket = socket
+            self.kind = kind
+        }
+
+        public func cancel(with closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+            socket?.cancel(with: closeCode, reason: reason)
+        }
+
+        public func cancel() {
+            socket?.cancel()
+        }
+
+        public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping (PingResponse) -> Void) {
+            socket?.sendPing(respondingOn: queue, onResponse: onResponse)
+        }
+
+//        func mapMessage<NewSuccess>(_ transform: (URLSessionWebSocketTask.Message) throws -> NewSuccess) rethrows -> Event<NewSuccess, Error> {
+//            switch self {
+//            case let .connected(`protocol`):
+//                return .connected(`protocol`)
+//            case let .receiveMessage(message):
+//                do {
+//                    let value = try transform(message)
+//                    return .receivedMessage(<#T##URLSessionWebSocketTask.Message#>)
+//                }
+//            }
+//        }
+    }
+
+    public struct Completion {
+        /// Last `URLRequest` issued by the instance.
+        public let request: URLRequest?
+        /// Last `HTTPURLResponse` received by the instance.
+        public let response: HTTPURLResponse?
+        /// Last `URLSessionTaskMetrics` produced for the instance.
+        public let metrics: URLSessionTaskMetrics?
+        /// `AFError` produced for the instance, if any.
+        public let error: AFError?
+    }
+
+    /// Response to a sent ping.
+    public enum PingResponse {
+        public struct Pong {
+            let start: Date
+            let end: Date
+            let latency: TimeInterval
+        }
+
+        /// Received a pong with the associated state.
+        case pong(Pong)
+        /// Received an error.
+        case error(Error)
+        /// Did not send the ping, the request is cancelled or suspended.
+        case unsent
+    }
+
+    struct SocketMutableState {
+        var enqueuedSends: [(message: URLSessionWebSocketTask.Message,
+                             queue: DispatchQueue,
+                             completionHandler: (Result<Void, Error>) -> Void)] = []
+        var handlers: [(queue: DispatchQueue, handler: (_ event: IncomingEvent) -> Void)] = []
+        var pingTimerItem: DispatchWorkItem?
+    }
+
+    let socketMutableState = Protected(SocketMutableState())
+
+    var socket: URLSessionWebSocketTask? {
+        task as? URLSessionWebSocketTask
+    }
+
+    public let convertible: URLRequestConvertible
+    public let `protocol`: String?
+    public let maximumMessageSize: Int
+    public let pingInterval: TimeInterval?
+
+    init(id: UUID = UUID(),
+         convertible: URLRequestConvertible,
+         protocol: String? = nil,
+         maximumMessageSize: Int,
+         pingInterval: TimeInterval?,
+         underlyingQueue: DispatchQueue,
+         serializationQueue: DispatchQueue,
+         eventMonitor: EventMonitor?,
+         interceptor: RequestInterceptor?,
+         delegate: RequestDelegate) {
+        self.convertible = convertible
+        self.protocol = `protocol`
+        self.maximumMessageSize = maximumMessageSize
+        self.pingInterval = pingInterval
+
+        super.init(id: id,
+                   underlyingQueue: underlyingQueue,
+                   serializationQueue: serializationQueue,
+                   eventMonitor: eventMonitor,
+                   interceptor: interceptor,
+                   delegate: delegate)
+    }
+
+    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        var copiedRequest = request
+        let task: URLSessionWebSocketTask
+        if let `protocol` = `protocol` {
+            copiedRequest.headers.update(.websocketProtocol(`protocol`))
+            task = session.webSocketTask(with: copiedRequest)
+        } else {
+            task = session.webSocketTask(with: copiedRequest)
+        }
+        task.maximumMessageSize = maximumMessageSize
+
+        return task
+    }
+
+    override func didCreateTask(_ task: URLSessionTask) {
+        super.didCreateTask(task)
+
+        guard let webSocketTask = task as? URLSessionWebSocketTask else {
+            fatalError("Invalid task of type \(task.self) created for WebSocketRequest.")
+        }
+        // TODO: What about the any old tasks? Reset their receive?
+        listen(to: webSocketTask)
+
+        // Empty pending messages.
+        socketMutableState.write { state in
+            guard !state.enqueuedSends.isEmpty else { return }
+
+            let sends = state.enqueuedSends
+            self.underlyingQueue.async {
+                sends.forEach { send in
+                    webSocketTask.send(send.message) { error in
+                        send.queue.async {
+                            send.completionHandler(Result(value: (), error: error))
+                        }
+                    }
+                }
+            }
+
+            state.enqueuedSends = []
+        }
+    }
+
+    // TODO: Distinguish between cancellation and close behavior?
+    // TODO: Reexamine cancellation behavior.
+    @discardableResult
+    public func cancel(with closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) -> Self {
+        cancelTimedPing()
+
+        mutableState.write { mutableState in
+            guard mutableState.state.canTransitionTo(.cancelled) else { return }
+
+            mutableState.state = .cancelled
+
+            underlyingQueue.async { self.didCancel() }
+
+            guard let task = mutableState.tasks.last, task.state != .completed else {
+                underlyingQueue.async { self.finish() }
+                return
+            }
+
+            // Resume to ensure metrics are gathered.
+            task.resume()
+            // Cast from state directly, otherwise the lock is recursive.
+            (mutableState.tasks.last as? URLSessionWebSocketTask)?.cancel(with: closeCode, reason: reason)
+            underlyingQueue.async { self.didCancelTask(task) }
+        }
+
+        return self
+    }
+
+    func didConnect(protocol: String?) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
+        socketMutableState.read { state in
+            state.handlers.forEach { handler in
+                handler.queue.async { handler.handler(.connected(protocol: `protocol`)) }
+            }
+        }
+
+        if let pingInterval = pingInterval {
+            startTimedPing(onInterval: pingInterval)
+        }
+    }
+
+    public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping (PingResponse) -> Void) {
+        guard isResumed else {
+            queue.async { onResponse(.unsent) }
+            return
+        }
+
+        NSLog("Starting ping.")
+        let start = Date()
+        let startTimestamp = ProcessInfo.processInfo.systemUptime
+        socket?.sendPing { error in
+            // Calls back on delegate queue / rootQueue / underlyingQueue
+            if let error = error {
+                NSLog("Ping error: \(error)")
+                queue.async {
+                    onResponse(.error(error))
+                }
+                // TODO: What to do with failed ping? Configure for failure, auto retry, or stop pinging?
+            } else {
+                let end = Date()
+                let endTimestamp = ProcessInfo.processInfo.systemUptime
+                let pong = PingResponse.Pong(start: start, end: end, latency: endTimestamp - startTimestamp)
+                NSLog("Pong received: \(pong)")
+                queue.async {
+                    onResponse(.pong(pong))
+                }
+            }
+        }
+    }
+
+    func startTimedPing(onInterval pingInterval: TimeInterval) {
+        socketMutableState.write { mutableState in
+            guard isResumed else {
+                defer { cancelTimedPing() }
+                return
+            }
+
+            let item = DispatchWorkItem { [weak self] in
+                guard let self = self, self.isResumed else { return }
+
+                self.sendPing(respondingOn: self.underlyingQueue) { response in
+                    guard case .pong = response else { return }
+
+                    self.startTimedPing(onInterval: pingInterval)
+                }
+            }
+
+            mutableState.pingTimerItem = item
+            underlyingQueue.asyncAfter(deadline: .now() + pingInterval, execute: item)
+        }
+    }
+
+    func cancelTimedPing() {
+        socketMutableState.write { mutableState in
+            mutableState.pingTimerItem?.cancel()
+            mutableState.pingTimerItem = nil
+        }
+    }
+
+    func didDisconnect(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
+        cancelTimedPing()
+        socketMutableState.read { state in
+            state.handlers.forEach { handler in
+                handler.queue.async {
+                    handler.handler(.disconnected(closeCode: closeCode, reason: reason))
+                }
+            }
+        }
+    }
+
+    private func listen(to task: URLSessionWebSocketTask) {
+        // TODO: Do we care about the cycle while receiving?
+        task.receive { result in
+            switch result {
+            case let .success(message):
+                self.socketMutableState.read { state in
+                    state.handlers.forEach { handler in
+                        handler.queue.async { handler.handler(.receivedMessage(message)) }
+                    }
+                }
+                self.listen(to: task)
+            case let .failure(error):
+                NSLog("Receive for task: \(task), didFailWithError: \(error)")
+            }
+        }
+    }
+
+    @discardableResult
+    public func responseMessage(on queue: DispatchQueue = .main,
+                                handler: @escaping (Event<URLSessionWebSocketTask.Message, Never>) -> Void) -> Self {
+        socketMutableState.write { state in
+            state.handlers.append((queue: queue, handler: { incomingEvent in
+                queue.async {
+                    switch incomingEvent {
+                    case let .connected(`protocol`):
+                        handler(.init(socket: self, kind: .connected(protocol: `protocol`)))
+                    case let .receivedMessage(message):
+                        // TODO: Call serializers.
+                        handler(.init(socket: self, kind: .receivedMessage(message)))
+                    case let .disconnected(closeCode, reason):
+                        handler(.init(socket: self, kind: .disconnected(closeCode: closeCode, reason: reason)))
+                    case let .completed(completion):
+                        handler(.init(socket: self, kind: .completed(completion)))
+                    }
+                }
+            }))
+        }
+
+        appendResponseSerializer {
+            self.underlyingQueue.async {
+                self.responseSerializerDidComplete {
+                    self.socketMutableState.read { state in
+                        state.handlers.forEach { handler in
+                            handler.queue.async {
+                                handler.handler(.completed(.init(request: self.request,
+                                                                 response: self.response,
+                                                                 metrics: self.metrics,
+                                                                 error: self.error)))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return self
+    }
+
+//    @discardableResult
+//    public func responseDecodable<Value: Decodable>(on queue: DispatchQueue = .main,
+//                                                    using decoder: WebSocketMessageDecoder,
+//                                                    handler: @escaping (Event<Value, Error>) -> Void) -> Self {
+//        responseMessage(on: queue) { event in
+//            event
+//        }
+//    }
+
+    public func send(_ message: URLSessionWebSocketTask.Message,
+                     queue: DispatchQueue = .main,
+                     completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        guard !(isCancelled || isFinished) else {
+            // Error for attempting send while cancelled or finished?
+            // Probably just silently ignore.
+            return
+        }
+
+        guard let socket = socket else {
+            socketMutableState.write { mutableState in
+                mutableState.enqueuedSends.append((message, queue, completionHandler))
+            }
+            return
+        }
+
+        underlyingQueue.async {
+            socket.send(message) { error in
+                queue.async {
+                    completionHandler(Result(value: (), error: error))
+                }
+            }
+        }
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+protocol WebSocketMessageDecoder {
+    associatedtype Output
+
+    func decode(_ message: URLSessionWebSocketTask.Message) throws -> Output
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct DecodableWebSocketMessageDecoder<Value: Decodable>: WebSocketMessageDecoder {
+    struct UnknownMessage: Error {}
+
+    public let decoder: DataDecoder
+
+    func decode(_ message: URLSessionWebSocketTask.Message) throws -> Value {
+        switch message {
+        case let .data(data):
+            return try decoder.decode(Value.self, from: data)
+        case let .string(string):
+            return try decoder.decode(Value.self, from: Data(string.utf8))
+        @unknown default:
+            throw UnknownMessage()
+        }
+    }
+}
+
+#endif
+
 // MARK: - DownloadRequest
 
 /// `Request` subclass which downloads `Data` to a file on disk using `URLSessionDownloadTask`.

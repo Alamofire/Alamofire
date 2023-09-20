@@ -276,6 +276,37 @@ extension SessionDelegate: URLSessionDataDelegate {
     }
 }
 
+// MARK: URLSessionWebSocketDelegate
+
+#if !(os(Linux) || os(Windows))
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension SessionDelegate: URLSessionWebSocketDelegate {
+    open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+        // TODO: Add event monitor method.
+//        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didOpenWithProtocol: \(`protocol` ?? "None")")
+        guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
+            return
+        }
+
+        request.didConnect(protocol: `protocol`)
+    }
+
+    open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        // TODO: Add event monitor method.
+//        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didCloseWithCode: \(closeCode.rawValue), reason: \(reason ?? Data())")
+        guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
+            return
+        }
+
+        // On 2021 OSes and above, empty reason is returned as empty Data rather than nil, so make it nil always.
+        let reason = (reason?.isEmpty == true) ? nil : reason
+        request.didDisconnect(closeCode: closeCode, reason: reason)
+    }
+}
+
+#endif
+
 // MARK: URLSessionDownloadDelegate
 
 extension SessionDelegate: URLSessionDownloadDelegate {

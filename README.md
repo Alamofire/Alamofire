@@ -102,6 +102,7 @@ Alamofire builds on Linux, Windows, and Android but there are missing features a
 - Various methods of HTTP authentication may crash, including HTTP Basic and HTTP Digest. Crashes may occur if responses contain server challenges.
 - Cache control through `CachedResponseHandler` and associated APIs is unavailable, as the underlying delegate methods aren't called.
 - `URLSessionTaskMetrics` are never gathered.
+- `WebSocketRequest` not available.
 
 Due to these issues, Alamofire is unsupported on Linux, Windows, and Android. Please report any crashes to the [Swift bug reporter](https://bugs.swift.org).
 

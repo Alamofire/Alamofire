@@ -761,6 +761,85 @@ extension DataStreamRequest {
     }
 }
 
+#if !(os(Linux) || os(Windows))
+// - MARK: WebSocketTask
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct WebSocketTask {
+    private let request: WebSocketRequest
+
+    fileprivate init(request: WebSocketRequest) {
+        self.request = request
+    }
+
+    public typealias Stream<Success, Failure: Error> = StreamOf<WebSocketRequest.Event<Success, Failure>>
+
+    public func streamingEvents(
+        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+        bufferingPolicy: StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>>.BufferingPolicy = .unbounded
+    ) -> StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>> {
+        createStream(automaticallyCancelling: shouldAutomaticallyCancel,
+                     bufferingPolicy: bufferingPolicy) { onEvent in
+            request.responseMessage(on: .streamCompletionQueue(forRequestID: request.id), handler: onEvent)
+        }
+    }
+
+    private func createStream(
+        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+        bufferingPolicy: StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>>.BufferingPolicy = .unbounded,
+        forResponse onResponse: @escaping (@escaping (WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>) -> Void) -> Void
+    ) -> StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>> {
+        StreamOf(bufferingPolicy: bufferingPolicy) {
+            guard shouldAutomaticallyCancel,
+                  request.isInitialized || request.isResumed || request.isSuspended else { return }
+
+            cancel()
+        } builder: { continuation in
+            onResponse { event in
+                continuation.yield(event)
+                if case .completed = event.kind {
+                    continuation.finish()
+                }
+            }
+        }
+    }
+
+    public func send(_ message: URLSessionWebSocketTask.Message) async -> Result<Void, Error> {
+        await withCheckedContinuation { continuation in
+            request.send(message) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+
+    /// Cancel the underlying `WebSocketRequest`.
+    public func cancel(with closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) {
+        request.cancel(with: closeCode, reason: reason)
+    }
+
+    public func cancel() {
+        request.cancel()
+    }
+
+    /// Resume the underlying `WebSocketRequest`.
+    public func resume() {
+        request.resume()
+    }
+
+    /// Suspend the underlying `WebSocketRequest`.
+    public func suspend() {
+        request.suspend()
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension WebSocketRequest {
+    public func webSocketTask() -> WebSocketTask {
+        WebSocketTask(request: self)
+    }
+}
+#endif
+
 extension DispatchQueue {
     fileprivate static let singleEventQueue = DispatchQueue(label: "org.alamofire.concurrencySingleEventQueue",
                                                             attributes: .concurrent)

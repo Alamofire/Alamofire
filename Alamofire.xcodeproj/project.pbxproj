@@ -403,6 +403,7 @@
 		31DADDFC224811ED0051390F /* AlamofireExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DADDFA224811ED0051390F /* AlamofireExtended.swift */; };
 		31DADDFD224811ED0051390F /* AlamofireExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DADDFA224811ED0051390F /* AlamofireExtended.swift */; };
 		31DADDFE224811ED0051390F /* AlamofireExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DADDFA224811ED0051390F /* AlamofireExtended.swift */; };
+		31E382E126477307004533B3 /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
 		31EBD9C120D1D89C00D1FF34 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */; };
 		31EBD9C220D1D89C00D1FF34 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */; };
 		31EBD9C320D1D89D00D1FF34 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */; };
@@ -420,6 +421,9 @@
 		31FB2F8822C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
 		31FB2F8922C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
 		31FB2F8A22C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
+		31FEC68C26225A54009D17DB /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
+		31FEC68D26225A54009D17DB /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
+		31FEC68E26225A54009D17DB /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
 		4196936222FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */; };
 		4196936322FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */; };
 		4196936422FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */; };
@@ -664,6 +668,7 @@
 		31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionConfiguration+Alamofire.swift"; sourceTree = "<group>"; };
 		31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSLoggingEventMonitor.swift; sourceTree = "<group>"; };
 		31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedFormEncoder.swift; sourceTree = "<group>"; };
+		31FEC68B26225A54009D17DB /* WebSocketTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketTests.swift; sourceTree = "<group>"; };
 		4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Alamofire.swift"; sourceTree = "<group>"; };
 		4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerializationTests.swift; sourceTree = "<group>"; };
 		4C0CB630220BC70300604EDC /* RequestInterceptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptorTests.swift; sourceTree = "<group>"; };
@@ -917,6 +922,7 @@
 				4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */,
 				F8D1C6F419D52968002E74FE /* SessionTests.swift */,
 				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
+				31FEC68B26225A54009D17DB /* WebSocketTests.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -1702,6 +1708,7 @@
 				3129308E263E184500473CEA /* CachedResponseHandlerTests.swift in Sources */,
 				31293087263E184500473CEA /* RedirectHandlerTests.swift in Sources */,
 				31293089263E184500473CEA /* ServerTrustEvaluatorTests.swift in Sources */,
+				31E382E126477307004533B3 /* WebSocketTests.swift in Sources */,
 				3129307D263E183C00473CEA /* DataStreamTests.swift in Sources */,
 				31293085263E184500473CEA /* HTTPHeadersTests.swift in Sources */,
 				31293079263E183C00473CEA /* InternalRequestTests.swift in Sources */,
@@ -1879,6 +1886,7 @@
 				3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2182220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
+				31FEC68E26225A54009D17DB /* WebSocketTests.swift in Sources */,
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E142794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
@@ -2056,6 +2064,7 @@
 				3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2180220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
+				31FEC68C26225A54009D17DB /* WebSocketTests.swift in Sources */,
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E122794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
@@ -2101,6 +2110,7 @@
 				3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2181220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,
+				31FEC68D26225A54009D17DB /* WebSocketTests.swift in Sources */,
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E132794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
