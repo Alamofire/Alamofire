@@ -379,7 +379,7 @@ extension Session {
                       interceptor: interceptor)
     }
 
-    #if !(os(Linux) || os(Windows))
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func websocketRequest(_ endpoint: Endpoint,
                           protocol: String? = nil,

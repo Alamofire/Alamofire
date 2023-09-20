@@ -1785,6 +1785,16 @@ public final class WebSocketRequest: Request {
         }
     }
 
+//    override func didCancel() {
+//        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+//
+//        mutableState.write { mutableState in
+//            mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
+//        }
+//
+//        eventMonitor?.requestDidCancel(self)
+//    }
+
     // TODO: Distinguish between cancellation and close behavior?
     // TODO: Reexamine cancellation behavior.
     @discardableResult
