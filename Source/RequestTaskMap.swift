@@ -131,7 +131,8 @@ struct RequestTaskMap {
 
         switch (events.completed, events.metricsGathered) {
         case (true, _): fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
-        #if os(Linux) || os(Android) // Linux doesn't gather metrics, so unconditionally remove the reference and return true.
+        // swift-corelibs-foundation doesn't gather metrics, so unconditionally remove the reference and return true.
+        #if canImport(FoundationNetworking)
         default: self[task] = nil; return true
         #else
         case (false, false):

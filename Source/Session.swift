@@ -461,7 +461,7 @@ open class Session {
         return request
     }
 
-    #if !(os(Linux) || os(Windows))
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     open func websocketRequest(to convertible: URLRequestConvertible,
                                protocol: String? = nil,
@@ -1027,7 +1027,7 @@ open class Session {
                 case let r as DownloadRequest: self.performDownloadRequest(r)
                 case let r as DataStreamRequest: self.performDataStreamRequest(r)
                 default:
-                    #if !(os(Linux) || os(Windows))
+                    #if canImport(Darwin) && !canImport(FoundationNetworking)
                     if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *),
                        let request = request as? WebSocketRequest {
                         self.performWebSocketRequest(request)
@@ -1054,7 +1054,7 @@ open class Session {
         performSetupOperations(for: request, convertible: request.convertible)
     }
 
-    #if !(os(Linux) || os(Windows))
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func performWebSocketRequest(_ request: WebSocketRequest) {
         dispatchPrecondition(condition: .onQueue(requestQueue))

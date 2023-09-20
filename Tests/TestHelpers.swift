@@ -234,7 +234,7 @@ struct Endpoint {
 
     static let upload: Endpoint = .init(path: .upload, method: .post, headers: [.contentType("application/octet-stream")])
 
-    #if !(os(Linux) || os(Windows))
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     static var defaultCloseDelay: Int64 {
         if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
             return 0

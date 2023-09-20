@@ -6,7 +6,7 @@
 //  Copyright © 2021 Alamofire. All rights reserved.
 //
 
-#if !(os(Linux) || os(Windows))
+#if canImport(Darwin) && !canImport(FoundationNetworking)
 
 import Alamofire
 import Foundation
