@@ -410,6 +410,7 @@
 		31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
+		31F032542ABB9C0900D68FB2 /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
 		31F5085D20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */; };
 		31F5085E20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */; };
 		31F5085F20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */; };
@@ -1778,6 +1779,7 @@
 				317339022A43BE9000D4EA0A /* AuthenticationTests.swift in Sources */,
 				317339032A43BE9000D4EA0A /* DataStreamTests.swift in Sources */,
 				317339042A43BE9000D4EA0A /* DownloadTests.swift in Sources */,
+				31F032542ABB9C0900D68FB2 /* WebSocketTests.swift in Sources */,
 				317339052A43BE9000D4EA0A /* InternalRequestTests.swift in Sources */,
 				317339062A43BE9000D4EA0A /* ParameterEncoderTests.swift in Sources */,
 				317339072A43BE9000D4EA0A /* ParameterEncodingTests.swift in Sources */,
