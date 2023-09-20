@@ -290,16 +290,14 @@ jobs:
         include:
           - image: swift:5.8.1-focal
           - image: swift:5.8.1-jammy
-          - image: swift:5.8.1-bionic
           - image: swift:5.8.1-centos7
           - image: swift:5.8.1-amazonlinux2
           - image: swift:5.8.1-rhel-ubi9
-          # - image: swift:5.9.0-focal
-          # - image: swift:5.9.0-jammy
-          # - image: swift:5.9.0-bionic
-          # - image: swift:5.9.0-centos7
-          # - image: swift:5.9.0-amazonlinux2
-          # - image: swift:5.9.0-rhel-ubi9
+          - image: swift:5.9.0-focal
+          - image: swift:5.9.0-jammy
+          - image: swift:5.9.0-centos7
+          - image: swift:5.9.0-amazonlinux2
+          - image: swift:5.9.0-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
           - image: swiftlang/swift:nightly-amazonlinux2
@@ -319,18 +317,28 @@ jobs:
       target-repo: ${{ github.repository }}
       checkout-hash: ${{ github.sha }}
   Windows:
-    name: Windows
+    name: ${{ matrix.name }}
     runs-on: windows-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - branch: swift-5.8-release
+            tag: 5.8-RELEASE
+            name: Windows Swift 5.8
+          - branch: swift-5.9-release
+            tag: 5.9-RELEASE
+            name: Windows Swift 5.9
     steps:
       - name: Setup
         uses: compnerd/gha-setup-swift@main
         with:
-          branch: swift-5.8-release
-          tag: 5.8-RELEASE
+          branch: ${{ matrix.branch }}
+          tag: ${{ matrix.tag }}
       - name: Clone
         uses: actions/checkout@v4
-      - name: SPM Windows Build
+      - name: SPM ${{ matrix.name }}
         run: |
           swift build --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
   CodeQL:
