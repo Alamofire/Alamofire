@@ -16,7 +16,7 @@ import XCTest
 final class WebSocketTests: BaseTestCase {
 //    override var skipVersion: SkipVersion { .twenty }
 
-    func testThatWebSocketsCanReceiveAMessage() {
+    func testThatWebSocketsCanReceiveMessageEvents() {
         // Given
         let didConnect = expectation(description: "didConnect")
         let didReceiveMessage = expectation(description: "didReceiveMessage")
@@ -31,7 +31,7 @@ final class WebSocketTests: BaseTestCase {
         var receivedCompletion: WebSocketRequest.Completion?
 
         // When
-        session.websocketRequest(.websocket()).responseMessage { event in
+        session.websocketRequest(.websocket()).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -61,6 +61,94 @@ final class WebSocketTests: BaseTestCase {
         XCTAssertNil(receivedCompletion?.error)
     }
 
+    func testThatWebSocketsCanReceiveAMessage() {
+        // Given
+        let didReceiveMessage = expectation(description: "didReceiveMessage")
+
+        let session = stored(Session())
+
+        var receivedMessage: URLSessionWebSocketTask.Message?
+
+        // When
+        session.websocketRequest(.websocket()).streamMessages { message in
+            receivedMessage = message
+            didReceiveMessage.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(receivedMessage)
+        XCTAssertNotNil(receivedMessage?.data)
+    }
+
+    func testThatWebSocketsCanReceiveADecodableMessage() {
+        // Given
+        let didConnect = expectation(description: "didConnect")
+        let didReceiveMessage = expectation(description: "didReceiveMessage")
+        let didDisconnect = expectation(description: "didDisconnect")
+        let didComplete = expectation(description: "didComplete")
+        let session = stored(Session())
+
+        var connectedProtocol: String?
+        var message: TestResponse?
+        var closeCode: URLSessionWebSocketTask.CloseCode?
+        var closeReason: Data?
+        var receivedCompletion: WebSocketRequest.Completion?
+
+        // When
+        session.websocketRequest(.websocketCount(1)).streamDecodableEvents(TestResponse.self) { event in
+            switch event.kind {
+            case let .connected(`protocol`):
+                connectedProtocol = `protocol`
+                didConnect.fulfill()
+            case let .receivedMessage(receivedMessage):
+                message = receivedMessage
+                didReceiveMessage.fulfill()
+            case let .serializerFailed(error):
+                XCTFail("websocket message serialization failed with error: \(error)")
+            case let .disconnected(code, reason):
+                closeCode = code
+                closeReason = reason
+                didDisconnect.fulfill()
+            case let .completed(completion):
+                receivedCompletion = completion
+                didComplete.fulfill()
+            }
+        }
+
+        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
+             timeout: timeout,
+             enforceOrder: false)
+
+        // Then
+        XCTAssertNil(connectedProtocol)
+        XCTAssertNotNil(message)
+        XCTAssertEqual(closeCode, .normalClosure)
+        XCTAssertNil(closeReason)
+        XCTAssertNil(receivedCompletion?.error)
+    }
+
+    func testThatWebSocketsCanReceiveADecodableValue() {
+        // Given
+        let didReceiveValue = expectation(description: "didReceiveMessage")
+
+        let session = stored(Session())
+
+        var receivedValue: TestResponse?
+
+        // When
+        session.websocketRequest(.websocket()).streamDecodable(TestResponse.self) { value in
+            receivedValue = value
+            didReceiveValue.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(receivedValue)
+    }
+
     func testThatWebSocketsCanReceiveAMessageWithAProtocol() {
         // Given
         let didConnect = expectation(description: "didConnect")
@@ -77,7 +165,7 @@ final class WebSocketTests: BaseTestCase {
         var receivedCompletion: WebSocketRequest.Completion?
 
         // When
-        session.websocketRequest(.websocket(), protocol: `protocol`).responseMessage { event in
+        session.websocketRequest(.websocket(), protocol: `protocol`).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -125,7 +213,7 @@ final class WebSocketTests: BaseTestCase {
         var receivedCompletion: WebSocketRequest.Completion?
 
         // When
-        session.websocketRequest(.websocketCount(count)).responseMessage { event in
+        session.websocketRequest(.websocketCount(count)).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -171,7 +259,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.websocketRequest(.websocketEcho)
-        request.responseMessage { event in
+        request.streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -179,7 +267,7 @@ final class WebSocketTests: BaseTestCase {
                 request.send(sentMessage) { _ in didSend.fulfill() }
             case let .receivedMessage(receivedMessage):
                 message = receivedMessage
-                event.cancel(with: .normalClosure, reason: nil)
+                event.close(sending: .normalClosure)
                 didReceiveMessage.fulfill()
             case let .disconnected(code, reason):
                 closeCode = code
@@ -201,7 +289,42 @@ final class WebSocketTests: BaseTestCase {
         XCTAssertEqual(sentMessage, message)
         XCTAssertEqual(closeCode, .normalClosure)
         XCTAssertNil(closeReason)
-//        XCTAssertNil(receivedCompletion?.error)
+        XCTAssertNil(receivedCompletion?.error)
+    }
+
+    func testThatWebSocketsCanBeCancelled() {
+        // Given
+        let didConnect = expectation(description: "didConnect")
+        let didComplete = expectation(description: "didComplete")
+        let session = stored(Session())
+
+        var connectedProtocol: String?
+        var receivedCompletion: WebSocketRequest.Completion?
+
+        // When
+        let request = session.websocketRequest(.websocketEcho)
+        request.streamMessageEvents { event in
+            switch event.kind {
+            case let .connected(`protocol`):
+                connectedProtocol = `protocol`
+                didConnect.fulfill()
+                request.cancel()
+            case let .receivedMessage(receivedMessage):
+                XCTFail("cancelled socket received message: \(receivedMessage)")
+            case .disconnected:
+                XCTFail("cancelled socket shouldn't receive disconnected event")
+            case let .completed(completion):
+                receivedCompletion = completion
+                didComplete.fulfill()
+            }
+        }
+
+        wait(for: [didConnect, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertNil(connectedProtocol)
+        XCTAssertTrue(receivedCompletion?.error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(request.error?.isExplicitlyCancelledError == true)
     }
 
     func testOnePingOnly() {
@@ -225,7 +348,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.websocketRequest(.websocketEcho)
-        request.responseMessage { event in
+        request.streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -244,7 +367,7 @@ final class WebSocketTests: BaseTestCase {
                         }
                         didReceivePong.fulfill()
                         if count == 99 {
-                            request.cancel(with: .normalClosure, reason: nil)
+                            request.close(sending: .normalClosure)
                         }
                     }
                 }
@@ -287,7 +410,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.websocketRequest(.websocketPings(), pingInterval: 0.01)
-        request.responseMessage { event in
+        request.streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -324,7 +447,7 @@ final class WebSocketTests: BaseTestCase {
         var receivedCompletion: WebSocketRequest.Completion?
 
         // When
-        session.websocketRequest(.websocket(), maximumMessageSize: 1).responseMessage { event in
+        session.websocketRequest(.websocket(), maximumMessageSize: 1).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -359,7 +482,7 @@ final class WebSocketTests: BaseTestCase {
         var receivedCompletion: WebSocketRequest.Completion?
 
         // When
-        session.websocketRequest(.websocket(closeCode: .goingAway)).responseMessage { event in
+        session.websocketRequest(.websocket(closeCode: .goingAway)).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`

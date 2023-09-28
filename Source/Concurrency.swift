@@ -780,7 +780,7 @@ public struct WebSocketTask {
     ) -> StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy) { onEvent in
-            request.responseMessage(on: .streamCompletionQueue(forRequestID: request.id), handler: onEvent)
+            request.streamMessageEvents(on: .streamCompletionQueue(forRequestID: request.id), handler: onEvent)
         }
     }
 
@@ -813,8 +813,8 @@ public struct WebSocketTask {
     }
 
     /// Cancel the underlying `WebSocketRequest`.
-    public func cancel(with closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) {
-        request.cancel(with: closeCode, reason: reason)
+    public func close(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) {
+        request.close(sending: closeCode, reason: reason)
     }
 
     public func cancel() {
