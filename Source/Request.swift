@@ -1928,14 +1928,13 @@ public final class WebSocketRequest: Request {
             case let .success(message):
                 self.socketMutableState.read { state in
                     state.handlers.forEach { handler in
-                        handler.queue.async {
-                            handler.handler(.receivedMessage(message))
-                        }
+                        // Saved handler calls out to serializationQueue immediately, then to handler's queue.
+                        handler.handler(.receivedMessage(message))
                     }
                 }
 
                 self.listen(to: task)
-            case let .failure(error):
+            case .failure:
                 break
 //                NSLog("Receive for task: \(task), didFailWithError: \(error)")
             }
