@@ -1843,7 +1843,8 @@ public final class WebSocketRequest: Request {
 
         socketMutableState.read { state in
             state.handlers.forEach { handler in
-                handler.queue.async { handler.handler(.connected(protocol: `protocol`)) }
+                // Saved handler calls out to serializationQueue immediately, then to handler's queue.
+                handler.handler(.connected(protocol: `protocol`))
             }
         }
 
@@ -1914,9 +1915,8 @@ public final class WebSocketRequest: Request {
         cancelTimedPing()
         socketMutableState.read { state in
             state.handlers.forEach { handler in
-                handler.queue.async {
-                    handler.handler(.disconnected(closeCode: closeCode, reason: reason))
-                }
+                // Saved handler calls out to serializationQueue immediately, then to handler's queue.
+                handler.handler(.disconnected(closeCode: closeCode, reason: reason))
             }
         }
     }

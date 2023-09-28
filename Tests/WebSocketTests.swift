@@ -16,6 +16,12 @@ import XCTest
 final class WebSocketTests: BaseTestCase {
 //    override var skipVersion: SkipVersion { .twenty }
 
+//    func testMany() {
+//        for _ in 0..<5000 {
+//            testThatWebSocketsCanReceiveMessageEvents()
+//        }
+//    }
+
     func testThatWebSocketsCanReceiveMessageEvents() {
         // Given
         let didConnect = expectation(description: "didConnect")
