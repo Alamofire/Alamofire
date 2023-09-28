@@ -2034,7 +2034,7 @@ public final class WebSocketRequest: Request {
 
         appendResponseSerializer {
             self.responseSerializerDidComplete {
-                queue.async {
+                self.serializationQueue.async {
                     handler(.completed(.init(request: self.request,
                                              response: self.response,
                                              metrics: self.metrics,
