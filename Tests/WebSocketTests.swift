@@ -57,7 +57,7 @@ final class WebSocketTests: BaseTestCase {
 
         wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
              timeout: timeout,
-             enforceOrder: false)
+             enforceOrder: true)
 
         // Then
         XCTAssertNil(connectedProtocol)
@@ -129,7 +129,7 @@ final class WebSocketTests: BaseTestCase {
 
         wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
              timeout: timeout,
-             enforceOrder: false)
+             enforceOrder: true)
 
         // Then
         XCTAssertNil(connectedProtocol)
@@ -474,7 +474,7 @@ final class WebSocketTests: BaseTestCase {
             }
         }
 
-        wait(for: [didConnect, didComplete], timeout: timeout, enforceOrder: false)
+        wait(for: [didConnect, didComplete], timeout: timeout, enforceOrder: true)
 
         // Then
         XCTAssertNil(connectedProtocol)
@@ -516,7 +516,7 @@ final class WebSocketTests: BaseTestCase {
 
         wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
              timeout: timeout,
-             enforceOrder: false)
+             enforceOrder: true)
 
         // Then
         XCTAssertNil(connectedProtocol)
@@ -587,7 +587,7 @@ final class WebSocketTests: BaseTestCase {
 
         wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
              timeout: timeout,
-             enforceOrder: false)
+             enforceOrder: true)
 
         // Then
         XCTAssertNil(firstConnectedProtocol)

@@ -1936,7 +1936,8 @@ public final class WebSocketRequest: Request {
 
                 self.listen(to: task)
             case let .failure(error):
-                NSLog("Receive for task: \(task), didFailWithError: \(error)")
+                break
+//                NSLog("Receive for task: \(task), didFailWithError: \(error)")
             }
         }
     }
