@@ -1786,16 +1786,6 @@ public final class WebSocketRequest: Request {
         }
     }
 
-//    override func didCancel() {
-//        dispatchPrecondition(condition: .onQueue(underlyingQueue))
-//
-//        mutableState.write { mutableState in
-//            mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
-//        }
-//
-//        eventMonitor?.requestDidCancel(self)
-//    }
-
     func didClose() {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
@@ -1868,13 +1858,11 @@ public final class WebSocketRequest: Request {
             return
         }
 
-        NSLog("Starting ping.")
         let start = Date()
         let startTimestamp = ProcessInfo.processInfo.systemUptime
         socket?.sendPing { error in
             // Calls back on delegate queue / rootQueue / underlyingQueue
             if let error = error {
-                NSLog("Ping error: \(error)")
                 queue.async {
                     onResponse(.error(error))
                 }
@@ -1883,7 +1871,7 @@ public final class WebSocketRequest: Request {
                 let end = Date()
                 let endTimestamp = ProcessInfo.processInfo.systemUptime
                 let pong = PingResponse.Pong(start: start, end: end, latency: endTimestamp - startTimestamp)
-                NSLog("Pong received: \(pong)")
+
                 queue.async {
                     onResponse(.pong(pong))
                 }
@@ -1940,7 +1928,9 @@ public final class WebSocketRequest: Request {
             case let .success(message):
                 self.socketMutableState.read { state in
                     state.handlers.forEach { handler in
-                        handler.queue.async { handler.handler(.receivedMessage(message)) }
+                        handler.queue.async {
+                            handler.handler(.receivedMessage(message))
+                        }
                     }
                 }
 
@@ -2044,15 +2034,11 @@ public final class WebSocketRequest: Request {
 
         appendResponseSerializer {
             self.responseSerializerDidComplete {
-                self.socketMutableState.read { state in
-                    state.handlers.forEach { storedHandler in
-                        storedHandler.queue.async {
-                            storedHandler.handler(.completed(.init(request: self.request,
-                                                                   response: self.response,
-                                                                   metrics: self.metrics,
-                                                                   error: self.error)))
-                        }
-                    }
+                queue.async {
+                    handler(.completed(.init(request: self.request,
+                                             response: self.response,
+                                             metrics: self.metrics,
+                                             error: self.error)))
                 }
             }
         }
