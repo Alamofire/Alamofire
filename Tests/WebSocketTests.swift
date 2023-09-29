@@ -14,14 +14,6 @@ import XCTest
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class WebSocketTests: BaseTestCase {
-//    override var skipVersion: SkipVersion { .twenty }
-
-//    func testMany() {
-//        for _ in 0..<5000 {
-//            testThatWebSocketsCanReceiveMessageEvents()
-//        }
-//    }
-
     func testThatWebSocketsCanReceiveMessageEvents() {
         // Given
         let didConnect = expectation(description: "didConnect")
@@ -70,8 +62,6 @@ final class WebSocketTests: BaseTestCase {
     func testThatWebSocketsCanReceiveAMessage() {
         // Given
         let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didComplete = expectation(description: "didComplete")
-
         let session = stored(Session())
 
         var receivedMessage: URLSessionWebSocketTask.Message?
@@ -80,9 +70,6 @@ final class WebSocketTests: BaseTestCase {
         session.websocketRequest(.websocket()).streamMessages { message in
             receivedMessage = message
             didReceiveMessage.fulfill()
-        }
-        .onCompletion {
-            didComplete.fulfill()
         }
 
         waitForExpectations(timeout: timeout)
@@ -142,7 +129,6 @@ final class WebSocketTests: BaseTestCase {
     func testThatWebSocketsCanReceiveADecodableValue() {
         // Given
         let didReceiveValue = expectation(description: "didReceiveMessage")
-        let didComplete = expectation(description: "didComplete")
 
         let session = stored(Session())
 
@@ -152,9 +138,6 @@ final class WebSocketTests: BaseTestCase {
         session.websocketRequest(.websocket()).streamDecodable(TestResponse.self) { value in
             receivedValue = value
             didReceiveValue.fulfill()
-        }
-        .onCompletion {
-            didComplete.fulfill()
         }
 
         waitForExpectations(timeout: timeout)
@@ -600,18 +583,6 @@ final class WebSocketTests: BaseTestCase {
         XCTAssertEqual(firstCloseReason, secondCloseReason)
         XCTAssertNil(firstReceivedCompletion?.error)
         XCTAssertNil(secondReceivedCompletion?.error)
-    }
-}
-
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-extension WebSocketRequest {
-    @discardableResult
-    func onCompletion(_ handler: @escaping () -> Void) -> Self {
-        streamMessageEvents { event in
-            guard case .completed = event.kind else { return }
-
-            handler()
-        }
     }
 }
 
