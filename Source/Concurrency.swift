@@ -772,23 +772,68 @@ public struct WebSocketTask {
         self.request = request
     }
 
-    public typealias Stream<Success, Failure: Error> = StreamOf<WebSocketRequest.Event<Success, Failure>>
+    public typealias EventStreamOf<Success, Failure: Error> = StreamOf<WebSocketRequest.Event<Success, Failure>>
 
-    public func streamingEvents(
+    public func streamingMessageEvents(
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-        bufferingPolicy: StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>>.BufferingPolicy = .unbounded
-    ) -> StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>> {
+        bufferingPolicy: EventStreamOf<URLSessionWebSocketTask.Message, Never>.BufferingPolicy = .unbounded
+    ) -> EventStreamOf<URLSessionWebSocketTask.Message, Never> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
-                     bufferingPolicy: bufferingPolicy) { onEvent in
+                     bufferingPolicy: bufferingPolicy,
+                     transform: { $0 }) { onEvent in
             request.streamMessageEvents(on: .streamCompletionQueue(forRequestID: request.id), handler: onEvent)
         }
     }
 
-    private func createStream(
+    public func streamingMessages(
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-        bufferingPolicy: StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>>.BufferingPolicy = .unbounded,
-        forResponse onResponse: @escaping (@escaping (WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>) -> Void) -> Void
-    ) -> StreamOf<WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>> {
+        bufferingPolicy: StreamOf<URLSessionWebSocketTask.Message>.BufferingPolicy = .unbounded
+    ) -> StreamOf<URLSessionWebSocketTask.Message> {
+        createStream(automaticallyCancelling: shouldAutomaticallyCancel,
+                     bufferingPolicy: bufferingPolicy,
+                     transform: { $0.message }) { onEvent in
+            request.streamMessageEvents(on: .streamCompletionQueue(forRequestID: request.id), handler: onEvent)
+        }
+    }
+
+    public func streamingDecodableEvents<Value: Decodable>(
+        _ type: Value.Type = Value.self,
+        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+        using decoder: DataDecoder = JSONDecoder(),
+        bufferingPolicy: EventStreamOf<Value, Error>.BufferingPolicy = .unbounded
+    ) -> EventStreamOf<Value, Error> {
+        createStream(automaticallyCancelling: shouldAutomaticallyCancel,
+                     bufferingPolicy: bufferingPolicy,
+                     transform: { $0 }) { onEvent in
+            request.streamDecodableEvents(Value.self,
+                                          on: .streamCompletionQueue(forRequestID: request.id),
+                                          using: decoder,
+                                          handler: onEvent)
+        }
+    }
+
+    public func streamingDecodable<Value: Decodable>(
+        _ type: Value.Type = Value.self,
+        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+        using decoder: DataDecoder = JSONDecoder(),
+        bufferingPolicy: StreamOf<Value>.BufferingPolicy = .unbounded
+    ) -> StreamOf<Value> {
+        createStream(automaticallyCancelling: shouldAutomaticallyCancel,
+                     bufferingPolicy: bufferingPolicy,
+                     transform: { $0.message }) { onEvent in
+            request.streamDecodableEvents(Value.self,
+                                          on: .streamCompletionQueue(forRequestID: request.id),
+                                          using: decoder,
+                                          handler: onEvent)
+        }
+    }
+
+    private func createStream<Success, Value, Failure: Error>(
+        automaticallyCancelling shouldAutomaticallyCancel: Bool,
+        bufferingPolicy: StreamOf<Value>.BufferingPolicy,
+        transform: @escaping (WebSocketRequest.Event<Success, Failure>) -> Value?,
+        forResponse onResponse: @escaping (@escaping (WebSocketRequest.Event<Success, Failure>) -> Void) -> Void
+    ) -> StreamOf<Value> {
         StreamOf(bufferingPolicy: bufferingPolicy) {
             guard shouldAutomaticallyCancel,
                   request.isInitialized || request.isResumed || request.isSuspended else { return }
@@ -796,7 +841,10 @@ public struct WebSocketTask {
             cancel()
         } builder: { continuation in
             onResponse { event in
-                continuation.yield(event)
+                if let value = transform(event) {
+                    continuation.yield(value)
+                }
+
                 if case .completed = event.kind {
                     continuation.finish()
                 }
@@ -804,19 +852,26 @@ public struct WebSocketTask {
         }
     }
 
-    public func send(_ message: URLSessionWebSocketTask.Message) async -> Result<Void, Error> {
-        await withCheckedContinuation { continuation in
-            request.send(message) { result in
-                continuation.resume(returning: result)
+    /// Send a `URLSessionWebSocketTask.Message`.
+    ///
+    /// - Parameter message: The `Message`.
+    ///
+    public func send(_ message: URLSessionWebSocketTask.Message) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            request.send(message, queue: .streamCompletionQueue(forRequestID: request.id)) { result in
+                continuation.resume(with: result)
             }
         }
     }
 
-    /// Cancel the underlying `WebSocketRequest`.
+    /// Close the underlying `WebSocketRequest`.
     public func close(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) {
         request.close(sending: closeCode, reason: reason)
     }
 
+    /// Cancel the underlying `WebSocketRequest`.
+    ///
+    /// Cancellation will produce an `AFError.explicitlyCancelled` instance.
     public func cancel() {
         request.cancel()
     }

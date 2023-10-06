@@ -1796,15 +1796,12 @@ public final class WebSocketRequest: Request {
             if case let .sessionTaskFailed(error) = mutableState.error, (error as? URLError)?.code == .cancelled {
                 mutableState.error = nil
             }
-//            mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
         }
 
         // TODO: Still issue this event?
         eventMonitor?.requestDidCancel(self)
     }
 
-    // TODO: Distinguish between cancellation and close behavior?
-    // TODO: Reexamine cancellation behavior.
     @discardableResult
     public func close(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) -> Self {
         cancelTimedPing()
@@ -1842,6 +1839,7 @@ public final class WebSocketRequest: Request {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
         socketMutableState.read { state in
+            // TODO: Capture HTTPURLResponse here too?
             state.handlers.forEach { handler in
                 // Saved handler calls out to serializationQueue immediately, then to handler's queue.
                 handler.handler(.connected(protocol: `protocol`))
@@ -1935,8 +1933,9 @@ public final class WebSocketRequest: Request {
 
                 self.listen(to: task)
             case .failure:
+                // It doesn't seem like any relevant errors are received here, just incorrect garbage, like errors when
+                // the socket disconnects.
                 break
-//                NSLog("Receive for task: \(task), didFailWithError: \(error)")
             }
         }
     }
@@ -2075,7 +2074,7 @@ public final class WebSocketRequest: Request {
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public protocol WebSocketMessageSerializer {
     associatedtype Output
-    associatedtype Failure = Error
+    associatedtype Failure: Error = Error
 
     func decode(_ message: URLSessionWebSocketTask.Message) throws -> Output
 }
