@@ -776,7 +776,6 @@ final class WebSocketConcurrencyTests: BaseTestCase {
         XCTAssertTrue(messages.count == 1)
     }
 }
-
 #endif
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)

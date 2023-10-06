@@ -1804,7 +1804,7 @@ public final class WebSocketRequest: Request {
 
     @discardableResult
     public func close(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) -> Self {
-        cancelTimedPing()
+        cancelAutomaticPing()
 
         mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
@@ -1830,7 +1830,7 @@ public final class WebSocketRequest: Request {
 
     @discardableResult
     override public func cancel() -> Self {
-        cancelTimedPing()
+        cancelAutomaticPing()
 
         return super.cancel()
     }
@@ -1847,7 +1847,7 @@ public final class WebSocketRequest: Request {
         }
 
         if let pingInterval = pingInterval {
-            startTimedPing(onInterval: pingInterval)
+            startAutomaticPing(onInterval: pingInterval)
         }
     }
 
@@ -1878,10 +1878,10 @@ public final class WebSocketRequest: Request {
         }
     }
 
-    func startTimedPing(onInterval pingInterval: TimeInterval) {
+    func startAutomaticPing(onInterval pingInterval: TimeInterval) {
         socketMutableState.write { mutableState in
             guard isResumed else {
-                defer { cancelTimedPing() }
+                defer { cancelAutomaticPing() }
                 return
             }
 
@@ -1891,7 +1891,7 @@ public final class WebSocketRequest: Request {
                 self.sendPing(respondingOn: self.underlyingQueue) { response in
                     guard case .pong = response else { return }
 
-                    self.startTimedPing(onInterval: pingInterval)
+                    self.startAutomaticPing(onInterval: pingInterval)
                 }
             }
 
@@ -1900,7 +1900,7 @@ public final class WebSocketRequest: Request {
         }
     }
 
-    func cancelTimedPing() {
+    func cancelAutomaticPing() {
         socketMutableState.write { mutableState in
             mutableState.pingTimerItem?.cancel()
             mutableState.pingTimerItem = nil
@@ -1910,7 +1910,7 @@ public final class WebSocketRequest: Request {
     func didDisconnect(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        cancelTimedPing()
+        cancelAutomaticPing()
         socketMutableState.read { state in
             state.handlers.forEach { handler in
                 // Saved handler calls out to serializationQueue immediately, then to handler's queue.
