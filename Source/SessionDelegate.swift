@@ -46,7 +46,7 @@ open class SessionDelegate: NSObject {
     ///   - type: The `Request` subclass type to cast any `Request` associate with `task`.
     func request<R: Request>(for task: URLSessionTask, as type: R.Type) -> R? {
         guard let provider = stateProvider else {
-            assertionFailure("StateProvider is nil.")
+            assertionFailure("StateProvider is nil for task \(task.taskIdentifier).")
             return nil
         }
 
