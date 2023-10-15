@@ -704,7 +704,7 @@ let adapterAndRetrier = Interceptor(adapter: adapter, retrier: retrier)
 let composite = Interceptor(interceptors: [adapterAndRetrier, interceptor])
 ```
 
-When composed of multiple `RequestAdapter`s, `Interceptor` will call each `RequestAdapter` in succession. If they all succeed, the final `URLRequest` out of the chain of `RequestAdapter`s will be used to perform the request. If one fails, adaptation stops and the `Request` fails with the error returned. Similarly, when composed of multiple `RequestRetrier`s, retries are executed in the same order as the retriers were added to the instance, until either all of them complete or one of them fails with an error.
+When composed of multiple `RequestAdapter`s, `Interceptor` will call each `RequestAdapter` in succession. If they all succeed, the final `URLRequest` out of the chain of `RequestAdapter`s will be used to perform the request. If one fails, adaptation stops and the `Request` fails with the error returned. Similarly, when composed of multiple `RequestRetrier`s, retriers are executed in the same order as the retriers were added to the instance, until either all of them complete or one of them fails with an error.
 
 ### `AuthenticationInterceptor`
 
