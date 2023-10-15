@@ -1047,7 +1047,7 @@ AF.streamRequest(...).responseStream { stream in
 
 #### `URLSessionTaskMetrics`
 
-Alamofire gathers `URLSessionTaskMetrics` for every `Request`. `URLSessionTaskMetrics` encapsulate some fantastic statistical information about the underlying network connection and request and response timing.
+Alamofire gathers `URLSessionTaskMetrics` for every `Request`. `URLSessionTaskMetrics` encapsulate some fantastic statistical information about the underlying network connection, request and response timing.
 
 ```swift
 AF.request("https://httpbin.org/get").responseDecodable(of: DecodableType.self) { response in
