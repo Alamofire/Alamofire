@@ -323,6 +323,28 @@ extension Endpoint: URLConvertible {
     }
 }
 
+final class EndpointSequence: URLRequestConvertible {
+    enum Error: Swift.Error { case noRemainingEndpoints }
+
+    private var remainingEndpoints: [Endpoint]
+
+    init(endpoints: [Endpoint]) {
+        remainingEndpoints = endpoints
+    }
+
+    func asURLRequest() throws -> URLRequest {
+        guard !remainingEndpoints.isEmpty else { throw Error.noRemainingEndpoints }
+
+        return try remainingEndpoints.removeFirst().asURLRequest()
+    }
+}
+
+extension URLRequestConvertible where Self == EndpointSequence {
+    static func endpoints(_ endpoints: Endpoint...) -> Self {
+        EndpointSequence(endpoints: endpoints)
+    }
+}
+
 extension Session {
     func request(_ endpoint: Endpoint,
                  parameters: Parameters? = nil,
@@ -381,15 +403,11 @@ extension Session {
 
     #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func websocketRequest(_ endpoint: Endpoint,
-                          protocol: String? = nil,
-                          maximumMessageSize: Int = 1_048_576,
-                          pingInterval: TimeInterval? = nil,
+    func webSocketRequest(_ endpoint: Endpoint,
+                          configuration: WebSocketRequest.Configuration = .default,
                           interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
-        websocketRequest(to: endpoint as URLRequestConvertible,
-                         protocol: `protocol`,
-                         maximumMessageSize: maximumMessageSize,
-                         pingInterval: pingInterval,
+        webSocketRequest(performing: endpoint as URLRequestConvertible,
+                         configuration: configuration,
                          interceptor: interceptor)
     }
     #endif

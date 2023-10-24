@@ -463,15 +463,59 @@ open class Session {
 
     #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    open func websocketRequest(to convertible: URLRequestConvertible,
-                               protocol: String? = nil,
-                               maximumMessageSize: Int = 1_048_576,
-                               pingInterval: TimeInterval? = nil,
+    open func webSocketRequest(
+        to url: URLConvertible,
+        configuration: WebSocketRequest.Configuration = .default,
+        headers: HTTPHeaders? = nil,
+        interceptor: RequestInterceptor? = nil,
+        requestModifier: RequestModifier? = nil
+    ) -> WebSocketRequest {
+        webSocketRequest(
+            to: url,
+            configuration: configuration,
+            parameters: Empty?.none,
+            encoder: URLEncodedFormParameterEncoder.default,
+            headers: headers,
+            interceptor: interceptor,
+            requestModifier: requestModifier
+        )
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    open func webSocketRequest<Parameters>(
+        to url: URLConvertible,
+        configuration: WebSocketRequest.Configuration = .default,
+        parameters: Parameters? = nil,
+        encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+        headers: HTTPHeaders? = nil,
+        interceptor: RequestInterceptor? = nil,
+        requestModifier: RequestModifier? = nil
+    ) -> WebSocketRequest where Parameters: Encodable {
+        let convertible = RequestEncodableConvertible(url: url,
+                                                      method: .get,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
+        let request = WebSocketRequest(convertible: convertible,
+                                       configuration: configuration,
+                                       underlyingQueue: rootQueue,
+                                       serializationQueue: serializationQueue,
+                                       eventMonitor: eventMonitor,
+                                       interceptor: interceptor,
+                                       delegate: self)
+
+        perform(request)
+
+        return request
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    open func webSocketRequest(performing convertible: URLRequestConvertible,
+                               configuration: WebSocketRequest.Configuration = .default,
                                interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
         let request = WebSocketRequest(convertible: convertible,
-                                       protocol: `protocol`,
-                                       maximumMessageSize: maximumMessageSize,
-                                       pingInterval: pingInterval,
+                                       configuration: configuration,
                                        underlyingQueue: rootQueue,
                                        serializationQueue: serializationQueue,
                                        eventMonitor: eventMonitor,

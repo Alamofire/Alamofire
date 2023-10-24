@@ -42,6 +42,19 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         XCTAssertNotNil(value)
     }
 
+    func testThat500ResponseCanBeRetried() async throws {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.request(.endpoints(.status(500), .method(.get)), interceptor: .retryPolicy)
+            .serializingResponse(using: .data)
+            .value
+
+        // Then
+        XCTAssertNotNil(value)
+    }
+
     func testThatDataTaskSerializesDecodable() async throws {
         // Given
         let session = stored(Session())
@@ -756,7 +769,7 @@ final class WebSocketConcurrencyTests: BaseTestCase {
         receivedEvent.expectedFulfillmentCount = 4
 
         // When
-        for await _ in session.websocketRequest(.websocket()).webSocketTask().streamingMessageEvents() {
+        for await _ in session.webSocketRequest(.websocket()).webSocketTask().streamingMessageEvents() {
             receivedEvent.fulfill()
         }
 
@@ -770,7 +783,7 @@ final class WebSocketConcurrencyTests: BaseTestCase {
         let session = stored(Session())
 
         // When
-        let messages = await session.websocketRequest(.websocket()).webSocketTask().streamingMessages().collect()
+        let messages = await session.webSocketRequest(.websocket()).webSocketTask().streamingMessages().collect()
 
         // Then
         XCTAssertTrue(messages.count == 1)

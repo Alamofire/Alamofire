@@ -1686,6 +1686,32 @@ public final class WebSocketRequest: Request {
         public let error: AFError?
     }
 
+    public struct Configuration {
+        public static var `default`: Self { Self() }
+
+        public static func `protocol`(_ protocol: String) -> Self {
+            Self(protocol: `protocol`)
+        }
+
+        public static func maximumMessageSize(_ maximumMessageSize: Int) -> Self {
+            Self(maximumMessageSize: maximumMessageSize)
+        }
+
+        public static func pingInterval(_ pingInterval: TimeInterval) -> Self {
+            Self(pingInterval: pingInterval)
+        }
+
+        public let `protocol`: String?
+        public let maximumMessageSize: Int
+        public let pingInterval: TimeInterval?
+
+        init(protocol: String? = nil, maximumMessageSize: Int = 1_048_576, pingInterval: TimeInterval? = nil) {
+            self.protocol = `protocol`
+            self.maximumMessageSize = maximumMessageSize
+            self.pingInterval = pingInterval
+        }
+    }
+
     /// Response to a sent ping.
     public enum PingResponse {
         public struct Pong {
@@ -1717,24 +1743,18 @@ public final class WebSocketRequest: Request {
     }
 
     public let convertible: URLRequestConvertible
-    public let `protocol`: String?
-    public let maximumMessageSize: Int
-    public let pingInterval: TimeInterval?
+    public let configuration: Configuration
 
     init(id: UUID = UUID(),
          convertible: URLRequestConvertible,
-         protocol: String? = nil,
-         maximumMessageSize: Int,
-         pingInterval: TimeInterval?,
+         configuration: Configuration,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          interceptor: RequestInterceptor?,
          delegate: RequestDelegate) {
         self.convertible = convertible
-        self.protocol = `protocol`
-        self.maximumMessageSize = maximumMessageSize
-        self.pingInterval = pingInterval
+        self.configuration = configuration
 
         super.init(id: id,
                    underlyingQueue: underlyingQueue,
@@ -1747,13 +1767,13 @@ public final class WebSocketRequest: Request {
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
         var copiedRequest = request
         let task: URLSessionWebSocketTask
-        if let `protocol` = `protocol` {
+        if let `protocol` = configuration.protocol {
             copiedRequest.headers.update(.websocketProtocol(`protocol`))
             task = session.webSocketTask(with: copiedRequest)
         } else {
             task = session.webSocketTask(with: copiedRequest)
         }
-        task.maximumMessageSize = maximumMessageSize
+        task.maximumMessageSize = configuration.maximumMessageSize
 
         return task
     }
@@ -1846,7 +1866,7 @@ public final class WebSocketRequest: Request {
             }
         }
 
-        if let pingInterval = pingInterval {
+        if let pingInterval = configuration.pingInterval {
             startAutomaticPing(onInterval: pingInterval)
         }
     }
@@ -1881,6 +1901,7 @@ public final class WebSocketRequest: Request {
     func startAutomaticPing(onInterval pingInterval: TimeInterval) {
         socketMutableState.write { mutableState in
             guard isResumed else {
+                // Defer out of lock.
                 defer { cancelAutomaticPing() }
                 return
             }
@@ -2048,31 +2069,27 @@ public final class WebSocketRequest: Request {
     public func send(_ message: URLSessionWebSocketTask.Message,
                      queue: DispatchQueue = .main,
                      completionHandler: @escaping (Result<Void, Error>) -> Void) {
-        guard !(isCancelled || isFinished) else {
-            // Error for attempting send while cancelled or finished?
-            // Probably just silently ignore.
-            return
-        }
+        guard !(isCancelled || isFinished) else { return }
 
         guard let socket = socket else {
+            // URLSessionWebSocketTask note created yet, enqueue the send.
             socketMutableState.write { mutableState in
                 mutableState.enqueuedSends.append((message, queue, completionHandler))
             }
+
             return
         }
 
-        underlyingQueue.async {
-            socket.send(message) { error in
-                queue.async {
-                    completionHandler(Result(value: (), error: error))
-                }
+        socket.send(message) { error in
+            queue.async {
+                completionHandler(Result(value: (), error: error))
             }
         }
     }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public protocol WebSocketMessageSerializer {
+public protocol WebSocketMessageSerializer<Output, Failure> {
     associatedtype Output
     associatedtype Failure: Error = Error
 
