@@ -2218,6 +2218,7 @@
 					"@loader_path/Frameworks",
 				);
 				SDKROOT = xros;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
 				TARGETED_DEVICE_FAMILY = 7;
 			};
@@ -2236,6 +2237,7 @@
 					"@loader_path/Frameworks",
 				);
 				SDKROOT = xros;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
 				TARGETED_DEVICE_FAMILY = 7;
 			};
