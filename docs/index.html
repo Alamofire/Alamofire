@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.8.0 Docs
+          Alamofire 5.8.1 Docs
         </a>
          (97% documented)
       </p>
@@ -549,12 +549,11 @@
             
             <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/AlamofireLogo.png" alt="Alamofire: Elegant Networking in Swift"></p>
 
-<p><a href="https://img.shields.io/badge/Swift-5.5_5.6_5.7_5.8-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.5_5.6_5.7_5.8-orange?style=flat-square" alt="Swift"></a>
-<a href="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-Green?style=flat-square"><img src="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_Linux_Windows-yellowgreen?style=flat-square" alt="Platforms"></a>
+<p><a href="https://img.shields.io/badge/Swift-5.6_5.7_5.8_5.9-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.6_5.7_5.8_5.9-orange?style=flat-square" alt="Swift"></a>
+<a href="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_vision_OS_Linux_Windows_Android-Green?style=flat-square"><img src="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS_Linux_Windows_Android-yellowgreen?style=flat-square" alt="Platforms"></a>
 <a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square" alt="CocoaPods Compatible"></a>
 <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square" alt="Carthage Compatible"></a>
 <a href="https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square"><img src="https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square" alt="Swift Package Manager"></a>
-<a href="https://twitter.com/AlamofireSF"><img src="https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat-square" alt="Twitter"></a>
 <a href="https://forums.swift.org/c/related-projects/alamofire/37"><img src="https://img.shields.io/badge/Swift_Forums-Alamofire-orange?style=flat-square" alt="Swift Forums"></a></p>
 
 <p>Alamofire is an HTTP networking library written in Swift.</p>
@@ -609,6 +608,30 @@
 <li>[x] Comprehensive Unit and Integration Test Coverage</li>
 <li>[x] <a href="https://alamofire.github.io/Alamofire">Complete Documentation</a></li>
 </ul>
+<h2 id='write-requests-fast' class='heading'>Write Requests Fast!</h2>
+
+<p>Alamofire&rsquo;s compact syntax and extensive feature set allow requests with powerful features like automatic retry to be written in just a few lines of code.</p>
+<pre class="highlight swift"><code><span class="c1">// Automatic String to URL conversion, Swift concurrency support, and automatic retry.</span>
+<span class="k">let</span> <span class="nv">response</span> <span class="o">=</span> <span class="n">await</span> <span class="kt">AF</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">,</span> <span class="nv">interceptor</span><span class="p">:</span> <span class="o">.</span><span class="n">retryPolicy</span><span class="p">)</span>
+                       <span class="c1">// Automatic HTTP Basic Auth.</span>
+                       <span class="o">.</span><span class="nf">authenticate</span><span class="p">(</span><span class="nv">username</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span> <span class="nv">password</span><span class="p">:</span> <span class="s">"pass"</span><span class="p">)</span>
+                       <span class="c1">// Caching customization.</span>
+                       <span class="o">.</span><span class="nf">cacheResponse</span><span class="p">(</span><span class="nv">using</span><span class="p">:</span> <span class="o">.</span><span class="n">cache</span><span class="p">)</span>
+                       <span class="c1">// Redirect customization.</span>
+                       <span class="o">.</span><span class="nf">redirect</span><span class="p">(</span><span class="nv">using</span><span class="p">:</span> <span class="o">.</span><span class="n">follow</span><span class="p">)</span>
+                       <span class="c1">// Validate response code and Content-Type.</span>
+                       <span class="o">.</span><span class="nf">validate</span><span class="p">()</span>
+                       <span class="c1">// Produce a cURL command for the request.</span>
+                       <span class="o">.</span><span class="n">cURLDescription</span> <span class="p">{</span> <span class="n">description</span> <span class="k">in</span>
+                         <span class="nf">print</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+                       <span class="p">}</span>
+                       <span class="c1">// Automatic Decodable support with background parsing.</span>
+                       <span class="o">.</span><span class="nf">serializingDecodable</span><span class="p">(</span><span class="kt">DecodableType</span><span class="o">.</span><span class="k">self</span><span class="p">)</span>
+                       <span class="c1">// Await the full response with metrics and a parsed body.</span>
+                       <span class="o">.</span><span class="n">response</span>
+<span class="c1">// Detailed response description for easy debugging.</span>
+<span class="nf">debugPrint</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre>
 <h2 id='component-libraries' class='heading'>Component Libraries</h2>
 
 <p>In order to keep Alamofire focused specifically on core networking implementations, additional component libraries have been created by the <a href="https://github.com/Alamofire/Foundation">Alamofire Software Foundation</a> to bring additional functionality to the Alamofire ecosystem.</p>
@@ -629,7 +652,7 @@
 </thead><tbody>
 <tr>
 <td>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</td>
-<td>5.5</td>
+<td>5.6</td>
 <td><a href="#cocoapods">CocoaPods</a>, <a href="#carthage">Carthage</a>, <a href="#swift-package-manager">Swift Package Manager</a>, <a href="#manually">Manual</a></td>
 <td>Fully Tested</td>
 </tr>
@@ -645,10 +668,16 @@
 <td><a href="#swift-package-manager">Swift Package Manager</a></td>
 <td>Building But Unsupported</td>
 </tr>
+<tr>
+<td>Android</td>
+<td>Latest Only</td>
+<td><a href="#swift-package-manager">Swift Package Manager</a></td>
+<td>Building But Unsupported</td>
+</tr>
 </tbody></table>
 <h4 id='known-issues-on-linux-and-windows' class='heading'>Known Issues on Linux and Windows</h4>
 
-<p>Alamofire builds on Linux and Windows but there are missing features and many issues in the underlying <code>swift-corelibs-foundation</code> that prevent full functionality and may cause crashes. These include:</p>
+<p>Alamofire builds on Linux, Windows, and Android but there are missing features and many issues in the underlying <code>swift-corelibs-foundation</code> that prevent full functionality and may cause crashes. These include:</p>
 
 <ul>
 <li><code><a href="Classes/ServerTrustManager.html">ServerTrustManager</a></code> and associated certificate functionality is unavailable, so there is no certificate pinning and no client certificate support.</li>
@@ -657,7 +686,7 @@
 <li><code>URLSessionTaskMetrics</code> are never gathered.</li>
 </ul>
 
-<p>Due to these issues, Alamofire is unsupported on Linux and Windows. Please report any crashes to the <a href="https://bugs.swift.org">Swift bug reporter</a>.</p>
+<p>Due to these issues, Alamofire is unsupported on Linux, Windows, and Android. Please report any crashes to the <a href="https://bugs.swift.org">Swift bug reporter</a>.</p>
 <h2 id='migration-guides' class='heading'>Migration Guides</h2>
 
 <ul>
@@ -689,11 +718,11 @@
 </code></pre>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
-<p>The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for automating the distribution of Swift code and is integrated into the <code>swift</code> compiler. </p>
+<p>The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for automating the distribution of Swift code and is integrated into the <code>swift</code> compiler.</p>
 
 <p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
 <pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.6.4"</span><span class="p">))</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.8.1"</span><span class="p">))</span>
 <span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
@@ -714,26 +743,35 @@
 </code></pre>
 
 <ul>
-<li><p>Open the new <code>Alamofire</code> folder, and drag the <code>Alamofire.xcodeproj</code> into the Project Navigator of your application&rsquo;s Xcode project.</p>
+<li>Open the new <code>Alamofire</code> folder, and drag the <code>Alamofire.xcodeproj</code> into the Project Navigator of your application&rsquo;s Xcode project.</li>
+</ul>
 
 <blockquote>
 <p>It should appear nested underneath your application&rsquo;s blue project icon. Whether it is above or below all the other Xcode groups does not matter.</p>
-</blockquote></li>
-<li><p>Select the <code>Alamofire.xcodeproj</code> in the Project Navigator and verify the deployment target matches that of your application target.</p></li>
-<li><p>Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the &ldquo;Targets&rdquo; heading in the sidebar.</p></li>
-<li><p>In the tab bar at the top of that window, open the &ldquo;General&rdquo; panel.</p></li>
-<li><p>Click on the <code>+</code> button under the &ldquo;Embedded Binaries&rdquo; section.</p></li>
-<li><p>You will see two different <code>Alamofire.xcodeproj</code> folders each with two different versions of the <code>Alamofire.framework</code> nested inside a <code>Products</code> folder.</p>
+</blockquote>
+
+<ul>
+<li>Select the <code>Alamofire.xcodeproj</code> in the Project Navigator and verify the deployment target matches that of your application target.</li>
+<li>Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the &ldquo;Targets&rdquo; heading in the sidebar.</li>
+<li>In the tab bar at the top of that window, open the &ldquo;General&rdquo; panel.</li>
+<li>Click on the <code>+</code> button under the &ldquo;Embedded Binaries&rdquo; section.</li>
+<li>You will see two different <code>Alamofire.xcodeproj</code> folders each with two different versions of the <code>Alamofire.framework</code> nested inside a <code>Products</code> folder.</li>
+</ul>
 
 <blockquote>
 <p>It does not matter which <code>Products</code> folder you choose from, but it does matter whether you choose the top or bottom <code>Alamofire.framework</code>.</p>
-</blockquote></li>
-<li><p>Select the top <code>Alamofire.framework</code> for iOS and the bottom one for macOS.</p>
+</blockquote>
+
+<ul>
+<li>Select the top <code>Alamofire.framework</code> for iOS and the bottom one for macOS.</li>
+</ul>
 
 <blockquote>
 <p>You can verify which one you selected by inspecting the build log for your project. The build target for <code>Alamofire</code> will be listed as <code>Alamofire iOS</code>, <code>Alamofire macOS</code>, <code>Alamofire tvOS</code>, or <code>Alamofire watchOS</code>.</p>
-</blockquote></li>
-<li><p>And that&rsquo;s it!</p></li>
+</blockquote>
+
+<ul>
+<li>And that&rsquo;s it!</li>
 </ul>
 
 <blockquote>
@@ -818,8 +856,8 @@ Any amount you can donate, whether once or monthly, to help us reach our goal wo
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-08-31)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-10-25)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>
