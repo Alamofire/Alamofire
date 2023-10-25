@@ -656,7 +656,7 @@ final class WebSocketIntegrationTests: BaseTestCase {
         var receivedCompletion: WebSocketRequest.Completion?
 
         // When
-        session.webSocketRequest(performing: .endpoints(.status(501), .websocket()), interceptor: .retryPolicy)
+        session.webSocketRequest(performing: .endpoints(.status(500), .websocket()), interceptor: .retryPolicy)
             .streamMessageEvents { event in
                 switch event.kind {
                 case let .connected(`protocol`):
