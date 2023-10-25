@@ -288,16 +288,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: swift:5.8.1-focal
-          - image: swift:5.8.1-jammy
-          - image: swift:5.8.1-centos7
-          - image: swift:5.8.1-amazonlinux2
-          - image: swift:5.8.1-rhel-ubi9
-          - image: swift:5.9.0-focal
-          - image: swift:5.9.0-jammy
-          - image: swift:5.9.0-centos7
-          - image: swift:5.9.0-amazonlinux2
-          - image: swift:5.9.0-rhel-ubi9
+          - image: swift:5.8-focal
+          - image: swift:5.8-jammy
+          - image: swift:5.8-centos7
+          - image: swift:5.8-amazonlinux2
+          - image: swift:5.8-rhel-ubi9
+          - image: swift:5.9-focal
+          - image: swift:5.9-jammy
+          - image: swift:5.9-centos7
+          - image: swift:5.9-amazonlinux2
+          - image: swift:5.9-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
           - image: swiftlang/swift:nightly-amazonlinux2
