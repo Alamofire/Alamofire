@@ -7,7 +7,7 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 
 #### 5.x Releases
 
-- `5.8.x` Releases - [5.8.0](#580)
+- `5.8.x` Releases - [5.8.0](#580) | [5.8.1](#581)
 - `5.7.x` Releases - [5.7.0](#570) | [5.7.1](#571)
 - `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563) | [5.6.4](#564)
 - `5.5.x` Releases - [5.5.0](#550)
@@ -56,6 +56,22 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.8.1](https://github.com/Alamofire/Alamofire/releases/tag/5.8.1)
+
+Released on 2023-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/88?closed=1).
+
+### Updated
+
+- Internal: `Protected` to no longer be a `@propertyWrapper`.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3777](https://github.com/Alamofire/Alamofire/pull/3777).
+
+### Fixed
+
+- `URLEncodedFormEncoder` encoding of `Encodable` values with optional properties using `encodeIfPresent`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3779](https://github.com/Alamofire/Alamofire/pull/3779).
+- Missing "Skip Install" setting for visionOS target.
+  - Fixed by [Sai](https://github.com/Sai) in Pull Request [#3788](https://github.com/Alamofire/Alamofire/pull/3788).
 
 ## [5.8.0](https://github.com/Alamofire/Alamofire/releases/tag/5.8.0)
 
