@@ -105,7 +105,7 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: firebreak
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_15b8.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_15.1.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false

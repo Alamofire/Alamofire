@@ -59,7 +59,7 @@ compatibility should be preserved in most cases, but cannot be guaranteed.
 
 ## [5.8.1](https://github.com/Alamofire/Alamofire/releases/tag/5.8.1)
 
-Released on 2023-10-25. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/88?closed=1).
+Released on 2023-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/88?closed=1).
 
 ### Updated
 
