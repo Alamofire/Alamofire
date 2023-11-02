@@ -1325,7 +1325,7 @@ This code produces a `DataResponsePublisher<DecodableType>` value which will pub
 
 > To properly handle retry when using Alamofire's `Publisher`s, use Alamofire's built in retry mechanisms, as explained [above](#adapting-and-retrying-requests-with-requestinterceptor).
 
-Additionally, `DataResponsePublisher` provides the ability to transform the outgoing `DataResponse<Success, Failure>` into a `Result<Success, Failure>` value or a `Success` value with `Failure` error. For example:
+Additionally, `DataResponsePublisher` provides the ability to transform the outgoing `DataResponse<Success, Failure>` into a `Result<Success, Failure>` value or a `Success` value with a `Failure` error. For example:
 
 ```swift
 let publisher = AF.request(...).publishDecodable(type: DecodableType.self)
