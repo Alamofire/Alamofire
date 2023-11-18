@@ -297,7 +297,7 @@ public struct JSONEncoding: ParameterEncoding {
     ///
     /// - Parameters:
     ///   - urlRequest: `URLRequestConvertible` value into which the object will be encoded.
-    ///   - jsonObject: `Any` value (must be JSON compatible` to be encoded into the `URLRequest`. `nil` by default.
+    ///   - jsonObject: `Any` value (must be JSON compatible) to be encoded into the `URLRequest`. `nil` by default.
     ///
     /// - Returns:      The encoded `URLRequest`.
     /// - Throws:       Any `Error` produced during encoding.
