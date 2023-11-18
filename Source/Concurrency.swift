@@ -772,6 +772,7 @@ public struct WebSocketTask {
         self.request = request
     }
 
+    public typealias SerializerStreamOf<Serializer: WebSocketMessageSerializer> = EventStreamOf<Serializer.Success, Serializer.Failure>
     public typealias EventStreamOf<Success, Failure: Error> = StreamOf<WebSocketRequest.Event<Success, Failure>>
 
     public func streamingMessageEvents(
@@ -800,8 +801,8 @@ public struct WebSocketTask {
         _ type: Value.Type = Value.self,
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
         using decoder: DataDecoder = JSONDecoder(),
-        bufferingPolicy: EventStreamOf<Value, Error>.BufferingPolicy = .unbounded
-    ) -> EventStreamOf<Value, Error> {
+        bufferingPolicy: SerializerStreamOf<DecodableWebSocketMessageDecoder<Value>>.BufferingPolicy = .unbounded
+    ) -> SerializerStreamOf<DecodableWebSocketMessageDecoder<Value>> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy,
                      transform: { $0 }) { onEvent in

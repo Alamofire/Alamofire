@@ -1614,7 +1614,7 @@ extension DataStreamRequest.Stream {
 
 // MARK: - WebSocketRequest
 
-#if canImport(Darwin) && !canImport(FoundationNetworking)
+#if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.11) && hasFeature(TypedThrows)
 
 /// `Request` subclass which manages a WebSocket connection using `URLSessionWebSocketTask`.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -1965,10 +1965,10 @@ public final class WebSocketRequest: Request {
     public func streamSerializer<Serializer>(
         _ serializer: Serializer,
         on queue: DispatchQueue = .main,
-        handler: @escaping (_ event: Event<Serializer.Output, Serializer.Failure>) -> Void
-    ) -> Self where Serializer: WebSocketMessageSerializer, Serializer.Failure == Error {
+        handler: @escaping (_ event: Event<Serializer.Success, Serializer.Failure>) -> Void
+    ) -> Self where Serializer: WebSocketMessageSerializer {
         forIncomingEvent(on: queue) { incomingEvent in
-            let event: Event<Serializer.Output, Serializer.Failure>
+            let event: Event<Serializer.Success, Serializer.Failure>
             switch incomingEvent {
             case let .connected(`protocol`):
                 event = .init(socket: self, kind: .connected(protocol: `protocol`))
@@ -1994,7 +1994,7 @@ public final class WebSocketRequest: Request {
         _ type: Value.Type = Value.self,
         on queue: DispatchQueue = .main,
         using decoder: DataDecoder = JSONDecoder(),
-        handler: @escaping (_ event: Event<Value, Error>) -> Void
+        handler: @escaping (_ event: Event<Value, DecodableWebSocketMessageDecoder<Value>.Error>) -> Void
     ) -> Self where Value: Decodable {
         streamSerializer(DecodableWebSocketMessageDecoder<Value>(decoder: decoder), on: queue, handler: handler)
     }
@@ -2089,19 +2089,23 @@ public final class WebSocketRequest: Request {
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public protocol WebSocketMessageSerializer<Output, Failure> {
-    associatedtype Output
-    associatedtype Failure: Error = Error
+public protocol WebSocketMessageSerializer<Success, Failure> {
+    associatedtype Success
+    associatedtype Failure: Error
 
-    func decode(_ message: URLSessionWebSocketTask.Message) throws -> Output
+    func decode(_ message: URLSessionWebSocketTask.Message) throws(Failure) -> Success
 }
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public typealias EventOf<Serializer: WebSocketMessageSerializer> = WebSocketRequest.Event<Serializer.Success, Serializer.Failure>
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension WebSocketMessageSerializer {
     public static func json<Value>(
-        decoder: JSONDecoder = JSONDecoder()
+        decoding type: Value.Type = Value.self,
+        using decoder: JSONDecoder = JSONDecoder()
     ) -> DecodableWebSocketMessageDecoder<Value> where Self == DecodableWebSocketMessageDecoder<Value> {
-        .json(decoder: decoder)
+        Self(decoder: decoder)
     }
 
     static var passthrough: PassthroughWebSocketMessageDecoder {
@@ -2110,21 +2114,18 @@ extension WebSocketMessageSerializer {
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-struct PassthroughWebSocketMessageDecoder: WebSocketMessageSerializer {
-    public typealias Failure = Never
-
-    public func decode(_ message: URLSessionWebSocketTask.Message) -> URLSessionWebSocketTask.Message {
+public struct PassthroughWebSocketMessageDecoder: WebSocketMessageSerializer {
+    public func decode(_ message: URLSessionWebSocketTask.Message) throws(Never) -> URLSessionWebSocketTask.Message {
         message
     }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public struct DecodableWebSocketMessageDecoder<Value: Decodable>: WebSocketMessageSerializer {
-    public static func json(decoder: JSONDecoder = JSONDecoder()) -> DecodableWebSocketMessageDecoder<Value> {
-        DecodableWebSocketMessageDecoder(decoder: decoder)
+    public enum Error: Swift.Error {
+        case decoding(Swift.Error)
+        case unknownMessage(String)
     }
-
-    public struct UnknownMessage: Error {}
 
     public let decoder: DataDecoder
 
@@ -2132,14 +2133,17 @@ public struct DecodableWebSocketMessageDecoder<Value: Decodable>: WebSocketMessa
         self.decoder = decoder
     }
 
-    public func decode(_ message: URLSessionWebSocketTask.Message) throws -> Value {
-        switch message {
-        case let .data(data):
+    public func decode(_ message: URLSessionWebSocketTask.Message) throws(Self.Error) -> Value {
+        let data = switch message {
+        case let .data(data): data
+        case let .string(string): Data(string.utf8)
+        @unknown default: throw .unknownMessage(String(describing: message))
+        }
+
+        do {
             return try decoder.decode(Value.self, from: data)
-        case let .string(string):
-            return try decoder.decode(Value.self, from: Data(string.utf8))
-        @unknown default:
-            throw UnknownMessage()
+        } catch {
+            throw .decoding(error)
         }
     }
 }

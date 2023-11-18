@@ -2357,6 +2357,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature TypedThrows";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -2376,6 +2377,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature TypedThrows";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
