@@ -46,7 +46,7 @@ open class SessionDelegate: NSObject {
     ///   - type: The `Request` subclass type to cast any `Request` associate with `task`.
     func request<R: Request>(for task: URLSessionTask, as type: R.Type) -> R? {
         guard let provider = stateProvider else {
-            assertionFailure("StateProvider is nil.")
+            assertionFailure("StateProvider is nil for task \(task.taskIdentifier).")
             return nil
         }
 
@@ -212,6 +212,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     }
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+//        NSLog("URLSession: \(session), task: \(task), didCompleteWithError: \(error)")
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
         let request = stateProvider?.request(for: task)
@@ -275,6 +276,37 @@ extension SessionDelegate: URLSessionDataDelegate {
         }
     }
 }
+
+// MARK: URLSessionWebSocketDelegate
+
+#if canImport(Darwin) && !canImport(FoundationNetworking)
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension SessionDelegate: URLSessionWebSocketDelegate {
+    open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+        // TODO: Add event monitor method.
+//        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didOpenWithProtocol: \(`protocol` ?? "None")")
+        guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
+            return
+        }
+
+        request.didConnect(protocol: `protocol`)
+    }
+
+    open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        // TODO: Add event monitor method.
+//        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didCloseWithCode: \(closeCode.rawValue), reason: \(reason ?? Data())")
+        guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
+            return
+        }
+
+        // On 2021 OSes and above, empty reason is returned as empty Data rather than nil, so make it nil always.
+        let reason = (reason?.isEmpty == true) ? nil : reason
+        request.didDisconnect(closeCode: closeCode, reason: reason)
+    }
+}
+
+#endif
 
 // MARK: URLSessionDownloadDelegate
 

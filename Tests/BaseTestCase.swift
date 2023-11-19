@@ -27,7 +27,36 @@ import Foundation
 import XCTest
 
 class BaseTestCase: XCTestCase {
-    let timeout: TimeInterval = 10
+    enum SkipVersion {
+        case twenty
+        case none
+
+        var shouldSkip: Bool {
+            switch self {
+            case .twenty:
+                if #available(macOS 11, iOS 14, tvOS 14, watchOS 7, *) {
+                    return false
+                } else {
+                    return true
+                }
+            case .none:
+                return false
+            }
+        }
+
+        var reason: String {
+            switch self {
+            case .twenty:
+                return "Skipped due to being iOS 13 or below."
+            case .none:
+                return "This should never skip."
+            }
+        }
+    }
+
+    let timeout: TimeInterval = 3
+
+    var skipVersion: SkipVersion { .none }
 
     var testDirectoryURL: URL {
         FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests")
@@ -43,6 +72,12 @@ class BaseTestCase: XCTestCase {
         FileManager.createDirectory(at: testDirectoryURL)
 
         super.setUp()
+    }
+
+    override func setUpWithError() throws {
+        try XCTSkipIf(skipVersion.shouldSkip, skipVersion.reason)
+
+        try super.setUpWithError()
     }
 
     override func tearDown() {

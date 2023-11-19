@@ -78,6 +78,10 @@ struct Endpoint {
         case status(Int)
         case stream(count: Int)
         case upload
+        case websocket
+        case websocketCount(Int)
+        case websocketEcho
+        case websocketPingCount(Int)
         case xml
 
         var string: String {
@@ -120,6 +124,14 @@ struct Endpoint {
                 return "/stream/\(count)"
             case .upload:
                 return "/upload"
+            case .websocket:
+                return "/websocket"
+            case let .websocketCount(count):
+                return "/websocket/payloads/\(count)"
+            case .websocketEcho:
+                return "/websocket/echo"
+            case let .websocketPingCount(count):
+                return "/websocket/ping/\(count)"
             case .xml:
                 return "/xml"
             }
@@ -222,6 +234,41 @@ struct Endpoint {
 
     static let upload: Endpoint = .init(path: .upload, method: .post, headers: [.contentType("application/octet-stream")])
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
+    static var defaultCloseDelay: Int64 {
+        if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
+            return 0
+        } else if #available(macOS 11.3, iOS 14.5, tvOS 14.5, watchOS 7.4, *) {
+            // iOS 14.5 to 14.7 have a bug where immediate connection closure will drop messages, so delay close by 60
+            // milliseconds.
+            return 60
+        } else {
+            return 0
+        }
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static func websocket(closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure, closeDelay: Int64 = defaultCloseDelay) -> Endpoint {
+        Endpoint(path: .websocket, queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
+                                                .init(name: "closeDelay", value: "\(closeDelay)")])
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static func websocketCount(_ count: Int = 2,
+                               closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure,
+                               closeDelay: Int64 = defaultCloseDelay) -> Endpoint {
+        Endpoint(path: .websocketCount(count), queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
+                                                            .init(name: "closeDelay", value: "\(closeDelay)")])
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static let websocketEcho = Endpoint(path: .websocketEcho)
+
+    static func websocketPings(count: Int = 5) -> Endpoint {
+        Endpoint(path: .websocketPingCount(count))
+    }
+    #endif
+
     static var xml: Endpoint {
         Endpoint(path: .xml, headers: [.contentType("application/xml")])
     }
@@ -273,6 +320,28 @@ extension Endpoint: URLConvertible {
         }
 
         return try components.asURL()
+    }
+}
+
+final class EndpointSequence: URLRequestConvertible {
+    enum Error: Swift.Error { case noRemainingEndpoints }
+
+    private var remainingEndpoints: [Endpoint]
+
+    init(endpoints: [Endpoint]) {
+        remainingEndpoints = endpoints
+    }
+
+    func asURLRequest() throws -> URLRequest {
+        guard !remainingEndpoints.isEmpty else { throw Error.noRemainingEndpoints }
+
+        return try remainingEndpoints.removeFirst().asURLRequest()
+    }
+}
+
+extension URLRequestConvertible where Self == EndpointSequence {
+    static func endpoints(_ endpoints: Endpoint...) -> Self {
+        EndpointSequence(endpoints: endpoints)
     }
 }
 

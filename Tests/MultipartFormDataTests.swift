@@ -26,7 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
-struct EncodingCharacters {
+enum EncodingCharacters {
     static let crlf = "\r\n"
 }
 

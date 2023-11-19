@@ -17,7 +17,9 @@
         "CombineTestCase",
         "DataRequestCombineTests",
         "DataStreamRequestCombineTests",
-        "DownloadRequestCombineTests"
+        "DownloadRequestCombineTests",
+        "WebSocketConcurrencyTests",
+        "WebSocketTests"
       ],
       "target" : {
         "containerPath" : "container:Alamofire.xcodeproj",

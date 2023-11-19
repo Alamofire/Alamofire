@@ -42,6 +42,19 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         XCTAssertNotNil(value)
     }
 
+    func testThat500ResponseCanBeRetried() async throws {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let value = try await session.request(.endpoints(.status(500), .method(.get)), interceptor: .retryPolicy)
+            .serializingResponse(using: .data)
+            .value
+
+        // Then
+        XCTAssertNotNil(value)
+    }
+
     func testThatDataTaskSerializesDecodable() async throws {
         // Given
         let session = stored(Session())
@@ -742,6 +755,40 @@ final class UploadConcurrencyTests: BaseTestCase {
 
         XCTAssertEqual(downloadProgressValues.last, 1.0, "last item in downloadProgressValues should equal 1.0")
         XCTAssertEqual(response?.value?.bytes, baseData.count * count)
+    }
+}
+#endif
+
+#if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.8)
+@_spi(WebSocket) import Alamofire
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+final class WebSocketConcurrencyTests: BaseTestCase {
+    func testThatMessageEventsCanBeStreamed() async throws {
+        // Given
+        let session = stored(Session())
+        let receivedEvent = expectation(description: "receivedEvent")
+        receivedEvent.expectedFulfillmentCount = 4
+
+        // When
+        for await _ in session.webSocketRequest(.websocket()).webSocketTask().streamingMessageEvents() {
+            receivedEvent.fulfill()
+        }
+
+        await fulfillment(of: [receivedEvent])
+
+        // Then
+    }
+
+    func testThatMessagesCanBeStreamed() async throws {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let messages = await session.webSocketRequest(.websocket()).webSocketTask().streamingMessages().collect()
+
+        // Then
+        XCTAssertTrue(messages.count == 1)
     }
 }
 #endif

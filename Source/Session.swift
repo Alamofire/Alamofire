@@ -461,6 +461,73 @@ open class Session {
         return request
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @_spi(WebSocket) open func webSocketRequest(
+        to url: URLConvertible,
+        configuration: WebSocketRequest.Configuration = .default,
+        headers: HTTPHeaders? = nil,
+        interceptor: RequestInterceptor? = nil,
+        requestModifier: RequestModifier? = nil
+    ) -> WebSocketRequest {
+        webSocketRequest(
+            to: url,
+            configuration: configuration,
+            parameters: Empty?.none,
+            encoder: URLEncodedFormParameterEncoder.default,
+            headers: headers,
+            interceptor: interceptor,
+            requestModifier: requestModifier
+        )
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @_spi(WebSocket) open func webSocketRequest<Parameters>(
+        to url: URLConvertible,
+        configuration: WebSocketRequest.Configuration = .default,
+        parameters: Parameters? = nil,
+        encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+        headers: HTTPHeaders? = nil,
+        interceptor: RequestInterceptor? = nil,
+        requestModifier: RequestModifier? = nil
+    ) -> WebSocketRequest where Parameters: Encodable {
+        let convertible = RequestEncodableConvertible(url: url,
+                                                      method: .get,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
+        let request = WebSocketRequest(convertible: convertible,
+                                       configuration: configuration,
+                                       underlyingQueue: rootQueue,
+                                       serializationQueue: serializationQueue,
+                                       eventMonitor: eventMonitor,
+                                       interceptor: interceptor,
+                                       delegate: self)
+
+        perform(request)
+
+        return request
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @_spi(WebSocket) open func webSocketRequest(performing convertible: URLRequestConvertible,
+                                                configuration: WebSocketRequest.Configuration = .default,
+                                                interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
+        let request = WebSocketRequest(convertible: convertible,
+                                       configuration: configuration,
+                                       underlyingQueue: rootQueue,
+                                       serializationQueue: serializationQueue,
+                                       eventMonitor: eventMonitor,
+                                       interceptor: interceptor,
+                                       delegate: self)
+
+        perform(request)
+
+        return request
+    }
+    #endif
+
     // MARK: - DownloadRequest
 
     /// Creates a `DownloadRequest` using a `URLRequest` created using the passed components, `RequestInterceptor`, and
@@ -1003,7 +1070,17 @@ open class Session {
                 case let r as DataRequest: self.performDataRequest(r)
                 case let r as DownloadRequest: self.performDownloadRequest(r)
                 case let r as DataStreamRequest: self.performDataStreamRequest(r)
-                default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
+                default:
+                    #if canImport(Darwin) && !canImport(FoundationNetworking)
+                    if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *),
+                       let request = request as? WebSocketRequest {
+                        self.performWebSocketRequest(request)
+                    } else {
+                        fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
+                    }
+                    #else
+                    fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
+                    #endif
                 }
             }
         }
@@ -1020,6 +1097,15 @@ open class Session {
 
         performSetupOperations(for: request, convertible: request.convertible)
     }
+
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func performWebSocketRequest(_ request: WebSocketRequest) {
+        dispatchPrecondition(condition: .onQueue(requestQueue))
+
+        performSetupOperations(for: request, convertible: request.convertible)
+    }
+    #endif
 
     func performUploadRequest(_ request: UploadRequest) {
         dispatchPrecondition(condition: .onQueue(requestQueue))
