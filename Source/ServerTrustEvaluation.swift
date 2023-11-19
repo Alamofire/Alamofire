@@ -456,7 +456,7 @@ public final class DisabledTrustEvaluator: ServerTrustEvaluating {
 
 // MARK: - Extensions
 
-extension Array where Element == ServerTrustEvaluating {
+extension [ServerTrustEvaluating] {
     #if os(Linux) || os(Windows) || os(Android)
     // Add this same convenience method for Linux/Windows.
     #else
@@ -614,17 +614,13 @@ extension AlamofireExtension where ExtendedType == SecTrust {
                 SecTrustGetCertificateAtIndex(type, index)
             }
         }
-        #elseif swift(>=5.5.1) // Xcode 13.1 / 2021 SDKs.
+        #else
         if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return (SecTrustCopyCertificateChain(type) as? [SecCertificate]) ?? []
         } else {
             return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
                 SecTrustGetCertificateAtIndex(type, index)
             }
-        }
-        #else
-        (0..<SecTrustGetCertificateCount(type)).compactMap { index in
-            SecTrustGetCertificateAtIndex(type, index)
         }
         #endif
     }

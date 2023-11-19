@@ -156,7 +156,7 @@ extension DownloadResponseSerializerProtocol where Self: DataResponseSerializerP
     public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> Self.SerializedObject {
         guard error == nil else { throw error! }
 
-        guard let fileURL = fileURL else {
+        guard let fileURL else {
             throw AFError.responseSerializationFailed(reason: .inputFileNil)
         }
 
@@ -247,7 +247,7 @@ extension DataRequest {
                     var didComplete: (() -> Void)?
 
                     defer {
-                        if let didComplete = didComplete {
+                        if let didComplete {
                             self.responseSerializerDidComplete { queue.async { didComplete() } }
                         }
                     }
@@ -384,7 +384,7 @@ extension DownloadRequest {
                     var didComplete: (() -> Void)?
 
                     defer {
-                        if let didComplete = didComplete {
+                        if let didComplete {
                             self.responseSerializerDidComplete { queue.async { didComplete() } }
                         }
                     }
@@ -520,7 +520,7 @@ public final class DataResponseSerializer: ResponseSerializer {
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data {
         guard error == nil else { throw error! }
 
-        guard var data = data, !data.isEmpty else {
+        guard var data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
@@ -640,7 +640,7 @@ public final class StringResponseSerializer: ResponseSerializer {
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> String {
         guard error == nil else { throw error! }
 
-        guard var data = data, !data.isEmpty else {
+        guard var data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
@@ -784,7 +784,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Any {
         guard error == nil else { throw error! }
 
-        guard var data = data, !data.isEmpty else {
+        guard var data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
@@ -941,7 +941,7 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> T {
         guard error == nil else { throw error! }
 
-        guard var data = data, !data.isEmpty else {
+        guard var data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }

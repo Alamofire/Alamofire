@@ -57,7 +57,7 @@ extension URLComponents: URLConvertible {
     /// - Returns: The `URL` from the `url` property.
     /// - Throws:  An `AFError.invalidURL` instance.
     public func asURL() throws -> URL {
-        guard let url = url else { throw AFError.invalidURL(url: self) }
+        guard let url else { throw AFError.invalidURL(url: self) }
 
         return url
     }

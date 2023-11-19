@@ -333,7 +333,7 @@ extension HTTPHeader {
     }
 }
 
-extension Array where Element == HTTPHeader {
+extension [HTTPHeader] {
     /// Case-insensitively finds the index of an `HTTPHeader` with the provided name, if it exists.
     func index(of name: String) -> Int? {
         let lowercasedName = name.lowercased()
@@ -425,7 +425,7 @@ extension HTTPHeader {
     }()
 }
 
-extension Collection where Element == String {
+extension Collection<String> {
     func qualityEncoded() -> String {
         enumerated().map { index, encoding in
             let quality = 1.0 - (Double(index) * 0.1)

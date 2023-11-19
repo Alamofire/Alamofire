@@ -114,16 +114,9 @@ public struct DeflateRequestCompressor: RequestInterceptor {
     }
 
     func adler32Checksum(of data: Data) -> UInt32 {
-        #if swift(>=5.6)
         data.withUnsafeBytes { buffer in
             UInt32(adler32(1, buffer.baseAddress, UInt32(buffer.count)))
         }
-        #else
-        data.withUnsafeBytes { buffer in
-            let buffer = buffer.bindMemory(to: UInt8.self)
-            return UInt32(adler32(1, buffer.baseAddress, UInt32(buffer.count)))
-        }
-        #endif
     }
 }
 

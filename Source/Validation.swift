@@ -97,7 +97,7 @@ extension Request {
                                            data: Data?)
         -> ValidationResult
         where S.Iterator.Element == String {
-        guard let data = data, !data.isEmpty else { return .success(()) }
+        guard let data, !data.isEmpty else { return .success(()) }
 
         return validate(contentType: acceptableContentTypes, response: response)
     }

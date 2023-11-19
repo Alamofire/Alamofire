@@ -72,7 +72,7 @@ class DetailViewController: UITableViewController {
     // MARK: IBActions
 
     @IBAction func refresh() {
-        guard let request = request else {
+        guard let request else {
             return
         }
 
@@ -85,7 +85,7 @@ class DetailViewController: UITableViewController {
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
-            if let response = response {
+            if let response {
                 for (field, value) in response.allHeaderFields {
                     self.headers["\(field)"] = "\(value)"
                 }
@@ -205,7 +205,7 @@ extension DetailViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if Sections(rawValue: section) == .body, let elapsedTime = elapsedTime {
+        if Sections(rawValue: section) == .body, let elapsedTime {
             let elapsedTimeText = DetailViewController.numberFormatter.string(from: elapsedTime as NSNumber) ?? "???"
             return "Elapsed Time: \(elapsedTimeText) sec"
         }

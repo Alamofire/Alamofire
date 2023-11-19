@@ -196,7 +196,7 @@ open class NetworkReachabilityManager {
             }
         )
         let callback: SCNetworkReachabilityCallBack = { _, flags, info in
-            guard let info = info else { return }
+            guard let info else { return }
 
             let weakManager = Unmanaged<WeakManager>.fromOpaque(info).takeUnretainedValue()
             weakManager.manager?.notifyListener(flags)

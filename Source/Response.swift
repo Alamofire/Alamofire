@@ -429,7 +429,7 @@ private enum DebugDescription {
                             headers: HTTPHeaders,
                             allowingPrintableTypes printableTypes: [String] = ["json", "xml", "text"],
                             maximumLength: Int = 100_000) -> String {
-        guard let data = data, !data.isEmpty else { return "[Body]: None" }
+        guard let data, !data.isEmpty else { return "[Body]: None" }
 
         guard
             data.count <= maximumLength,

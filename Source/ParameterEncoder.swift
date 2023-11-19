@@ -74,7 +74,7 @@ open class JSONParameterEncoder: ParameterEncoder {
 
     open func encode<Parameters: Encodable>(_ parameters: Parameters?,
                                             into request: URLRequest) throws -> URLRequest {
-        guard let parameters = parameters else { return request }
+        guard let parameters else { return request }
 
         var request = request
 
@@ -158,7 +158,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 
     open func encode<Parameters: Encodable>(_ parameters: Parameters?,
                                             into request: URLRequest) throws -> URLRequest {
-        guard let parameters = parameters else { return request }
+        guard let parameters else { return request }
 
         var request = request
 

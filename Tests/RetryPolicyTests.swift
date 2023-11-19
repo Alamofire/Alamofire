@@ -137,7 +137,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     func request(method: HTTPMethod = .get, statusCode: Int? = nil) -> Request {
         var response: HTTPURLResponse?
 
-        if let statusCode = statusCode {
+        if let statusCode {
             response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)
         }
 

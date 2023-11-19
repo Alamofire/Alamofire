@@ -47,7 +47,7 @@ struct RequestTaskMap {
     subscript(_ request: Request) -> URLSessionTask? {
         get { requestsToTasks[request] }
         set {
-            guard let newValue = newValue else {
+            guard let newValue else {
                 guard let task = requestsToTasks[request] else {
                     fatalError("RequestTaskMap consistency error: no task corresponding to request found.")
                 }
@@ -68,7 +68,7 @@ struct RequestTaskMap {
     subscript(_ task: URLSessionTask) -> Request? {
         get { tasksToRequests[task] }
         set {
-            guard let newValue = newValue else {
+            guard let newValue else {
                 guard let request = tasksToRequests[task] else {
                     fatalError("RequestTaskMap consistency error: no request corresponding to task found.")
                 }

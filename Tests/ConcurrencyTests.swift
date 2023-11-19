@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if compiler(>=5.6.0) && canImport(_Concurrency)
+#if canImport(_Concurrency)
 
 import Alamofire
 import XCTest

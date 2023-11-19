@@ -111,7 +111,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodedData, "encoded data should not be nil")
 
-        if let encodedData = encodedData {
+        if let encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedString = (
@@ -150,7 +150,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodedData, "encoded data should not be nil")
 
-        if let encodedData = encodedData {
+        if let encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedString = (
@@ -192,7 +192,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodedData, "encoded data should not be nil")
 
-        if let encodedData = encodedData {
+        if let encodedData {
             let boundary = multipartFormData.boundary
 
             var expectedData = Data()
@@ -231,7 +231,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodedData, "encoded data should not be nil")
 
-        if let encodedData = encodedData {
+        if let encodedData {
             let boundary = multipartFormData.boundary
 
             var expectedData = Data()
@@ -281,7 +281,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodedData, "encoded data should not be nil")
 
-        if let encodedData = encodedData {
+        if let encodedData {
             let boundary = multipartFormData.boundary
 
             var expectedData = Data()
@@ -333,7 +333,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodedData, "encoded data should not be nil")
 
-        if let encodedData = encodedData {
+        if let encodedData {
             let boundary = multipartFormData.boundary
 
             var expectedData = Data()
@@ -389,7 +389,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodedData, "encoded data should not be nil")
 
-        if let encodedData = encodedData {
+        if let encodedData {
             let boundary = multipartFormData.boundary
 
             var expectedData = Data()
