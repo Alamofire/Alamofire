@@ -1,7 +1,7 @@
 # file options
 
 --symlinks ignore
---swiftversion 5.5
+--swiftversion 5.7
 
 # rules
 --enable isEmpty
@@ -22,7 +22,15 @@
 --operatorfunc no-space
 --nospaceoperators ..<, ...
 --selfrequired validate
+--someAny false
 --stripunusedargs closure-only
 --wraparguments preserve
 --wrapcollections preserve
 --wrapparameters preserve
+
+
+# rules
+
+--enable isEmpty
+--disable wrapMultilineStatementBraces
+--disable opaqueGenericParameters

@@ -182,7 +182,7 @@ final class CacheTestCase: BaseTestCase {
             return
         }
 
-        if let response = response, let timestamp = response.headers["Date"] {
+        if let response, let timestamp = response.headers["Date"] {
             if isCachedResponse {
                 XCTAssertEqual(timestamp, cachedResponseTimestamp, "timestamps should be equal")
             } else {

@@ -149,7 +149,7 @@ final class SessionTestCase: BaseTestCase {
             retryErrors.append(error)
 
             if retryCount < 2 {
-                if let retryDelay = retryDelay {
+                if let retryDelay {
                     completion(.retryWithDelay(retryDelay))
                 } else {
                     completion(.retry)

@@ -842,7 +842,7 @@ final class CustomValidationTestCase: BaseTestCase {
 
         AF.download(endpoint)
             .validate { _, _, fileURL in
-                guard let fileURL = fileURL else { return .failure(ValidationError.missingFile) }
+                guard let fileURL else { return .failure(ValidationError.missingFile) }
 
                 do {
                     _ = try Data(contentsOf: fileURL)

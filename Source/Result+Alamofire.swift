@@ -59,7 +59,7 @@ extension Result {
     ///   - value: A value.
     ///   - error: An `Error`.
     init(value: Success, error: Failure?) {
-        if let error = error {
+        if let error {
             self = .failure(error)
         } else {
             self = .success(value)

@@ -303,7 +303,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
         }
 
         // Do not attempt retry if there is no credential.
-        guard let credential = credential else {
+        guard let credential else {
             let error = AuthenticationError.missingCredential
             completion(.doNotRetryWithError(error))
             return

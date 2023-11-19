@@ -320,7 +320,7 @@ open class MultipartFormData {
     /// - Returns: The encoded `Data`, if encoding is successful.
     /// - Throws:  An `AFError` if encoding encounters an error.
     public func encode() throws -> Data {
-        if let bodyPartError = bodyPartError {
+        if let bodyPartError {
             throw bodyPartError
         }
 
@@ -345,7 +345,7 @@ open class MultipartFormData {
     /// - Parameter fileURL: File `URL` to which to write the form data.
     /// - Throws:            An `AFError` if encoding encounters an error.
     public func writeEncodedData(to fileURL: URL) throws {
-        if let bodyPartError = bodyPartError {
+        if let bodyPartError {
             throw bodyPartError
         }
 
@@ -515,10 +515,10 @@ open class MultipartFormData {
 
     private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
         var disposition = "form-data; name=\"\(name)\""
-        if let fileName = fileName { disposition += "; filename=\"\(fileName)\"" }
+        if let fileName { disposition += "; filename=\"\(fileName)\"" }
 
         var headers: HTTPHeaders = [.contentDisposition(disposition)]
-        if let mimeType = mimeType { headers.add(.contentType(mimeType)) }
+        if let mimeType { headers.add(.contentType(mimeType)) }
 
         return headers
     }

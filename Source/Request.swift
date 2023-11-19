@@ -494,7 +494,7 @@ public class Request {
     func retryOrFinish(error: AFError?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        guard !isCancelled, let error = error, let delegate = delegate else { finish(); return }
+        guard !isCancelled, let error, let delegate else { finish(); return }
 
         delegate.retryResult(for: self, dueTo: error) { retryResult in
             switch retryResult {
@@ -518,7 +518,7 @@ public class Request {
 
         mutableState.isFinishing = true
 
-        if let error = error { self.error = error }
+        if let error { self.error = error }
 
         // Start response handlers
         processNextResponseSerializer()
@@ -1013,7 +1013,7 @@ extension Request {
                     components.append("-u \(user):\(password)")
                 }
             } else {
-                if let credential = credential, let user = credential.user, let password = credential.password {
+                if let credential, let user = credential.user, let password = credential.password {
                     components.append("-u \(user):\(password)")
                 }
             }
@@ -1212,7 +1212,7 @@ public class DataRequest: Request {
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
-            guard error == nil, let response = response else { return }
+            guard error == nil, let response else { return }
 
             let result = validation(request, response, data)
 
@@ -1451,7 +1451,7 @@ public final class DataStreamRequest: Request {
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
-            guard error == nil, let response = response else { return }
+            guard error == nil, let response else { return }
 
             let result = validation(request, response)
 
@@ -1869,7 +1869,7 @@ extension DataStreamRequest.Stream {
         let startTimestamp = ProcessInfo.processInfo.systemUptime
         socket?.sendPing { error in
             // Calls back on delegate queue / rootQueue / underlyingQueue
-            if let error = error {
+            if let error {
                 queue.async {
                     onResponse(.error(error))
                 }
@@ -1895,7 +1895,7 @@ extension DataStreamRequest.Stream {
             }
 
             let item = DispatchWorkItem { [weak self] in
-                guard let self = self, self.isResumed else { return }
+                guard let self, self.isResumed else { return }
 
                 self.sendPing(respondingOn: self.underlyingQueue) { response in
                     guard case .pong = response else { return }
@@ -2067,7 +2067,7 @@ extension DataStreamRequest.Stream {
                      completionHandler: @escaping (Result<Void, Error>) -> Void) {
         guard !(isCancelled || isFinished) else { return }
 
-        guard let socket = socket else {
+        guard let socket else {
             // URLSessionWebSocketTask note created yet, enqueue the send.
             socketMutableState.write { mutableState in
                 mutableState.enqueuedSends.append((message, queue, completionHandler))
@@ -2401,7 +2401,7 @@ public class DownloadRequest: Request {
                 return
             }
 
-            if let completionHandler = completionHandler {
+            if let completionHandler {
                 // Resume to ensure metrics are gathered.
                 task.resume()
                 task.cancel { resumeData in
@@ -2430,7 +2430,7 @@ public class DownloadRequest: Request {
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
-            guard error == nil, let response = response else { return }
+            guard error == nil, let response else { return }
 
             let result = validation(request, response, fileURL)
 
@@ -2534,7 +2534,7 @@ public class UploadRequest: DataRequest {
     }
 
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
-        guard let uploadable = uploadable else {
+        guard let uploadable else {
             fatalError("Attempting to create a URLSessionUploadTask when Uploadable value doesn't exist.")
         }
 
@@ -2558,7 +2558,7 @@ public class UploadRequest: DataRequest {
     ///
     /// - Returns: The `InputStream`.
     func inputStream() -> InputStream {
-        guard let uploadable = uploadable else {
+        guard let uploadable else {
             fatalError("Attempting to access the input stream but the uploadable doesn't exist.")
         }
 
@@ -2575,7 +2575,7 @@ public class UploadRequest: DataRequest {
         defer { super.cleanup() }
 
         guard
-            let uploadable = uploadable,
+            let uploadable,
             case let .file(url, shouldRemove) = uploadable,
             shouldRemove
         else { return }

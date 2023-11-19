@@ -456,7 +456,7 @@ public final class DisabledTrustEvaluator: ServerTrustEvaluating {
 
 // MARK: - Extensions
 
-extension Array where Element == ServerTrustEvaluating {
+extension [ServerTrustEvaluating] {
     #if os(Linux) || os(Windows) || os(Android)
     // Add this same convenience method for Linux/Windows.
     #else
