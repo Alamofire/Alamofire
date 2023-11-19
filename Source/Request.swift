@@ -1614,7 +1614,7 @@ extension DataStreamRequest.Stream {
 
 // MARK: - WebSocketRequest
 
-#if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.11) && hasFeature(TypedThrows)
+#if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.11) && hasFeature(FullTypedThrows)
 
 /// `Request` subclass which manages a WebSocket connection using `URLSessionWebSocketTask`.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
