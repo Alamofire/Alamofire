@@ -761,11 +761,11 @@ extension DataStreamRequest {
     }
 }
 
-#if canImport(Darwin) && !canImport(FoundationNetworking)
+#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
 // - MARK: WebSocketTask
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct WebSocketTask {
+@_spi(WebSocket) public struct WebSocketTask {
     private let request: WebSocketRequest
 
     fileprivate init(request: WebSocketRequest) {

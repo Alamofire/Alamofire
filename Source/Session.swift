@@ -461,9 +461,9 @@ open class Session {
         return request
     }
 
-    #if canImport(Darwin) && !canImport(FoundationNetworking)
+    #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    open func webSocketRequest(
+    @_spi(WebSocket) open func webSocketRequest(
         to url: URLConvertible,
         configuration: WebSocketRequest.Configuration = .default,
         headers: HTTPHeaders? = nil,
@@ -482,7 +482,7 @@ open class Session {
     }
 
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    open func webSocketRequest<Parameters>(
+    @_spi(WebSocket) open func webSocketRequest<Parameters>(
         to url: URLConvertible,
         configuration: WebSocketRequest.Configuration = .default,
         parameters: Parameters? = nil,
@@ -511,9 +511,9 @@ open class Session {
     }
 
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    open func webSocketRequest(performing convertible: URLRequestConvertible,
-                               configuration: WebSocketRequest.Configuration = .default,
-                               interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
+    @_spi(WebSocket) open func webSocketRequest(performing convertible: URLRequestConvertible,
+                                                configuration: WebSocketRequest.Configuration = .default,
+                                                interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
         let request = WebSocketRequest(convertible: convertible,
                                        configuration: configuration,
                                        underlyingQueue: rootQueue,

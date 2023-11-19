@@ -760,6 +760,8 @@ final class UploadConcurrencyTests: BaseTestCase {
 #endif
 
 #if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.8)
+@_spi(WebSocket) import Alamofire
+
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class WebSocketConcurrencyTests: BaseTestCase {
     func testThatMessageEventsCanBeStreamed() async throws {

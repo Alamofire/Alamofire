@@ -6,9 +6,9 @@
 //  Copyright © 2021 Alamofire. All rights reserved.
 //
 
-#if canImport(Darwin) && !canImport(FoundationNetworking)
+#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
 
-import Alamofire
+@_spi(WebSocket) import Alamofire
 import Foundation
 import XCTest
 
@@ -723,6 +723,17 @@ extension URLSessionWebSocketTask.Message: Equatable {
         guard case let .data(data) = self else { return nil }
 
         return data
+    }
+}
+
+extension Session {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketRequest(_ endpoint: Endpoint,
+                          configuration: WebSocketRequest.Configuration = .default,
+                          interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
+        webSocketRequest(performing: endpoint as URLRequestConvertible,
+                         configuration: configuration,
+                         interceptor: interceptor)
     }
 }
 

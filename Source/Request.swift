@@ -1614,11 +1614,11 @@ extension DataStreamRequest.Stream {
 
 // MARK: - WebSocketRequest
 
-#if canImport(Darwin) && !canImport(FoundationNetworking)
+#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
 
 /// `Request` subclass which manages a WebSocket connection using `URLSessionWebSocketTask`.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public final class WebSocketRequest: Request {
+@_spi(WebSocket) public final class WebSocketRequest: Request {
     enum IncomingEvent {
         case connected(protocol: String?)
         case receivedMessage(URLSessionWebSocketTask.Message)
@@ -1661,18 +1661,6 @@ public final class WebSocketRequest: Request {
         public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping (PingResponse) -> Void) {
             socket?.sendPing(respondingOn: queue, onResponse: onResponse)
         }
-
-//        func mapMessage<NewSuccess>(_ transform: (URLSessionWebSocketTask.Message) throws -> NewSuccess) rethrows -> Event<NewSuccess, Error> {
-//            switch self {
-//            case let .connected(`protocol`):
-//                return .connected(`protocol`)
-//            case let .receiveMessage(message):
-//                do {
-//                    let value = try transform(message)
-//                    return .receivedMessage(<#T##URLSessionWebSocketTask.Message#>)
-//                }
-//            }
-//        }
     }
 
     public struct Completion {

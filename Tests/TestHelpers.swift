@@ -401,17 +401,6 @@ extension Session {
                       interceptor: interceptor)
     }
 
-    #if canImport(Darwin) && !canImport(FoundationNetworking)
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func webSocketRequest(_ endpoint: Endpoint,
-                          configuration: WebSocketRequest.Configuration = .default,
-                          interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
-        webSocketRequest(performing: endpoint as URLRequestConvertible,
-                         configuration: configuration,
-                         interceptor: interceptor)
-    }
-    #endif
-
     func download<Parameters: Encodable>(_ endpoint: Endpoint,
                                          parameters: Parameters? = nil,
                                          encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
