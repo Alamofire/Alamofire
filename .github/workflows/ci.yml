@@ -47,30 +47,6 @@ jobs:
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.1, Swift 5.7.1"
             testPlan: "macOS"
-          - xcode: "Xcode_14.0.1"
-            runsOn: macOS-12
-            name: "macOS 12, Xcode 14.0.1, Swift 5.7.0"
-            testPlan: "macOS"
-          - xcode: "Xcode_13.4.1"
-            runsOn: macOS-12
-            name: "macOS 12, Xcode 13.4.1, Swift 5.6.1"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.3.1"
-            runsOn: macOS-12
-            name: "macOS 12, Xcode 13.3.1, Swift 5.6.0"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.2.1"
-            runsOn: macOS-11
-            name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.1"
-            runsOn: macOS-11
-            name: "macOS 11, Xcode 13.1, Swift 5.5.1"
-            testPlan: "macOS-NoTS"
-          - xcode: "Xcode_13.0"
-            runsOn: macOS-11
-            name: "macOS 11, Xcode 13.0, Swift 5.5.0"
-            testPlan: "macOS-NoTS"
     steps:
       - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
@@ -257,24 +233,6 @@ jobs:
           - xcode: "Xcode_14.1"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.1 Test"
-          - xcode: "Xcode_14.0.1"
-            runsOn: macOS-12
-            name: "macOS 12, SPM 5.7.0 Test"
-          - xcode: "Xcode_13.4.1"
-            runsOn: macOS-12
-            name: "macOS 12, SPM 5.6.1 Test"
-          - xcode: "Xcode_13.3.1"
-            runsOn: macOS-12
-            name: "macOS 12, SPM 5.6.0 Test"
-          - xcode: "Xcode_13.2.1"
-            runsOn: macOS-11
-            name: "macOS 11, SPM 5.5.2 Test"
-          - xcode: "Xcode_13.1"
-            runsOn: macOS-11
-            name: "macOS 11, SPM 5.5.1 Test"
-          - xcode: "Xcode_13.0"
-            runsOn: macOS-11
-            name: "macOS 11, SPM 5.5.0 Test"
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
