@@ -1909,11 +1909,13 @@ extension DataStreamRequest.Stream {
         }
     }
 
+    #if swift(>=5.8)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func startAutomaticPing(every duration: Duration) {
         let interval = TimeInterval(duration.components.seconds) + (Double(duration.components.attoseconds) / 1e18)
         startAutomaticPing(every: interval)
     }
+    #endif
 
     func cancelAutomaticPing() {
         socketMutableState.write { mutableState in
