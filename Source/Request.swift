@@ -1867,7 +1867,7 @@ public final class WebSocketRequest: Request {
         }
 
         if let pingInterval = configuration.pingInterval {
-            startAutomaticPing(onInterval: pingInterval)
+            startAutomaticPing(every: pingInterval)
         }
     }
 
@@ -1898,7 +1898,7 @@ public final class WebSocketRequest: Request {
         }
     }
 
-    func startAutomaticPing(onInterval pingInterval: TimeInterval) {
+    func startAutomaticPing(every pingInterval: TimeInterval) {
         socketMutableState.write { mutableState in
             guard isResumed else {
                 // Defer out of lock.
@@ -1912,13 +1912,19 @@ public final class WebSocketRequest: Request {
                 self.sendPing(respondingOn: self.underlyingQueue) { response in
                     guard case .pong = response else { return }
 
-                    self.startAutomaticPing(onInterval: pingInterval)
+                    self.startAutomaticPing(every: pingInterval)
                 }
             }
 
             mutableState.pingTimerItem = item
             underlyingQueue.asyncAfter(deadline: .now() + pingInterval, execute: item)
         }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func startAutomaticPing(every duration: Duration) {
+        let interval = TimeInterval(duration.components.seconds) + (Double(duration.components.attoseconds) / 1e18)
+        startAutomaticPing(every: interval)
     }
 
     func cancelAutomaticPing() {
@@ -2099,9 +2105,10 @@ public protocol WebSocketMessageSerializer<Output, Failure> {
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension WebSocketMessageSerializer {
     public static func json<Value>(
-        decoder: JSONDecoder = JSONDecoder()
+        decoding _: Value.Type = Value.self,
+        using decoder: JSONDecoder = JSONDecoder()
     ) -> DecodableWebSocketMessageDecoder<Value> where Self == DecodableWebSocketMessageDecoder<Value> {
-        .json(decoder: decoder)
+        Self(decoder: decoder)
     }
 
     static var passthrough: PassthroughWebSocketMessageDecoder {
@@ -2120,11 +2127,10 @@ struct PassthroughWebSocketMessageDecoder: WebSocketMessageSerializer {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public struct DecodableWebSocketMessageDecoder<Value: Decodable>: WebSocketMessageSerializer {
-    public static func json(decoder: JSONDecoder = JSONDecoder()) -> DecodableWebSocketMessageDecoder<Value> {
-        DecodableWebSocketMessageDecoder(decoder: decoder)
+    public enum Error: Swift.Error {
+        case decoding(Swift.Error)
+        case unknownMessage(description: String)
     }
-
-    public struct UnknownMessage: Error {}
 
     public let decoder: DataDecoder
 
@@ -2133,13 +2139,20 @@ public struct DecodableWebSocketMessageDecoder<Value: Decodable>: WebSocketMessa
     }
 
     public func decode(_ message: URLSessionWebSocketTask.Message) throws -> Value {
+        let data: Data
         switch message {
-        case let .data(data):
-            return try decoder.decode(Value.self, from: data)
+        case let .data(messageData):
+            data = messageData
         case let .string(string):
-            return try decoder.decode(Value.self, from: Data(string.utf8))
+            data = Data(string.utf8)
         @unknown default:
-            throw UnknownMessage()
+            throw Error.unknownMessage(description: String(describing: message))
+        }
+
+        do {
+            return try decoder.decode(Value.self, from: data)
+        } catch {
+            throw Error.decoding(error)
         }
     }
 }
