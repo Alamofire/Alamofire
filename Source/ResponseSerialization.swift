@@ -31,7 +31,7 @@ public protocol DataResponseSerializerProtocol {
     /// The type of serialized object to be created.
     associatedtype SerializedObject
 
-    /// Serialize the response `Data` into the provided type..
+    /// Serialize the response `Data` into the provided type.
     ///
     /// - Parameters:
     ///   - request:  `URLRequest` which was used to perform the request, if any.
@@ -49,7 +49,7 @@ public protocol DownloadResponseSerializerProtocol {
     /// The type of serialized object to be created.
     associatedtype SerializedObject
 
-    /// Serialize the downloaded response `Data` from disk into the provided type..
+    /// Serialize the downloaded response `Data` from disk into the provided type.
     ///
     /// - Parameters:
     ///   - request:  `URLRequest` which was used to perform the request, if any.
