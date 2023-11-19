@@ -181,7 +181,6 @@ extension DataRequest {
         }
     }
 
-    #if swift(>=5.7)
     /// Sets an async closure returning a `Request.ResponseDisposition`, called whenever the `DataRequest` produces an
     /// `HTTPURLResponse`.
     ///
@@ -231,7 +230,6 @@ extension DataRequest {
 
         return self
     }
-    #endif
 
     /// Creates a `DataTask` to `await` a `Data` value.
     ///
@@ -703,7 +701,6 @@ extension DataStreamRequest {
         }
     }
 
-    #if swift(>=5.7)
     /// Sets an async closure returning a `Request.ResponseDisposition`, called whenever the `DataStreamRequest`
     /// produces an `HTTPURLResponse`.
     ///
@@ -751,7 +748,6 @@ extension DataStreamRequest {
 
         return self
     }
-    #endif
 
     /// Creates a `DataStreamTask` used to `await` streams of serialized values.
     ///
