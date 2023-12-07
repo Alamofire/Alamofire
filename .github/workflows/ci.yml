@@ -36,7 +36,7 @@ jobs:
             name: "macOS 13, Xcode 15.0, Swift 5.9.0"
             testPlan: "macOS"
           - xcode: "Xcode_14.3.1"
-            runsOn: firebreak
+            runsOn: macos-13-xlarge
             name: "macOS 13, Xcode 14.3.1, Swift 5.8.0"
             testPlan: "macOS"
           - xcode: "Xcode_14.2"
