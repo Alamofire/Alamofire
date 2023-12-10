@@ -36,7 +36,7 @@ jobs:
             name: "macOS 13, Xcode 15.0, Swift 5.9.0"
             testPlan: "macOS"
           - xcode: "Xcode_14.3.1"
-            runsOn: macos-13-xlarge
+            runsOn: macos-13
             name: "macOS 13, Xcode 14.3.1, Swift 5.8.0"
             testPlan: "macOS"
           - xcode: "Xcode_14.2"
@@ -54,7 +54,7 @@ jobs:
           set -o pipefail
           brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk
           firewalk &
-          env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcpretty
+          env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcbeautify --renderer github-actions
   Catalyst:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
