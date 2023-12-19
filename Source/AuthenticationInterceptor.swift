@@ -157,7 +157,7 @@ public enum AuthenticationError: Error {
 
 /// The `AuthenticationInterceptor` class manages the queuing and threading complexity of authenticating requests.
 /// It relies on an `Authenticator` type to handle the actual `URLRequest` authentication and `Credential` refresh.
-public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor where AuthenticatorType: Authenticator {
+open class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor where AuthenticatorType: Authenticator {
     // MARK: Typealiases
 
     /// Type of credential used to authenticate requests.
@@ -221,7 +221,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
         set { mutableState.credential = newValue }
     }
 
-    let authenticator: AuthenticatorType
+    public let authenticator: AuthenticatorType
     let queue = DispatchQueue(label: "org.alamofire.authentication.inspector")
 
     private let mutableState: Protected<MutableState>
@@ -246,7 +246,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Adapt
 
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         let adaptResult: AdaptResult = mutableState.write { mutableState in
             // Queue the adapt operation if a refresh is already in place.
             guard !mutableState.isRefreshing else {
@@ -289,7 +289,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Retry
 
-    public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    open func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         // Do not attempt retry if there was not an original request and response from the server.
         guard let urlRequest = request.request, let response = request.response else {
             completion(.doNotRetry)
