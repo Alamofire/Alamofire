@@ -35,22 +35,27 @@ jobs:
             runsOn: firebreak
             name: "macOS 13, Xcode 15.1, Swift 5.9.1"
             testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.0"
             runsOn: firebreak
             name: "macOS 13, Xcode 15.0, Swift 5.9.0"
             testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_14.3.1"
             runsOn: firebreak
             name: "macOS 13, Xcode 14.3.1, Swift 5.8.0"
             testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_14.2"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.2, Swift 5.7.2"
             testPlan: "macOS"
+            outputFilter: xcpretty
           - xcode: "Xcode_14.1"
             runsOn: macOS-12
             name: "macOS 12, Xcode 14.1, Swift 5.7.1"
             testPlan: "macOS"
+            outputFilter: xcpretty
     steps:
       - uses: actions/checkout@v4
       - name: ${{ matrix.name }}
@@ -58,7 +63,7 @@ jobs:
           set -o pipefail
           brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk
           firewalk &
-          env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcbeautify --renderer github-actions
+          env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | ${{ matrix.outputFilter }}
   Catalyst:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
@@ -231,24 +236,29 @@ jobs:
           - xcode: "Xcode_15.1"
             runsOn: firebreak
             name: "macOS 13, SPM 5.9.1 Test"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.0"
             runsOn: firebreak
             name: "macOS 13, SPM 5.9.0 Test"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_14.3.1"
             runsOn: firebreak
             name: "macOS 13, SPM 5.8.0 Test"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_14.2"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.2 Test"
+            outputFilter: xcpretty
           - xcode: "Xcode_14.1"
             runsOn: macOS-12
             name: "macOS 12, SPM 5.7.1 Test"
+            outputFilter: xcpretty
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
       - name: Test SPM
-        run: swift test -c debug | xcbeautify --renderer github-actions
+        run: swift test -c debug | ${{ matrix.outputFilter }}
   Linux:
     name: Linux
     runs-on: ubuntu-latest
