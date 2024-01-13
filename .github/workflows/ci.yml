@@ -41,9 +41,9 @@ jobs:
             name: "macOS 13, Xcode 15.1, Swift 5.9.1"
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
-          - xcode: "Xcode_15.0"
+          - xcode: "Xcode_15.0.1"
             runsOn: macOS-13
-            name: "macOS 13, Xcode 15.0, Swift 5.9.0"
+            name: "macOS 13, Xcode 15.0.1, Swift 5.9.0"
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_14.3.1"
@@ -85,7 +85,7 @@ jobs:
           - xcode: "Xcode_15.1"
             name: "Catalyst 15.1"
             runsOn: firebreak
-          - xcode: "Xcode_15.0"
+          - xcode: "Xcode_15.0.1"
             name: "Catalyst 15.0"
             runsOn: macOS-13
           - xcode: "Xcode_14.3.1"
@@ -115,7 +115,7 @@ jobs:
           - destination: "OS=17.0,name=iPhone 15 Pro"
             name: "iOS 17.0"
             testPlan: "iOS"
-            xcode: "Xcode_15.0"
+            xcode: "Xcode_15.0.1"
             runsOn: macOS-13
           - destination: "OS=16.4,name=iPhone 14 Pro"
             name: "iOS 16.4"
@@ -151,7 +151,7 @@ jobs:
           - destination: "OS=17.0,name=Apple TV"
             name: "tvOS 17.0"
             testPlan: "tvOS"
-            xcode: "Xcode_15.0"
+            xcode: "Xcode_15.0.1"
             runsOn: macOS-13
           - destination: "OS=16.4,name=Apple TV"
             name: "tvOS 16.4"
@@ -208,7 +208,7 @@ jobs:
           - destination: "OS=10.0,name=Apple Watch Series 9 (45mm)"
             name: "watchOS 10.0"
             testPlan: "watchOS"
-            xcode: "Xcode_15.0"
+            xcode: "Xcode_15.0.1"
             runsOn: macOS-13
           - destination: "OS=9.4,name=Apple Watch Series 8 (45mm)"
             name: "watchOS 9.4"
@@ -244,7 +244,7 @@ jobs:
             runsOn: firebreak
             name: "macOS 13, SPM 5.9.1 Test"
             outputFilter: xcbeautify --renderer github-actions
-          - xcode: "Xcode_15.0"
+          - xcode: "Xcode_15.0.1"
             runsOn: macOS-13
             name: "macOS 13, SPM 5.9.0 Test"
             outputFilter: xcbeautify --renderer github-actions
