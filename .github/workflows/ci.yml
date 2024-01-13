@@ -42,7 +42,7 @@ jobs:
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.0"
-            runsOn: firebreak
+            runsOn: macOS-13
             name: "macOS 13, Xcode 15.0, Swift 5.9.0"
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
@@ -87,7 +87,7 @@ jobs:
             runsOn: firebreak
           - xcode: "Xcode_15.0"
             name: "Catalyst 15.0"
-            runsOn: firebreak
+            runsOn: macOS-13
           - xcode: "Xcode_14.3.1"
             name: "Catalyst 14.3.1"
             runsOn: macOS-13
@@ -116,7 +116,7 @@ jobs:
             name: "iOS 17.0"
             testPlan: "iOS"
             xcode: "Xcode_15.0"
-            runsOn: firebreak
+            runsOn: macOS-13
           - destination: "OS=16.4,name=iPhone 14 Pro"
             name: "iOS 16.4"
             testPlan: "iOS"
@@ -126,7 +126,7 @@ jobs:
             name: "iOS 15.5"
             testPlan: "iOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: firebreak
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
@@ -152,7 +152,7 @@ jobs:
             name: "tvOS 17.0"
             testPlan: "tvOS"
             xcode: "Xcode_15.0"
-            runsOn: firebreak
+            runsOn: macOS-13
           - destination: "OS=16.4,name=Apple TV"
             name: "tvOS 16.4"
             testPlan: "tvOS"
@@ -162,7 +162,7 @@ jobs:
             name: "tvOS 15.4"
             testPlan: "tvOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: firebreak
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
@@ -209,7 +209,7 @@ jobs:
             name: "watchOS 10.0"
             testPlan: "watchOS"
             xcode: "Xcode_15.0"
-            runsOn: firebreak
+            runsOn: macOS-13
           - destination: "OS=9.4,name=Apple Watch Series 8 (45mm)"
             name: "watchOS 9.4"
             testPlan: "watchOS"
@@ -219,7 +219,7 @@ jobs:
             name: "watchOS 8.5"
             testPlan: "watchOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: firebreak
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
@@ -245,7 +245,7 @@ jobs:
             name: "macOS 13, SPM 5.9.1 Test"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.0"
-            runsOn: firebreak
+            runsOn: macOS-13
             name: "macOS 13, SPM 5.9.0 Test"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_14.3.1"
