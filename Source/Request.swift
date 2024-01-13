@@ -1781,7 +1781,7 @@ extension DataStreamRequest.Stream {
 
             let sends = state.enqueuedSends
             self.underlyingQueue.async {
-                sends.forEach { send in
+                for send in sends {
                     webSocketTask.send(send.message) { error in
                         send.queue.async {
                             send.completionHandler(Result(value: (), error: error))
@@ -1848,7 +1848,7 @@ extension DataStreamRequest.Stream {
 
         socketMutableState.read { state in
             // TODO: Capture HTTPURLResponse here too?
-            state.handlers.forEach { handler in
+            for handler in state.handlers {
                 // Saved handler calls out to serializationQueue immediately, then to handler's queue.
                 handler.handler(.connected(protocol: `protocol`))
             }
@@ -1929,7 +1929,7 @@ extension DataStreamRequest.Stream {
 
         cancelAutomaticPing()
         socketMutableState.read { state in
-            state.handlers.forEach { handler in
+            for handler in state.handlers {
                 // Saved handler calls out to serializationQueue immediately, then to handler's queue.
                 handler.handler(.disconnected(closeCode: closeCode, reason: reason))
             }
@@ -1942,7 +1942,7 @@ extension DataStreamRequest.Stream {
             switch result {
             case let .success(message):
                 self.socketMutableState.read { state in
-                    state.handlers.forEach { handler in
+                    for handler in state.handlers {
                         // Saved handler calls out to serializationQueue immediately, then to handler's queue.
                         handler.handler(.receivedMessage(message))
                     }
