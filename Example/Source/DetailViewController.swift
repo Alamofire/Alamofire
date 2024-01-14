@@ -51,11 +51,6 @@ class DetailViewController: UITableViewController {
     var elapsedTime: TimeInterval?
     var segueIdentifier: String?
 
-    static let numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
 
     // MARK: View Lifecycle
 
@@ -206,8 +201,7 @@ extension DetailViewController {
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if Sections(rawValue: section) == .body, let elapsedTime {
-            let elapsedTimeText = DetailViewController.numberFormatter.string(from: elapsedTime as NSNumber) ?? "???"
-            return "Elapsed Time: \(elapsedTimeText) sec"
+            return formatElapsedTime(elapsedTime: elapsedTime)        
         }
 
         return ""

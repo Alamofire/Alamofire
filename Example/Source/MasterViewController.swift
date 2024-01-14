@@ -56,21 +56,21 @@ class MasterViewController: UITableViewController {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return AF.request("https://httpbin.org/get")
+                    return AF.request(getURL)
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
-                    return AF.request("https://httpbin.org/post", method: .post)
+                    return AF.request(postURL, method: .post)
                 case "PUT":
                     detailViewController.segueIdentifier = "PUT"
-                    return AF.request("https://httpbin.org/put", method: .put)
+                    return AF.request(putURL, method: .put)
                 case "DELETE":
                     detailViewController.segueIdentifier = "DELETE"
-                    return AF.request("https://httpbin.org/delete", method: .delete)
+                    return AF.request(deleteURL, method: .delete)
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
                     let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory,
                                                                                    in: .userDomainMask)
-                    return AF.download("https://httpbin.org/stream/1", to: destination)
+                    return AF.download(downloadURL, to: destination)
                 default:
                     return nil
                 }
