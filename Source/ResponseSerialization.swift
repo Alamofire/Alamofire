@@ -875,7 +875,7 @@ public protocol EmptyResponse {
 }
 
 /// Type representing an empty value. Use `Empty.value` to get the static instance.
-public struct Empty: Codable {
+public struct Empty: Codable, Sendable {
     /// Static `Empty` instance used for all `Empty` responses.
     public static let value = Empty()
 }
