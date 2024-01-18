@@ -1610,7 +1610,7 @@ final class SessionMassActionTestCase: BaseTestCase {
 
         wait(for: [createdTasks], timeout: timeout)
 
-        requests.forEach { request in
+        for request in requests {
             request.response { response in
                 responses.append(response)
                 completion.fulfill()

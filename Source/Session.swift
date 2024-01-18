@@ -1248,7 +1248,7 @@ open class Session {
     // MARK: - Invalidation
 
     func finishRequestsForDeinit() {
-        requestTaskMap.requests.forEach { request in
+        for request in requestTaskMap.requests {
             rootQueue.async {
                 request.finish(error: AFError.sessionDeinitialized)
             }
