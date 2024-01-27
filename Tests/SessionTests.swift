@@ -324,9 +324,17 @@ final class SessionTestCase: BaseTestCase {
                 #elseif os(tvOS)
                 return "tvOS"
                 #elseif os(macOS)
+                #if targetEnvironment(macCatalyst)
+                return "macOS(Catalyst)"
+                #else
                 return "macOS"
+                #endif
+                #elseif swift(>=5.9.2) && os(visionOS)
+                return "visionOS"
                 #elseif os(Linux)
                 return "Linux"
+                #elseif os(Windows)
+                return "Windows"
                 #elseif os(Android)
                 return "Android"
                 #else
