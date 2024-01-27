@@ -222,7 +222,7 @@ open class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wher
     }
 
     public let authenticator: AuthenticatorType
-    let queue = DispatchQueue(label: "org.alamofire.authentication.inspector")
+    let queue = DispatchQueue(label: "org.alamofire.authenticationInterceptor")
 
     private let mutableState: Protected<MutableState>
 
