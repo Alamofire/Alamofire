@@ -35,7 +35,7 @@ public enum AFError: Error {
     public enum MultipartEncodingFailureReason {
         /// The `fileURL` provided for reading an encodable body part isn't a file `URL`.
         case bodyPartURLInvalid(url: URL)
-        /// The filename of the `fileURL` provided has either an empty `lastPathComponent` or `pathExtension.
+        /// The filename of the `fileURL` provided has either an empty `lastPathComponent` or `pathExtension`.
         case bodyPartFilenameInvalid(in: URL)
         /// The file at the `fileURL` provided was not reachable.
         case bodyPartFileNotReachable(at: URL)
@@ -185,7 +185,7 @@ public enum AFError: Error {
     }
     #endif
 
-    /// The underlying reason the `.urlRequestValidationFailed`
+    /// The underlying reason the `.urlRequestValidationFailed` error occurred.
     public enum URLRequestValidationFailureReason {
         /// URLRequest with GET method had body data.
         case bodyDataInGETRequest(Data)
