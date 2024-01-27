@@ -323,7 +323,7 @@ final class SessionTestCase: BaseTestCase {
             return "\(osName) \(versionString)"
         }()
 
-        let alamofireVersion = "Alamofire/\(Alamofire.version)"
+        let alamofireVersion = "Alamofire/\(AFInfo.version)"
 
         XCTAssertTrue(userAgent?.contains(alamofireVersion) == true)
         XCTAssertTrue(userAgent?.contains(osNameVersion) == true)
