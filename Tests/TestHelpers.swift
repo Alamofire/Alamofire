@@ -467,12 +467,37 @@ extension Data {
 }
 
 struct TestResponse: Decodable {
-    let headers: [String: String]
+    let headers: HTTPHeaders
     let origin: String
-    let url: String?
+    let url: String
     let data: String?
     let form: [String: String]?
-    let args: [String: String]?
+    let args: [String: String]
+}
+
+extension HTTPHeaders: Decodable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        let headers = try container.decode([HTTPHeader].self)
+
+        self = .init(headers)
+    }
+}
+
+extension HTTPHeader: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case name, value
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        let name = try container.decode(String.self, forKey: .name)
+        let value = try container.decode(String.self, forKey: .value)
+
+        self = .init(name: name, value: value)
+    }
 }
 
 struct TestParameters: Encodable {

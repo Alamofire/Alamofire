@@ -1,0 +1,5 @@
+version: 1
+external_links:
+  documentation: "https://alamofire.github.io/Alamofire/"
+metadata:
+  authors: "Jon Shier, Christian Noon"

@@ -268,15 +268,13 @@ final class DownloadResponseTests: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
 
-        if
-            let data = try? Data(contentsOf: fileURL),
-            let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
-            let json = jsonObject as? [String: Any],
-            let headers = json["headers"] as? [String: String] {
-            XCTAssertEqual(headers["Authorization"], "123456")
-        } else {
+        guard let data = try? Data(contentsOf: fileURL),
+              let response = try? JSONDecoder().decode(TestResponse.self, from: data) else {
             XCTFail("headers parameter in JSON should not be nil")
+            return
         }
+
+        XCTAssertEqual(response.headers["Authorization"], "123456")
     }
 
     func testThatDownloadingFileAndMovingToDirectoryThatDoesNotExistThrowsError() {
@@ -748,7 +746,7 @@ final class DownloadResponseMapTestCase: BaseTestCase {
         // When
         AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.map { response in
-                response.args?["foo"] ?? "invalid"
+                response.args["foo"] ?? "invalid"
             }
 
             expectation.fulfill()
@@ -804,7 +802,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         // When
         AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { response in
-                response.args?["foo"] ?? "invalid"
+                response.args["foo"] ?? "invalid"
             }
 
             expectation.fulfill()

@@ -402,7 +402,13 @@ extension HTTPHeader {
                 #elseif os(tvOS)
                 return "tvOS"
                 #elseif os(macOS)
+                #if targetEnvironment(macCatalyst)
+                return "macOS(Catalyst)"
+                #else
                 return "macOS"
+                #endif
+                #elseif swift(>=5.9.2) && os(visionOS)
+                return "visionOS"
                 #elseif os(Linux)
                 return "Linux"
                 #elseif os(Windows)
@@ -417,7 +423,7 @@ extension HTTPHeader {
             return "\(osName) \(versionString)"
         }()
 
-        let alamofireVersion = "Alamofire/\(version)"
+        let alamofireVersion = "Alamofire/\(AFInfo.version)"
 
         let userAgent = "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
 
