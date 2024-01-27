@@ -389,95 +389,95 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
-    func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
+    func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseMIMETypeIsNil() {
         // Given
-        class MockManager: Session {
-            override func request(_ convertible: URLRequestConvertible,
-                                  interceptor: RequestInterceptor? = nil) -> DataRequest {
-                let request = MockDataRequest(convertible: convertible,
-                                              underlyingQueue: rootQueue,
-                                              serializationQueue: serializationQueue,
-                                              eventMonitor: eventMonitor,
-                                              interceptor: interceptor,
-                                              delegate: self)
+//        class MockManager: Session {
+//            override func request(_ convertible: URLRequestConvertible,
+//                                  interceptor: RequestInterceptor? = nil) -> DataRequest {
+//                let request = MockDataRequest(convertible: convertible,
+//                                              underlyingQueue: rootQueue,
+//                                              serializationQueue: serializationQueue,
+//                                              eventMonitor: eventMonitor,
+//                                              interceptor: interceptor,
+//                                              delegate: self)
+//
+//                perform(request)
+//
+//                return request
+//            }
+//
+//            override func download(_ convertible: URLRequestConvertible,
+//                                   interceptor: RequestInterceptor? = nil,
+//                                   to destination: DownloadRequest.Destination?)
+//                -> DownloadRequest {
+//                let request = MockDownloadRequest(downloadable: .request(convertible),
+//                                                  underlyingQueue: rootQueue,
+//                                                  serializationQueue: serializationQueue,
+//                                                  eventMonitor: eventMonitor,
+//                                                  interceptor: interceptor,
+//                                                  delegate: self,
+//                                                  destination: destination ?? MockDownloadRequest.defaultDestination)
+//
+//                perform(request)
+//
+//                return request
+//            }
+//        }
+//
+//        class MockDataRequest: DataRequest {
+//            override var response: HTTPURLResponse? {
+//                MockHTTPURLResponse(url: request!.url!,
+//                                    statusCode: 204,
+//                                    httpVersion: "HTTP/1.1",
+//                                    headerFields: nil)
+//            }
+//        }
+//
+//        class MockDownloadRequest: DownloadRequest {
+//            override var response: HTTPURLResponse? {
+//                MockHTTPURLResponse(url: request!.url!,
+//                                    statusCode: 204,
+//                                    httpVersion: "HTTP/1.1",
+//                                    headerFields: nil)
+//            }
+//        }
+//
+//        class MockHTTPURLResponse: HTTPURLResponse {
+//            override var mimeType: String? { nil }
+//        }
+//
+//        let manager: Session = {
+//            let configuration: URLSessionConfiguration = {
+//                let configuration = URLSessionConfiguration.ephemeral
+//                configuration.headers = HTTPHeaders.default
+//
+//                return configuration
+//            }()
+//
+//            return MockManager(configuration: configuration)
+//        }()
 
-                perform(request)
+        let endpoint = Endpoint.status(204)
 
-                return request
-            }
-
-            override func download(_ convertible: URLRequestConvertible,
-                                   interceptor: RequestInterceptor? = nil,
-                                   to destination: DownloadRequest.Destination?)
-                -> DownloadRequest {
-                let request = MockDownloadRequest(downloadable: .request(convertible),
-                                                  underlyingQueue: rootQueue,
-                                                  serializationQueue: serializationQueue,
-                                                  eventMonitor: eventMonitor,
-                                                  interceptor: interceptor,
-                                                  delegate: self,
-                                                  destination: destination ?? MockDownloadRequest.defaultDestination)
-
-                perform(request)
-
-                return request
-            }
-        }
-
-        class MockDataRequest: DataRequest {
-            override var response: HTTPURLResponse? {
-                MockHTTPURLResponse(url: request!.url!,
-                                    statusCode: 204,
-                                    httpVersion: "HTTP/1.1",
-                                    headerFields: nil)
-            }
-        }
-
-        class MockDownloadRequest: DownloadRequest {
-            override var response: HTTPURLResponse? {
-                MockHTTPURLResponse(url: request!.url!,
-                                    statusCode: 204,
-                                    httpVersion: "HTTP/1.1",
-                                    headerFields: nil)
-            }
-        }
-
-        class MockHTTPURLResponse: HTTPURLResponse {
-            override var mimeType: String? { nil }
-        }
-
-        let manager: Session = {
-            let configuration: URLSessionConfiguration = {
-                let configuration = URLSessionConfiguration.ephemeral
-                configuration.headers = HTTPHeaders.default
-
-                return configuration
-            }()
-
-            return MockManager(configuration: configuration)
-        }()
-
-        let endpoint = Endpoint.method(.delete)
-
-        let expectation1 = expectation(description: "request should be stubbed and return 204 status code")
-        let expectation2 = expectation(description: "download should be stubbed and return 204 status code")
+        let requestComplete = expectation(description: "request should be stubbed and return 204 status code")
+        let downloadComplete = expectation(description: "download should be stubbed and return 204 status code")
 
         var requestResponse: DataResponse<Data?, AFError>?
         var downloadResponse: DownloadResponse<URL?, AFError>?
 
         // When
-        manager.request(endpoint)
+        AF.request(endpoint)
             .validate(contentType: ["*/*"])
             .response { resp in
                 requestResponse = resp
-                expectation1.fulfill()
+                requestComplete.fulfill()
             }
 
-        manager.download(endpoint)
+        AF.download(endpoint)
             .validate(contentType: ["*/*"])
             .response { resp in
                 downloadResponse = resp
-                expectation2.fulfill()
+                downloadComplete.fulfill()
             }
 
         waitForExpectations(timeout: timeout)

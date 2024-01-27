@@ -1,8 +1,8 @@
-// swift-tools-version:5.10
+// swift-tools-version:5.9
 //
 //  Package.swift
 //
-//  Copyright (c) 2024 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2022 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
