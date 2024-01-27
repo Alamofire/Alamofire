@@ -161,23 +161,35 @@ final class SessionTestCase: BaseTestCase {
     }
 
     private class UploadHandler: RequestInterceptor {
-        var adaptCalledCount = 0
-        var adaptedCount = 0
-        var retryCalledCount = 0
-        var retryCount = 0
-        var retryErrors: [Error] = []
+        struct MutableState {
+            var adaptCalledCount = 0
+            var adaptedCount = 0
+            var retryCalledCount = 0
+            var retryCount = 0
+            var retryErrors: [Error] = []
+        }
+
+        private let mutableState = Protected(MutableState())
+
+        var adaptCalledCount: Int { mutableState.adaptCalledCount }
+        var adaptedCount: Int { mutableState.adaptedCount }
+        var retryCalledCount: Int { mutableState.retryCalledCount }
+        var retryCount: Int { mutableState.retryCount }
+        var retryErrors: [Error] { mutableState.retryErrors }
 
         func adapt(_ urlRequest: URLRequest,
                    using state: RequestAdapterState,
                    completion: @escaping (Result<URLRequest, Error>) -> Void) {
-            adaptCalledCount += 1
+            let result: Result<URLRequest, Error> = mutableState.write { mutableState in
+                mutableState.adaptCalledCount += 1
 
-            let result: Result<URLRequest, Error> = Result {
-                adaptedCount += 1
+                return Result {
+                    mutableState.adaptedCount += 1
 
-                if adaptedCount == 1 { throw AFError.invalidURL(url: "") }
+                    if mutableState.adaptedCount == 1 { throw AFError.invalidURL(url: "") }
 
-                return urlRequest
+                    return urlRequest
+                }
             }
 
             completion(result)
@@ -187,10 +199,12 @@ final class SessionTestCase: BaseTestCase {
                    for session: Session,
                    dueTo error: Error,
                    completion: @escaping (RetryResult) -> Void) {
-            retryCalledCount += 1
+            mutableState.write { mutableState in
+                mutableState.retryCalledCount += 1
 
-            retryCount += 1
-            retryErrors.append(error)
+                mutableState.retryCount += 1
+                mutableState.retryErrors.append(error)
+            }
 
             completion(.retry)
         }

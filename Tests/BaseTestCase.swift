@@ -26,6 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
+@MainActor
 class BaseTestCase: XCTestCase {
     enum SkipVersion {
         case twenty

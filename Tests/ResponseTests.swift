@@ -376,7 +376,7 @@ final class ResponseMapTestCase: BaseTestCase {
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.map { response in
-                response.args?["foo"] ?? "invalid"
+                response.args["foo"] ?? "invalid"
             }
 
             expectation.fulfill()
@@ -430,7 +430,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { response in
-                response.args?["foo"] ?? "invalid"
+                response.args["foo"] ?? "invalid"
             }
 
             expectation.fulfill()

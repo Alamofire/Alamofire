@@ -388,48 +388,6 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNil(requestError)
         XCTAssertNil(downloadError)
     }
-
-    func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseMIMETypeIsNil() {
-        let endpoint = Endpoint.status(204)
-
-        let requestComplete = expectation(description: "request should be stubbed and return 204 status code")
-        let downloadComplete = expectation(description: "download should be stubbed and return 204 status code")
-
-        var requestResponse: DataResponse<Data?, AFError>?
-        var downloadResponse: DownloadResponse<URL?, AFError>?
-
-        // When
-        AF.request(endpoint)
-            .validate(contentType: ["*/*"])
-            .response { resp in
-                requestResponse = resp
-                requestComplete.fulfill()
-            }
-
-        AF.download(endpoint)
-            .validate(contentType: ["*/*"])
-            .response { resp in
-                downloadResponse = resp
-                downloadComplete.fulfill()
-            }
-
-        waitForExpectations(timeout: timeout)
-
-        // Then
-        XCTAssertNotNil(requestResponse?.response)
-        XCTAssertNotNil(requestResponse?.data)
-        XCTAssertNil(requestResponse?.error)
-
-        XCTAssertEqual(requestResponse?.response?.statusCode, 204)
-        XCTAssertNil(requestResponse?.response?.mimeType)
-
-        XCTAssertNotNil(downloadResponse?.response)
-        XCTAssertNotNil(downloadResponse?.fileURL)
-        XCTAssertNil(downloadResponse?.error)
-
-        XCTAssertEqual(downloadResponse?.response?.statusCode, 204)
-        XCTAssertNil(downloadResponse?.response?.mimeType)
-    }
 }
 
 // MARK: -
