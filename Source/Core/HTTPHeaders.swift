@@ -47,7 +47,7 @@ public struct HTTPHeaders {
     ///
     /// - Parameters:
     ///   - name:  The `HTTPHeader` name.
-    ///   - value: The `HTTPHeader value.
+    ///   - value: The `HTTPHeader` value.
     public mutating func add(name: String, value: String) {
         update(HTTPHeader(name: name, value: value))
     }
@@ -63,7 +63,7 @@ public struct HTTPHeaders {
     ///
     /// - Parameters:
     ///   - name:  The `HTTPHeader` name.
-    ///   - value: The `HTTPHeader value.
+    ///   - value: The `HTTPHeader` value.
     public mutating func update(name: String, value: String) {
         update(HTTPHeader(name: name, value: value))
     }
@@ -263,7 +263,7 @@ extension HTTPHeader {
         return authorization("Basic \(credential)")
     }
 
-    /// Returns a `Bearer` `Authorization` header using the `bearerToken` provided
+    /// Returns a `Bearer` `Authorization` header using the `bearerToken` provided.
     ///
     /// - Parameter bearerToken: The bearer token.
     ///
