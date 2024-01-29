@@ -24,8 +24,48 @@
 
 import Foundation
 
+// MARK: - UploadRequest
+
 /// `DataRequest` subclass which handles `Data` upload from memory, file, or stream using `URLSessionUploadTask`.
 public final class UploadRequest: DataRequest {
+    // MARK: Lifecycle
+
+    /// Creates an `UploadRequest` using the provided parameters.
+    ///
+    /// - Parameters:
+    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
+    ///   - convertible:        `UploadConvertible` value used to determine the type of upload to be performed.
+    ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
+    ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
+    ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
+    ///   - eventMonitor:       `EventMonitor` called for event callbacks from internal `Request` actions.
+    ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
+    ///   - fileManager:        `FileManager` used to perform cleanup tasks, including the removal of multipart form
+    ///                         encoded payloads written to disk.
+    ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
+    init(id: UUID = UUID(),
+         convertible: UploadConvertible,
+         underlyingQueue: DispatchQueue,
+         serializationQueue: DispatchQueue,
+         eventMonitor: EventMonitor?,
+         interceptor: RequestInterceptor?,
+         fileManager: FileManager,
+         delegate: RequestDelegate)
+    {
+        upload = convertible
+        self.fileManager = fileManager
+
+        super.init(id: id,
+                   convertible: convertible,
+                   underlyingQueue: underlyingQueue,
+                   serializationQueue: serializationQueue,
+                   eventMonitor: eventMonitor,
+                   interceptor: interceptor,
+                   delegate: delegate)
+    }
+
+    // MARK: Public
+
     /// Type describing the origin of the upload, whether `Data`, file, or stream.
     public enum Uploadable {
         /// Upload from the provided `Data` value.
@@ -51,38 +91,21 @@ public final class UploadRequest: DataRequest {
     /// `Uploadable` value used by the instance.
     public var uploadable: Uploadable?
 
-    /// Creates an `UploadRequest` using the provided parameters.
-    ///
-    /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
-    ///   - convertible:        `UploadConvertible` value used to determine the type of upload to be performed.
-    ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
-    ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
-    ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
-    ///   - eventMonitor:       `EventMonitor` called for event callbacks from internal `Request` actions.
-    ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
-    ///   - fileManager:        `FileManager` used to perform cleanup tasks, including the removal of multipart form
-    ///                         encoded payloads written to disk.
-    ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
-    init(id: UUID = UUID(),
-         convertible: UploadConvertible,
-         underlyingQueue: DispatchQueue,
-         serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
-         fileManager: FileManager,
-         delegate: RequestDelegate) {
-        upload = convertible
-        self.fileManager = fileManager
+    override public func cleanup() {
+        defer { super.cleanup() }
 
-        super.init(id: id,
-                   convertible: convertible,
-                   underlyingQueue: underlyingQueue,
-                   serializationQueue: serializationQueue,
-                   eventMonitor: eventMonitor,
-                   interceptor: interceptor,
-                   delegate: delegate)
+        guard
+            let uploadable,
+            case let .file(url, shouldRemove) = uploadable,
+            shouldRemove
+        else {
+            return
+        }
+
+        try? fileManager.removeItem(at: url)
     }
+
+    // MARK: Internal
 
     /// Called when the `Uploadable` value has been created from the `UploadConvertible`.
     ///
@@ -108,7 +131,7 @@ public final class UploadRequest: DataRequest {
         guard let uploadable else {
             fatalError("Attempting to create a URLSessionUploadTask when Uploadable value doesn't exist.")
         }
-        
+
         var requestWithoutHTTPBody = request
         requestWithoutHTTPBody.httpBody = nil
 
@@ -144,19 +167,9 @@ public final class UploadRequest: DataRequest {
 
         return stream
     }
-
-    override public func cleanup() {
-        defer { super.cleanup() }
-
-        guard
-            let uploadable,
-            case let .file(url, shouldRemove) = uploadable,
-            shouldRemove
-        else { return }
-
-        try? fileManager.removeItem(at: url)
-    }
 }
+
+// MARK: - UploadableConvertible
 
 /// A type that can produce an `UploadRequest.Uploadable` value.
 public protocol UploadableConvertible {
@@ -167,11 +180,15 @@ public protocol UploadableConvertible {
     func createUploadable() throws -> UploadRequest.Uploadable
 }
 
+// MARK: - UploadRequest.Uploadable + UploadableConvertible
+
 extension UploadRequest.Uploadable: UploadableConvertible {
     public func createUploadable() throws -> UploadRequest.Uploadable {
         self
     }
 }
+
+// MARK: - UploadConvertible
 
 /// A type that can be converted to an upload, whether from an `UploadRequest.Uploadable` or `URLRequestConvertible`.
 public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible {}
