@@ -196,6 +196,30 @@ final class UploadDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNil(response?.error)
     }
+    
+    func testUploadDataRequestWithoutBody() {
+        // Given
+        let url = Endpoint.method(.post).url
+        let data = Data("Lorem ipsum dolor sit amet".utf8)
+
+        let expectation = expectation(description: "Upload request should succeed: \(url)")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        AF.upload(data, to: url)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNil(response?.request?.httpBody)
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.error)
+    }
 
     func testUploadDataRequestWithProgress() {
         // Given
