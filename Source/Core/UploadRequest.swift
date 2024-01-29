@@ -108,11 +108,14 @@ public final class UploadRequest: DataRequest {
         guard let uploadable else {
             fatalError("Attempting to create a URLSessionUploadTask when Uploadable value doesn't exist.")
         }
+        
+        var requestWithoutHTTPBody = request
+        requestWithoutHTTPBody.httpBody = nil
 
         switch uploadable {
-        case let .data(data): return session.uploadTask(with: request, from: data)
-        case let .file(url, _): return session.uploadTask(with: request, fromFile: url)
-        case .stream: return session.uploadTask(withStreamedRequest: request)
+        case let .data(data): return session.uploadTask(with: requestWithoutHTTPBody, from: data)
+        case let .file(url, _): return session.uploadTask(with: requestWithoutHTTPBody, fromFile: url)
+        case .stream: return session.uploadTask(withStreamedRequest: requestWithoutHTTPBody)
         }
     }
 
