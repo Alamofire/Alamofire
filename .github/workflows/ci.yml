@@ -37,13 +37,13 @@ jobs:
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.1"
-            runsOn: firebreak
-            name: "macOS 13, Xcode 15.1, Swift 5.9.1"
+            runsOn: macOS-14
+            name: "macOS 14, Xcode 15.1, Swift 5.9.1"
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.0.1"
-            runsOn: macOS-13
-            name: "macOS 13, Xcode 15.0.1, Swift 5.9.0"
+            runsOn: macOS-14
+            name: "macOS 14, Xcode 15.0.1, Swift 5.9.0"
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_14.3.1"
