@@ -945,7 +945,7 @@ Released on 2019-03-27. All issues associated with this milestone can be found u
 
 #### Fixed
 
-- compatibility with SPM from Xcode 10.2.
+- Compatibility with SPM from Xcode 10.2.
   - Fixed by [Klaas](https://github.com/klaas) in Pull Request [#2762](https://github.com/Alamofire/Alamofire/pull/2762).
 
 ## [4.8.1](https://github.com/Alamofire/Alamofire/releases/tag/4.8.1)
