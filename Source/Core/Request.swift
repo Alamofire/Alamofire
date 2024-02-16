@@ -192,7 +192,7 @@ public class Request {
 
     // MARK: URLRequests
 
-    /// All `URLRequests` created on behalf of the `Request`, including original and adapted requests.
+    /// All `URLRequest`s created on behalf of the `Request`, including original and adapted requests.
     public var requests: [URLRequest] { mutableState.requests }
     /// First `URLRequest` created on behalf of the `Request`. May not be the first one actually executed.
     public var firstRequest: URLRequest? { requests.first }
