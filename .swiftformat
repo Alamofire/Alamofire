@@ -3,11 +3,6 @@
 --symlinks ignore
 --swiftversion 5.7
 
-# rules
---enable isEmpty
---disable andOperator
---disable wrapMultilineStatementBraces
-
 # format options
 
 --commas inline
@@ -32,5 +27,6 @@
 # rules
 
 --enable isEmpty
---disable wrapMultilineStatementBraces
+--disable andOperator
 --disable opaqueGenericParameters
+--disable wrapMultilineStatementBraces
