@@ -25,7 +25,7 @@
 import Foundation
 
 /// Types adopting the `URLConvertible` protocol can be used to construct `URL`s, which can then be used to construct
-/// `URLRequests`.
+/// `URLRequest`s.
 public protocol URLConvertible {
     /// Returns a `URL` from the conforming instance or throws.
     ///
