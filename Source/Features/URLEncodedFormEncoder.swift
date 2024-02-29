@@ -445,7 +445,7 @@ public final class URLEncodedFormEncoder {
 
     /// Encodes the `value` as a URL form encoded `String`.
     ///
-    /// - Parameter value: The `Encodable` value.`
+    /// - Parameter value: The `Encodable` value.
     ///
     /// - Returns:         The encoded `String`.
     /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
