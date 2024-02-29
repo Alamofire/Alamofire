@@ -760,7 +760,7 @@ extension AlamofireExtension where ExtendedType == OSStatus {
 
 extension SecTrustResultType: AlamofireExtended {}
 extension AlamofireExtension where ExtendedType == SecTrustResultType {
-    /// Returns whether `self is `.unspecified` or `.proceed`.
+    /// Returns whether `self` is `.unspecified` or `.proceed`.
     public var isSuccess: Bool {
         type == .unspecified || type == .proceed
     }
