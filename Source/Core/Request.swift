@@ -131,7 +131,7 @@ public class Request {
     public var state: State { mutableState.state }
     /// Returns whether `state` is `.initialized`.
     public var isInitialized: Bool { state == .initialized }
-    /// Returns whether `state is `.resumed`.
+    /// Returns whether `state` is `.resumed`.
     public var isResumed: Bool { state == .resumed }
     /// Returns whether `state` is `.suspended`.
     public var isSuspended: Bool { state == .suspended }
