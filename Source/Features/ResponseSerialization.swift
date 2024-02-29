@@ -128,7 +128,7 @@ extension ResponseSerializer {
             .map { emptyRequestMethods.contains($0) }
     }
 
-    /// Determines whether the `response` allows empty response bodies, if `response` exists`.
+    /// Determines whether the `response` allows empty response bodies, if `response` exists.
     ///
     /// - Parameter response: `HTTPURLResponse` to evaluate.
     ///
