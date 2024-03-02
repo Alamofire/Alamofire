@@ -759,7 +759,7 @@ final class UploadConcurrencyTests: BaseTestCase {
 }
 #endif
 
-#if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.8)
+#if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.8) && hasFeature(TypedThrows)
 @_spi(WebSocket) import Alamofire
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)

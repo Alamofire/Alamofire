@@ -279,7 +279,7 @@ extension SessionDelegate: URLSessionDataDelegate {
 
 // MARK: URLSessionWebSocketDelegate
 
-#if canImport(Darwin) && !canImport(FoundationNetworking)
+#if canImport(Darwin) && !canImport(FoundationNetworking) && hasFeature(TypedThrows)
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension SessionDelegate: URLSessionWebSocketDelegate {

@@ -6,7 +6,7 @@
 //  Copyright © 2021 Alamofire. All rights reserved.
 //
 
-#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
+#if canImport(Darwin) && !canImport(FoundationNetworking) && hasFeature(TypedThrows) // Only Apple platforms support URLSessionWebSocketTask.
 
 @_spi(WebSocket) import Alamofire
 import Foundation
@@ -700,31 +700,31 @@ extension WebSocketRequest {
     }
 }
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-extension URLSessionWebSocketTask.Message: Equatable {
-    public static func ==(lhs: URLSessionWebSocketTask.Message, rhs: URLSessionWebSocketTask.Message) -> Bool {
-        switch (lhs, rhs) {
-        case let (.string(left), .string(right)):
-            return left == right
-        case let (.data(left), .data(right)):
-            return left == right
-        default:
-            return false
-        }
-    }
-
-    var string: String? {
-        guard case let .string(string) = self else { return nil }
-
-        return string
-    }
-
-    var data: Data? {
-        guard case let .data(data) = self else { return nil }
-
-        return data
-    }
-}
+//@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+//extension URLSessionWebSocketTask.Message: Equatable {
+//    public static func ==(lhs: URLSessionWebSocketTask.Message, rhs: URLSessionWebSocketTask.Message) -> Bool {
+//        switch (lhs, rhs) {
+//        case let (.string(left), .string(right)):
+//            return left == right
+//        case let (.data(left), .data(right)):
+//            return left == right
+//        default:
+//            return false
+//        }
+//    }
+//
+//    var string: String? {
+//        guard case let .string(string) = self else { return nil }
+//
+//        return string
+//    }
+//
+//    var data: Data? {
+//        guard case let .data(data) = self else { return nil }
+//
+//        return data
+//    }
+//}
 
 extension Session {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)

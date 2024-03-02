@@ -461,7 +461,7 @@ open class Session {
         return request
     }
 
-    #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
+    #if canImport(Darwin) && !canImport(FoundationNetworking) && hasFeature(TypedThrows) // Only Apple platforms support URLSessionWebSocketTask.
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     @_spi(WebSocket) open func webSocketRequest(
         to url: URLConvertible,
@@ -1071,7 +1071,7 @@ open class Session {
                 case let r as DownloadRequest: self.performDownloadRequest(r)
                 case let r as DataStreamRequest: self.performDataStreamRequest(r)
                 default:
-                    #if canImport(Darwin) && !canImport(FoundationNetworking)
+                    #if canImport(Darwin) && !canImport(FoundationNetworking) && hasFeature(TypedThrows)
                     if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *),
                        let request = request as? WebSocketRequest {
                         self.performWebSocketRequest(request)
@@ -1098,7 +1098,7 @@ open class Session {
         performSetupOperations(for: request, convertible: request.convertible)
     }
 
-    #if canImport(Darwin) && !canImport(FoundationNetworking)
+    #if canImport(Darwin) && !canImport(FoundationNetworking) && hasFeature(TypedThrows)
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func performWebSocketRequest(_ request: WebSocketRequest) {
         dispatchPrecondition(condition: .onQueue(requestQueue))

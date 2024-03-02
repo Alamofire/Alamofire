@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
+#if canImport(Darwin) && !canImport(FoundationNetworking) && hasFeature(TypedThrows) // Only Apple platforms support URLSessionWebSocketTask.
 
 import Foundation
 

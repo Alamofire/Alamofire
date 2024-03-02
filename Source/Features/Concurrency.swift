@@ -757,7 +757,7 @@ extension DataStreamRequest {
     }
 }
 
-#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
+#if canImport(Darwin) && !canImport(FoundationNetworking) && hasFeature(TypedThrows) // Only Apple platforms support URLSessionWebSocketTask.
 // - MARK: WebSocketTask
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
