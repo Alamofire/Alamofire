@@ -18,4 +18,6 @@ Pod::Spec.new do |s|
   s.source_files = 'Source/**/*.swift'
 
   s.frameworks = 'CFNetwork'
+
+  s.resource_bundles = {'Alamofire' => ['Source/PrivacyInfo.xcprivacy']}
 end
