@@ -21,9 +21,9 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.8.1 Docs
+          Alamofire 5.9.0 Docs
         </a>
-         (97% documented)
+         (96% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -262,6 +262,9 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFInfo.html">AFInfo</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
@@ -273,7 +276,7 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
+                <a class="nav-group-task-link" href="../Extensions.html#/s:Sa">Array</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
@@ -325,6 +328,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/%5BServerTrustEvaluating%5D.html">[ServerTrustEvaluating]</a>
               </li>
             </ul>
           </li>
@@ -403,6 +409,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/UploadableConvertible.html">UploadableConvertible</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/WebSocketMessageSerializer.html">WebSocketMessageSerializer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -428,6 +437,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableWebSocketMessageDecoder.html">DecodableWebSocketMessageDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableWebSocketMessageDecoder/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
@@ -633,6 +648,75 @@
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60ExtendedType%60%3A%20%60URLSessionConfiguration%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `ExtendedType`: `URLSessionConfiguration`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60ExtendedType%60%3A%20%60URLSessionConfiguration%60"></a>
+                  <h3 class="section-name"><span>Available where <code>ExtendedType</code>: <code>URLSessionConfiguration</code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE7defaultAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE7defaultAEvpZ">default</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Alamofire&rsquo;s default configuration. Same as <code>URLSessionConfiguration.default</code> but adds Alamofire default
+<code>Accept-Language</code>, <code>Accept-Encoding</code>, and <code>User-Agent</code> headers.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">var</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE9ephemeralAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/ephemeral" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE9ephemeralAEvpZ">ephemeral</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>.ephemeral</code> configuration with Alamofire&rsquo;s default <code>Accept-Language</code>, <code>Accept-Encoding</code>, and <code>User-Agent</code>
+headers.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">ephemeral</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -1590,7 +1674,7 @@ hostname validation.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Returns whether <code>self is</code>.unspecified<code>or</code>.proceed`.</p>
+                        <p>Returns whether <code>self</code> is <code>.unspecified</code> or <code>.proceed</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1606,82 +1690,13 @@ hostname validation.</p>
                 </li>
               </ul>
             </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Available%20where%20%60ExtendedType%60%3A%20%60URLSessionConfiguration%60"></a>
-                <a name="//apple_ref/swift/Section/Available where `ExtendedType`: `URLSessionConfiguration`" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Available%20where%20%60ExtendedType%60%3A%20%60URLSessionConfiguration%60"></a>
-                  <h3 class="section-name"><span>Available where <code>ExtendedType</code>: <code>URLSessionConfiguration</code></span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE7defaultAEvpZ"></a>
-                    <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE7defaultAEvpZ">default</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Alamofire&rsquo;s default configuration. Same as <code>URLSessionConfiguration.default</code> but adds Alamofire default
-<code>Accept-Language</code>, <code>Accept-Encoding</code>, and <code>User-Agent</code> headers.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">var</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE9ephemeralAEvpZ"></a>
-                    <a name="//apple_ref/swift/Variable/ephemeral" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE9ephemeralAEvpZ">ephemeral</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code>.ephemeral</code> configuration with Alamofire&rsquo;s default <code>Accept-Language</code>, <code>Accept-Encoding</code>, and <code>User-Agent</code>
-headers.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">ephemeral</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </div>
         </section>
 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-10-25)</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

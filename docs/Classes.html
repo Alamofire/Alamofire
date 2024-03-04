@@ -21,9 +21,9 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.8.1 Docs
+          Alamofire 5.9.0 Docs
         </a>
-         (97% documented)
+         (96% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -262,6 +262,9 @@
                 <a class="nav-group-task-link" href="Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AFInfo.html">AFInfo</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
@@ -273,7 +276,7 @@
             <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions/Array.html">Array</a>
+                <a class="nav-group-task-link" href="Extensions.html#/s:Sa">Array</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
@@ -325,6 +328,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/%5BServerTrustEvaluating%5D.html">[ServerTrustEvaluating]</a>
               </li>
             </ul>
           </li>
@@ -403,6 +409,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/UploadableConvertible.html">UploadableConvertible</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/WebSocketMessageSerializer.html">WebSocketMessageSerializer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -428,6 +437,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DecodableWebSocketMessageDecoder.html">DecodableWebSocketMessageDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DecodableWebSocketMessageDecoder/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
@@ -560,48 +575,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire25AuthenticationInterceptorC"></a>
-                    <a name="//apple_ref/swift/Class/AuthenticationInterceptor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire25AuthenticationInterceptorC">AuthenticationInterceptor</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The <code>AuthenticationInterceptor</code> class manages the queuing and threading complexity of authenticating requests.
-It relies on an <code><a href="Protocols/Authenticator.html">Authenticator</a></code> type to handle the actual <code>URLRequest</code> authentication and <code>Credential</code> refresh.</p>
-
-                        <a href="Classes/AuthenticationInterceptor.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AuthenticationInterceptor</span><span class="o">&lt;</span><span class="kt">AuthenticatorType</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span> <span class="k">where</span> <span class="kt">AuthenticatorType</span> <span class="p">:</span> <span class="kt"><a href="Protocols/Authenticator.html">Authenticator</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/DataRequest"></a>
-                <a name="//apple_ref/swift/Section/DataRequest" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/DataRequest"></a>
-                  <h3 class="section-name"><span>DataRequest</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:9Alamofire11DataRequestC"></a>
                     <a name="//apple_ref/swift/Class/DataRequest" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire11DataRequestC">DataRequest</a>
@@ -627,19 +600,6 @@ It relies on an <code><a href="Protocols/Authenticator.html">Authenticator</a></
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/DataStreamRequest"></a>
-                <a name="//apple_ref/swift/Section/DataStreamRequest" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/DataStreamRequest"></a>
-                  <h3 class="section-name"><span>DataStreamRequest</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -668,19 +628,6 @@ It relies on an <code><a href="Protocols/Authenticator.html">Authenticator</a></
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/DownloadRequest"></a>
-                <a name="//apple_ref/swift/Section/DownloadRequest" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/DownloadRequest"></a>
-                  <h3 class="section-name"><span>DownloadRequest</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -702,7 +649,7 @@ It relies on an <code><a href="Protocols/Authenticator.html">Authenticator</a></
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DownloadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DownloadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span></code></pre>
 
                         </div>
                       </div>
@@ -735,6 +682,219 @@ handling.</p>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Request</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Request</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Request</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A13NotificationsC"></a>
+                    <a name="//apple_ref/swift/Class/AlamofireNotifications" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A13NotificationsC">AlamofireNotifications</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="Protocols/EventMonitor.html">EventMonitor</a></code> that provides Alamofire&rsquo;s notifications.</p>
+
+                        <a href="Classes/AlamofireNotifications.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">AlamofireNotifications</span> <span class="p">:</span> <span class="kt"><a href="Protocols/EventMonitor.html">EventMonitor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire20JSONParameterEncoderC"></a>
+                    <a name="//apple_ref/swift/Class/JSONParameterEncoder" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire20JSONParameterEncoderC">JSONParameterEncoder</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A <code><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></code> that encodes types as JSON body data.</p>
+
+<p>If no <code>Content-Type</code> header is already set on the provided <code>URLRequest</code>s, it&rsquo;s set to <code>application/json</code>.</p>
+
+                        <a href="Classes/JSONParameterEncoder.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">JSONParameterEncoder</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire30URLEncodedFormParameterEncoderC"></a>
+                    <a name="//apple_ref/swift/Class/URLEncodedFormParameterEncoder" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire30URLEncodedFormParameterEncoderC">URLEncodedFormParameterEncoder</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A <code><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></code> that encodes types as URL-encoded query strings to be set on the URL or as body data, depending
+on the <code>Destination</code> set.</p>
+
+<p>If no <code>Content-Type</code> header is already set on the provided <code>URLRequest</code>s, it will be set to
+<code>application/x-www-form-urlencoded; charset=utf-8</code>.</p>
+
+<p>Encoding behavior can be customized by passing an instance of <code><a href="Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a></code> to the initializer.</p>
+
+                        <a href="Classes/URLEncodedFormParameterEncoder.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">URLEncodedFormParameterEncoder</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC"></a>
+                    <a name="//apple_ref/swift/Class/Session" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC">Session</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>Session</code> creates and manages Alamofire&rsquo;s <code><a href="Classes/Request.html">Request</a></code> types during their lifetimes. It also provides common
+functionality for all <code><a href="Classes/Request.html">Request</a></code>s, including queuing, interception, trust management, redirect handling, and response
+cache handling.</p>
+
+                        <a href="Classes/Session.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Session</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Session</span><span class="p">:</span> <span class="kt"><a href="Protocols/RequestDelegate.html">RequestDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Alamofire@objc(cs)SessionDelegate"></a>
+                    <a name="//apple_ref/swift/Class/SessionDelegate" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Alamofire@objc(cs)SessionDelegate">SessionDelegate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Class which implements the various <code>URLSessionDelegate</code> methods to connect various Alamofire features.</p>
+
+                        <a href="Classes/SessionDelegate.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">SessionDelegate</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDelegate</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionTaskDelegate</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDataDelegate</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionWebSocketDelegate</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDownloadDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire13UploadRequestC"></a>
+                    <a name="//apple_ref/swift/Class/UploadRequest" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire13UploadRequestC">UploadRequest</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="Classes/DataRequest.html">DataRequest</a></code> subclass which handles <code>Data</code> upload from memory, file, or stream using <code>URLSessionUploadTask</code>.</p>
+
+                        <a href="Classes/UploadRequest.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">UploadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/DataRequest.html">DataRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire25AuthenticationInterceptorC"></a>
+                    <a name="//apple_ref/swift/Class/AuthenticationInterceptor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire25AuthenticationInterceptorC">AuthenticationInterceptor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>AuthenticationInterceptor</code> class manages the queuing and threading complexity of authenticating requests.
+It relies on an <code><a href="Protocols/Authenticator.html">Authenticator</a></code> type to handle the actual <code>URLRequest</code> authentication and <code>Credential</code> refresh.</p>
+
+                        <a href="Classes/AuthenticationInterceptor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AuthenticationInterceptor</span><span class="o">&lt;</span><span class="kt">AuthenticatorType</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span> <span class="k">where</span> <span class="kt">AuthenticatorType</span> <span class="p">:</span> <span class="kt"><a href="Protocols/Authenticator.html">Authenticator</a></span></code></pre>
 
                         </div>
                       </div>
@@ -871,147 +1031,6 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire0A13NotificationsC"></a>
-                    <a name="//apple_ref/swift/Class/AlamofireNotifications" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire0A13NotificationsC">AlamofireNotifications</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code><a href="Protocols/EventMonitor.html">EventMonitor</a></code> that provides Alamofire&rsquo;s notifications.</p>
-
-                        <a href="Classes/AlamofireNotifications.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">AlamofireNotifications</span> <span class="p">:</span> <span class="kt"><a href="Protocols/EventMonitor.html">EventMonitor</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire20JSONParameterEncoderC"></a>
-                    <a name="//apple_ref/swift/Class/JSONParameterEncoder" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire20JSONParameterEncoderC">JSONParameterEncoder</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A <code><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></code> that encodes types as JSON body data.</p>
-
-<p>If no <code>Content-Type</code> header is already set on the provided <code>URLRequest</code>s, it&rsquo;s set to <code>application/json</code>.</p>
-
-                        <a href="Classes/JSONParameterEncoder.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">JSONParameterEncoder</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire30URLEncodedFormParameterEncoderC"></a>
-                    <a name="//apple_ref/swift/Class/URLEncodedFormParameterEncoder" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire30URLEncodedFormParameterEncoderC">URLEncodedFormParameterEncoder</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A <code><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></code> that encodes types as URL-encoded query strings to be set on the URL or as body data, depending
-on the <code>Destination</code> set.</p>
-
-<p>If no <code>Content-Type</code> header is already set on the provided <code>URLRequest</code>s, it will be set to
-<code>application/x-www-form-urlencoded; charset=utf-8</code>.</p>
-
-<p>Encoding behavior can be customized by passing an instance of <code><a href="Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a></code> to the initializer.</p>
-
-                        <a href="Classes/URLEncodedFormParameterEncoder.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">URLEncodedFormParameterEncoder</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/UploadRequest"></a>
-                <a name="//apple_ref/swift/Section/UploadRequest" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/UploadRequest"></a>
-                  <h3 class="section-name"><span>UploadRequest</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire13UploadRequestC"></a>
-                    <a name="//apple_ref/swift/Class/UploadRequest" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire13UploadRequestC">UploadRequest</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code><a href="Classes/DataRequest.html">DataRequest</a></code> subclass which handles <code>Data</code> upload from memory, file, or stream using <code>URLSessionUploadTask</code>.</p>
-
-                        <a href="Classes/UploadRequest.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">UploadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/DataRequest.html">DataRequest</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1211,6 +1230,12 @@ valid for empty responses, then an empty <code>String</code> is returned.</p>
                         <p>A <code><a href="Protocols/ResponseSerializer.html">ResponseSerializer</a></code> that decodes the response data using <code>JSONSerialization</code>. By default, a request returning
 <code>nil</code> or no data is considered an error. However, if the request has an <code><a href="Structs/HTTPMethod.html">HTTPMethod</a></code> or the response has an
 HTTP status code valid for empty responses, then an <code>NSNull</code> value is returned.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This serializer is deprecated and should not be used. Instead, create concrete types conforming to
+    <code>Decodable</code> and use a <code><a href="Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></code>.
+
+</div>
 
                         <a href="Classes/JSONResponseSerializer.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1570,69 +1595,6 @@ evaluators consider it valid.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC"></a>
-                    <a name="//apple_ref/swift/Class/Session" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC">Session</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code>Session</code> creates and manages Alamofire&rsquo;s <code><a href="Classes/Request.html">Request</a></code> types during their lifetimes. It also provides common
-functionality for all <code><a href="Classes/Request.html">Request</a></code>s, including queuing, interception, trust management, redirect handling, and response
-cache handling.</p>
-
-                        <a href="Classes/Session.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Session</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Session</span><span class="p">:</span> <span class="kt"><a href="Protocols/RequestDelegate.html">RequestDelegate</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@Alamofire@objc(cs)SessionDelegate"></a>
-                    <a name="//apple_ref/swift/Class/SessionDelegate" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@Alamofire@objc(cs)SessionDelegate">SessionDelegate</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Class which implements the various <code>URLSessionDelegate</code> methods to connect various Alamofire features.</p>
-
-                        <a href="Classes/SessionDelegate.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">SessionDelegate</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDelegate</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionTaskDelegate</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDataDelegate</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDownloadDelegate</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:9Alamofire21URLEncodedFormEncoderC"></a>
                     <a name="//apple_ref/swift/Class/URLEncodedFormEncoder" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC">URLEncodedFormEncoder</a>
@@ -1692,7 +1654,7 @@ replacing spaces with <code>%20</code>.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-10-25)</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

@@ -21,9 +21,9 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.8.1 Docs
+          Alamofire 5.9.0 Docs
         </a>
-         (97% documented)
+         (96% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -262,6 +262,9 @@
                 <a class="nav-group-task-link" href="Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AFInfo.html">AFInfo</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
@@ -273,7 +276,7 @@
             <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions/Array.html">Array</a>
+                <a class="nav-group-task-link" href="Extensions.html#/s:Sa">Array</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
@@ -325,6 +328,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/%5BServerTrustEvaluating%5D.html">[ServerTrustEvaluating]</a>
               </li>
             </ul>
           </li>
@@ -403,6 +409,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/UploadableConvertible.html">UploadableConvertible</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/WebSocketMessageSerializer.html">WebSocketMessageSerializer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -428,6 +437,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DecodableWebSocketMessageDecoder.html">DecodableWebSocketMessageDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DecodableWebSocketMessageDecoder/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
@@ -556,7 +571,366 @@
         <section class="section">
           <div class="section-content">
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Serialization"></a>
+                <a name="//apple_ref/swift/Section/Serialization" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Serialization"></a>
+                  <h3 class="section-name"><span>Serialization</span>
+</h3>
+                </div>
+              </div>
               <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire25DecodableStreamSerializerV"></a>
+                    <a name="//apple_ref/swift/Struct/DecodableStreamSerializer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire25DecodableStreamSerializerV">DecodableStreamSerializer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> which uses the provided <code><a href="Protocols/DataPreprocessor.html">DataPreprocessor</a></code> and <code><a href="Protocols/DataDecoder.html">DataDecoder</a></code> to serialize the incoming <code>Data</code>.</p>
+
+                        <a href="Structs/DecodableStreamSerializer.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DecodableStreamSerializer</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire27PassthroughStreamSerializerV"></a>
+                    <a name="//apple_ref/swift/Struct/PassthroughStreamSerializer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire27PassthroughStreamSerializerV">PassthroughStreamSerializer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> which performs no serialization on incoming <code>Data</code>.</p>
+
+                        <a href="Structs/PassthroughStreamSerializer.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PassthroughStreamSerializer</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire22StringStreamSerializerV"></a>
+                    <a name="//apple_ref/swift/Struct/StringStreamSerializer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire22StringStreamSerializerV">StringStreamSerializer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> which serializes incoming stream <code>Data</code> into <code>UTF8</code>-decoded <code>String</code> values.</p>
+
+                        <a href="Structs/StringStreamSerializer.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">StringStreamSerializer</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11HTTPHeadersV"></a>
+                    <a name="//apple_ref/swift/Struct/HTTPHeaders" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11HTTPHeadersV">HTTPHeaders</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An order-preserving and case-insensitive representation of HTTP headers.</p>
+
+                        <a href="Structs/HTTPHeaders.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPHeaders</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">ExpressibleByDictionaryLiteral</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">ExpressibleByArrayLiteral</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">Sequence</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">Collection</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/HTTPHeader"></a>
+                <a name="//apple_ref/swift/Section/HTTPHeader" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/HTTPHeader"></a>
+                  <h3 class="section-name"><span>HTTPHeader</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire10HTTPHeaderV"></a>
+                    <a name="//apple_ref/swift/Struct/HTTPHeader" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV">HTTPHeader</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A representation of a single HTTP header&rsquo;s name / value pair.</p>
+
+                        <a href="Structs/HTTPHeader.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPHeader</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeader</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire10HTTPMethodV"></a>
+                    <a name="//apple_ref/swift/Struct/HTTPMethod" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire10HTTPMethodV">HTTPMethod</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Type representing HTTP methods. Raw <code>String</code> value is stored and compared case-sensitively, so
+<code>HTTPMethod.get != HTTPMethod(rawValue: &quot;get&quot;)</code>.</p>
+
+<p>See <a href="https://tools.ietf.org/html/rfc7231#section-4.3">https://tools.ietf.org/html/rfc7231#section-4.3</a></p>
+
+                        <a href="Structs/HTTPMethod.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPMethod</span> <span class="p">:</span> <span class="kt">RawRepresentable</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Hashable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11URLEncodingV"></a>
+                    <a name="//apple_ref/swift/Struct/URLEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV">URLEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP
+body of the URL request. Whether the query string is set or appended to any existing URL query string or set as
+the HTTP body depends on the destination of the encoding.</p>
+
+<p>The <code>Content-Type</code> HTTP header field of an encoded request with HTTP body is set to
+<code>application/x-www-form-urlencoded; charset=utf-8</code>.</p>
+
+<p>There is no published specification for how to encode collection types. By default the convention of appending
+<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
+nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
+square brackets appended to array keys.</p>
+
+<p><code>BoolEncoding</code> can be used to configure how boolean values are encoded. The default behavior is to encode
+<code>true</code> as 1 and <code>false</code> as 0.</p>
+
+                        <a href="Structs/URLEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">URLEncoding</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire12JSONEncodingV"></a>
+                    <a name="//apple_ref/swift/Struct/JSONEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12JSONEncodingV">JSONEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Uses <code>JSONSerialization</code> to create a JSON representation of the parameters object, which is set as the body of the
+request. The <code>Content-Type</code> HTTP header field of an encoded request is set to <code>application/json</code>.</p>
+
+                        <a href="Structs/JSONEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">JSONEncoding</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire12DataResponseV"></a>
+                    <a name="//apple_ref/swift/Struct/DataResponse" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12DataResponseV">DataResponse</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Type used to store all values associated with a serialized response of a <code><a href="Classes/DataRequest.html">DataRequest</a></code> or <code><a href="Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+
+                        <a href="Structs/DataResponse.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">DataResponse</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span><span class="p">,</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire16DownloadResponseV"></a>
+                    <a name="//apple_ref/swift/Struct/DownloadResponse" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV">DownloadResponse</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Used to store all data associated with a serialized response of a download request.</p>
+
+                        <a href="Structs/DownloadResponse.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">DownloadResponse</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span><span class="p">,</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire32DecodableWebSocketMessageDecoderV"></a>
+                    <a name="//apple_ref/swift/Struct/DecodableWebSocketMessageDecoder" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire32DecodableWebSocketMessageDecoderV">DecodableWebSocketMessageDecoder</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Structs/DecodableWebSocketMessageDecoder.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DecodableWebSocketMessageDecoder</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/WebSocketMessageSerializer.html">WebSocketMessageSerializer</a></span> <span class="k">where</span> <span class="kt">Value</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -839,6 +1213,19 @@ response.</p>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/WebSocketTask"></a>
+                <a name="//apple_ref/swift/Section/WebSocketTask" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/WebSocketTask"></a>
+                  <h3 class="section-name"><span>WebSocketTask</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -868,186 +1255,10 @@ response.</p>
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11HTTPHeadersV"></a>
-                    <a name="//apple_ref/swift/Struct/HTTPHeaders" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11HTTPHeadersV">HTTPHeaders</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>An order-preserving and case-insensitive representation of HTTP headers.</p>
-
-                        <a href="Structs/HTTPHeaders.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPHeaders</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">ExpressibleByDictionaryLiteral</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">ExpressibleByArrayLiteral</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">Sequence</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">Collection</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeaders</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/HTTPHeader"></a>
-                <a name="//apple_ref/swift/Section/HTTPHeader" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/HTTPHeader"></a>
-                  <h3 class="section-name"><span>HTTPHeader</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire10HTTPHeaderV"></a>
-                    <a name="//apple_ref/swift/Struct/HTTPHeader" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPHeaderV">HTTPHeader</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A representation of a single HTTP header&rsquo;s name / value pair.</p>
-
-                        <a href="Structs/HTTPHeader.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPHeader</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">HTTPHeader</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire10HTTPMethodV"></a>
-                    <a name="//apple_ref/swift/Struct/HTTPMethod" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire10HTTPMethodV">HTTPMethod</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Type representing HTTP methods. Raw <code>String</code> value is stored and compared case-sensitively, so
-<code>HTTPMethod.get != HTTPMethod(rawValue: &quot;get&quot;)</code>.</p>
-
-<p>See <a href="https://tools.ietf.org/html/rfc7231#section-4.3">https://tools.ietf.org/html/rfc7231#section-4.3</a></p>
-
-                        <a href="Structs/HTTPMethod.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPMethod</span> <span class="p">:</span> <span class="kt">RawRepresentable</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Hashable</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
             <div class="task-group">
               <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11URLEncodingV"></a>
-                    <a name="//apple_ref/swift/Struct/URLEncoding" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV">URLEncoding</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP
-body of the URL request. Whether the query string is set or appended to any existing URL query string or set as
-the HTTP body depends on the destination of the encoding.</p>
-
-<p>The <code>Content-Type</code> HTTP header field of an encoded request with HTTP body is set to
-<code>application/x-www-form-urlencoded; charset=utf-8</code>.</p>
-
-<p>There is no published specification for how to encode collection types. By default the convention of appending
-<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
-nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
-square brackets appended to array keys.</p>
-
-<p><code>BoolEncoding</code> can be used to configure how boolean values are encoded. The default behavior is to encode
-<code>true</code> as 1 and <code>false</code> as 0.</p>
-
-                        <a href="Structs/URLEncoding.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">URLEncoding</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire12JSONEncodingV"></a>
-                    <a name="//apple_ref/swift/Struct/JSONEncoding" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12JSONEncodingV">JSONEncoding</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Uses <code>JSONSerialization</code> to create a JSON representation of the parameters object, which is set as the body of the
-request. The <code>Content-Type</code> HTTP header field of an encoded request is set to <code>application/json</code>.</p>
-
-                        <a href="Structs/JSONEncoding.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">JSONEncoding</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1145,77 +1356,6 @@ appropriate header.</p>
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire12DataResponseV"></a>
-                    <a name="//apple_ref/swift/Struct/DataResponse" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12DataResponseV">DataResponse</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Type used to store all values associated with a serialized response of a <code><a href="Classes/DataRequest.html">DataRequest</a></code> or <code><a href="Classes/UploadRequest.html">UploadRequest</a></code>.</p>
-
-                        <a href="Structs/DataResponse.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">DataResponse</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span><span class="p">,</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire16DownloadResponseV"></a>
-                    <a name="//apple_ref/swift/Struct/DownloadResponse" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV">DownloadResponse</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Used to store all data associated with a serialized response of a download request.</p>
-
-                        <a href="Structs/DownloadResponse.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">DownloadResponse</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span><span class="p">,</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Protocols"></a>
-                <a name="//apple_ref/swift/Section/Protocols" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Protocols"></a>
-                  <h3 class="section-name"><span>Protocols</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1348,105 +1488,8 @@ is present.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Empty</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Empty</span> <span class="p">:</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Empty</span><span class="p">:</span> <span class="kt"><a href="Protocols/EmptyResponse.html">EmptyResponse</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/DataStreamRequest"></a>
-                <a name="//apple_ref/swift/Section/DataStreamRequest" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/DataStreamRequest"></a>
-                  <h3 class="section-name"><span>DataStreamRequest</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire25DecodableStreamSerializerV"></a>
-                    <a name="//apple_ref/swift/Struct/DecodableStreamSerializer" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire25DecodableStreamSerializerV">DecodableStreamSerializer</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> which uses the provided <code><a href="Protocols/DataPreprocessor.html">DataPreprocessor</a></code> and <code><a href="Protocols/DataDecoder.html">DataDecoder</a></code> to serialize the incoming <code>Data</code>.</p>
-
-                        <a href="Structs/DecodableStreamSerializer.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DecodableStreamSerializer</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire27PassthroughStreamSerializerV"></a>
-                    <a name="//apple_ref/swift/Struct/PassthroughStreamSerializer" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire27PassthroughStreamSerializerV">PassthroughStreamSerializer</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> which performs no serialization on incoming <code>Data</code>.</p>
-
-                        <a href="Structs/PassthroughStreamSerializer.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PassthroughStreamSerializer</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire22StringStreamSerializerV"></a>
-                    <a name="//apple_ref/swift/Struct/StringStreamSerializer" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire22StringStreamSerializerV">StringStreamSerializer</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p><code><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> which serializes incoming stream <code>Data</code> into <code>UTF8</code>-decoded <code>String</code> values.</p>
-
-                        <a href="Structs/StringStreamSerializer.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">StringStreamSerializer</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1461,7 +1504,7 @@ is present.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-10-25)</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

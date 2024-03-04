@@ -243,7 +243,10 @@ public struct URLEncoding: ParameterEncoding {
 /// Uses `JSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the
 /// request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
 public struct JSONEncoding: ParameterEncoding {
+    /// Error produced by `JSONEncoding`.
     public enum Error: Swift.Error {
+        /// `JSONEncoding` attempted to encode an invalid JSON object. Usually this means the value included types not
+        /// representable in Objective-C. See `JSONSerialization.isValidJSONObject` for details.
         case invalidJSONObject
     }
 

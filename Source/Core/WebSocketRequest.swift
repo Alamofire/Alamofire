@@ -27,6 +27,10 @@
 import Foundation
 
 /// `Request` subclass which manages a WebSocket connection using `URLSessionWebSocketTask`.
+///
+/// - Note: This type is currently experimental. There will be breaking changes before the final public release,
+///         especially around adoption of the typed throws feature in Swift 6. Please report any missing features or
+///         bugs to https://github.com/Alamofire/Alamofire/issues.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 @_spi(WebSocket) public final class WebSocketRequest: Request {
     enum IncomingEvent {
@@ -478,7 +482,7 @@ import Foundation
         guard !(isCancelled || isFinished) else { return }
 
         guard let socket else {
-            // URLSessionWebSocketTask note created yet, enqueue the send.
+            // URLSessionWebSocketTask not created yet, enqueue the send.
             socketMutableState.write { mutableState in
                 mutableState.enqueuedSends.append((message, queue, completionHandler))
             }
