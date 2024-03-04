@@ -39,5 +39,5 @@ public let AF = Session.default
 /// Namespace for informational Alamofire values.
 public enum AFInfo {
     /// Current Alamofire version.
-    public static let version = "5.8.1"
+    public static let version = "5.9.0"
 }
