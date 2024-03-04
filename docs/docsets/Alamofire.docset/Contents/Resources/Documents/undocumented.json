@@ -2,28 +2,7 @@
   "warnings": [
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/ParameterEncoding.swift",
-      "line": 246,
-      "symbol": "JSONEncoding.Error",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/ParameterEncoding.swift",
-      "line": 247,
-      "symbol": "JSONEncoding.Error.invalidJSONObject",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/ParameterEncoding.swift",
-      "line": 329,
-      "symbol": "JSONEncoding.Error",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/ParameterEncoding.swift",
-      "line": 330,
+      "line": 333,
       "symbol": "JSONEncoding.Error.localizedDescription",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
