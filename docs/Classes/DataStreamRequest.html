@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire 5.8.1 Docs
         </a>
-         (97% documented)
+         (96% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -262,6 +262,9 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFInfo.html">AFInfo</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
@@ -273,7 +276,7 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
+                <a class="nav-group-task-link" href="../Extensions.html#/s:Sa">Array</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
@@ -325,6 +328,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/%5BServerTrustEvaluating%5D.html">[ServerTrustEvaluating]</a>
               </li>
             </ul>
           </li>
@@ -403,6 +409,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/UploadableConvertible.html">UploadableConvertible</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/WebSocketMessageSerializer.html">WebSocketMessageSerializer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -428,6 +437,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableWebSocketMessageDecoder.html">DecodableWebSocketMessageDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableWebSocketMessageDecoder/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
@@ -1005,6 +1020,326 @@ handler to return a <code>ResponseDisposition</code> value.</p>
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/Response%20Serialization"></a>
+                <a name="//apple_ref/swift/Section/Response Serialization" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Response%20Serialization"></a>
+                  <h3 class="section-name"><span>Response Serialization</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC08responseC02on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_10Foundation0B0Vs5NeverOGKctF"></a>
+                    <a name="//apple_ref/swift/Method/responseStream(on:stream:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC02on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_10Foundation0B0Vs5NeverOGKctF">responseStream(on:<wbr>stream:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a <code>StreamHandler</code> which performs no parsing on incoming <code>Data</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseStream</span><span class="p">(</span><span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span> <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>stream</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code>DataStreamRequest</code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC08responseC05using2on6streamACXDx_So17OS_dispatch_queueCyAC0C0Vy_16SerializedObjectQzAA7AFErrorOGKctAA0bC10SerializerRzlF"></a>
+                    <a name="//apple_ref/swift/Method/responseStream(using:on:stream:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC05using2on6streamACXDx_So17OS_dispatch_queueCyAC0C0Vy_16SerializedObjectQzAA7AFErrorOGKctAA0bC10SerializerRzlF">responseStream(using:<wbr>on:<wbr>stream:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a <code>StreamHandler</code> which uses the provided <code><a href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> to process incoming <code>Data</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseStream</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
+                                                             <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                                                             <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>serializer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> used to process incoming <code>Data</code>. Its work is done on the <code>serializationQueue</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>stream</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code>DataStreamRequest</code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC08responseC6String2on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_SSs5NeverOGKctF"></a>
+                    <a name="//apple_ref/swift/Method/responseStreamString(on:stream:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC6String2on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_SSs5NeverOGKctF">responseStreamString(on:<wbr>stream:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a <code>StreamHandler</code> which parses incoming <code>Data</code> as a UTF8 <code>String</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseStreamString</span><span class="p">(</span><span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                                 <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>stream</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code>DataStreamRequest</code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire17DataStreamRequestC08responseC9Decodable2of2on5using12preprocessor6streamACXDxm_So17OS_dispatch_queueCAA0B7Decoder_pAA0B12Preprocessor_pyAC0C0Vy_xAA7AFErrorOGKctSeRzlF"></a>
+                    <a name="//apple_ref/swift/Method/responseStreamDecodable(of:on:using:preprocessor:stream:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC9Decodable2of2on5using12preprocessor6streamACXDxm_So17OS_dispatch_queueCAA0B7Decoder_pAA0B12Preprocessor_pyAC0C0Vy_xAA7AFErrorOGKctSeRzlF">responseStreamDecodable(of:<wbr>on:<wbr>using:<wbr>preprocessor:<wbr>stream:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a <code>StreamHandler</code> which parses incoming <code>Data</code> using the provided <code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseStreamDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">T</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
+                                                  <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                                                  <span class="n">using</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
+                                                  <span class="nv">preprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a></span><span class="p">(),</span>
+                                                  <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>type</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>Decodable</code> type to parse incoming <code>Data</code> into.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>decoder</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code> used to decode the incoming <code>Data</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>preprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> used to process the incoming <code>Data</code> before it&rsquo;s passed to the <code>decoder</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>stream</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code>DataStreamRequest</code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/DataRequest%20%2F%20UploadRequest"></a>
                 <a name="//apple_ref/swift/Section/DataRequest / UploadRequest" class="dashAnchor"></a>
                 <div class="section-name-container">
@@ -1493,326 +1828,6 @@ produces an <code>HTTPURLResponse</code>.</p>
               </ul>
             </div>
             <div class="task-group">
-              <div class="task-name-container">
-                <a name="/DataStreamRequest"></a>
-                <a name="//apple_ref/swift/Section/DataStreamRequest" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/DataStreamRequest"></a>
-                  <h3 class="section-name"><span>DataStreamRequest</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire17DataStreamRequestC08responseC02on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_10Foundation0B0Vs5NeverOGKctF"></a>
-                    <a name="//apple_ref/swift/Method/responseStream(on:stream:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC02on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_10Foundation0B0Vs5NeverOGKctF">responseStream(on:<wbr>stream:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a <code>StreamHandler</code> which performs no parsing on incoming <code>Data</code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseStream</span><span class="p">(</span><span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span> <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>stream</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The <code>DataStreamRequest</code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire17DataStreamRequestC08responseC05using2on6streamACXDx_So17OS_dispatch_queueCyAC0C0Vy_16SerializedObjectQzAA7AFErrorOGKctAA0bC10SerializerRzlF"></a>
-                    <a name="//apple_ref/swift/Method/responseStream(using:on:stream:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC05using2on6streamACXDx_So17OS_dispatch_queueCyAC0C0Vy_16SerializedObjectQzAA7AFErrorOGKctAA0bC10SerializerRzlF">responseStream(using:<wbr>on:<wbr>stream:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a <code>StreamHandler</code> which uses the provided <code><a href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> to process incoming <code>Data</code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseStream</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a></span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
-                                                             <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                                                             <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>serializer</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a></code> used to process incoming <code>Data</code>. Its work is done on the <code>serializationQueue</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>stream</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The <code>DataStreamRequest</code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire17DataStreamRequestC08responseC6String2on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_SSs5NeverOGKctF"></a>
-                    <a name="//apple_ref/swift/Method/responseStreamString(on:stream:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC6String2on6streamACXDSo17OS_dispatch_queueC_yAC0C0Vy_SSs5NeverOGKctF">responseStreamString(on:<wbr>stream:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a <code>StreamHandler</code> which parses incoming <code>Data</code> as a UTF8 <code>String</code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseStreamString</span><span class="p">(</span><span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                                 <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>stream</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The <code>DataStreamRequest</code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire17DataStreamRequestC08responseC9Decodable2of2on5using12preprocessor6streamACXDxm_So17OS_dispatch_queueCAA0B7Decoder_pAA0B12Preprocessor_pyAC0C0Vy_xAA7AFErrorOGKctSeRzlF"></a>
-                    <a name="//apple_ref/swift/Method/responseStreamDecodable(of:on:using:preprocessor:stream:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire17DataStreamRequestC08responseC9Decodable2of2on5using12preprocessor6streamACXDxm_So17OS_dispatch_queueCAA0B7Decoder_pAA0B12Preprocessor_pyAC0C0Vy_xAA7AFErrorOGKctSeRzlF">responseStreamDecodable(of:<wbr>on:<wbr>using:<wbr>preprocessor:<wbr>stream:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a <code>StreamHandler</code> which parses incoming <code>Data</code> using the provided <code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseStreamDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">T</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
-                                                  <span class="n">on</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                                                  <span class="n">using</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
-                                                  <span class="nv">preprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a></span><span class="p">(),</span>
-                                                  <span class="nv">stream</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/DataStreamRequest.html#/s:9Alamofire17DataStreamRequestC7Handlera">Handler</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>type</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>Decodable</code> type to parse incoming <code>Data</code> into.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>DispatchQueue</code> on which to perform <code>StreamHandler</code> closure.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>decoder</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code> used to decode the incoming <code>Data</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>preprocessor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> used to process the incoming <code>Data</code> before it&rsquo;s passed to the <code>decoder</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>stream</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>StreamHandler</code> closure called as <code>Data</code> is received. May be called multiple times.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The <code>DataStreamRequest</code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -1991,7 +2006,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-10-25)</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

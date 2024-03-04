@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire 5.8.1 Docs
         </a>
-         (97% documented)
+         (96% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -262,6 +262,9 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFInfo.html">AFInfo</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
@@ -273,7 +276,7 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
+                <a class="nav-group-task-link" href="../Extensions.html#/s:Sa">Array</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
@@ -325,6 +328,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/%5BServerTrustEvaluating%5D.html">[ServerTrustEvaluating]</a>
               </li>
             </ul>
           </li>
@@ -403,6 +409,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/UploadableConvertible.html">UploadableConvertible</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/WebSocketMessageSerializer.html">WebSocketMessageSerializer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -428,6 +437,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableWebSocketMessageDecoder.html">DecodableWebSocketMessageDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableWebSocketMessageDecoder/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
@@ -804,6 +819,709 @@ handler to return a <code>ResponseDisposition</code> value.</p>
                       <div>
                         <h4>Return Value</h4>
                         <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Response%20Serialization"></a>
+                <a name="//apple_ref/swift/Section/Response Serialization" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Response%20Serialization"></a>
+                  <h3 class="section-name"><span>Response Serialization</span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11DataRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation0B0VSgAA7AFErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/response(queue:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation0B0VSgAA7AFErrorOGctF">response(queue:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler to be called once the request has finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">response</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="p">?</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The code to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0bkF8ProtocolRzlF"></a>
+                    <a name="//apple_ref/swift/Method/response(queue:responseSerializer:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0bkF8ProtocolRzlF">response(queue:<wbr>responseSerializer:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler to be called once the request has finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">response</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a></span><span class="o">&gt;</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                                                                 <span class="nv">responseSerializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
+                                                                 <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
+    <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>responseSerializer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The response serializer responsible for serializing the request, response, and data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The code to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0kF0RzlF"></a>
+                    <a name="//apple_ref/swift/Method/response(queue:responseSerializer:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0kF0RzlF">response(queue:<wbr>responseSerializer:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler to be called once the request has finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">response</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></span><span class="o">&gt;</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                                                     <span class="nv">responseSerializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
+                                                     <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
+    <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>responseSerializer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The response serializer responsible for serializing the request, response, and data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The code to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11DataRequestC08responseB05queue16dataPreprocessor18emptyResponseCodes0hC7Methods17completionHandlerACXDSo012OS_dispatch_E0C_AA0bG0_pShySiGShyAA10HTTPMethodVGyAA0bI0Vy10Foundation0B0VAA7AFErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/responseData(queue:dataPreprocessor:emptyResponseCodes:emptyRequestMethods:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC08responseB05queue16dataPreprocessor18emptyResponseCodes0hC7Methods17completionHandlerACXDSo012OS_dispatch_E0C_AA0bG0_pShySiGShyAA10HTTPMethodVGyAA0bI0Vy10Foundation0B0VAA7AFErrorOGctF">responseData(queue:<wbr>dataPreprocessor:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler using a <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code> to be called once the request has finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseData</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                         <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
+                         <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
+                         <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
+                         <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is called. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataPreprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
+                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyResponseCodes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyRequestMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11DataRequestC14responseString5queue16dataPreprocessor8encoding18emptyResponseCodes0jC7Methods17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pSS10FoundationE8EncodingVSgShySiGShyAA10HTTPMethodVGyAA0bK0VySSAA7AFErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/responseString(queue:dataPreprocessor:encoding:emptyResponseCodes:emptyRequestMethods:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC14responseString5queue16dataPreprocessor8encoding18emptyResponseCodes0jC7Methods17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pSS10FoundationE8EncodingVSgShySiGShyAA10HTTPMethodVGyAA0bK0VySSAA7AFErrorOGctF">responseString(queue:<wbr>dataPreprocessor:<wbr>encoding:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler using a <code><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></code> to be called once the request has finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseString</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                           <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
+                           <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                           <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
+                           <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
+                           <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataPreprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
+                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The string encoding. Defaults to <code>nil</code>, in which case the encoding will be determined
+                 from the server response, falling back to the default HTTP character set, <code>ISO-8859-1</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyResponseCodes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyRequestMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11DataRequestC12responseJSON5queue16dataPreprocessor18emptyResponseCodes0iC7Methods7options17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pShySiGShyAA10HTTPMethodVGSo20NSJSONReadingOptionsVyAA0bJ0VyypAA7AFErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/responseJSON(queue:dataPreprocessor:emptyResponseCodes:emptyRequestMethods:options:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC12responseJSON5queue16dataPreprocessor18emptyResponseCodes0iC7Methods7options17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pShySiGShyAA10HTTPMethodVGSo20NSJSONReadingOptionsVyAA0bJ0VyypAA7AFErrorOGctF">responseJSON(queue:<wbr>dataPreprocessor:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>options:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler using a <code><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></code> to be called once the request has finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "responseJSON deprecated and will be removed in Alamofire 6. Use responseDecodable instead.")</span>
+<span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseJSON</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                         <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
+                         <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
+                         <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
+                         <span class="nv">options</span><span class="p">:</span> <span class="kt">JSONSerialization</span><span class="o">.</span><span class="kt">ReadingOptions</span> <span class="o">=</span> <span class="o">.</span><span class="n">allowFragments</span><span class="p">,</span>
+                         <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataPreprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
+                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyResponseCodes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyRequestMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>JSONSerialization.ReadingOptions</code> used when parsing the response. <code>.allowFragments</code>
+                 by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11DataRequestC17responseDecodable2of5queue16dataPreprocessor7decoder18emptyResponseCodes0kC7Methods17completionHandlerACXDxm_So012OS_dispatch_G0CAA0bI0_pAA0B7Decoder_pShySiGShyAA10HTTPMethodVGyAA0bL0VyxAA7AFErrorOGctSeRzlF"></a>
+                    <a name="//apple_ref/swift/Method/responseDecodable(of:queue:dataPreprocessor:decoder:emptyResponseCodes:emptyRequestMethods:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC17responseDecodable2of5queue16dataPreprocessor7decoder18emptyResponseCodes0kC7Methods17completionHandlerACXDxm_So012OS_dispatch_G0CAA0bI0_pAA0B7Decoder_pShySiGShyAA10HTTPMethodVGyAA0bL0VyxAA7AFErrorOGctSeRzlF">responseDecodable(of:<wbr>queue:<wbr>dataPreprocessor:<wbr>decoder:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>completionHandler:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a handler using a <code><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></code> to be called once the request has finished.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">T</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
+                                            <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                                            <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
+                                            <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
+                                            <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
+                                            <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
+                                            <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>type</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>Decodable</code> type to decode from response data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataPreprocessor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
+                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>decoder</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code> to use to decode the response. <code>JSONDecoder()</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyResponseCodes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>emptyRequestMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure to be executed once the request has finished.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The request.</p>
                       </div>
                     </section>
                   </div>
@@ -1917,761 +2635,6 @@ response.</p>
               </ul>
             </div>
             <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Default"></a>
-                <a name="//apple_ref/swift/Section/Default" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Default"></a>
-                  <h3 class="section-name"><span>Default</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11DataRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation0B0VSgAA7AFErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/response(queue:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation0B0VSgAA7AFErrorOGctF">response(queue:<wbr>completionHandler:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a handler to be called once the request has finished.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">response</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="p">?</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completionHandler</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The code to be executed once the request has finished.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The request.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0bkF8ProtocolRzlF"></a>
-                    <a name="//apple_ref/swift/Method/response(queue:responseSerializer:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0bkF8ProtocolRzlF">response(queue:<wbr>responseSerializer:<wbr>completionHandler:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a handler to be called once the request has finished.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">response</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a></span><span class="o">&gt;</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                                                                 <span class="nv">responseSerializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
-                                                                 <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>responseSerializer</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The response serializer responsible for serializing the request, response, and data.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completionHandler</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The code to be executed once the request has finished.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The request.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0kF0RzlF"></a>
-                    <a name="//apple_ref/swift/Method/response(queue:responseSerializer:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0kF0RzlF">response(queue:<wbr>responseSerializer:<wbr>completionHandler:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a handler to be called once the request has finished.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">response</span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></span><span class="o">&gt;</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                                                     <span class="nv">responseSerializer</span><span class="p">:</span> <span class="kt">Serializer</span><span class="p">,</span>
-                                                     <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Serializer</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>responseSerializer</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The response serializer responsible for serializing the request, response, and data.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completionHandler</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The code to be executed once the request has finished.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The request.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Data"></a>
-                <a name="//apple_ref/swift/Section/Data" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Data"></a>
-                  <h3 class="section-name"><span>Data</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11DataRequestC08responseB05queue16dataPreprocessor18emptyResponseCodes0hC7Methods17completionHandlerACXDSo012OS_dispatch_E0C_AA0bG0_pShySiGShyAA10HTTPMethodVGyAA0bI0Vy10Foundation0B0VAA7AFErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/responseData(queue:dataPreprocessor:emptyResponseCodes:emptyRequestMethods:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC08responseB05queue16dataPreprocessor18emptyResponseCodes0hC7Methods17completionHandlerACXDSo012OS_dispatch_E0C_AA0bG0_pShySiGShyAA10HTTPMethodVGyAA0bI0Vy10Foundation0B0VAA7AFErrorOGctF">responseData(queue:<wbr>dataPreprocessor:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>completionHandler:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a handler using a <code><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></code> to be called once the request has finished.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseData</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                         <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
-                         <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
-                         <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
-                         <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The queue on which the completion handler is called. <code>.main</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>dataPreprocessor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
-                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyResponseCodes</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyRequestMethods</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completionHandler</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>A closure to be executed once the request has finished.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The request.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/String"></a>
-                <a name="//apple_ref/swift/Section/String" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/String"></a>
-                  <h3 class="section-name"><span>String</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11DataRequestC14responseString5queue16dataPreprocessor8encoding18emptyResponseCodes0jC7Methods17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pSS10FoundationE8EncodingVSgShySiGShyAA10HTTPMethodVGyAA0bK0VySSAA7AFErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/responseString(queue:dataPreprocessor:encoding:emptyResponseCodes:emptyRequestMethods:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC14responseString5queue16dataPreprocessor8encoding18emptyResponseCodes0jC7Methods17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pSS10FoundationE8EncodingVSgShySiGShyAA10HTTPMethodVGyAA0bK0VySSAA7AFErrorOGctF">responseString(queue:<wbr>dataPreprocessor:<wbr>encoding:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>completionHandler:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a handler using a <code><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></code> to be called once the request has finished.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseString</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                           <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
-                           <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                           <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
-                           <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/StringResponseSerializer.html">StringResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
-                           <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>dataPreprocessor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
-                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>encoding</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The string encoding. Defaults to <code>nil</code>, in which case the encoding will be determined
-                 from the server response, falling back to the default HTTP character set, <code>ISO-8859-1</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyResponseCodes</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyRequestMethods</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completionHandler</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>A closure to be executed once the request has finished.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The request.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/JSON"></a>
-                <a name="//apple_ref/swift/Section/JSON" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/JSON"></a>
-                  <h3 class="section-name"><span>JSON</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11DataRequestC12responseJSON5queue16dataPreprocessor18emptyResponseCodes0iC7Methods7options17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pShySiGShyAA10HTTPMethodVGSo20NSJSONReadingOptionsVyAA0bJ0VyypAA7AFErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/responseJSON(queue:dataPreprocessor:emptyResponseCodes:emptyRequestMethods:options:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC12responseJSON5queue16dataPreprocessor18emptyResponseCodes0iC7Methods7options17completionHandlerACXDSo012OS_dispatch_F0C_AA0bH0_pShySiGShyAA10HTTPMethodVGSo20NSJSONReadingOptionsVyAA0bJ0VyypAA7AFErrorOGctF">responseJSON(queue:<wbr>dataPreprocessor:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>options:<wbr>completionHandler:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a handler using a <code><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></code> to be called once the request has finished.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "responseJSON deprecated and will be removed in Alamofire 6. Use responseDecodable instead.")</span>
-<span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseJSON</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                         <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
-                         <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
-                         <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONResponseSerializer.html">JSONResponseSerializer</a></span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
-                         <span class="nv">options</span><span class="p">:</span> <span class="kt">JSONSerialization</span><span class="o">.</span><span class="kt">ReadingOptions</span> <span class="o">=</span> <span class="o">.</span><span class="n">allowFragments</span><span class="p">,</span>
-                         <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>dataPreprocessor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
-                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyResponseCodes</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyRequestMethods</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>options</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>JSONSerialization.ReadingOptions</code> used when parsing the response. <code>.allowFragments</code>
-                 by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completionHandler</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>A closure to be executed once the request has finished.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The request.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Decodable"></a>
-                <a name="//apple_ref/swift/Section/Decodable" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Decodable"></a>
-                  <h3 class="section-name"><span>Decodable</span>
-</h3>
-                </div>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11DataRequestC17responseDecodable2of5queue16dataPreprocessor7decoder18emptyResponseCodes0kC7Methods17completionHandlerACXDxm_So012OS_dispatch_G0CAA0bI0_pAA0B7Decoder_pShySiGShyAA10HTTPMethodVGyAA0bL0VyxAA7AFErrorOGctSeRzlF"></a>
-                    <a name="//apple_ref/swift/Method/responseDecodable(of:queue:dataPreprocessor:decoder:emptyResponseCodes:emptyRequestMethods:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC17responseDecodable2of5queue16dataPreprocessor7decoder18emptyResponseCodes0kC7Methods17completionHandlerACXDxm_So012OS_dispatch_G0CAA0bI0_pAA0B7Decoder_pShySiGShyAA10HTTPMethodVGyAA0bL0VyxAA7AFErrorOGctSeRzlF">responseDecodable(of:<wbr>queue:<wbr>dataPreprocessor:<wbr>decoder:<wbr>emptyResponseCodes:<wbr>emptyRequestMethods:<wbr>completionHandler:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Adds a handler using a <code><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></code> to be called once the request has finished.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">T</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
-                                            <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
-                                            <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
-                                            <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
-                                            <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
-                                            <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">,</span>
-                                            <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>type</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>Decodable</code> type to decode from response data.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>queue</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>dataPreprocessor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> which processes the received <code>Data</code> before calling the
-                 <code>completionHandler</code>. <code>PassthroughPreprocessor()</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>decoder</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code> to use to decode the response. <code>JSONDecoder()</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyResponseCodes</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>HTTP status codes for which empty responses are always valid. <code>[204, 205]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>emptyRequestMethods</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty responses are always valid. <code>[.head]</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completionHandler</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>A closure to be executed once the request has finished.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The request.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -2850,7 +2813,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-10-25)</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

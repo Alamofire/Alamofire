@@ -22,7 +22,7 @@
         <a class="header-link" href="index.html">
           Alamofire 5.8.1 Docs
         </a>
-         (97% documented)
+         (96% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -261,6 +261,9 @@
                 <a class="nav-group-task-link" href="Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AFInfo.html">AFInfo</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AuthenticationError.html">AuthenticationError</a>
               </li>
               <li class="nav-group-task">
@@ -272,7 +275,7 @@
             <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions/Array.html">Array</a>
+                <a class="nav-group-task-link" href="Extensions.html#/s:Sa">Array</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
@@ -324,6 +327,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/%5BServerTrustEvaluating%5D.html">[ServerTrustEvaluating]</a>
               </li>
             </ul>
           </li>
@@ -402,6 +408,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/UploadableConvertible.html">UploadableConvertible</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/WebSocketMessageSerializer.html">WebSocketMessageSerializer</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -427,6 +436,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DecodableWebSocketMessageDecoder.html">DecodableWebSocketMessageDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DecodableWebSocketMessageDecoder/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DeflateRequestCompressor.html">DeflateRequestCompressor</a>
@@ -549,7 +564,7 @@
             
             <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/AlamofireLogo.png" alt="Alamofire: Elegant Networking in Swift"></p>
 
-<p><a href="https://img.shields.io/badge/Swift-5.6_5.7_5.8_5.9-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.6_5.7_5.8_5.9-orange?style=flat-square" alt="Swift"></a>
+<p><a href="https://img.shields.io/badge/Swift-5.7_5.8_5.9-Orange?style=flat-square"><img src="https://img.shields.io/badge/Swift-5.7_5.8_5.9-orange?style=flat-square" alt="Swift"></a>
 <a href="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_vision_OS_Linux_Windows_Android-Green?style=flat-square"><img src="https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS_Linux_Windows_Android-yellowgreen?style=flat-square" alt="Platforms"></a>
 <a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square" alt="CocoaPods Compatible"></a>
 <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square" alt="Carthage Compatible"></a>
@@ -652,7 +667,7 @@
 </thead><tbody>
 <tr>
 <td>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</td>
-<td>5.6</td>
+<td>5.7.1 / Xcode 14.1</td>
 <td><a href="#cocoapods">CocoaPods</a>, <a href="#carthage">Carthage</a>, <a href="#swift-package-manager">Swift Package Manager</a>, <a href="#manually">Manual</a></td>
 <td>Fully Tested</td>
 </tr>
@@ -684,6 +699,7 @@
 <li>Various methods of HTTP authentication may crash, including HTTP Basic and HTTP Digest. Crashes may occur if responses contain server challenges.</li>
 <li>Cache control through <code><a href="Protocols/CachedResponseHandler.html">CachedResponseHandler</a></code> and associated APIs is unavailable, as the underlying delegate methods aren&rsquo;t called.</li>
 <li><code>URLSessionTaskMetrics</code> are never gathered.</li>
+<li><code>WebSocketRequest</code> is not available.</li>
 </ul>
 
 <p>Due to these issues, Alamofire is unsupported on Linux, Windows, and Android. Please report any crashes to the <a href="https://bugs.swift.org">Swift bug reporter</a>.</p>
@@ -706,6 +722,23 @@
 <li>If you <strong>found a bug</strong>, open an issue here on GitHub and follow the guide. The more detail the better!</li>
 </ul>
 <h2 id='installation' class='heading'>Installation</h2>
+<h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
+
+<p>The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for automating the distribution of Swift code and is integrated into the <code>swift</code> compiler.</p>
+
+<p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code> or the Package list in Xcode.</p>
+<pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.8.1"</span><span class="p">))</span>
+<span class="p">]</span>
+</code></pre>
+
+<p>Normally you&rsquo;ll want to depend on the <code>Alamofire</code> target:</p>
+<pre class="highlight swift"><code><span class="o">.</span><span class="nf">product</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Alamofire"</span><span class="p">,</span> <span class="nv">package</span><span class="p">:</span> <span class="s">"Alamofire"</span><span class="p">)</span>
+</code></pre>
+
+<p>But if you want to force Alamofire to be dynamically linked (do not do this unless you&rsquo;re sure you need it), you can depend on the <code>AlamofireDynamic</code> target:</p>
+<pre class="highlight swift"><code><span class="o">.</span><span class="nf">product</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"AlamofireDynamic"</span><span class="p">,</span> <span class="nv">package</span><span class="p">:</span> <span class="s">"Alamofire"</span><span class="p">)</span>
+</code></pre>
 <h3 id='cocoapods' class='heading'>CocoaPods</h3>
 
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
@@ -715,15 +748,6 @@
 
 <p><a href="https://github.com/Carthage/Carthage">Carthage</a> is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
 <pre class="highlight plaintext"><code>github "Alamofire/Alamofire"
-</code></pre>
-<h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
-
-<p>The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for automating the distribution of Swift code and is integrated into the <code>swift</code> compiler.</p>
-
-<p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
-<pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMajor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.8.1"</span><span class="p">))</span>
-<span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
 
@@ -856,7 +880,7 @@ Any amount you can donate, whether once or monthly, to help us reach our goal wo
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2023-10-25)</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
