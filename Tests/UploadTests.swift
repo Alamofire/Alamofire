@@ -893,3 +893,30 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .cancelled)
     }
 }
+
+final class UploadFileWithDeletion: BaseTestCase {
+    func testFileUploadSuccessAndDeletion() {
+        // Given
+        let endpoint = Endpoint(path: .delay(interval: 1),
+                                method: .post,
+                                headers: [.contentType("text/plain")],
+                                timeout: 0.1)
+        
+        let fileURL = url(forResource: "utf8_string", withExtension: "txt")
+        let session = Session()
+        var response: AFDataResponse<TestResponse>?
+        let completion = expectation(description: "upload should complete and file should be deleted")
+
+        // When
+        session.upload(fileURL, with: endpoint, shouldRemove: true).responseDecodable(of: TestResponse.self) {
+            response = $0
+            completion.fulfill()
+        }
+                
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertTrue(response?.result.isSuccess == true)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: fileURL.path), "file should be deleted after upload")
+    }
+}

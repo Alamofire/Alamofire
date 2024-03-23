@@ -830,6 +830,16 @@ let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 AF.upload(fileURL, to: "https://httpbin.org/post").responseDecodable(of: DecodableType.self) { response in
     debugPrint(response)
 }
+
+let tempFileURL = Bundle.main.url(forResource: "image", withExtension: "jpg")
+
+// Flag to indicate that the file should be automatically removed once uploaded
+let shouldRemove = true
+
+AF.upload(fileURL, to: "https://httpbin.org/post", shouldRemove: shouldRemove).responseDecodable(of: DecodableType.self) { response in
+    debugPrint(response)
+}
+
 ```
 
 #### Uploading Multipart Form Data

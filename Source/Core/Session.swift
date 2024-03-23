@@ -751,6 +751,7 @@ open class Session: @unchecked Sendable {
     ///                      default.
     ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
     ///                      parameters. `nil` by default.
+    ///   - shouldRemove: A `Bool`  indicating whether the source file should be automatically removed once uploaded. `false` by default.
     ///
     /// - Returns:           The created `UploadRequest`.
     open func upload(_ fileURL: URL,
@@ -759,7 +760,8 @@ open class Session: @unchecked Sendable {
                      headers: HTTPHeaders? = nil,
                      interceptor: (any RequestInterceptor)? = nil,
                      fileManager: FileManager = .default,
-                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+                     requestModifier: RequestModifier? = nil,
+                     shouldRemove: Bool = false) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible,
                                                           method: method,
                                                           headers: headers,
@@ -777,6 +779,7 @@ open class Session: @unchecked Sendable {
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
     ///                  default.
+    ///   - shouldRemove: A `Bool`  indicating whether the source file should be automatically removed once uploaded. `false` by default.
     ///
     /// - Returns:       The created `UploadRequest`.
     open func upload(_ fileURL: URL,
