@@ -25,7 +25,7 @@
 import Foundation
 
 /// An order-preserving and case-insensitive representation of HTTP headers.
-public struct HTTPHeaders {
+public struct HTTPHeaders: Equatable, Hashable, Sendable {
     private var headers: [HTTPHeader] = []
 
     /// Creates an empty instance.
@@ -185,7 +185,7 @@ extension HTTPHeaders: CustomStringConvertible {
 // MARK: - HTTPHeader
 
 /// A representation of a single HTTP header's name / value pair.
-public struct HTTPHeader: Hashable {
+public struct HTTPHeader: Equatable, Hashable, Sendable {
     /// Name of the header.
     public let name: String
 
