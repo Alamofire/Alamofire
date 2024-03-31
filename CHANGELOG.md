@@ -6,7 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
-- `5.9.x` Releases - [5.9.0](#590)
+- `5.9.x` Releases - [5.9.0](#590) | [5.9.1](#591)
 - `5.8.x` Releases - [5.8.0](#580) | [5.8.1](#581)
 - `5.7.x` Releases - [5.7.0](#570) | [5.7.1](#571)
 - `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563) | [5.6.4](#564)
@@ -56,6 +56,22 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.9.1](https://github.com/Alamofire/Alamofire/releases/tag/5.9.1)
+
+Released on 2024-03-30. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/90?closed=1).
+
+### Updated
+
+- `HTTPHeaders` and `HTTPHeader` to be `Sendable`.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3856](https://github.com/Alamofire/Alamofire/pull/3856).
+- `HTTPMethod` to be `Sendable`.
+  - Updated by [Galvin Li](https://github.com/bestwnh) in Pull Request [#3848](https://github.com/Alamofire/Alamofire/pull/3848).
+
+### Fixed
+
+- CocoaPods visionOS support by explicitly declaring it in podspec.
+  - Fixed by [Tamás Jäger](https://github.com/bestwnh) in Pull Request [#3845](https://github.com/Alamofire/Alamofire/pull/3845).
 
 ## [5.9.0](https://github.com/Alamofire/Alamofire/releases/tag/5.9.0)
 
