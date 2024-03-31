@@ -265,7 +265,7 @@ jobs:
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
       - name: Test SPM
-        run: swift test -c debug | ${{ matrix.outputFilter }}
+        run: swift test -c debug 2>&1 | ${{ matrix.outputFilter }}
   Linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -283,6 +283,11 @@ jobs:
           - image: swift:5.9-centos7
           - image: swift:5.9-amazonlinux2
           - image: swift:5.9-rhel-ubi9
+          - image: swift:5.10-focal
+          - image: swift:5.10-jammy
+          - image: swift:5.10-centos7
+          - image: swift:5.10-amazonlinux2
+          - image: swift:5.10-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
           - image: swiftlang/swift:nightly-amazonlinux2
@@ -315,6 +320,9 @@ jobs:
           - branch: swift-5.9-release
             tag: 5.9-RELEASE
             name: Windows Swift 5.9
+          - branch: swift-5.10-release
+            tag: 5.10-RELEASE
+            name: Windows Swift 5.10
     steps:
       - name: Setup
         uses: compnerd/gha-setup-swift@main
