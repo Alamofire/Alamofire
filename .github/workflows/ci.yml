@@ -295,7 +295,7 @@ jobs:
       image: ${{ matrix.image }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
   Android:
