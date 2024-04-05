@@ -133,7 +133,7 @@ class BaseTestCase: XCTestCase {
     ///   - object: The testing object for each class.
     ///   - file: Which file that failure test happens.
     ///   - line: Which line that failure test happens.
-    @available(iOS 13.0, *)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, *)
     func checkMemoryLeaks(_ object: AnyObject, file: StaticString = #file, line: UInt = #line) {
         addTeardownBlock { [weak object] in
             XCTAssertNil(object, "The object should be deallocated. Memory leaks may happen in the object.", file: file, line: line)
