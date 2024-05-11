@@ -730,6 +730,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS"
         dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
 
         let encoder = URLEncodedFormEncoder(dateEncoding: .formatted(dateFormatter))
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
