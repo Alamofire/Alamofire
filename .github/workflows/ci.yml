@@ -31,9 +31,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_15.4"
+            runsOn: firebreak
+            name: "macOS 14, Xcode 15.4, Swift 5.10"
+            testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.2"
             runsOn: firebreak
-            name: "macOS 13, Xcode 15.2, Swift 5.9.2"
+            name: "macOS 14, Xcode 15.2, Swift 5.9.2"
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.1"
@@ -79,6 +84,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_15.4"
+            name: "Catalyst 15.4"
+            runsOn: firebreak
           - xcode: "Xcode_15.2"
             name: "Catalyst 15.2"
             runsOn: firebreak
@@ -107,6 +115,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=17.5,name=iPhone 15 Pro"
+            name: "iOS 17.5"
+            testPlan: "iOS"
+            xcode: "Xcode_15.4"
+            runsOn: firebreak
           - destination: "OS=17.2,name=iPhone 15 Pro"
             name: "iOS 17.2"
             testPlan: "iOS"
@@ -143,6 +156,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=17.5,name=Apple TV"
+            name: "tvOS 17.5"
+            testPlan: "tvOS"
+            xcode: "Xcode_15.4"
+            runsOn: firebreak
           - destination: "OS=17.2,name=Apple TV"
             name: "tvOS 17.2"
             testPlan: "tvOS"
@@ -173,16 +191,23 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_15.2.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=1.2,name=Apple Vision Pro"
+            name: "visionOS 1.2"
+            testPlan: "visionOS"
+            scheme: "Alamofire visionOS"
+            xcode: "Xcode_15.4"
+            runsOn: firebreak
           - destination: "OS=1.0,name=Apple Vision Pro"
             name: "visionOS 1.0"
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
+            xcode: "Xcode_15.2"
             runsOn: firebreak
     steps:
       - uses: actions/checkout@v4
@@ -200,6 +225,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=10.5,name=Apple Watch Series 9 (45mm)"
+            name: "watchOS 10.5"
+            testPlan: "watchOS"
+            xcode: "Xcode_15.4"
+            runsOn: firebreak
           - destination: "OS=10.2,name=Apple Watch Series 9 (45mm)"
             name: "watchOS 10.2"
             testPlan: "watchOS"
@@ -236,9 +266,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_15.4"
+            runsOn: firebreak
+            name: "macOS 14, SPM 5.10 Test"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.2"
             runsOn: firebreak
-            name: "macOS 13, SPM 5.9.2 Test"
+            name: "macOS 14, SPM 5.9.2 Test"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.1"
             runsOn: macOS-14
@@ -295,7 +329,7 @@ jobs:
       image: ${{ matrix.image }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
   Android:
