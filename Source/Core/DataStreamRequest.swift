@@ -464,6 +464,7 @@ public final class DataStreamRequest: Request {
                                                       preprocessor: DataPreprocessor = PassthroughPreprocessor(),
                                                       stream: @escaping Handler<T, AFError>) -> Self {
         responseStream(using: DecodableStreamSerializer<T>(decoder: decoder, dataPreprocessor: preprocessor),
+                       on: queue,
                        stream: stream)
     }
 }

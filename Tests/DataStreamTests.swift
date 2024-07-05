@@ -70,6 +70,46 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(completeOnMain)
     }
 
+    func testThatDataCanBeStreamedOnArbitraryQueue() {
+        // Given
+        let expectedSize = 5
+        var accumulatedData = Data()
+        var initialResponse: HTTPURLResponse?
+        var response: HTTPURLResponse?
+        let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
+        let didReceiveResponse = expectation(description: "stream should receive response once")
+        let didReceive = expectation(description: "stream should receive once")
+        let didComplete = expectation(description: "stream should complete")
+
+        // When
+        AF.streamRequest(.bytes(expectedSize))
+            .onHTTPResponse { response in
+                initialResponse = response
+                didReceiveResponse.fulfill()
+            }
+            .responseStream(on: streamQueue) { stream in
+                dispatchPrecondition(condition: .onQueue(streamQueue))
+                switch stream.event {
+                case let .stream(result):
+                    switch result {
+                    case let .success(data):
+                        accumulatedData.append(data)
+                    }
+                    didReceive.fulfill()
+                case let .complete(completion):
+                    response = completion.response
+                    didComplete.fulfill()
+                }
+            }
+
+        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertEqual(initialResponse, response)
+        XCTAssertEqual(accumulatedData.count, expectedSize)
+    }
+
     func testThatDataCanBeStreamedByByte() throws {
         guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
             throw XCTSkip("Older OSes don't return individual bytes.")
