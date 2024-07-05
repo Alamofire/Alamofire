@@ -309,22 +309,15 @@ jobs:
         include:
           - image: swift:5.8-focal
           - image: swift:5.8-jammy
-          - image: swift:5.8-centos7
-          - image: swift:5.8-amazonlinux2
           - image: swift:5.8-rhel-ubi9
           - image: swift:5.9-focal
           - image: swift:5.9-jammy
-          - image: swift:5.9-centos7
-          - image: swift:5.9-amazonlinux2
           - image: swift:5.9-rhel-ubi9
           - image: swift:5.10-focal
           - image: swift:5.10-jammy
-          - image: swift:5.10-centos7
-          - image: swift:5.10-amazonlinux2
           - image: swift:5.10-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
-          - image: swiftlang/swift:nightly-amazonlinux2
     container:
       image: ${{ matrix.image }}
     timeout-minutes: 10
