@@ -139,7 +139,7 @@ jobs:
             name: "iOS 15.5"
             testPlan: "iOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: macOS-12
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
@@ -180,7 +180,7 @@ jobs:
             name: "tvOS 15.4"
             testPlan: "tvOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: macOS-12
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
@@ -249,7 +249,7 @@ jobs:
             name: "watchOS 8.5"
             testPlan: "watchOS-NoTS"
             xcode: "Xcode_14.3.1"
-            runsOn: macOS-13
+            runsOn: macOS-12
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
