@@ -70,6 +70,46 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(completeOnMain)
     }
 
+    func testThatDataCanBeStreamedOnArbitraryQueue() {
+        // Given
+        let expectedSize = 5
+        var accumulatedData = Data()
+        var initialResponse: HTTPURLResponse?
+        var response: HTTPURLResponse?
+        let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
+        let didReceiveResponse = expectation(description: "stream should receive response once")
+        let didReceive = expectation(description: "stream should receive once")
+        let didComplete = expectation(description: "stream should complete")
+
+        // When
+        AF.streamRequest(.bytes(expectedSize))
+            .onHTTPResponse { response in
+                initialResponse = response
+                didReceiveResponse.fulfill()
+            }
+            .responseStream(on: streamQueue) { stream in
+                dispatchPrecondition(condition: .onQueue(streamQueue))
+                switch stream.event {
+                case let .stream(result):
+                    switch result {
+                    case let .success(data):
+                        accumulatedData.append(data)
+                    }
+                    didReceive.fulfill()
+                case let .complete(completion):
+                    response = completion.response
+                    didComplete.fulfill()
+                }
+            }
+
+        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertEqual(initialResponse, response)
+        XCTAssertEqual(accumulatedData.count, expectedSize)
+    }
+
     func testThatDataCanBeStreamedByByte() throws {
         guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
             throw XCTSkip("Older OSes don't return individual bytes.")
@@ -660,6 +700,38 @@ final class DataStreamSerializationTests: BaseTestCase {
         XCTAssertEqual(response?.statusCode, 200)
     }
 
+    func testThatDataStreamsCanBeAStringOnAnArbitraryQueue() {
+        // Given
+        var responseString: String?
+        var response: HTTPURLResponse?
+        let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
+        let didStream = expectation(description: "did stream")
+        let didComplete = expectation(description: "stream complete")
+
+        // When
+        AF.streamRequest(.stream(1))
+            .responseStreamString(on: streamQueue) { stream in
+                dispatchPrecondition(condition: .onQueue(streamQueue))
+                switch stream.event {
+                case let .stream(result):
+                    switch result {
+                    case let .success(string):
+                        responseString = string
+                    }
+                    didStream.fulfill()
+                case let .complete(completion):
+                    response = completion.response
+                    didComplete.fulfill()
+                }
+            }
+
+        wait(for: [didStream, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertNotNil(responseString)
+        XCTAssertEqual(response?.statusCode, 200)
+    }
+
     func testThatDataStreamsCanBeDecoded() {
         // Given
         var response: TestResponse?
@@ -695,6 +767,42 @@ final class DataStreamSerializationTests: BaseTestCase {
         // Then
         XCTAssertTrue(streamOnMain)
         XCTAssertTrue(completeOnMain)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(httpResponse?.statusCode, 200)
+        XCTAssertNil(decodingError)
+    }
+
+    func testThatDataStreamsCanBeDecodedOnAnArbitraryQueue() {
+        // Given
+        var response: TestResponse?
+        var httpResponse: HTTPURLResponse?
+        var decodingError: AFError?
+        let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
+        let didReceive = expectation(description: "stream did receive")
+        let didComplete = expectation(description: "stream complete")
+
+        // When
+        AF.streamRequest(.stream(1))
+            .responseStreamDecodable(of: TestResponse.self, on: streamQueue) { stream in
+                dispatchPrecondition(condition: .onQueue(streamQueue))
+                switch stream.event {
+                case let .stream(result):
+                    switch result {
+                    case let .success(value):
+                        response = value
+                    case let .failure(error):
+                        decodingError = error
+                    }
+                    didReceive.fulfill()
+                case let .complete(completion):
+                    httpResponse = completion.response
+                    didComplete.fulfill()
+                }
+            }
+
+        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
         XCTAssertNotNil(response)
         XCTAssertEqual(httpResponse?.statusCode, 200)
         XCTAssertNil(decodingError)
