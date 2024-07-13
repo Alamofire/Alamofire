@@ -27,7 +27,7 @@ import Foundation
 /// `Request` subclass which handles in-memory `Data` download using `URLSessionDataTask`.
 public class DataRequest: Request {
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
-    public let convertible: URLRequestConvertible
+    public let convertible: any URLRequestConvertible
     /// `Data` read from the server so far.
     public var data: Data? { dataMutableState.data }
 
@@ -52,12 +52,12 @@ public class DataRequest: Request {
     ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
     ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     init(id: UUID = UUID(),
-         convertible: URLRequestConvertible,
+         convertible: any URLRequestConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
-         delegate: RequestDelegate) {
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
+         delegate: any RequestDelegate) {
         self.convertible = convertible
 
         super.init(id: id,
@@ -349,7 +349,7 @@ public class DataRequest: Request {
     /// - Returns:               The request.
     @discardableResult
     public func responseData(queue: DispatchQueue = .main,
-                             dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                             dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                              emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods,
                              completionHandler: @escaping (AFDataResponse<Data>) -> Void) -> Self {
@@ -375,7 +375,7 @@ public class DataRequest: Request {
     /// - Returns:               The request.
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
-                               dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                               dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                encoding: String.Encoding? = nil,
                                emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                                emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods,
@@ -404,7 +404,7 @@ public class DataRequest: Request {
     @available(*, deprecated, message: "responseJSON deprecated and will be removed in Alamofire 6. Use responseDecodable instead.")
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
-                             dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
+                             dataPreprocessor: any DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
                              emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
@@ -433,8 +433,8 @@ public class DataRequest: Request {
     @discardableResult
     public func responseDecodable<T: Decodable>(of type: T.Type = T.self,
                                                 queue: DispatchQueue = .main,
-                                                dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                                decoder: DataDecoder = JSONDecoder(),
+                                                dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                                decoder: any DataDecoder = JSONDecoder(),
                                                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                 emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods,
                                                 completionHandler: @escaping (AFDataResponse<T>) -> Void) -> Self {

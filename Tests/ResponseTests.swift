@@ -425,7 +425,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<String, Error>?
+        var response: DataResponse<String, any Error>?
 
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
@@ -453,7 +453,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
 
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<String, Error>?
+        var response: DataResponse<String, any Error>?
 
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseData { resp in
@@ -486,7 +486,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL error")
 
-        var response: DataResponse<String, Error>?
+        var response: DataResponse<String, any Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
@@ -579,7 +579,7 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<Data, Error>?
+        var response: DataResponse<Data, any Error>?
 
         // When
         AF.request(.default).responseData { resp in
@@ -602,7 +602,7 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
-        var response: DataResponse<Data, Error>?
+        var response: DataResponse<Data, any Error>?
 
         // When
         AF.request(urlString).responseData { resp in
@@ -632,7 +632,7 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
-        var response: DataResponse<Data, Error>?
+        var response: DataResponse<Data, any Error>?
 
         // When
         AF.request(urlString).responseData { resp in

@@ -79,7 +79,7 @@ extension Result {
     ///
     /// - returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> Result<NewSuccess, Error> {
+    func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> Result<NewSuccess, any Error> {
         switch self {
         case let .success(value):
             do {
@@ -105,7 +105,7 @@ extension Result {
     ///
     /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same success.
-    func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> Result<Success, Error> {
+    func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> Result<Success, any Error> {
         switch self {
         case let .failure(error):
             do {

@@ -797,7 +797,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DownloadResponse<String, Error>?
+        var response: DownloadResponse<String, any Error>?
 
         // When
         AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
@@ -826,7 +826,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
 
         let expectation = expectation(description: "request should succeed")
 
-        var response: DownloadResponse<String, Error>?
+        var response: DownloadResponse<String, any Error>?
 
         // When
         AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
@@ -858,7 +858,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with 404")
 
-        var response: DownloadResponse<String, Error>?
+        var response: DownloadResponse<String, any Error>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
@@ -942,7 +942,7 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DownloadResponse<Data, Error>?
+        var response: DownloadResponse<Data, any Error>?
 
         // When
         AF.download(.get).responseData { resp in
@@ -967,7 +967,7 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
-        var response: DownloadResponse<Data, Error>?
+        var response: DownloadResponse<Data, any Error>?
 
         // When
         AF.download(urlString).responseData { resp in
@@ -999,7 +999,7 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
-        var response: DownloadResponse<Data, Error>?
+        var response: DownloadResponse<Data, any Error>?
 
         // When
         AF.download(urlString).responseData { resp in

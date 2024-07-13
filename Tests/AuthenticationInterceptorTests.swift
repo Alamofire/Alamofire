@@ -61,10 +61,10 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         private(set) var isRequestAuthenticatedWithCredentialCount = 0
 
         let shouldRefreshAsynchronously: Bool
-        let refreshResult: Result<TestCredential, Error>?
+        let refreshResult: Result<TestCredential, any Error>?
         let lock = NSLock()
 
-        init(shouldRefreshAsynchronously: Bool = true, refreshResult: Result<TestCredential, Error>? = nil) {
+        init(shouldRefreshAsynchronously: Bool = true, refreshResult: Result<TestCredential, any Error>? = nil) {
             self.shouldRefreshAsynchronously = shouldRefreshAsynchronously
             self.refreshResult = refreshResult
         }
@@ -79,7 +79,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         func refresh(_ credential: TestCredential,
                      for session: Session,
-                     completion: @escaping (Result<TestCredential, Error>) -> Void) {
+                     completion: @escaping (Result<TestCredential, any Error>) -> Void) {
             lock.lock()
 
             refreshCount += 1
@@ -103,7 +103,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         func didRequest(_ urlRequest: URLRequest,
                         with response: HTTPURLResponse,
-                        failDueToAuthenticationError error: Error)
+                        failDueToAuthenticationError error: any Error)
             -> Bool {
             lock.lock(); defer { lock.unlock() }
 
@@ -128,7 +128,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
             self.paths = paths
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
             var request = urlRequest
 
             var urlComponents = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!

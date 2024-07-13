@@ -81,7 +81,7 @@ public final class DataStreamRequest: Request {
     }
 
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
-    public let convertible: URLRequestConvertible
+    public let convertible: any URLRequestConvertible
     /// Whether or not the instance will be cancelled if stream parsing encounters an error.
     public let automaticallyCancelOnStreamError: Bool
 
@@ -122,13 +122,13 @@ public final class DataStreamRequest: Request {
     ///   - delegate:                         `RequestDelegate` that provides an interface to actions not performed by
     ///                                       the `Request`.
     init(id: UUID = UUID(),
-         convertible: URLRequestConvertible,
+         convertible: any URLRequestConvertible,
          automaticallyCancelOnStreamError: Bool,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
-         delegate: RequestDelegate) {
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
+         delegate: any RequestDelegate) {
         self.convertible = convertible
         self.automaticallyCancelOnStreamError = automaticallyCancelOnStreamError
 
@@ -460,8 +460,8 @@ public final class DataStreamRequest: Request {
     @discardableResult
     public func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
                                                       on queue: DispatchQueue = .main,
-                                                      using decoder: DataDecoder = JSONDecoder(),
-                                                      preprocessor: DataPreprocessor = PassthroughPreprocessor(),
+                                                      using decoder: any DataDecoder = JSONDecoder(),
+                                                      preprocessor: any DataPreprocessor = PassthroughPreprocessor(),
                                                       stream: @escaping Handler<T, AFError>) -> Self {
         responseStream(using: DecodableStreamSerializer<T>(decoder: decoder, dataPreprocessor: preprocessor),
                        on: queue,
@@ -517,16 +517,16 @@ public protocol DataStreamSerializer {
 /// `DataStreamSerializer` which uses the provided `DataPreprocessor` and `DataDecoder` to serialize the incoming `Data`.
 public struct DecodableStreamSerializer<T: Decodable>: DataStreamSerializer {
     /// `DataDecoder` used to decode incoming `Data`.
-    public let decoder: DataDecoder
+    public let decoder: any DataDecoder
     /// `DataPreprocessor` incoming `Data` is passed through before being passed to the `DataDecoder`.
-    public let dataPreprocessor: DataPreprocessor
+    public let dataPreprocessor: any DataPreprocessor
 
     /// Creates an instance with the provided `DataDecoder` and `DataPreprocessor`.
     /// - Parameters:
     ///   - decoder: `        DataDecoder` used to decode incoming `Data`. `JSONDecoder()` by default.
     ///   - dataPreprocessor: `DataPreprocessor` used to process incoming `Data` before it's passed through the
     ///                       `decoder`. `PassthroughPreprocessor()` by default.
-    public init(decoder: DataDecoder = JSONDecoder(), dataPreprocessor: DataPreprocessor = PassthroughPreprocessor()) {
+    public init(decoder: any DataDecoder = JSONDecoder(), dataPreprocessor: any DataPreprocessor = PassthroughPreprocessor()) {
         self.decoder = decoder
         self.dataPreprocessor = dataPreprocessor
     }
@@ -568,8 +568,8 @@ extension DataStreamSerializer {
     ///   - dataPreprocessor: `DataPreprocessor` used to process incoming `Data` before it's passed through the
     ///                       `decoder`. `PassthroughPreprocessor()` by default.
     public static func decodable<T: Decodable>(of type: T.Type,
-                                               decoder: DataDecoder = JSONDecoder(),
-                                               dataPreprocessor: DataPreprocessor = PassthroughPreprocessor()) -> Self where Self == DecodableStreamSerializer<T> {
+                                               decoder: any DataDecoder = JSONDecoder(),
+                                               dataPreprocessor: any DataPreprocessor = PassthroughPreprocessor()) -> Self where Self == DecodableStreamSerializer<T> {
         DecodableStreamSerializer<T>(decoder: decoder, dataPreprocessor: dataPreprocessor)
     }
 }

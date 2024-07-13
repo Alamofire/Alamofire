@@ -40,7 +40,7 @@ public final class UploadRequest: DataRequest {
     // MARK: Initial State
 
     /// The `UploadableConvertible` value used to produce the `Uploadable` value for this instance.
-    public let upload: UploadableConvertible
+    public let upload: any UploadableConvertible
 
     /// `FileManager` used to perform cleanup tasks, including the removal of multipart form encoded payloads written
     /// to disk.
@@ -65,13 +65,13 @@ public final class UploadRequest: DataRequest {
     ///                         encoded payloads written to disk.
     ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     init(id: UUID = UUID(),
-         convertible: UploadConvertible,
+         convertible: any UploadConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
          fileManager: FileManager,
-         delegate: RequestDelegate) {
+         delegate: any RequestDelegate) {
         upload = convertible
         self.fileManager = fileManager
 
