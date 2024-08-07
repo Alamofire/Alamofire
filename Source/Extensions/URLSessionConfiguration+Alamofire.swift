@@ -27,19 +27,30 @@ import Foundation
 extension URLSessionConfiguration: AlamofireExtended {}
 extension AlamofireExtension where ExtendedType: URLSessionConfiguration {
     /// Alamofire's default configuration. Same as `URLSessionConfiguration.default` but adds Alamofire default
-    /// `Accept-Language`, `Accept-Encoding`, and `User-Agent` headers.
+    /// `Accept-Language`, `Accept-Encoding`, and `User-Agent` headers. Enables handover MPTCP by default
+    /// on iOS 11+
     public static var `default`: URLSessionConfiguration {
         let configuration = URLSessionConfiguration.default
         configuration.headers = .default
+        #if TARGET_OS_IOS
+        if #available(iOS 11, *){
+            configuration.multipathServiceType = .handover
+        }
+        #endif
 
         return configuration
     }
 
     /// `.ephemeral` configuration with Alamofire's default `Accept-Language`, `Accept-Encoding`, and `User-Agent`
-    /// headers.
+    /// headers. Enables handover MPTCP by default on iOS 11+
     public static var ephemeral: URLSessionConfiguration {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.headers = .default
+        #if TARGET_OS_IOS
+        if #available(iOS 11, *){
+            configuration.multipathServiceType = .handover
+        }
+        #endif
 
         return configuration
     }
