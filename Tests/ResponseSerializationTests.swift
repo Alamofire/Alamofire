@@ -1184,7 +1184,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
     func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
         // Given
         final class UselessResponseSerializer: ResponseSerializer {
-            func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data? {
+            func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Data? {
                 data
             }
         }
@@ -1382,7 +1382,7 @@ final class DataPreprocessorTests: BaseTestCase {
 }
 
 final class StaticDataPreprocessorTests: BaseTestCase {
-    func consumeDataPreprocessor(_ dataPreprocessor: DataPreprocessor) {
+    func consumeDataPreprocessor(_ dataPreprocessor: any DataPreprocessor) {
         _ = dataPreprocessor
     }
 

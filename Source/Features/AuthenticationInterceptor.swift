@@ -81,7 +81,7 @@ public protocol Authenticator: AnyObject {
     ///   - credential: The `Credential` to refresh.
     ///   - session:    The `Session` requiring the refresh.
     ///   - completion: The closure to be executed once the refresh is complete.
-    func refresh(_ credential: Credential, for session: Session, completion: @escaping (Result<Credential, Error>) -> Void)
+    func refresh(_ credential: Credential, for session: Session, completion: @escaping (Result<Credential, any Error>) -> Void)
 
     /// Determines whether the `URLRequest` failed due to an authentication error based on the `HTTPURLResponse`.
     ///
@@ -106,7 +106,7 @@ public protocol Authenticator: AnyObject {
     ///   - error:      The `Error`.
     ///
     /// - Returns: `true` if the `URLRequest` failed due to an authentication error, `false` otherwise.
-    func didRequest(_ urlRequest: URLRequest, with response: HTTPURLResponse, failDueToAuthenticationError error: Error) -> Bool
+    func didRequest(_ urlRequest: URLRequest, with response: HTTPURLResponse, failDueToAuthenticationError error: any Error) -> Bool
 
     /// Determines whether the `URLRequest` is authenticated with the `Credential`.
     ///
@@ -193,7 +193,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
     private struct AdaptOperation {
         let urlRequest: URLRequest
         let session: Session
-        let completion: (Result<URLRequest, Error>) -> Void
+        let completion: (Result<URLRequest, any Error>) -> Void
     }
 
     private enum AdaptResult {
@@ -246,7 +246,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Adapt
 
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         let adaptResult: AdaptResult = mutableState.write { mutableState in
             // Queue the adapt operation if a refresh is already in place.
             guard !mutableState.isRefreshing else {
@@ -289,7 +289,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Retry
 
-    public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    public func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
         // Do not attempt retry if there was not an original request and response from the server.
         guard let urlRequest = request.request, let response = request.response else {
             completion(.doNotRetry)
@@ -384,7 +384,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
         }
     }
 
-    private func handleRefreshFailure(_ error: Error, insideLock mutableState: inout MutableState) {
+    private func handleRefreshFailure(_ error: any Error, insideLock mutableState: inout MutableState) {
         let adaptOperations = mutableState.adaptOperations
         let requestsToRetry = mutableState.requestsToRetry
 

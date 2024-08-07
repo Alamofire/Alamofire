@@ -191,7 +191,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
     // MARK: Private - Test Helpers
 
-    private func session(using handler: CachedResponseHandler? = nil) -> Session {
+    private func session(using handler: (any CachedResponseHandler)? = nil) -> Session {
         let configuration = URLSessionConfiguration.af.default
         let capacity = 100_000_000
         let cache: URLCache
@@ -209,7 +209,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 }
 
 final class StaticCachedResponseHandlerTests: BaseTestCase {
-    func takeCachedResponseHandler(_ handler: CachedResponseHandler) {
+    func takeCachedResponseHandler(_ handler: any CachedResponseHandler) {
         _ = handler
     }
 

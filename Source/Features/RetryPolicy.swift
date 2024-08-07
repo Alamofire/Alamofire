@@ -307,7 +307,7 @@ open class RetryPolicy: RequestInterceptor {
 
     open func retry(_ request: Request,
                     for session: Session,
-                    dueTo error: Error,
+                    dueTo error: any Error,
                     completion: @escaping (RetryResult) -> Void) {
         if request.retryCount < retryLimit, shouldRetry(request: request, dueTo: error) {
             completion(.retryWithDelay(pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale))
@@ -323,7 +323,7 @@ open class RetryPolicy: RequestInterceptor {
     ///     - error:   `Error` encountered while executing the `Request`.
     ///
     /// - Returns:     `Bool` determining whether or not to retry the `Request`.
-    open func shouldRetry(request: Request, dueTo error: Error) -> Bool {
+    open func shouldRetry(request: Request, dueTo error: any Error) -> Bool {
         guard let httpMethod = request.request?.method, retryableHTTPMethods.contains(httpMethod) else { return false }
 
         if let statusCode = request.response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {

@@ -89,7 +89,7 @@ final class AdapterTestCase: BaseTestCase {
             completion(.success(request))
         }
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         // When
         adapter.adapt(urlRequest, for: session) { result = $0 }
@@ -107,7 +107,7 @@ final class AdapterTestCase: BaseTestCase {
 
             override func adapt(_ urlRequest: URLRequest,
                                 using state: RequestAdapterState,
-                                completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                                completion: @escaping (Result<URLRequest, any Error>) -> Void) {
                 self.urlRequest = urlRequest
                 self.state = state
 
@@ -128,7 +128,7 @@ final class AdapterTestCase: BaseTestCase {
 
         let state = RequestAdapterState(requestID: requestID, session: session)
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         // When
         adapter.adapt(urlRequest, using: state) { result = $0 }
@@ -172,7 +172,7 @@ final class AdapterTestCase: BaseTestCase {
             }
         }
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         let completesExpectation = expectation(description: "adapter completes")
 
@@ -223,7 +223,7 @@ final class RetrierTestCase: BaseTestCase {
             completion(.retry)
         }
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         // When
         retrier.adapt(urlRequest, for: session) { result = $0 }
@@ -325,7 +325,7 @@ final class InterceptorTests: BaseTestCase {
         let session = Session()
         let interceptor = Interceptor()
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -343,7 +343,7 @@ final class InterceptorTests: BaseTestCase {
         let adapter = Adapter { _, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -362,7 +362,7 @@ final class InterceptorTests: BaseTestCase {
         let adapter2 = Adapter { _, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter1, adapter2])
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -382,7 +382,7 @@ final class InterceptorTests: BaseTestCase {
         let interceptor = Interceptor(adapters: [adapter1, adapter2])
         let state = RequestAdapterState(requestID: UUID(), session: session)
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         // When
         interceptor.adapt(urlRequest, using: state) { result = $0 }
@@ -404,7 +404,7 @@ final class InterceptorTests: BaseTestCase {
         }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: Result<URLRequest, Error>!
+        var result: Result<URLRequest, any Error>!
 
         let completesExpectation = expectation(description: "interceptor completes")
 
@@ -592,15 +592,15 @@ final class InterceptorRequestTests: BaseTestCase {
 // MARK: - Static Accessors
 
 final class StaticAccessorTests: BaseTestCase {
-    func consumeRequestAdapter(_ requestAdapter: RequestAdapter) {
+    func consumeRequestAdapter(_ requestAdapter: any RequestAdapter) {
         _ = requestAdapter
     }
 
-    func consumeRequestRetrier(_ requestRetrier: RequestRetrier) {
+    func consumeRequestRetrier(_ requestRetrier: any RequestRetrier) {
         _ = requestRetrier
     }
 
-    func consumeRequestInterceptor(_ requestInterceptor: RequestInterceptor) {
+    func consumeRequestInterceptor(_ requestInterceptor: any RequestInterceptor) {
         _ = requestInterceptor
     }
 
@@ -634,10 +634,10 @@ final class StaticAccessorTests: BaseTestCase {
 
 /// Class which captures the output of any underlying `RequestInterceptor`.
 final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterceptor {
-    var onAdaptation: ((Result<URLRequest, Error>) -> Void)?
+    var onAdaptation: ((Result<URLRequest, any Error>) -> Void)?
     var onRetry: ((RetryResult) -> Void)?
 
-    private(set) var adaptations: [Result<URLRequest, Error>] = []
+    private(set) var adaptations: [Result<URLRequest, any Error>] = []
     private(set) var retries: [RetryResult] = []
 
     /// Number of times `retry` was called.
@@ -649,7 +649,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
         self.interceptor = interceptor
     }
 
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         interceptor.adapt(urlRequest, for: session) { result in
             self.adaptations.append(result)
             completion(result)
@@ -657,7 +657,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
         }
     }
 
-    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
         interceptor.retry(request, for: session, dueTo: error) { result in
             self.retries.append(result)
             completion(result)
@@ -670,7 +670,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
 final class SingleRetrier: RequestInterceptor {
     private var hasRetried = false
 
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         if hasRetried {
             let method = urlRequest.method ?? .get
             let endpoint = Endpoint(path: .method(method),
@@ -682,7 +682,7 @@ final class SingleRetrier: RequestInterceptor {
         }
     }
 
-    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
         completion(hasRetried ? .doNotRetry : .retry)
         hasRetried = true
     }

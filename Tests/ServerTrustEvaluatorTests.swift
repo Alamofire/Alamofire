@@ -1425,7 +1425,7 @@ final class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTest
 }
 
 final class StaticServerTrustAccessorTests: ServerTrustPolicyTestCase {
-    func consumeServerTrustEvaluator(_ evaluator: ServerTrustEvaluating) {
+    func consumeServerTrustEvaluator(_ evaluator: any ServerTrustEvaluating) {
         _ = evaluator
     }
 

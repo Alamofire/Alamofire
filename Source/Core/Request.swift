@@ -72,11 +72,11 @@ public class Request {
     /// The queue used for all serialization actions. By default it's a serial queue that targets `underlyingQueue`.
     public let serializationQueue: DispatchQueue
     /// `EventMonitor` used for event callbacks.
-    public let eventMonitor: EventMonitor?
+    public let eventMonitor: (any EventMonitor)?
     /// The `Request`'s interceptor.
-    public let interceptor: RequestInterceptor?
+    public let interceptor: (any RequestInterceptor)?
     /// The `Request`'s delegate.
-    public private(set) weak var delegate: RequestDelegate?
+    public private(set) weak var delegate: (any RequestDelegate)?
 
     // MARK: - Mutable State
 
@@ -89,9 +89,9 @@ public class Request {
         /// `ProgressHandler` and `DispatchQueue` provided for download progress callbacks.
         var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
         /// `RedirectHandler` provided for to handle request redirection.
-        var redirectHandler: RedirectHandler?
+        var redirectHandler: (any RedirectHandler)?
         /// `CachedResponseHandler` provided to handle response caching.
-        var cachedResponseHandler: CachedResponseHandler?
+        var cachedResponseHandler: (any CachedResponseHandler)?
         /// Queue and closure called when the `Request` is able to create a cURL description of itself.
         var cURLHandler: (queue: DispatchQueue, handler: (String) -> Void)?
         /// Queue and closure called when the `Request` creates a `URLRequest`.
@@ -164,7 +164,7 @@ public class Request {
     // MARK: Redirect Handling
 
     /// `RedirectHandler` set on the instance.
-    public internal(set) var redirectHandler: RedirectHandler? {
+    public internal(set) var redirectHandler: (any RedirectHandler)? {
         get { mutableState.redirectHandler }
         set { mutableState.redirectHandler = newValue }
     }
@@ -172,7 +172,7 @@ public class Request {
     // MARK: Cached Response Handling
 
     /// `CachedResponseHandler` set on the instance.
-    public internal(set) var cachedResponseHandler: CachedResponseHandler? {
+    public internal(set) var cachedResponseHandler: (any CachedResponseHandler)? {
         get { mutableState.cachedResponseHandler }
         set { mutableState.cachedResponseHandler = newValue }
     }
@@ -259,9 +259,9 @@ public class Request {
     init(id: UUID = UUID(),
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
-         delegate: RequestDelegate) {
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
+         delegate: any RequestDelegate) {
         self.id = id
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue
@@ -802,7 +802,7 @@ public class Request {
     ///
     /// - Returns:           The instance.
     @discardableResult
-    public func redirect(using handler: RedirectHandler) -> Self {
+    public func redirect(using handler: any RedirectHandler) -> Self {
         mutableState.write { mutableState in
             precondition(mutableState.redirectHandler == nil, "Redirect handler has already been set.")
             mutableState.redirectHandler = handler
@@ -821,7 +821,7 @@ public class Request {
     ///
     /// - Returns:           The instance.
     @discardableResult
-    public func cacheResponse(using handler: CachedResponseHandler) -> Self {
+    public func cacheResponse(using handler: any CachedResponseHandler) -> Self {
         mutableState.write { mutableState in
             precondition(mutableState.cachedResponseHandler == nil, "Cached response handler has already been set.")
             mutableState.cachedResponseHandler = handler

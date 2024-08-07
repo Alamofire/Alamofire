@@ -221,7 +221,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
 }
 
 final class StaticRedirectHandlerTests: BaseTestCase {
-    func takeRedirectHandler(_ handler: RedirectHandler) {
+    func takeRedirectHandler(_ handler: any RedirectHandler) {
         _ = handler
     }
 

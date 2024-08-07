@@ -125,7 +125,7 @@ import Foundation
         /// Received a pong with the associated state.
         case pong(Pong)
         /// Received an error.
-        case error(Error)
+        case error(any Error)
         /// Did not send the ping, the request is cancelled or suspended.
         case unsent
     }
@@ -133,7 +133,7 @@ import Foundation
     struct SocketMutableState {
         var enqueuedSends: [(message: URLSessionWebSocketTask.Message,
                              queue: DispatchQueue,
-                             completionHandler: (Result<Void, Error>) -> Void)] = []
+                             completionHandler: (Result<Void, any Error>) -> Void)] = []
         var handlers: [(queue: DispatchQueue, handler: (_ event: IncomingEvent) -> Void)] = []
         var pingTimerItem: DispatchWorkItem?
     }
@@ -144,17 +144,17 @@ import Foundation
         task as? URLSessionWebSocketTask
     }
 
-    public let convertible: URLRequestConvertible
+    public let convertible: any URLRequestConvertible
     public let configuration: Configuration
 
     init(id: UUID = UUID(),
-         convertible: URLRequestConvertible,
+         convertible: any URLRequestConvertible,
          configuration: Configuration,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
-         delegate: RequestDelegate) {
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
+         delegate: any RequestDelegate) {
         self.convertible = convertible
         self.configuration = configuration
 
@@ -376,7 +376,7 @@ import Foundation
         _ serializer: Serializer,
         on queue: DispatchQueue = .main,
         handler: @escaping (_ event: Event<Serializer.Output, Serializer.Failure>) -> Void
-    ) -> Self where Serializer: WebSocketMessageSerializer, Serializer.Failure == Error {
+    ) -> Self where Serializer: WebSocketMessageSerializer, Serializer.Failure == any Error {
         forIncomingEvent(on: queue) { incomingEvent in
             let event: Event<Serializer.Output, Serializer.Failure>
             switch incomingEvent {
@@ -403,8 +403,8 @@ import Foundation
     public func streamDecodableEvents<Value>(
         _ type: Value.Type = Value.self,
         on queue: DispatchQueue = .main,
-        using decoder: DataDecoder = JSONDecoder(),
-        handler: @escaping (_ event: Event<Value, Error>) -> Void
+        using decoder: any DataDecoder = JSONDecoder(),
+        handler: @escaping (_ event: Event<Value, any Error>) -> Void
     ) -> Self where Value: Decodable {
         streamSerializer(DecodableWebSocketMessageDecoder<Value>(decoder: decoder), on: queue, handler: handler)
     }
@@ -413,7 +413,7 @@ import Foundation
     public func streamDecodable<Value>(
         _ type: Value.Type = Value.self,
         on queue: DispatchQueue = .main,
-        using decoder: DataDecoder = JSONDecoder(),
+        using decoder: any DataDecoder = JSONDecoder(),
         handler: @escaping (_ value: Value) -> Void
     ) -> Self where Value: Decodable {
         streamDecodableEvents(Value.self, on: queue) { event in
@@ -478,7 +478,7 @@ import Foundation
 
     public func send(_ message: URLSessionWebSocketTask.Message,
                      queue: DispatchQueue = .main,
-                     completionHandler: @escaping (Result<Void, Error>) -> Void) {
+                     completionHandler: @escaping (Result<Void, any Error>) -> Void) {
         guard !(isCancelled || isFinished) else { return }
 
         guard let socket else {
@@ -532,13 +532,13 @@ struct PassthroughWebSocketMessageDecoder: WebSocketMessageSerializer {
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public struct DecodableWebSocketMessageDecoder<Value: Decodable>: WebSocketMessageSerializer {
     public enum Error: Swift.Error {
-        case decoding(Swift.Error)
+        case decoding(any Swift.Error)
         case unknownMessage(description: String)
     }
 
-    public let decoder: DataDecoder
+    public let decoder: any DataDecoder
 
-    public init(decoder: DataDecoder) {
+    public init(decoder: any DataDecoder) {
         self.decoder = decoder
     }
 

@@ -730,8 +730,8 @@ extension Session {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func webSocketRequest(_ endpoint: Endpoint,
                           configuration: WebSocketRequest.Configuration = .default,
-                          interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
-        webSocketRequest(performing: endpoint as URLRequestConvertible,
+                          interceptor: (any RequestInterceptor)? = nil) -> WebSocketRequest {
+        webSocketRequest(performing: endpoint as (any URLRequestConvertible),
                          configuration: configuration,
                          interceptor: interceptor)
     }

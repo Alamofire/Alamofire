@@ -30,7 +30,7 @@ extension Request {
     fileprivate typealias ErrorReason = AFError.ResponseValidationFailureReason
 
     /// Used to represent whether a validation succeeded or failed.
-    public typealias ValidationResult = Result<Void, Error>
+    public typealias ValidationResult = Result<Void, any Error>
 
     fileprivate struct MIMEType {
         let type: String

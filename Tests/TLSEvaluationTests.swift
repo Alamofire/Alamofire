@@ -99,7 +99,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         let expectation = expectation(description: "\(revokedURLString)")
         let manager = Session(configuration: configuration)
 
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(revokedURLString)
@@ -166,7 +166,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(revokedURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(revokedURLString)
@@ -350,7 +350,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(expiredURLString)
@@ -374,7 +374,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(expiredURLString)
@@ -398,7 +398,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(expiredURLString)
@@ -463,7 +463,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(expiredURLString)
@@ -487,7 +487,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(expiredURLString)
@@ -511,7 +511,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(expiredURLString)
@@ -539,7 +539,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: (any Error)?
 
         // When
         manager.request(expiredURLString)

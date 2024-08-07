@@ -683,7 +683,7 @@ extension DataRequest {
         }
     }
 
-    func validate(with error: Error) -> Self {
+    func validate(with error: any Error) -> Self {
         validate { _, _, _ in .failure(error) }
     }
 }
@@ -702,7 +702,7 @@ extension DownloadRequest {
         }
     }
 
-    func validate(with error: Error) -> Self {
+    func validate(with error: any Error) -> Self {
         validate { _, _, _ in .failure(error) }
     }
 }

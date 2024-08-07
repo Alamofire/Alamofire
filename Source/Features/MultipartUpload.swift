@@ -31,11 +31,11 @@ final class MultipartUpload {
     private let multipartFormData: Protected<MultipartFormData>
 
     let encodingMemoryThreshold: UInt64
-    let request: URLRequestConvertible
+    let request: any URLRequestConvertible
     let fileManager: FileManager
 
     init(encodingMemoryThreshold: UInt64,
-         request: URLRequestConvertible,
+         request: any URLRequestConvertible,
          multipartFormData: MultipartFormData) {
         self.encodingMemoryThreshold = encodingMemoryThreshold
         self.request = request
