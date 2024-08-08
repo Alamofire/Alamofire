@@ -752,6 +752,7 @@ open class Session {
     ///                      default.
     ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
     ///                      parameters. `nil` by default.
+    ///   - shouldRemove: A `Bool`  indicating whether whether the source file should be automatically removed once uploaded. `false` by default.
     ///
     /// - Returns:           The created `UploadRequest`.
     open func upload(_ fileURL: URL,
@@ -760,13 +761,14 @@ open class Session {
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default,
-                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+                     requestModifier: RequestModifier? = nil,
+                     shouldRemove: Bool = false) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible,
                                                           method: method,
                                                           headers: headers,
                                                           requestModifier: requestModifier)
 
-        return upload(fileURL, with: convertible, interceptor: interceptor, fileManager: fileManager)
+        return upload(fileURL, with: convertible, interceptor: interceptor, fileManager: fileManager, shouldRemove: shouldRemove)
     }
 
     /// Creates an `UploadRequest` for the file at the given file `URL` using the `URLRequestConvertible` value and
@@ -778,13 +780,15 @@ open class Session {
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
     ///                  default.
+    ///   - shouldRemove: A `Bool`  indicating whether whether the source file should be automatically removed once uploaded. `false` by default.
     ///
     /// - Returns:       The created `UploadRequest`.
     open func upload(_ fileURL: URL,
                      with convertible: URLRequestConvertible,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor, fileManager: fileManager)
+                     fileManager: FileManager = .default,
+                     shouldRemove: Bool = false) -> UploadRequest {
+        upload(.file(fileURL, shouldRemove: shouldRemove), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: InputStream
