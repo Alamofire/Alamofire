@@ -25,7 +25,7 @@
 import Foundation
 
 /// `DataRequest` subclass which handles `Data` upload from memory, file, or stream using `URLSessionUploadTask`.
-public final class UploadRequest: DataRequest {
+public final class UploadRequest: DataRequest, @unchecked Sendable {
     /// Type describing the origin of the upload, whether `Data`, file, or stream.
     public enum Uploadable {
         /// Upload from the provided `Data` value.
@@ -156,7 +156,7 @@ public final class UploadRequest: DataRequest {
 }
 
 /// A type that can produce an `UploadRequest.Uploadable` value.
-public protocol UploadableConvertible {
+public protocol UploadableConvertible: Sendable {
     /// Produces an `UploadRequest.Uploadable` value from the instance.
     ///
     /// - Returns: The `UploadRequest.Uploadable`.

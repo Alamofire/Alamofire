@@ -36,9 +36,9 @@ final class Networking: ObservableObject {
             .compactMap { $0 }
             .map {
                 if case .success = $0 {
-                    return "Successful!"
+                    "Successful!"
                 } else {
-                    return "Failed!"
+                    "Failed!"
                 }
             }
             .assign(to: \.message, on: self)

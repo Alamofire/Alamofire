@@ -62,15 +62,13 @@ open class MultipartFormData {
         }
 
         static func boundaryData(forBoundaryType boundaryType: BoundaryType, boundary: String) -> Data {
-            let boundaryText: String
-
-            switch boundaryType {
+            let boundaryText = switch boundaryType {
             case .initial:
-                boundaryText = "--\(boundary)\(EncodingCharacters.crlf)"
+                "--\(boundary)\(EncodingCharacters.crlf)"
             case .encapsulated:
-                boundaryText = "\(EncodingCharacters.crlf)--\(boundary)\(EncodingCharacters.crlf)"
+                "\(EncodingCharacters.crlf)--\(boundary)\(EncodingCharacters.crlf)"
             case .final:
-                boundaryText = "\(EncodingCharacters.crlf)--\(boundary)--\(EncodingCharacters.crlf)"
+                "\(EncodingCharacters.crlf)--\(boundary)--\(EncodingCharacters.crlf)"
             }
 
             return Data(boundaryText.utf8)
@@ -480,7 +478,7 @@ open class MultipartFormData {
 
     private func writeFinalBoundaryData(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
         if bodyPart.hasFinalBoundary {
-            return try write(finalBoundaryData(), to: outputStream)
+            try write(finalBoundaryData(), to: outputStream)
         }
     }
 

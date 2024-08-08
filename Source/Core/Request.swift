@@ -26,7 +26,7 @@ import Foundation
 
 /// `Request` is the common superclass of all Alamofire request types and provides common state, delegate, and callback
 /// handling.
-public class Request {
+public class Request: @unchecked Sendable {
     /// State of the `Request`, with managed transitions between states set when calling `resume()`, `suspend()`, or
     /// `cancel()` on the `Request`.
     public enum State {
@@ -50,15 +50,15 @@ public class Request {
         func canTransitionTo(_ state: State) -> Bool {
             switch (self, state) {
             case (.initialized, _):
-                return true
+                true
             case (_, .initialized), (.cancelled, _), (.finished, _):
-                return false
+                false
             case (.resumed, .cancelled), (.suspended, .cancelled), (.resumed, .suspended), (.suspended, .resumed):
-                return true
+                true
             case (.suspended, .suspended), (.resumed, .resumed):
-                return false
+                false
             case (_, .finished):
-                return true
+                true
             }
         }
     }
@@ -93,15 +93,15 @@ public class Request {
         /// `CachedResponseHandler` provided to handle response caching.
         var cachedResponseHandler: CachedResponseHandler?
         /// Queue and closure called when the `Request` is able to create a cURL description of itself.
-        var cURLHandler: (queue: DispatchQueue, handler: (String) -> Void)?
+        var cURLHandler: (queue: DispatchQueue, handler: @Sendable (String) -> Void)?
         /// Queue and closure called when the `Request` creates a `URLRequest`.
-        var urlRequestHandler: (queue: DispatchQueue, handler: (URLRequest) -> Void)?
+        var urlRequestHandler: (queue: DispatchQueue, handler: @Sendable (URLRequest) -> Void)?
         /// Queue and closure called when the `Request` creates a `URLSessionTask`.
-        var urlSessionTaskHandler: (queue: DispatchQueue, handler: (URLSessionTask) -> Void)?
+        var urlSessionTaskHandler: (queue: DispatchQueue, handler: @Sendable (URLSessionTask) -> Void)?
         /// Response serialization closures that handle response parsing.
-        var responseSerializers: [() -> Void] = []
+        var responseSerializers: [@Sendable () -> Void] = []
         /// Response serialization completion closures executed once all response serializers are complete.
-        var responseSerializerCompletions: [() -> Void] = []
+        var responseSerializerCompletions: [@Sendable () -> Void] = []
         /// Whether response serializer processing is finished.
         var responseSerializerProcessingFinished = false
         /// `URLCredential` used for authentication challenges.
@@ -143,7 +143,7 @@ public class Request {
     // MARK: Progress
 
     /// Closure type executed when monitoring the upload or download progress of a request.
-    public typealias ProgressHandler = (Progress) -> Void
+    public typealias ProgressHandler = @Sendable (_ progress: Progress) -> Void
 
     /// `Progress` of the upload of the body of the executed `URLRequest`. Reset to `0` if the `Request` is retried.
     public let uploadProgress = Progress(totalUnitCount: 0)
@@ -342,7 +342,9 @@ public class Request {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
         mutableState.read { state in
-            state.urlRequestHandler?.queue.async { state.urlRequestHandler?.handler(request) }
+            guard let urlRequestHandler = state.urlRequestHandler else { return }
+
+            urlRequestHandler.queue.async { urlRequestHandler.handler(request) }
         }
 
         eventMonitor?.request(self, didCreateURLRequest: request)
@@ -531,7 +533,7 @@ public class Request {
     ///  - Note: This method will also `resume` the instance if `delegate.startImmediately` returns `true`.
     ///
     /// - Parameter closure: The closure containing the response serialization call.
-    func appendResponseSerializer(_ closure: @escaping () -> Void) {
+    func appendResponseSerializer(_ closure: @Sendable @escaping () -> Void) {
         mutableState.write { mutableState in
             mutableState.responseSerializers.append(closure)
 
@@ -552,8 +554,8 @@ public class Request {
     /// Returns the next response serializer closure to execute if there's one left.
     ///
     /// - Returns: The next response serialization closure, if there is one.
-    func nextResponseSerializer() -> (() -> Void)? {
-        var responseSerializer: (() -> Void)?
+    func nextResponseSerializer() -> (@Sendable () -> Void)? {
+        var responseSerializer: (@Sendable () -> Void)?
 
         mutableState.write { mutableState in
             let responseSerializerIndex = mutableState.responseSerializerCompletions.count
@@ -605,7 +607,7 @@ public class Request {
     ///
     /// - Parameter completion: The completion handler provided with the response serializer, called when all serializers
     ///                         are complete.
-    func responseSerializerDidComplete(completion: @escaping () -> Void) {
+    func responseSerializerDidComplete(completion: @Sendable @escaping () -> Void) {
         mutableState.write { $0.responseSerializerCompletions.append(completion) }
         processNextResponseSerializer()
     }
@@ -842,7 +844,7 @@ public class Request {
     ///
     /// - Returns:           The instance.
     @discardableResult
-    public func cURLDescription(on queue: DispatchQueue, calling handler: @escaping (String) -> Void) -> Self {
+    public func cURLDescription(on queue: DispatchQueue, calling handler: @Sendable @escaping (String) -> Void) -> Self {
         mutableState.write { mutableState in
             if mutableState.requests.last != nil {
                 queue.async { handler(self.cURLDescription()) }
@@ -863,7 +865,7 @@ public class Request {
     ///
     /// - Returns:           The instance.
     @discardableResult
-    public func cURLDescription(calling handler: @escaping (String) -> Void) -> Self {
+    public func cURLDescription(calling handler: @Sendable @escaping (String) -> Void) -> Self {
         cURLDescription(on: underlyingQueue, calling: handler)
 
         return self
@@ -879,7 +881,7 @@ public class Request {
     ///
     /// - Returns:   The instance.
     @discardableResult
-    public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @escaping (URLRequest) -> Void) -> Self {
+    public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @Sendable @escaping (URLRequest) -> Void) -> Self {
         mutableState.write { state in
             if let request = state.requests.last {
                 queue.async { handler(request) }
@@ -903,7 +905,7 @@ public class Request {
     ///
     /// - Returns:   The instance.
     @discardableResult
-    public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @escaping (URLSessionTask) -> Void) -> Self {
+    public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @Sendable @escaping (URLSessionTask) -> Void) -> Self {
         mutableState.write { state in
             if let task = state.tasks.last {
                 queue.async { handler(task) }
@@ -942,7 +944,7 @@ public class Request {
 
 extension Request {
     /// Type indicating how a `DataRequest` or `DataStreamRequest` should proceed after receiving an `HTTPURLResponse`.
-    public enum ResponseDisposition {
+    public enum ResponseDisposition: Sendable {
         /// Allow the request to continue normally.
         case allow
         /// Cancel the request, similar to calling `cancel()`.
@@ -950,8 +952,8 @@ extension Request {
 
         var sessionDisposition: URLSession.ResponseDisposition {
             switch self {
-            case .allow: return .allow
-            case .cancel: return .cancel
+            case .allow: .allow
+            case .cancel: .cancel
             }
         }
     }
@@ -1061,7 +1063,7 @@ extension Request {
 }
 
 /// Protocol abstraction for `Request`'s communication back to the `SessionDelegate`.
-public protocol RequestDelegate: AnyObject {
+public protocol RequestDelegate: AnyObject, Sendable {
     /// `URLSessionConfiguration` used to create the underlying `URLSessionTask`s.
     var sessionConfiguration: URLSessionConfiguration { get }
 
@@ -1079,7 +1081,7 @@ public protocol RequestDelegate: AnyObject {
     ///   - request:    `Request` which failed.
     ///   - error:      `Error` which produced the failure.
     ///   - completion: Closure taking the `RetryResult` for evaluation.
-    func retryResult(for request: Request, dueTo error: AFError, completion: @escaping (RetryResult) -> Void)
+    func retryResult(for request: Request, dueTo error: AFError, completion: @Sendable @escaping (RetryResult) -> Void)
 
     /// Asynchronously retry the `Request`.
     ///

@@ -357,11 +357,10 @@ extension HTTPHeader {
     ///
     /// See the [Accept-Encoding HTTP header documentation](https://tools.ietf.org/html/rfc7230#section-4.2.3) .
     public static let defaultAcceptEncoding: HTTPHeader = {
-        let encodings: [String]
-        if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
-            encodings = ["br", "gzip", "deflate"]
+        let encodings: [String] = if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
+            ["br", "gzip", "deflate"]
         } else {
-            encodings = ["gzip", "deflate"]
+            ["gzip", "deflate"]
         }
 
         return .acceptEncoding(encodings.qualityEncoded())

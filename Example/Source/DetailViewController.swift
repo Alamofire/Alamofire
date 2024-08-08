@@ -149,9 +149,9 @@ extension DetailViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Sections(rawValue: section)! {
         case .headers:
-            return headers.count
+            headers.count
         case .body:
-            return body == nil ? 0 : 1
+            body == nil ? 0 : 1
         }
     }
 
@@ -198,9 +198,9 @@ extension DetailViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch Sections(rawValue: indexPath.section)! {
         case .body:
-            return 300
+            300
         default:
-            return tableView.rowHeight
+            tableView.rowHeight
         }
     }
 

@@ -25,7 +25,7 @@
 import Foundation
 
 /// Internal type which encapsulates a `MultipartFormData` upload.
-final class MultipartUpload {
+final class MultipartUpload: Sendable {
     lazy var result = Result { try build() }
 
     private let multipartFormData: Protected<MultipartFormData>

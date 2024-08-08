@@ -35,21 +35,21 @@ class BaseTestCase: XCTestCase {
             switch self {
             case .twenty:
                 if #available(macOS 11, iOS 14, tvOS 14, watchOS 7, *) {
-                    return false
+                    false
                 } else {
-                    return true
+                    true
                 }
             case .none:
-                return false
+                false
             }
         }
 
         var reason: String {
             switch self {
             case .twenty:
-                return "Skipped due to being iOS 13 or below."
+                "Skipped due to being iOS 13 or below."
             case .none:
-                return "This should never skip."
+                "This should never skip."
             }
         }
     }

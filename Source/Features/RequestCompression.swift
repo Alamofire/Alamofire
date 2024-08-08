@@ -36,9 +36,9 @@ import zlib
 ///         want to use a dedicated `requestQueue` in your `Session` instance. Finally, not all servers support request
 ///         compression, so test with all of your server configurations before deploying.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DeflateRequestCompressor: RequestInterceptor {
+public struct DeflateRequestCompressor: @unchecked Sendable, RequestInterceptor {
     /// Type that determines the action taken when the `URLRequest` already has a `Content-Encoding` header.
-    public enum DuplicateHeaderBehavior {
+    public enum DuplicateHeaderBehavior: Sendable {
         /// Throws a `DuplicateHeaderError`. The default.
         case error
         /// Replaces the existing header value with `deflate`.

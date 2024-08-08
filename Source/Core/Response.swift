@@ -30,7 +30,7 @@ public typealias AFDataResponse<Success> = DataResponse<Success, AFError>
 public typealias AFDownloadResponse<Success> = DownloadResponse<Success, AFError>
 
 /// Type used to store all values associated with a serialized response of a `DataRequest` or `UploadRequest`.
-public struct DataResponse<Success, Failure: Error> {
+public struct DataResponse<Success, Failure: Error>: Sendable where Success: Sendable, Failure: Sendable {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -212,7 +212,7 @@ extension DataResponse {
 // MARK: -
 
 /// Used to store all data associated with a serialized response of a download request.
-public struct DownloadResponse<Success, Failure: Error> {
+public struct DownloadResponse<Success, Failure: Error>: Sendable where Success: Sendable, Failure: Sendable {
     /// The URL request sent to the server.
     public let request: URLRequest?
 

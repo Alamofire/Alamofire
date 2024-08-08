@@ -57,9 +57,9 @@ extension Request {
         func matches(_ mime: MIMEType) -> Bool {
             switch (type, subtype) {
             case (mime.type, mime.subtype), (mime.type, "*"), ("*", mime.subtype), ("*", "*"):
-                return true
+                true
             default:
-                return false
+                false
             }
         }
     }

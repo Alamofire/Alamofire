@@ -705,11 +705,11 @@ extension URLSessionWebSocketTask.Message: Equatable {
     public static func ==(lhs: URLSessionWebSocketTask.Message, rhs: URLSessionWebSocketTask.Message) -> Bool {
         switch (lhs, rhs) {
         case let (.string(left), .string(right)):
-            return left == right
+            left == right
         case let (.data(left), .data(right)):
-            return left == right
+            left == right
         default:
-            return false
+            false
         }
     }
 
