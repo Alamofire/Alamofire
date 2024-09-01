@@ -521,7 +521,7 @@ Released on 2020-05-16. All issues associated with this milestone can be found u
 - Thread-safety issue in `Session`.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3179](https://github.com/Alamofire/Alamofire/pull/3179).
 - Memory leak in `NetworkReachabilityManager`.
-  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Reqeust [#3180](https://github.com/Alamofire/Alamofire/pull/3180).
+  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Request [#3180](https://github.com/Alamofire/Alamofire/pull/3180).
 
 ---
 
@@ -1943,7 +1943,7 @@ Released on 2016-05-08. All issues associated with this milestone can be found u
 - URLProtocol tests to demonstrate using `NSURLProtocol` with `NSURLSession`.
   - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
     [#1160](https://github.com/Alamofire/Alamofire/issues/1160).
-- The `SesionDelegate` to no longer be `final` to allow subclassing.
+- The `SessionDelegate` to no longer be `final` to allow subclassing.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
     [#1172](https://github.com/Alamofire/Alamofire/issues/1172) in regards to Issue
     [#1145](https://github.com/Alamofire/Alamofire/issues/1145).
@@ -3088,7 +3088,7 @@ Released on 2015-04-09.
 #### Fixed
 
 - Async tests where asserts were potentially not being run by by moving
-  `expectation.fullfill()` to end of closures.
+  `expectation.fulfill()` to end of closures.
   - Fixed by [Nate Cook](https://github.com/natecook1000) in Pull Request
     [#420](https://github.com/Alamofire/Alamofire/pull/420).
 - Small grammatical error in the ParameterEncoding section of the README.
@@ -3196,7 +3196,7 @@ Released on 2015-01-30.
 - Spec validation error with CocoaPods 0.36.0.beta-1 by disabling -b flags in `cURL`
   debug on OSX.
   - Fixed by [Mattt Thompson](https://github.com/mattt).
-- Travis-CI build issue by adding suppport for an `iOS Example` scheme.
+- Travis-CI build issue by adding support for an `iOS Example` scheme.
   - Fixed by [Yasuharu Ozaki](https://github.com/yasuoza) in Pull Request
     [#322](https://github.com/Alamofire/Alamofire/pull/322).
 
