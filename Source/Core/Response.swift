@@ -394,7 +394,22 @@ extension DownloadResponse {
     }
 }
 
+/// Enum containing functions to generate detailed descriptions of HTTP requests and responses.
+/// These descriptions are useful for debugging and logging during the lifecycle of a network request.
 private enum DebugDescription {
+
+    /// Generates a complete description of a `URLRequest`, including the HTTP method, headers, and body.
+    ///
+    /// - Parameters:
+    ///   - request: The `URLRequest` to describe.
+    /// - Returns: A `String` describing the request, including headers and body.
+    ///
+    /// # Example:
+    /// ```
+    /// let urlRequest = URLRequest(url: URL(string: "https://api.example.com")!)
+    /// let description = DebugDescription.description(of: urlRequest)
+    /// print(description)
+    /// ```
     static func description(of request: URLRequest) -> String {
         let requestSummary = "\(request.httpMethod!) \(request)"
         let requestHeadersDescription = DebugDescription.description(for: request.headers)
@@ -407,6 +422,18 @@ private enum DebugDescription {
         """
     }
 
+    /// Generates a complete description of an `HTTPURLResponse`, including status code and headers.
+    ///
+    /// - Parameters:
+    ///   - response: The `HTTPURLResponse` to describe.
+    /// - Returns: A `String` describing the response, including status code and headers.
+    ///
+    /// # Example:
+    /// ```
+    /// let response = HTTPURLResponse(url: URL(string: "https://api.example.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+    /// let description = DebugDescription.description(of: response)
+    /// print(description)
+    /// ```
     static func description(of response: HTTPURLResponse) -> String {
         """
         [Response]:
@@ -415,6 +442,18 @@ private enum DebugDescription {
         """
     }
 
+    /// Generates a description of HTTP headers.
+    ///
+    /// - Parameters:
+    ///   - headers: The `HTTPHeaders` to describe.
+    /// - Returns: A `String` describing the headers or "None" if there are no headers.
+    ///
+    /// # Example:
+    /// ```
+    /// let headers: HTTPHeaders = ["Content-Type": "application/json"]
+    /// let description = DebugDescription.description(for: headers)
+    /// print(description)
+    /// ```
     static func description(for headers: HTTPHeaders) -> String {
         guard !headers.isEmpty else { return "[Headers]: None" }
 
@@ -425,6 +464,22 @@ private enum DebugDescription {
         """
     }
 
+    /// Generates a description of the request/response body data if it is within a printable format (e.g., JSON, XML, text).
+    ///
+    /// - Parameters:
+    ///   - data: The body `Data` to describe.
+    ///   - headers: The HTTP headers to check content type.
+    ///   - printableTypes: An array of content types that are considered printable (default: `["json", "xml", "text"]`).
+    ///   - maximumLength: The maximum allowable length of the body data to print (default: `100_000` bytes).
+    /// - Returns: A `String` describing the body, or the number of bytes if not printable or exceeds the maximum length.
+    ///
+    /// # Example:
+    /// ```
+    /// let data = "{\"key\":\"value\"}".data(using: .utf8)!
+    /// let headers: HTTPHeaders = ["Content-Type": "application/json"]
+    /// let description = DebugDescription.description(for: data, headers: headers)
+    /// print(description)
+    /// ```
     static func description(for data: Data?,
                             headers: HTTPHeaders,
                             allowingPrintableTypes printableTypes: [String] = ["json", "xml", "text"],
@@ -446,6 +501,18 @@ private enum DebugDescription {
 }
 
 extension String {
+    /// Indents every newline in the string by a specified number of spaces.
+    ///
+    /// - Parameters:
+    ///   - spaceCount: The number of spaces to use for indentation (default: 4).
+    /// - Returns: A new `String` with indented newlines.
+    ///
+    /// # Example:
+    /// ```
+    /// let string = "Line 1\nLine 2"
+    /// let indented = string.indentingNewlines(by: 4)
+    /// print(indented)
+    /// ```
     fileprivate func indentingNewlines(by spaceCount: Int = 4) -> String {
         let spaces = String(repeating: " ", count: spaceCount)
         return replacingOccurrences(of: "\n", with: "\n\(spaces)")
