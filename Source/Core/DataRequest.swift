@@ -408,7 +408,7 @@ public class DataRequest: Request {
                              emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @Sendable @escaping (AFDataResponse<Any & Sendable>) -> Void) -> Self {
+                             completionHandler: @Sendable @escaping (AFDataResponse<any Any & Sendable>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: JSONResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                             emptyResponseCodes: emptyResponseCodes,

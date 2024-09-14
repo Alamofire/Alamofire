@@ -94,7 +94,7 @@ final class Protected<Value> {
     #else
     private var value: Value
     #endif
-    
+
     init(_ value: Value) {
         self.value = value
     }

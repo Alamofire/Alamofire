@@ -178,8 +178,8 @@ final class ResponseStringTestCase: BaseTestCase {
 
 // MARK: -
 
-//@available(*, deprecated)
-//final class ResponseJSONTestCase: BaseTestCase {
+// @available(*, deprecated)
+// final class ResponseJSONTestCase: BaseTestCase {
 //    func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
 //        // Given
 //        let expectation = expectation(description: "request should succeed")
@@ -288,7 +288,7 @@ final class ResponseStringTestCase: BaseTestCase {
 //            XCTFail("form should not be nil")
 //        }
 //    }
-//}
+// }
 
 final class ResponseJSONDecodableTestCase: BaseTestCase {
     func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {

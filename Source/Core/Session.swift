@@ -115,7 +115,7 @@ open class Session: @unchecked Sendable {
                 serverTrustManager: ServerTrustManager? = nil,
                 redirectHandler: (any RedirectHandler)? = nil,
                 cachedResponseHandler: (any CachedResponseHandler)? = nil,
-                eventMonitors: [EventMonitor] = [AlamofireNotifications()]) {
+                eventMonitors: [any EventMonitor] = [AlamofireNotifications()]) {
         precondition(session.configuration.identifier == nil,
                      "Alamofire does not support background URLSessionConfigurations.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,
@@ -179,7 +179,7 @@ open class Session: @unchecked Sendable {
                             serverTrustManager: ServerTrustManager? = nil,
                             redirectHandler: (any RedirectHandler)? = nil,
                             cachedResponseHandler: (any CachedResponseHandler)? = nil,
-                            eventMonitors: [EventMonitor] = [AlamofireNotifications()]) {
+                            eventMonitors: [any EventMonitor] = [AlamofireNotifications()]) {
         precondition(configuration.identifier == nil, "Alamofire does not support background URLSessionConfigurations.")
 
         // Retarget the incoming rootQueue for safety, unless it's the main queue, which we know is safe.
@@ -326,12 +326,12 @@ open class Session: @unchecked Sendable {
     ///
     /// - Returns:           The created `DataRequest`.
     open func request<Parameters: Encodable & Sendable>(_ convertible: any URLConvertible,
-                                             method: HTTPMethod = .get,
-                                             parameters: Parameters? = nil,
-                                             encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
-                                             headers: HTTPHeaders? = nil,
-                                             interceptor: (any RequestInterceptor)? = nil,
-                                             requestModifier: RequestModifier? = nil) -> DataRequest {
+                                                        method: HTTPMethod = .get,
+                                                        parameters: Parameters? = nil,
+                                                        encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                        headers: HTTPHeaders? = nil,
+                                                        interceptor: (any RequestInterceptor)? = nil,
+                                                        requestModifier: RequestModifier? = nil) -> DataRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
@@ -383,13 +383,13 @@ open class Session: @unchecked Sendable {
     ///
     /// - Returns:       The created `DataStream` request.
     open func streamRequest<Parameters: Encodable & Sendable>(_ convertible: any URLConvertible,
-                                                   method: HTTPMethod = .get,
-                                                   parameters: Parameters? = nil,
-                                                   encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
-                                                   headers: HTTPHeaders? = nil,
-                                                   automaticallyCancelOnStreamError: Bool = false,
-                                                   interceptor: (any RequestInterceptor)? = nil,
-                                                   requestModifier: RequestModifier? = nil) -> DataStreamRequest {
+                                                              method: HTTPMethod = .get,
+                                                              parameters: Parameters? = nil,
+                                                              encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                              headers: HTTPHeaders? = nil,
+                                                              automaticallyCancelOnStreamError: Bool = false,
+                                                              interceptor: (any RequestInterceptor)? = nil,
+                                                              requestModifier: RequestModifier? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
@@ -583,13 +583,13 @@ open class Session: @unchecked Sendable {
     ///
     /// - Returns:           The created `DownloadRequest`.
     open func download<Parameters: Encodable & Sendable>(_ convertible: any URLConvertible,
-                                              method: HTTPMethod = .get,
-                                              parameters: Parameters? = nil,
-                                              encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
-                                              headers: HTTPHeaders? = nil,
-                                              interceptor: (any RequestInterceptor)? = nil,
-                                              requestModifier: RequestModifier? = nil,
-                                              to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+                                                         method: HTTPMethod = .get,
+                                                         parameters: Parameters? = nil,
+                                                         encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                         headers: HTTPHeaders? = nil,
+                                                         interceptor: (any RequestInterceptor)? = nil,
+                                                         requestModifier: RequestModifier? = nil,
+                                                         to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,

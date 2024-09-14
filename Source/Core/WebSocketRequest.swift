@@ -403,7 +403,7 @@ import Foundation
     public func streamDecodableEvents<Value>(
         _ type: Value.Type = Value.self,
         on queue: DispatchQueue = .main,
-        using decoder: DataDecoder = JSONDecoder(),
+        using decoder: any DataDecoder = JSONDecoder(),
         handler: @Sendable @escaping (_ event: Event<Value, any Error>) -> Void
     ) -> Self where Value: Decodable {
         streamSerializer(DecodableWebSocketMessageDecoder<Value>(decoder: decoder), on: queue, handler: handler)

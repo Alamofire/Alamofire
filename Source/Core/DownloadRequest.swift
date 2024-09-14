@@ -548,7 +548,7 @@ public final class DownloadRequest: Request {
                              emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @Sendable @escaping (AFDownloadResponse<Any & Sendable>) -> Void) -> Self {
+                             completionHandler: @Sendable @escaping (AFDownloadResponse<any Any & Sendable>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: JSONResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                             emptyResponseCodes: emptyResponseCodes,

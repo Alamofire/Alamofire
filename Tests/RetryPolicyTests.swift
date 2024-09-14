@@ -336,9 +336,9 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         let request = request(method: .get)
 
         let errors: [any Error] = [resourceUnavailable,
-                               unknown,
-                               resourceUnavailableError,
-                               unknownError]
+                                   unknown,
+                                   resourceUnavailableError,
+                                   unknownError]
 
         var results: [RetryResult] = []
 

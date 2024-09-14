@@ -25,7 +25,7 @@
 import Foundation
 
 /// A dictionary of parameters to apply to a `URLRequest`.
-public typealias Parameters = [String: Any & Sendable]
+public typealias Parameters = [String: any Any & Sendable]
 
 /// A type used to define how a set of parameters are applied to a `URLRequest`.
 public protocol ParameterEncoding: Sendable {
