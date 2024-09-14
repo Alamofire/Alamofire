@@ -349,7 +349,7 @@ jobs:
           swift build --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
   CodeQL:
     name: Analyze with CodeQL
-    runs-on: macOS-13
+    runs-on: macOS-14
     env:
       DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
     timeout-minutes: 10
