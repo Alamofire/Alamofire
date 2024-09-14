@@ -243,7 +243,7 @@ extension DataRequest {
     ///
     /// - Returns: The `DataTask`.
     public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                                dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataTask<Data> {
         serializingResponse(using: DataResponseSerializer(dataPreprocessor: dataPreprocessor,
@@ -268,8 +268,8 @@ extension DataRequest {
     /// - Returns: The `DataTask`.
     public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
                                                        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                                       dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
-                                                       decoder: DataDecoder = JSONDecoder(),
+                                                       dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
+                                                       decoder: any DataDecoder = JSONDecoder(),
                                                        emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
                                                        emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DataTask<Value> {
         serializingResponse(using: DecodableResponseSerializer<Value>(dataPreprocessor: dataPreprocessor,
@@ -295,7 +295,7 @@ extension DataRequest {
     ///
     /// - Returns: The `DataTask`.
     public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                  dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                                  dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                   encoding: String.Encoding? = nil,
                                   emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                                   emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DataTask<String> {
@@ -436,7 +436,7 @@ extension DownloadRequest {
     ///
     /// - Returns:                   The `DownloadTask`.
     public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                                dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DownloadTask<Data> {
         serializingDownload(using: DataResponseSerializer(dataPreprocessor: dataPreprocessor,
@@ -463,8 +463,8 @@ extension DownloadRequest {
     /// - Returns:                   The `DownloadTask`.
     public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
                                                        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                                       dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
-                                                       decoder: DataDecoder = JSONDecoder(),
+                                                       dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
+                                                       decoder: any DataDecoder = JSONDecoder(),
                                                        emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
                                                        emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DownloadTask<Value> {
         serializingDownload(using: DecodableResponseSerializer<Value>(dataPreprocessor: dataPreprocessor,
@@ -503,7 +503,7 @@ extension DownloadRequest {
     ///
     /// - Returns:                   The `DownloadTask`.
     public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                  dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                                  dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                   encoding: String.Encoding? = nil,
                                   emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                                   emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DownloadTask<String> {
@@ -795,9 +795,9 @@ extension DataStreamRequest {
     public func streamingDecodableEvents<Value: Decodable>(
         _ type: Value.Type = Value.self,
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-        using decoder: DataDecoder = JSONDecoder(),
-        bufferingPolicy: EventStreamOf<Value, Error>.BufferingPolicy = .unbounded
-    ) -> EventStreamOf<Value, Error> {
+        using decoder: any DataDecoder = JSONDecoder(),
+        bufferingPolicy: EventStreamOf<Value, any Error>.BufferingPolicy = .unbounded
+    ) -> EventStreamOf<Value, any Error> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy,
                      transform: { $0 }) { onEvent in
@@ -811,7 +811,7 @@ extension DataStreamRequest {
     public func streamingDecodable<Value: Decodable>(
         _ type: Value.Type = Value.self,
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-        using decoder: DataDecoder = JSONDecoder(),
+        using decoder: any DataDecoder = JSONDecoder(),
         bufferingPolicy: StreamOf<Value>.BufferingPolicy = .unbounded
     ) -> StreamOf<Value> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,

@@ -30,7 +30,7 @@ open class ServerTrustManager {
     public let allHostsMustBeEvaluated: Bool
 
     /// The dictionary of policies mapped to a particular host.
-    public let evaluators: [String: ServerTrustEvaluating]
+    public let evaluators: [String: any ServerTrustEvaluating]
 
     /// Initializes the `ServerTrustManager` instance with the given evaluators.
     ///
@@ -43,7 +43,7 @@ open class ServerTrustManager {
     ///   - allHostsMustBeEvaluated: The value determining whether all hosts for this instance must be evaluated. `true`
     ///                              by default.
     ///   - evaluators:              A dictionary of evaluators mapped to hosts.
-    public init(allHostsMustBeEvaluated: Bool = true, evaluators: [String: ServerTrustEvaluating]) {
+    public init(allHostsMustBeEvaluated: Bool = true, evaluators: [String: any ServerTrustEvaluating]) {
         self.allHostsMustBeEvaluated = allHostsMustBeEvaluated
         self.evaluators = evaluators
     }
@@ -59,7 +59,7 @@ open class ServerTrustManager {
     /// - Returns:        The `ServerTrustEvaluating` value for the given host if found, `nil` otherwise.
     /// - Throws:         `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching
     ///                   evaluators are found.
-    open func serverTrustEvaluator(forHost host: String) throws -> ServerTrustEvaluating? {
+    open func serverTrustEvaluator(forHost host: String) throws -> (any ServerTrustEvaluating)? {
         guard let evaluator = evaluators[host] else {
             if allHostsMustBeEvaluated {
                 throw AFError.serverTrustEvaluationFailed(reason: .noRequiredEvaluator(host: host))
@@ -408,12 +408,12 @@ extension ServerTrustEvaluating where Self == PublicKeysTrustEvaluator {
 /// Uses the provided evaluators to validate the server trust. The trust is only considered valid if all of the
 /// evaluators consider it valid.
 public final class CompositeTrustEvaluator: ServerTrustEvaluating {
-    private let evaluators: [ServerTrustEvaluating]
+    private let evaluators: [any ServerTrustEvaluating]
 
     /// Creates a `CompositeTrustEvaluator` from the provided evaluators.
     ///
     /// - Parameter evaluators: The `ServerTrustEvaluating` values used to evaluate the server trust.
-    public init(evaluators: [ServerTrustEvaluating]) {
+    public init(evaluators: [any ServerTrustEvaluating]) {
         self.evaluators = evaluators
     }
 
@@ -426,7 +426,7 @@ extension ServerTrustEvaluating where Self == CompositeTrustEvaluator {
     /// Creates a `CompositeTrustEvaluator` from the provided evaluators.
     ///
     /// - Parameter evaluators: The `ServerTrustEvaluating` values used to evaluate the server trust.
-    public static func composite(evaluators: [ServerTrustEvaluating]) -> CompositeTrustEvaluator {
+    public static func composite(evaluators: [any ServerTrustEvaluating]) -> CompositeTrustEvaluator {
         CompositeTrustEvaluator(evaluators: evaluators)
     }
 }
@@ -525,7 +525,7 @@ extension AlamofireExtension where ExtendedType == SecTrust {
     @available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(afterApplying:)")
     @available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:)")
     @available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate(afterApplying:)")
-    public func validate(policy: SecPolicy, errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws {
+    public func validate(policy: SecPolicy, errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> any Error) throws {
         try apply(policy: policy).af.validate(errorProducer: errorProducer)
     }
 
@@ -570,7 +570,7 @@ extension AlamofireExtension where ExtendedType == SecTrust {
     @available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate()")
     @available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate()")
     @available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate()")
-    public func validate(errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws {
+    public func validate(errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> any Error) throws {
         var result = SecTrustResultType.invalid
         let status = SecTrustEvaluate(type, &result)
 

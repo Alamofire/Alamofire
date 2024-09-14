@@ -40,10 +40,10 @@ final class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
             adaptedCount += 1
 
-            let result: Result<URLRequest, Error> = Result {
+            let result: Result<URLRequest, any Error> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
                 var urlRequest = urlRequest
@@ -67,10 +67,10 @@ final class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
             adaptedCount += 1
 
-            let result: Result<URLRequest, Error> = Result {
+            let result: Result<URLRequest, any Error> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
                 var urlRequest = urlRequest
@@ -92,7 +92,7 @@ final class SessionTestCase: BaseTestCase {
         var adaptedCount = 0
         var retryCount = 0
         var retryCalledCount = 0
-        var retryErrors: [Error] = []
+        var retryErrors: [any Error] = []
 
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnFirstAdapt = false
@@ -103,10 +103,10 @@ final class SessionTestCase: BaseTestCase {
 
         func adapt(_ urlRequest: URLRequest,
                    using state: RequestAdapterState,
-                   completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                   completion: @escaping (Result<URLRequest, any Error>) -> Void) {
             adaptCalledCount += 1
 
-            let result: Result<URLRequest, Error> = Result {
+            let result: Result<URLRequest, any Error> = Result {
                 if throwsErrorOnFirstAdapt {
                     throwsErrorOnFirstAdapt = false
                     throw AFError.invalidURL(url: "/adapt/error/1")
@@ -133,7 +133,7 @@ final class SessionTestCase: BaseTestCase {
 
         func retry(_ request: Request,
                    for session: Session,
-                   dueTo error: Error,
+                   dueTo error: any Error,
                    completion: @escaping (RetryResult) -> Void) {
             retryCalledCount += 1
 
@@ -166,7 +166,7 @@ final class SessionTestCase: BaseTestCase {
             var adaptedCount = 0
             var retryCalledCount = 0
             var retryCount = 0
-            var retryErrors: [Error] = []
+            var retryErrors: [any Error] = []
         }
 
         private let mutableState = Protected(MutableState())
@@ -175,12 +175,12 @@ final class SessionTestCase: BaseTestCase {
         var adaptedCount: Int { mutableState.adaptedCount }
         var retryCalledCount: Int { mutableState.retryCalledCount }
         var retryCount: Int { mutableState.retryCount }
-        var retryErrors: [Error] { mutableState.retryErrors }
+        var retryErrors: [any Error] { mutableState.retryErrors }
 
         func adapt(_ urlRequest: URLRequest,
                    using state: RequestAdapterState,
-                   completion: @escaping (Result<URLRequest, Error>) -> Void) {
-            let result: Result<URLRequest, Error> = mutableState.write { mutableState in
+                   completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+            let result: Result<URLRequest, any Error> = mutableState.write { mutableState in
                 mutableState.adaptCalledCount += 1
 
                 return Result {
@@ -197,7 +197,7 @@ final class SessionTestCase: BaseTestCase {
 
         func retry(_ request: Request,
                    for session: Session,
-                   dueTo error: Error,
+                   dueTo error: any Error,
                    completion: @escaping (RetryResult) -> Void) {
             mutableState.write { mutableState in
                 mutableState.retryCalledCount += 1
@@ -1555,7 +1555,7 @@ final class SessionTestCase: BaseTestCase {
         struct InvalidAdapter: RequestInterceptor {
             func adapt(_ urlRequest: URLRequest,
                        for session: Session,
-                       completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                       completion: @escaping (Result<URLRequest, any Error>) -> Void) {
                 var request = urlRequest
                 request.httpBody = Data("invalid".utf8)
 
@@ -1699,7 +1699,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         final class OnceRetrier: RequestInterceptor {
             private var hasRetried = false
 
-            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
                 if hasRetried {
                     var request = urlRequest
                     request.url = Endpoint.delay(1).url
@@ -1709,7 +1709,7 @@ final class SessionMassActionTestCase: BaseTestCase {
                 }
             }
 
-            func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+            func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
                 completion(hasRetried ? .doNotRetry : .retry)
                 hasRetried = true
             }

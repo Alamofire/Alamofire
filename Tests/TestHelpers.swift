@@ -348,11 +348,11 @@ extension URLRequestConvertible where Self == EndpointSequence {
 extension Session {
     func request(_ endpoint: Endpoint,
                  parameters: Parameters? = nil,
-                 encoding: ParameterEncoding = URLEncoding.default,
+                 encoding: any ParameterEncoding = URLEncoding.default,
                  headers: HTTPHeaders? = nil,
-                 interceptor: RequestInterceptor? = nil,
+                 interceptor: (any RequestInterceptor)? = nil,
                  requestModifier: RequestModifier? = nil) -> DataRequest {
-        request(endpoint as URLConvertible,
+        request(endpoint as (any URLConvertible),
                 method: endpoint.method,
                 parameters: parameters,
                 encoding: encoding,
@@ -363,11 +363,11 @@ extension Session {
 
     func request<Parameters: Encodable>(_ endpoint: Endpoint,
                                         parameters: Parameters? = nil,
-                                        encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                        encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                         headers: HTTPHeaders? = nil,
-                                        interceptor: RequestInterceptor? = nil,
+                                        interceptor: (any RequestInterceptor)? = nil,
                                         requestModifier: RequestModifier? = nil) -> DataRequest {
-        request(endpoint as URLConvertible,
+        request(endpoint as (any URLConvertible),
                 method: endpoint.method,
                 parameters: parameters,
                 encoder: encoder,
@@ -376,16 +376,16 @@ extension Session {
                 requestModifier: requestModifier)
     }
 
-    func request(_ endpoint: Endpoint, interceptor: RequestInterceptor? = nil) -> DataRequest {
-        request(endpoint as URLRequestConvertible, interceptor: interceptor)
+    func request(_ endpoint: Endpoint, interceptor: (any RequestInterceptor)? = nil) -> DataRequest {
+        request(endpoint as (any URLRequestConvertible), interceptor: interceptor)
     }
 
     func streamRequest(_ endpoint: Endpoint,
                        headers: HTTPHeaders? = nil,
                        automaticallyCancelOnStreamError: Bool = false,
-                       interceptor: RequestInterceptor? = nil,
+                       interceptor: (any RequestInterceptor)? = nil,
                        requestModifier: RequestModifier? = nil) -> DataStreamRequest {
-        streamRequest(endpoint as URLConvertible,
+        streamRequest(endpoint as (any URLConvertible),
                       method: endpoint.method,
                       headers: headers,
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
@@ -395,20 +395,20 @@ extension Session {
 
     func streamRequest(_ endpoint: Endpoint,
                        automaticallyCancelOnStreamError: Bool = false,
-                       interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
-        streamRequest(endpoint as URLRequestConvertible,
+                       interceptor: (any RequestInterceptor)? = nil) -> DataStreamRequest {
+        streamRequest(endpoint as (any URLRequestConvertible),
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                       interceptor: interceptor)
     }
 
     func download<Parameters: Encodable>(_ endpoint: Endpoint,
                                          parameters: Parameters? = nil,
-                                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                         encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                          headers: HTTPHeaders? = nil,
-                                         interceptor: RequestInterceptor? = nil,
+                                         interceptor: (any RequestInterceptor)? = nil,
                                          requestModifier: RequestModifier? = nil,
                                          to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint as URLConvertible,
+        download(endpoint as (any URLConvertible),
                  method: endpoint.method,
                  parameters: parameters,
                  encoder: encoder,
@@ -420,12 +420,12 @@ extension Session {
 
     func download(_ endpoint: Endpoint,
                   parameters: Parameters? = nil,
-                  encoding: ParameterEncoding = URLEncoding.default,
+                  encoding: any ParameterEncoding = URLEncoding.default,
                   headers: HTTPHeaders? = nil,
-                  interceptor: RequestInterceptor? = nil,
+                  interceptor: (any RequestInterceptor)? = nil,
                   requestModifier: RequestModifier? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint as URLConvertible,
+        download(endpoint as (any URLConvertible),
                  method: endpoint.method,
                  parameters: parameters,
                  encoding: encoding,
@@ -436,18 +436,18 @@ extension Session {
     }
 
     func download(_ endpoint: Endpoint,
-                  interceptor: RequestInterceptor? = nil,
+                  interceptor: (any RequestInterceptor)? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint as URLRequestConvertible, interceptor: interceptor, to: destination)
+        download(endpoint as (any URLRequestConvertible), interceptor: interceptor, to: destination)
     }
 
     func upload(_ data: Data,
                 to endpoint: Endpoint,
                 headers: HTTPHeaders? = nil,
-                interceptor: RequestInterceptor? = nil,
+                interceptor: (any RequestInterceptor)? = nil,
                 fileManager: FileManager = .default,
                 requestModifier: RequestModifier? = nil) -> UploadRequest {
-        upload(data, to: endpoint as URLConvertible,
+        upload(data, to: endpoint as (any URLConvertible),
                method: endpoint.method,
                headers: headers,
                interceptor: interceptor,
@@ -476,7 +476,7 @@ struct TestResponse: Decodable {
 }
 
 extension Alamofire.HTTPHeaders: Swift.Decodable {
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
 
         let headers = try container.decode([HTTPHeader].self)
@@ -490,7 +490,7 @@ extension Alamofire.HTTPHeader: Swift.Decodable {
         case name, value
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let name = try container.decode(String.self, forKey: .name)

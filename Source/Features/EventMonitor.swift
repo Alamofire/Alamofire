@@ -35,7 +35,7 @@ public protocol EventMonitor {
     // MARK: URLSessionDelegate Events
 
     /// Event called during `URLSessionDelegate`'s `urlSession(_:didBecomeInvalidWithError:)` method.
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?)
+    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?)
 
     // MARK: URLSessionTaskDelegate Events
 
@@ -62,7 +62,7 @@ public protocol EventMonitor {
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics)
 
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:task:didCompleteWithError:)` method.
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?)
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?)
 
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:taskIsWaitingForConnectivity:)` method.
     func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask)
@@ -228,7 +228,7 @@ extension EventMonitor {
 
     // MARK: Default Implementations
 
-    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {}
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {}
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didReceive challenge: URLAuthenticationChallenge) {}
@@ -245,7 +245,7 @@ extension EventMonitor {
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didFinishCollecting metrics: URLSessionTaskMetrics) {}
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {}
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {}
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {}
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse) {}
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {}
@@ -315,13 +315,13 @@ extension EventMonitor {
 public final class CompositeEventMonitor: EventMonitor {
     public let queue = DispatchQueue(label: "org.alamofire.compositeEventMonitor")
 
-    let monitors: Protected<[EventMonitor]>
+    let monitors: Protected<[any EventMonitor]>
 
-    init(monitors: [EventMonitor]) {
+    init(monitors: [any EventMonitor]) {
         self.monitors = Protected(monitors)
     }
 
-    func performEvent(_ event: @escaping (EventMonitor) -> Void) {
+    func performEvent(_ event: @escaping (any EventMonitor) -> Void) {
         queue.async {
             self.monitors.read { monitors in
                 for monitor in monitors {
@@ -331,7 +331,7 @@ public final class CompositeEventMonitor: EventMonitor {
         }
     }
 
-    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
         performEvent { $0.urlSession(session, didBecomeInvalidWithError: error) }
     }
 
@@ -377,7 +377,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, task: task, didFinishCollecting: metrics) }
     }
 
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
         performEvent { $0.urlSession(session, task: task, didCompleteWithError: error) }
     }
 
@@ -580,7 +580,7 @@ public final class CompositeEventMonitor: EventMonitor {
 /// `EventMonitor` that allows optional closures to be set to receive events.
 open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
-    open var sessionDidBecomeInvalidWithError: ((URLSession, Error?) -> Void)?
+    open var sessionDidBecomeInvalidWithError: ((URLSession, (any Error)?) -> Void)?
 
     /// Closure called on the `urlSession(_:task:didReceive:completionHandler:)`.
     open var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> Void)?
@@ -598,7 +598,7 @@ open class ClosureEventMonitor: EventMonitor {
     open var taskDidFinishCollectingMetrics: ((URLSession, URLSessionTask, URLSessionTaskMetrics) -> Void)?
 
     /// Closure called on the `urlSession(_:task:didCompleteWithError:)` event.
-    open var taskDidComplete: ((URLSession, URLSessionTask, Error?) -> Void)?
+    open var taskDidComplete: ((URLSession, URLSessionTask, (any Error)?) -> Void)?
 
     /// Closure called on the `urlSession(_:taskIsWaitingForConnectivity:)` event.
     open var taskIsWaitingForConnectivity: ((URLSession, URLSessionTask) -> Void)?
@@ -714,7 +714,7 @@ open class ClosureEventMonitor: EventMonitor {
         self.queue = queue
     }
 
-    open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+    open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
         sessionDidBecomeInvalidWithError?(session, error)
     }
 
@@ -745,7 +745,7 @@ open class ClosureEventMonitor: EventMonitor {
         taskDidFinishCollectingMetrics?(session, task, metrics)
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
         taskDidComplete?(session, task, error)
     }
 

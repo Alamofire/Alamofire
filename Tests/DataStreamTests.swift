@@ -885,7 +885,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         final class GoodRetry: RequestInterceptor {
             var hasRetried = false
 
-            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
                 if hasRetried {
                     completion(.success(Endpoint.bytes(1000).urlRequest))
                 } else {
@@ -893,7 +893,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
                 }
             }
 
-            func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+            func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
                 hasRetried = true
                 completion(.retry)
             }
