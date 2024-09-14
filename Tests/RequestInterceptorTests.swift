@@ -688,7 +688,7 @@ final class SingleRetrier: RequestInterceptor {
     }
 }
 
-extension RetryResult: Equatable {
+extension Alamofire.RetryResult: Swift.Equatable {
     public static func ==(lhs: RetryResult, rhs: RetryResult) -> Bool {
         switch (lhs, rhs) {
         case (.retry, .retry),

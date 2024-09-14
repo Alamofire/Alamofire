@@ -475,7 +475,7 @@ struct TestResponse: Decodable {
     let args: [String: String]
 }
 
-extension HTTPHeaders: Decodable {
+extension Alamofire.HTTPHeaders: Swift.Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
@@ -485,7 +485,7 @@ extension HTTPHeaders: Decodable {
     }
 }
 
-extension HTTPHeader: Decodable {
+extension Alamofire.HTTPHeader: Swift.Decodable {
     enum CodingKeys: String, CodingKey {
         case name, value
     }

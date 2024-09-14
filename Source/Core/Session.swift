@@ -61,9 +61,10 @@ open class Session {
     public let redirectHandler: RedirectHandler?
     /// `CachedResponseHandler` instance used to provide customization of cached response handling.
     public let cachedResponseHandler: CachedResponseHandler?
-    /// `CompositeEventMonitor` used to compose Alamofire's `defaultEventMonitors` and any passed `EventMonitor`s.
+    /// `CompositeEventMonitor` used to compose any passed `EventMonitor`s.
     public let eventMonitor: CompositeEventMonitor
-    /// `EventMonitor`s included in all instances. `[AlamofireNotifications()]` by default.
+    /// `EventMonitor`s included in all instances unless overwritten. `[AlamofireNotifications()]` by default.
+    @available(*, deprecated, message: "Use [AlamofireNotifications()] directly.")
     public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
 
     /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
@@ -103,8 +104,7 @@ open class Session {
     ///                               default.
     ///   - cachedResponseHandler:    `CachedResponseHandler` to be used by all `Request`s created by this instance.
     ///                               `nil` by default.
-    ///   - eventMonitors:            Additional `EventMonitor`s used by the instance. Alamofire always adds a
-    ///                               `AlamofireNotifications` `EventMonitor` to the array passed here. `[]` by default.
+    ///   - eventMonitors:            `EventMonitor`s used by the instance. `[AlamofireNotifications()]` by default.
     public init(session: URLSession,
                 delegate: SessionDelegate,
                 rootQueue: DispatchQueue,
@@ -115,7 +115,7 @@ open class Session {
                 serverTrustManager: ServerTrustManager? = nil,
                 redirectHandler: RedirectHandler? = nil,
                 cachedResponseHandler: CachedResponseHandler? = nil,
-                eventMonitors: [EventMonitor] = []) {
+                eventMonitors: [EventMonitor] = [AlamofireNotifications()]) {
         precondition(session.configuration.identifier == nil,
                      "Alamofire does not support background URLSessionConfigurations.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,
@@ -131,7 +131,7 @@ open class Session {
         self.serverTrustManager = serverTrustManager
         self.redirectHandler = redirectHandler
         self.cachedResponseHandler = cachedResponseHandler
-        eventMonitor = CompositeEventMonitor(monitors: defaultEventMonitors + eventMonitors)
+        eventMonitor = CompositeEventMonitor(monitors: eventMonitors)
         delegate.eventMonitor = eventMonitor
         delegate.stateProvider = self
     }
@@ -168,8 +168,7 @@ open class Session {
     ///                               default.
     ///   - cachedResponseHandler:    `CachedResponseHandler` to be used by all `Request`s created by this instance.
     ///                               `nil` by default.
-    ///   - eventMonitors:            Additional `EventMonitor`s used by the instance. Alamofire always adds a
-    ///                               `AlamofireNotifications` `EventMonitor` to the array passed here. `[]` by default.
+    ///   - eventMonitors:            `EventMonitor`s used by the instance. `[AlamofireNotifications()]` by default.
     public convenience init(configuration: URLSessionConfiguration = URLSessionConfiguration.af.default,
                             delegate: SessionDelegate = SessionDelegate(),
                             rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.session.rootQueue"),
@@ -180,7 +179,7 @@ open class Session {
                             serverTrustManager: ServerTrustManager? = nil,
                             redirectHandler: RedirectHandler? = nil,
                             cachedResponseHandler: CachedResponseHandler? = nil,
-                            eventMonitors: [EventMonitor] = []) {
+                            eventMonitors: [EventMonitor] = [AlamofireNotifications()]) {
         precondition(configuration.identifier == nil, "Alamofire does not support background URLSessionConfigurations.")
 
         // Retarget the incoming rootQueue for safety, unless it's the main queue, which we know is safe.

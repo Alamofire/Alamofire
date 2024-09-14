@@ -571,7 +571,7 @@ final class URLResponseSerializerTests: BaseTestCase {
 // MARK: -
 
 // used by testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseConformingTypeAndEmptyResponseStatusCode
-extension Bool: EmptyResponse {
+extension Swift.Bool: Alamofire.EmptyResponse {
     public static func emptyValue() -> Bool {
         true
     }
