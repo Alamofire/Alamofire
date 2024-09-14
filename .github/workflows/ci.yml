@@ -310,14 +310,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
-  Android:
-    name: Android
-    uses: hggz/swift-android-sdk/.github/workflows/sdks.yml@ci
-    strategy:
-      fail-fast: false
-    with:
-      target-repo: ${{ github.repository }}
-      checkout-hash: ${{ github.sha }}
+  # Disabled to find consistently updated builder.
+  # Android:
+  #   name: Android
+  #   uses: hggz/swift-android-sdk/.github/workflows/sdks.yml@ci
+  #   strategy:
+  #     fail-fast: false
+  #   with:
+  #     target-repo: ${{ github.repository }}
+  #     checkout-hash: ${{ github.sha }}
   Windows:
     name: ${{ matrix.name }}
     runs-on: windows-latest
@@ -348,9 +349,9 @@ jobs:
           swift build --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
   CodeQL:
     name: Analyze with CodeQL
-    runs-on: macOS-13
+    runs-on: macOS-14
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.3.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
     timeout-minutes: 10
     steps:
       - name: Clone
