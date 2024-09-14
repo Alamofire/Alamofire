@@ -42,7 +42,7 @@
   - [Compressing Request Body Data With `DeflateRequestCompressor`](#compressing-request-body-data-with-deflaterequestcompressor)
 - [Security](#security)
   - [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
-    - [`ServerTrustEvaluting`](#servertrustevaluting)
+    - [`ServerTrustEvaluating`](#servertrustevaluting)
     - [`ServerTrustManager`](#servertrustmanager)
       - [Subclassing `ServerTrustManager`](#subclassing-servertrustmanager)
   - [App Transport Security](#app-transport-security)

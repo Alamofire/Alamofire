@@ -315,16 +315,18 @@ extension EventMonitor {
 public final class CompositeEventMonitor: EventMonitor {
     public let queue = DispatchQueue(label: "org.alamofire.compositeEventMonitor")
 
-    let monitors: [any EventMonitor]
+    let monitors: Protected<[any EventMonitor]>
 
     init(monitors: [any EventMonitor]) {
-        self.monitors = monitors
+        self.monitors = Protected(monitors)
     }
 
     func performEvent(_ event: @escaping (any EventMonitor) -> Void) {
         queue.async {
-            for monitor in self.monitors {
-                monitor.queue.async { event(monitor) }
+            self.monitors.read { monitors in
+                for monitor in monitors {
+                    monitor.queue.async { event(monitor) }
+                }
             }
         }
     }

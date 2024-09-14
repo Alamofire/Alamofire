@@ -22,7 +22,7 @@ function itemLinkToContent($link) {
   return $link.parent().parent().next();
 }
 
-// On doc load + hash-change, open any targetted item
+// On doc load + hash-change, open any targeted item
 function openCurrentItemIfClosed() {
   if (window.jazzy.docset) {
     return;

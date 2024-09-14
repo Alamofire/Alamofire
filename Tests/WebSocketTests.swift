@@ -701,7 +701,7 @@ extension WebSocketRequest {
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-extension URLSessionWebSocketTask.Message: Equatable {
+extension Foundation.URLSessionWebSocketTask.Message: Swift.Equatable {
     public static func ==(lhs: URLSessionWebSocketTask.Message, rhs: URLSessionWebSocketTask.Message) -> Bool {
         switch (lhs, rhs) {
         case let (.string(left), .string(right)):

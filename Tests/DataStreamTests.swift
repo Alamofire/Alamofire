@@ -493,7 +493,7 @@ final class DataStreamTests: BaseTestCase {
 
         var response: HTTPURLResponse?
         var complete: DataStreamRequest.Completion?
-        let didReceive = expectation(description: "stream did receieve")
+        let didReceive = expectation(description: "stream did receive")
         let didComplete = expectation(description: "stream complete")
 
         // When
