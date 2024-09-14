@@ -1,8 +1,8 @@
-// swift-tools-version:5.7.1
+// swift-tools-version:5.10
 //
 //  Package.swift
 //
-//  Copyright (c) 2022 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2024 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,8 @@ import PackageDescription
 
 let package = Package(name: "Alamofire",
                       platforms: [.macOS(.v10_13),
-                                  .iOS(.v11),
-                                  .tvOS(.v11),
+                                  .iOS(.v12),
+                                  .tvOS(.v12),
                                   .watchOS(.v4)],
                       products: [
                           .library(name: "Alamofire", targets: ["Alamofire"]),
@@ -36,7 +36,8 @@ let package = Package(name: "Alamofire",
                       ],
                       targets: [.target(name: "Alamofire",
                                         path: "Source",
-                                        exclude: ["Info.plist", "PrivacyInfo.xcprivacy"],
+                                        exclude: ["Info.plist"],
+                                        resources: [.process("PrivacyInfo.xcprivacy")],
                                         linkerSettings: [.linkedFramework("CFNetwork",
                                                                           .when(platforms: [.iOS,
                                                                                             .macOS,

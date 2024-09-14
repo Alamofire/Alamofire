@@ -26,7 +26,7 @@ import Foundation
 
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
-public protocol EventMonitor {
+public protocol EventMonitor: Sendable {
     /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. `.main` by default.
     var queue: DispatchQueue { get }
 
@@ -321,7 +321,7 @@ public final class CompositeEventMonitor: EventMonitor {
         self.monitors = Protected(monitors)
     }
 
-    func performEvent(_ event: @escaping (any EventMonitor) -> Void) {
+    func performEvent(_ event: @Sendable @escaping (any EventMonitor) -> Void) {
         queue.async {
             self.monitors.read { monitors in
                 for monitor in monitors {
@@ -578,7 +578,7 @@ public final class CompositeEventMonitor: EventMonitor {
 }
 
 /// `EventMonitor` that allows optional closures to be set to receive events.
-open class ClosureEventMonitor: EventMonitor {
+open class ClosureEventMonitor: @unchecked Sendable, EventMonitor {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
     open var sessionDidBecomeInvalidWithError: ((URLSession, (any Error)?) -> Void)?
 

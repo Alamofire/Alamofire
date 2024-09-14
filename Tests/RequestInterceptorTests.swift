@@ -694,11 +694,11 @@ extension Alamofire.RetryResult: Swift.Equatable {
         case (.retry, .retry),
              (.doNotRetry, .doNotRetry),
              (.doNotRetryWithError, .doNotRetryWithError):
-            return true
+            true
         case let (.retryWithDelay(leftDelay), .retryWithDelay(rightDelay)):
-            return leftDelay == rightDelay
+            leftDelay == rightDelay
         default:
-            return false
+            false
         }
     }
 }

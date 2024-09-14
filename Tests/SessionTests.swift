@@ -1775,13 +1775,11 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
         // Given
         let session: Session = {
             let configuration: URLSessionConfiguration = {
-                let configuration: URLSessionConfiguration
-
-                switch type {
+                let configuration: URLSessionConfiguration = switch type {
                 case .default:
-                    configuration = .default
+                    .default
                 case .ephemeral:
-                    configuration = .ephemeral
+                    .ephemeral
                 }
 
                 var headers = HTTPHeaders.default
