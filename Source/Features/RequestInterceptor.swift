@@ -118,10 +118,12 @@ public protocol RequestRetrier: Sendable {
 public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
 
 extension RequestInterceptor {
+    @preconcurrency
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         completion(.success(urlRequest))
     }
 
+    @preconcurrency
     public func retry(_ request: Request,
                       for session: Session,
                       dueTo error: any Error,
@@ -149,14 +151,18 @@ open class Adapter: @unchecked Sendable, RequestInterceptor {
     /// Creates an instance using the provided closure.
     ///
     /// - Parameter adaptHandler: `AdaptHandler` closure to be executed when handling request adaptation.
+    ///
+    @preconcurrency
     public init(_ adaptHandler: @escaping AdaptHandler) {
         self.adaptHandler = adaptHandler
     }
 
+    @preconcurrency
     open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         adaptHandler(urlRequest, session, completion)
     }
 
+    @preconcurrency
     open func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         adaptHandler(urlRequest, state.session, completion)
     }
@@ -181,6 +187,7 @@ open class Retrier: @unchecked Sendable, RequestInterceptor {
     /// Creates an instance using the provided closure.
     ///
     /// - Parameter retryHandler: `RetryHandler` closure to be executed when handling request retry.
+    @preconcurrency
     public init(_ retryHandler: @escaping RetryHandler) {
         self.retryHandler = retryHandler
     }
@@ -238,11 +245,14 @@ open class Interceptor: @unchecked Sendable, RequestInterceptor {
     ///   - adapters:     `RequestAdapter` values to be used.
     ///   - retriers:     `RequestRetrier` values to be used.
     ///   - interceptors: `RequestInterceptor`s to be used.
-    public init(adapters: [any RequestAdapter] = [], retriers: [any RequestRetrier] = [], interceptors: [any RequestInterceptor] = []) {
+    public init(adapters: [any RequestAdapter] = [],
+                retriers: [any RequestRetrier] = [],
+                interceptors: [any RequestInterceptor] = []) {
         self.adapters = adapters + interceptors
         self.retriers = retriers + interceptors
     }
 
+    @preconcurrency
     open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         adapt(urlRequest, for: session, using: adapters, completion: completion)
     }
@@ -267,6 +277,7 @@ open class Interceptor: @unchecked Sendable, RequestInterceptor {
         }
     }
 
+    @preconcurrency
     open func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         adapt(urlRequest, using: state, adapters: adapters, completion: completion)
     }
@@ -291,6 +302,7 @@ open class Interceptor: @unchecked Sendable, RequestInterceptor {
         }
     }
 
+    @preconcurrency
     open func retry(_ request: Request,
                     for session: Session,
                     dueTo error: any Error,

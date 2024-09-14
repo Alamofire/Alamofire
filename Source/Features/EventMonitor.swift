@@ -164,7 +164,7 @@ public protocol EventMonitor: Sendable {
     func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>)
 
     /// Event called when a `DataRequest` calls a `ResponseSerializer` and creates a generic `DataResponse<Value, AFError>`.
-    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>)
+    func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>)
 
     // MARK: DataStreamRequest Events
 
@@ -185,7 +185,7 @@ public protocol EventMonitor: Sendable {
     /// - Parameters:
     ///   - request: `DataStreamRequest` for which the value was serialized.
     ///   - result:  `Result` of the serialization attempt.
-    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
+    func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
 
     // MARK: UploadRequest Events
 
@@ -219,7 +219,7 @@ public protocol EventMonitor: Sendable {
     func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>)
 
     /// Event called when a `DownloadRequest` calls a `DownloadResponseSerializer` and creates a generic `DownloadResponse<Value, AFError>`
-    func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
+    func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
 }
 
 extension EventMonitor {
@@ -291,12 +291,12 @@ extension EventMonitor {
                         data: Data?,
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {}
-    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
     public func request(_ request: DataStreamRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
                         withResult result: Request.ValidationResult) {}
-    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {}
     public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {}
     public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {}
@@ -308,7 +308,7 @@ extension EventMonitor {
                         fileURL: URL?,
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {}
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
@@ -532,7 +532,7 @@ public final class CompositeEventMonitor: EventMonitor {
         }
     }
 
-    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
         performEvent { $0.request(request, didParseStream: result) }
     }
 
@@ -572,7 +572,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 }

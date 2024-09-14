@@ -250,6 +250,7 @@ public final class DownloadRequest: Request {
     ///                                want use an appropriate queue to perform your work.
     ///
     /// - Returns:                     The instance.
+    @preconcurrency
     @discardableResult
     public func cancel(byProducingResumeData completionHandler: @Sendable @escaping (_ data: Data?) -> Void) -> Self {
         cancel(optionallyProducingResumeData: completionHandler)
@@ -332,6 +333,7 @@ public final class DownloadRequest: Request {
     ///   - completionHandler: The code to be executed once the request has finished.
     ///
     /// - Returns:             The request.
+    @preconcurrency
     @discardableResult
     public func response(queue: DispatchQueue = .main,
                          completionHandler: @Sendable @escaping (AFDownloadResponse<URL?>) -> Void)
@@ -470,6 +472,7 @@ public final class DownloadRequest: Request {
     ///   - completionHandler: A closure to be executed once the request has finished.
     ///
     /// - Returns:             The request.
+    @preconcurrency
     @discardableResult
     public func responseURL(queue: DispatchQueue = .main,
                             completionHandler: @Sendable @escaping (AFDownloadResponse<URL>) -> Void) -> Self {
@@ -487,6 +490,7 @@ public final class DownloadRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseData(queue: DispatchQueue = .main,
                              dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
@@ -513,6 +517,7 @@ public final class DownloadRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
                                dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
@@ -542,6 +547,7 @@ public final class DownloadRequest: Request {
     ///
     /// - Returns:               The request.
     @available(*, deprecated, message: "responseJSON deprecated and will be removed in Alamofire 6. Use responseDecodable instead.")
+    @preconcurrency
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
                              dataPreprocessor: any DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
@@ -570,6 +576,7 @@ public final class DownloadRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseDecodable<T: Decodable>(of type: T.Type = T.self,
                                                 queue: DispatchQueue = .main,

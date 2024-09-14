@@ -254,6 +254,7 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     ///
     /// - Returns:   The instance.
     @_disfavoredOverload
+    @preconcurrency
     @discardableResult
     public func onHTTPResponse(
         on queue: DispatchQueue = .main,
@@ -274,6 +275,7 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     ///   - handler: Closure called when the instance produces an `HTTPURLResponse`.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main,
                                perform handler: @Sendable @escaping (HTTPURLResponse) -> Void) -> Self {
@@ -339,6 +341,7 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     ///   - stream: `StreamHandler` closure called as `Data` is received. May be called multiple times.
     ///
     /// - Returns:  The `DataStreamRequest`.
+    @preconcurrency
     @discardableResult
     public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Handler<Data, Never>) -> Self {
         let parser = { @Sendable [unowned self] (data: Data) in
@@ -365,6 +368,7 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     ///   - stream:     `StreamHandler` closure called as `Data` is received. May be called multiple times.
     ///
     /// - Returns:      The `DataStreamRequest`.
+    @preconcurrency
     @discardableResult
     public func responseStream<Serializer: DataStreamSerializer>(using serializer: Serializer,
                                                                  on queue: DispatchQueue = .main,
@@ -406,6 +410,7 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     ///   - stream:     `StreamHandler` closure called as `Data` is received. May be called multiple times.
     ///
     /// - Returns:  The `DataStreamRequest`.
+    @preconcurrency
     @discardableResult
     public func responseStreamString(on queue: DispatchQueue = .main,
                                      stream: @escaping Handler<String, Never>) -> Self {
@@ -456,6 +461,7 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     ///   - stream:       `StreamHandler` closure called as `Data` is received. May be called multiple times.
     ///
     /// - Returns: The `DataStreamRequest`.
+    @preconcurrency
     @discardableResult
     public func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
                                                       on queue: DispatchQueue = .main,

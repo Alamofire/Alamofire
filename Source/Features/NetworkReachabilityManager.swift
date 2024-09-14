@@ -162,6 +162,7 @@ open class NetworkReachabilityManager: @unchecked Sendable {
     ///   - listener: `Listener` closure called when reachability changes.
     ///
     /// - Returns: `true` if listening was started successfully, `false` otherwise.
+    @preconcurrency
     @discardableResult
     open func startListening(onQueue queue: DispatchQueue = .main,
                              onUpdatePerforming listener: @escaping Listener) -> Bool {

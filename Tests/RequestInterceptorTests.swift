@@ -101,9 +101,14 @@ final class AdapterTestCase: BaseTestCase {
 
     func testThatAdapterCallsAdaptHandlerWithStateAPI() {
         // Given
-        class StateCaptureAdapter: Adapter {
+        final class StateCaptureAdapter: Adapter {
             private(set) var urlRequest: URLRequest?
             private(set) var state: RequestAdapterState?
+
+            @preconcurrency
+            override init(_ adaptHandler: @escaping AdaptHandler) {
+                super.init(adaptHandler)
+            }
 
             override func adapt(_ urlRequest: URLRequest,
                                 using state: RequestAdapterState,

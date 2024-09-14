@@ -771,6 +771,7 @@ public class Request: @unchecked Sendable {
     ///   - closure: The closure to be executed periodically as data is read from the server.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         mutableState.downloadProgressHandler = (handler: closure, queue: queue)
@@ -787,6 +788,7 @@ public class Request: @unchecked Sendable {
     ///   - closure: The closure to be executed periodically as data is sent to the server.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         mutableState.uploadProgressHandler = (handler: closure, queue: queue)
@@ -803,6 +805,7 @@ public class Request: @unchecked Sendable {
     /// - Parameter handler: The `RedirectHandler`.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
     public func redirect(using handler: any RedirectHandler) -> Self {
         mutableState.write { mutableState in
@@ -822,6 +825,7 @@ public class Request: @unchecked Sendable {
     /// - Parameter handler: The `CachedResponseHandler`.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
     public func cacheResponse(using handler: any CachedResponseHandler) -> Self {
         mutableState.write { mutableState in
@@ -843,6 +847,7 @@ public class Request: @unchecked Sendable {
     ///   - handler: Closure to be called when the cURL description is available.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
     public func cURLDescription(on queue: DispatchQueue, calling handler: @Sendable @escaping (String) -> Void) -> Self {
         mutableState.write { mutableState in
@@ -864,6 +869,7 @@ public class Request: @unchecked Sendable {
     ///                      `underlyingQueue` by default.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
     public func cURLDescription(calling handler: @Sendable @escaping (String) -> Void) -> Self {
         cURLDescription(on: underlyingQueue, calling: handler)
@@ -880,6 +886,7 @@ public class Request: @unchecked Sendable {
     ///   - handler: Closure to be called when a `URLRequest` is available.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @Sendable @escaping (URLRequest) -> Void) -> Self {
         mutableState.write { state in
@@ -904,6 +911,7 @@ public class Request: @unchecked Sendable {
     ///   - handler: Closure to be called when the `URLSessionTask` is available.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @Sendable @escaping (URLSessionTask) -> Void) -> Self {
         mutableState.write { state in

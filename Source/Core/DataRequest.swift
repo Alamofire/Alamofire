@@ -140,6 +140,7 @@ public class DataRequest: Request {
     /// - Parameter validation: `Validation` closure used to validate the response.
     ///
     /// - Returns:              The instance.
+    @preconcurrency
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
@@ -171,6 +172,7 @@ public class DataRequest: Request {
     ///
     /// - Returns:   The instance.
     @_disfavoredOverload
+    @preconcurrency
     @discardableResult
     public func onHTTPResponse(
         on queue: DispatchQueue = .main,
@@ -191,6 +193,7 @@ public class DataRequest: Request {
     ///   - handler: Closure called when the instance produces an `HTTPURLResponse`.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main,
                                perform handler: @Sendable @escaping (HTTPURLResponse) -> Void) -> Self {
@@ -211,6 +214,7 @@ public class DataRequest: Request {
     ///   - completionHandler: The code to be executed once the request has finished.
     ///
     /// - Returns:             The request.
+    @preconcurrency
     @discardableResult
     public func response(queue: DispatchQueue = .main, completionHandler: @escaping @Sendable (AFDataResponse<Data?>) -> Void) -> Self {
         appendResponseSerializer {
@@ -312,6 +316,7 @@ public class DataRequest: Request {
     ///   - completionHandler:  The code to be executed once the request has finished.
     ///
     /// - Returns:              The request.
+    @preconcurrency
     @discardableResult
     public func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
                                                                      responseSerializer: Serializer,
@@ -328,6 +333,7 @@ public class DataRequest: Request {
     ///   - completionHandler:  The code to be executed once the request has finished.
     ///
     /// - Returns:              The request.
+    @preconcurrency
     @discardableResult
     public func response<Serializer: ResponseSerializer>(queue: DispatchQueue = .main,
                                                          responseSerializer: Serializer,
@@ -347,6 +353,7 @@ public class DataRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseData(queue: DispatchQueue = .main,
                              dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
@@ -373,6 +380,7 @@ public class DataRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
                                dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
@@ -402,6 +410,7 @@ public class DataRequest: Request {
     ///
     /// - Returns:               The request.
     @available(*, deprecated, message: "responseJSON deprecated and will be removed in Alamofire 6. Use responseDecodable instead.")
+    @preconcurrency
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
                              dataPreprocessor: any DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
@@ -430,6 +439,7 @@ public class DataRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseDecodable<Value>(of type: Value.Type = Value.self,
                                          queue: DispatchQueue = .main,
