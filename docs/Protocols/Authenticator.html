@@ -875,7 +875,7 @@ server until the refresh has completed. This is where this method comes in.</p>
 credential while the request was in flight. If it has already refreshed, then we don&rsquo;t need to trigger an
 additional refresh. If it hasn&rsquo;t refreshed, then we need to refresh.</p>
 
-<p>Now that it is understood how the result of this method is used in the refresh lifecyle, let&rsquo;s walk through how
+<p>Now that it is understood how the result of this method is used in the refresh lifecycle, let&rsquo;s walk through how
 to implement it. You should return <code>true</code> in this method if the <code>URLRequest</code> is authenticated in a way that
 matches the values in the <code><a href="../Protocols/Authenticator.html#/s:9Alamofire13AuthenticatorP10CredentialQa">Credential</a></code>. In the case of OAuth2, this would mean that the Bearer token in the
 <code>Authorization</code> header of the <code>URLRequest</code> matches the access token in the <code><a href="../Protocols/Authenticator.html#/s:9Alamofire13AuthenticatorP10CredentialQa">Credential</a></code>. If it matches, then we

@@ -126,7 +126,7 @@ public protocol Authenticator: AnyObject {
     /// credential while the request was in flight. If it has already refreshed, then we don't need to trigger an
     /// additional refresh. If it hasn't refreshed, then we need to refresh.
     ///
-    /// Now that it is understood how the result of this method is used in the refresh lifecyle, let's walk through how
+    /// Now that it is understood how the result of this method is used in the refresh lifecycle, let's walk through how
     /// to implement it. You should return `true` in this method if the `URLRequest` is authenticated in a way that
     /// matches the values in the `Credential`. In the case of OAuth2, this would mean that the Bearer token in the
     /// `Authorization` header of the `URLRequest` matches the access token in the `Credential`. If it matches, then we
