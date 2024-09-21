@@ -349,15 +349,23 @@ extension DataRequest {
                                  forResponse onResponse: @escaping (@escaping (DataResponse<Value, AFError>) -> Void) -> Void)
         -> DataTask<Value> {
         let task = Task {
-            await withTaskCancellationHandler {
+            await withTaskCancellationHandler(handler: { self.cancel() }, operation: {
                 await withCheckedContinuation { continuation in
                     onResponse {
                         continuation.resume(returning: $0)
                     }
                 }
-            } onCancel: {
-                self.cancel()
-            }
+            })
+//            
+//            await withTaskCancellationHandler {
+//                await withCheckedContinuation { continuation in
+//                    onResponse {
+//                        continuation.resume(returning: $0)
+//                    }
+//                }
+//            } onCancel: {
+//                self.cancel()
+//            }
         }
 
         return DataTask<Value>(request: self, task: task, shouldAutomaticallyCancel: shouldAutomaticallyCancel)
