@@ -350,7 +350,7 @@ extension DataRequest {
         -> DataTask<Value> {
         let task = Task {
             await withTaskCancellationHandler(handler: { self.cancel() }, operation: {
-                await withCheckedContinuation { continuation in
+                await withUnsafeContinuation { continuation in
                     onResponse {
                         continuation.resume(returning: $0)
                     }
