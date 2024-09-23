@@ -32,7 +32,7 @@ let package = Package(name: "Alamofire",
                                   .watchOS(.v4)],
                       products: [
                           .library(name: "Alamofire", targets: ["Alamofire"]),
-                          .library(name: "AlamofireDynamic", type: .dynamic, targets: ["Alamofire"])
+                          .library(name: "AlamofireDynamic", type: .static, targets: ["Alamofire"])
                       ],
                       targets: [.target(name: "Alamofire",
                                         path: "Source",
