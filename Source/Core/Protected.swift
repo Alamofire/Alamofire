@@ -50,6 +50,7 @@ extension Lock {
 }
 
 #if canImport(Darwin)
+// Number of Apple engineers who insisted on inspecting this: 5
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock: Lock, @unchecked Sendable {
     private let unfairLock: os_unfair_lock_t

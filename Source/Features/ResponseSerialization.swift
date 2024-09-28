@@ -446,12 +446,19 @@ extension PropertyListDecoder: DataDecoder {}
 
 // MARK: - Decodable
 
-/// A `ResponseSerializer` that decodes the response data as a generic value using any type that conforms to
-/// `DataDecoder`. By default, this is an instance of `JSONDecoder`. Additionally, a request returning `nil` or no data
-/// is considered an error. However, if the request has an `HTTPMethod` or the response has an HTTP status code valid
-/// for empty responses then an empty value will be returned. If the decoded type conforms to `EmptyResponse`, the
-/// type's `emptyValue()` will be returned. If the decoded type is `Empty`, the `.value` instance is returned. If the
-/// decoded type *does not* conform to `EmptyResponse` and isn't `Empty`, an error will be produced.
+/// A `ResponseSerializer` that decodes the response data as a `Decodable` value using any decoder that conforms to
+/// `DataDecoder`. By default, this is an instance of `JSONDecoder`.
+///
+/// - Note: A request returning `nil` or no data is considered an error. However, if the request has an `HTTPMethod` or
+///         the response has an HTTP status code valid for empty responses then an empty value will be returned. If the
+///         decoded type conforms to `EmptyResponse`, the type's `emptyValue()` will be returned. If the decoded type is
+///         `Empty`, the `.value` instance is returned. If the decoded type *does not* conform to `EmptyResponse` and
+///         isn't `Empty`, an error will be produced.
+///
+/// - Note: `JSONDecoder` and `PropertyListDecoder` are not `Sendable` on Apple platforms until macOS 13+ or iOS 16+, so
+///         instances passed to a serializer should not be used outside of the serializer. Additionally, ensure a new
+///         serializer is created for each request, do not use a single, shared serializer, so as to ensure separate
+///         decoder instances.
 public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer where T: Sendable {
     public let dataPreprocessor: any DataPreprocessor
     /// The `DataDecoder` instance used to decode responses.

@@ -127,11 +127,11 @@ public final class URLEncodedFormEncoder {
     /// Encoding to use for `Date` values.
     public enum DateEncoding {
         /// ISO8601 and RFC3339 formatter.
-        private static let iso8601Formatter: ISO8601DateFormatter = {
+        private static let iso8601Formatter = Protected<ISO8601DateFormatter>({
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = .withInternetDateTime
             return formatter
-        }()
+        }())
 
         /// Defers encoding to the `Date` type. This is the default encoding.
         case deferredToDate
@@ -161,7 +161,7 @@ public final class URLEncodedFormEncoder {
             case .millisecondsSince1970:
                 String(date.timeIntervalSince1970 * 1000.0)
             case .iso8601:
-                DateEncoding.iso8601Formatter.string(from: date)
+                DateEncoding.iso8601Formatter.read { $0.string(from: date) }
             case let .formatted(formatter):
                 formatter.string(from: date)
             case let .custom(closure):
