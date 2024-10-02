@@ -188,13 +188,13 @@ jobs:
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
             xcode: "Xcode_15.4"
-            runsOn: macOS-14
+            runsOn: firebreak
           - destination: "OS=1.0,name=Apple Vision Pro"
             name: "visionOS 1.0"
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
             xcode: "Xcode_15.2"
-            runsOn: macOS-14
+            runsOn: firebreak
     steps:
       - uses: actions/checkout@v4
       - name: Install Firewalk
