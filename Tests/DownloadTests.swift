@@ -168,11 +168,10 @@ final class DownloadResponseTests: BaseTestCase {
         XCTAssertEqual(response?.error?.isExplicitlyCancelledError, true)
     }
 
-    // Test disabled until it can be made reliable.
     @MainActor
-    func disabled_testDownloadRequestWithProgress() {
+    func testDownloadRequestWithProgress() {
         // Given
-        let randomBytes = 1 * 25 * 1024
+        let randomBytes = 256
         let endpoint = Endpoint.bytes(randomBytes)
 
         let expectation = expectation(description: "Bytes download progress should be reported: \(endpoint.url)")

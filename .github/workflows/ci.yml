@@ -318,6 +318,9 @@ jobs:
           - branch: swift-5.10-release
             tag: 5.10-RELEASE
             name: Windows Swift 5.10
+          - branch: swift-6.0-release
+            tag: 6.0-RELEASE
+            name: Windows Swift 6.0
     steps:
       - name: Setup
         uses: compnerd/gha-setup-swift@main
