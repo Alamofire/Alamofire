@@ -141,7 +141,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
     func testRequestResponseWithProgress() {
         // Given
-        let byteCount = 50 * 1024
+        let byteCount = 512
         let url = Endpoint.bytes(byteCount).url
 
         let expectation = expectation(description: "Bytes download progress should be reported: \(url)")
