@@ -280,12 +280,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: swift:5.9-focal
-          - image: swift:5.9-jammy
-          - image: swift:5.9-rhel-ubi9
-          - image: swift:5.10-focal
-          - image: swift:5.10-jammy
-          - image: swift:5.10-rhel-ubi9
+          - image: swift:6.0-focal
+          - image: swift:6.0-jammy
+          - image: swift:6.0-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
     container:
@@ -312,12 +309,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - branch: swift-5.9-release
-            tag: 5.9-RELEASE
-            name: Windows Swift 5.9
-          - branch: swift-5.10-release
-            tag: 5.10-RELEASE
-            name: Windows Swift 5.10
           - branch: swift-6.0-release
             tag: 6.0-RELEASE
             name: Windows Swift 6.0
