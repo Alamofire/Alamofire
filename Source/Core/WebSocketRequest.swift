@@ -273,6 +273,7 @@ import Foundation
         }
     }
 
+    @preconcurrency
     public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @Sendable @escaping (PingResponse) -> Void) {
         guard isResumed else {
             queue.async { onResponse(.unsent) }
@@ -480,6 +481,7 @@ import Foundation
         return self
     }
 
+    @preconcurrency
     public func send(_ message: URLSessionWebSocketTask.Message,
                      queue: DispatchQueue = .main,
                      completionHandler: @Sendable @escaping (Result<Void, any Error>) -> Void) {
