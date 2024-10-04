@@ -25,7 +25,7 @@
 import Foundation
 
 /// `Request` subclass which downloads `Data` to a file on disk using `URLSessionDownloadTask`.
-public final class DownloadRequest: Request {
+public final class DownloadRequest: Request, @unchecked Sendable {
     /// A set of options to be executed prior to moving a downloaded file from the temporary `URL` to the destination
     /// `URL`.
     public struct Options: OptionSet, Sendable {

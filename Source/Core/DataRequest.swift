@@ -25,7 +25,7 @@
 import Foundation
 
 /// `Request` subclass which handles in-memory `Data` download using `URLSessionDataTask`.
-public class DataRequest: Request {
+public class DataRequest: Request, @unchecked Sendable {
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     public let convertible: any URLRequestConvertible
     /// `Data` read from the server so far.

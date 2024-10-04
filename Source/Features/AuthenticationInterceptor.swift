@@ -44,7 +44,7 @@ public protocol AuthenticationCredential {
 
 /// Types adopting the `Authenticator` protocol can be used to authenticate `URLRequest`s with an
 /// `AuthenticationCredential` as well as refresh the `AuthenticationCredential` when required.
-public protocol Authenticator: AnyObject {
+public protocol Authenticator: AnyObject, Sendable {
     /// The type of credential associated with the `Authenticator` instance.
     associatedtype Credential: AuthenticationCredential & Sendable
 
@@ -157,7 +157,7 @@ public enum AuthenticationError: Error {
 
 /// The `AuthenticationInterceptor` class manages the queuing and threading complexity of authenticating requests.
 /// It relies on an `Authenticator` type to handle the actual `URLRequest` authentication and `Credential` refresh.
-public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor, @unchecked Sendable where AuthenticatorType: Authenticator {
+public final class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor, Sendable where AuthenticatorType: Authenticator {
     // MARK: Typealiases
 
     /// Type of credential used to authenticate requests.

@@ -166,8 +166,6 @@ public struct DataTask<Value>: Sendable where Value: Sendable {
     }
 }
 
-extension DataRequest: @unchecked Sendable {}
-
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension DataRequest {
     /// Creates a `StreamOf<HTTPURLResponse>` for the instance's responses.
@@ -423,8 +421,6 @@ public struct DownloadTask<Value>: Sendable where Value: Sendable {
         request.suspend()
     }
 }
-
-extension DownloadRequest: @unchecked Sendable {}
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension DownloadRequest {

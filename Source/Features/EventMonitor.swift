@@ -578,7 +578,7 @@ public final class CompositeEventMonitor: EventMonitor {
 }
 
 /// `EventMonitor` that allows optional closures to be set to receive events.
-open class ClosureEventMonitor: @unchecked Sendable, EventMonitor {
+open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
     open var sessionDidBecomeInvalidWithError: ((URLSession, (any Error)?) -> Void)?
 
