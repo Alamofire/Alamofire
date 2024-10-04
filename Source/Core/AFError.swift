@@ -30,7 +30,7 @@ import Foundation
 
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
 /// their own associated reasons.
-public enum AFError: Error, @unchecked Sendable {
+public enum AFError: Error, Sendable {
     /// The underlying reason the `.multipartEncodingFailed` error occurred.
     public enum MultipartEncodingFailureReason: Sendable {
         /// The `fileURL` provided for reading an encodable body part isn't a file `URL`.
