@@ -816,11 +816,7 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
                      tasks: [URLSessionTask],
                      descriptions: [String],
                      response: AFDataResponse<TestResponse>)
-        #if swift(>=5.11)
-        values = try! await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
-        #else
         values = await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
-        #endif
 
         // Then
         XCTAssertTrue(values.httpResponses.count == 1, "httpResponses should have one response")
