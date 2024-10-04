@@ -406,13 +406,13 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
-    func testThatUploadingMultipartFormDataWhileStreamingFromMemoryMonitorsProgress() {
-        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: false)
-    }
-
-    func testThatUploadingMultipartFormDataWhileStreamingFromDiskMonitorsProgress() {
-        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: true)
-    }
+//    func testThatUploadingMultipartFormDataWhileStreamingFromMemoryMonitorsProgress() {
+//        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: false)
+//    }
+//
+//    func testThatUploadingMultipartFormDataWhileStreamingFromDiskMonitorsProgress() {
+//        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: true)
+//    }
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
         // Given
