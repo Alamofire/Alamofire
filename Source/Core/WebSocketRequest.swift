@@ -371,6 +371,7 @@ import Foundation
         }
     }
 
+    @preconcurrency
     @discardableResult
     public func streamSerializer<Serializer>(
         _ serializer: Serializer,
@@ -399,6 +400,7 @@ import Foundation
         }
     }
 
+    @preconcurrency
     @discardableResult
     public func streamDecodableEvents<Value>(
         _ type: Value.Type = Value.self,
@@ -409,6 +411,7 @@ import Foundation
         streamSerializer(DecodableWebSocketMessageDecoder<Value>(decoder: decoder), on: queue, handler: handler)
     }
 
+    @preconcurrency
     @discardableResult
     public func streamDecodable<Value>(
         _ type: Value.Type = Value.self,
@@ -421,6 +424,7 @@ import Foundation
         }
     }
 
+    @preconcurrency
     @discardableResult
     public func streamMessageEvents(
         on queue: DispatchQueue = .main,
@@ -442,6 +446,7 @@ import Foundation
         }
     }
 
+    @preconcurrency
     @discardableResult
     public func streamMessages(
         on queue: DispatchQueue = .main,
