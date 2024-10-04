@@ -136,6 +136,7 @@ final class CacheTestCase: BaseTestCase {
 
     // MARK: - Request Helper Methods
 
+    @preconcurrency
     @discardableResult
     private func startRequest(cacheControl: CacheControl,
                               cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
