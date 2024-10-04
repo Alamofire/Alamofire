@@ -26,6 +26,7 @@ import Alamofire
 import XCTest
 
 final class DataStreamTests: BaseTestCase {
+    @MainActor
     func testThatDataCanBeStreamedOnMainQueue() {
         // Given
         let expectedSize = 5
@@ -70,6 +71,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(completeOnMain)
     }
 
+    @MainActor
     func testThatDataCanBeStreamedOnArbitraryQueue() {
         // Given
         let expectedSize = 5
@@ -110,6 +112,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertEqual(accumulatedData.count, expectedSize)
     }
 
+    @MainActor
     func testThatDataCanBeStreamedByByte() throws {
         guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
             throw XCTSkip("Older OSes don't return individual bytes.")
@@ -162,6 +165,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(completeOnMain)
     }
 
+    @MainActor
     func testThatDataCanBeStreamedAsMultipleJSONPayloads() throws {
         guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
             throw XCTSkip("Older OSes do not separate chunked payloads in callbacks.")
@@ -216,6 +220,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(completeOnMain)
     }
 
+    @MainActor
     func testThatDataCanBeStreamedFromURL() {
         // Given
         let expectedSize = 1
@@ -260,6 +265,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(completeOnMain)
     }
 
+    @MainActor
     func testThatDataCanBeStreamedManyTimes() {
         // Given
         let expectedSize = 1
@@ -331,6 +337,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertEqual(secondAccumulatedData.count, expectedSize)
     }
 
+    @MainActor
     func testThatDataCanBeStreamedAndDecodedAtTheSameTime() {
         // Given
         var initialResponse: HTTPURLResponse?
@@ -406,6 +413,7 @@ final class DataStreamTests: BaseTestCase {
     }
 
     #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
+    @MainActor
     func testThatDataStreamRequestProducesWorkingInputStream() {
         // Given
         let expect = expectation(description: "stream complete")
@@ -431,6 +439,7 @@ final class DataStreamTests: BaseTestCase {
     }
     #endif
 
+    @MainActor
     func testThatDataStreamCanBeManuallyResumed() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -462,6 +471,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertEqual(response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatDataStreamIsAutomaticallyCanceledOnStreamErrorWhenEnabled() {
         var response: HTTPURLResponse?
         var complete: DataStreamRequest.Completion?
@@ -487,6 +497,7 @@ final class DataStreamTests: BaseTestCase {
                       "error is not explicitly cancelled but \(complete?.error?.localizedDescription ?? "None")")
     }
 
+    @MainActor
     func testThatDataStreamIsAutomaticallyCanceledOnStreamClosureError() {
         // Given
         enum LocalError: Error { case failed }
@@ -517,6 +528,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(complete?.error?.isExplicitlyCancelledError == false)
     }
 
+    @MainActor
     func testThatDataStreamCanBeCancelledInClosure() {
         // Given
         // Use .main so that completion can't beat cancellation.
@@ -547,6 +559,7 @@ final class DataStreamTests: BaseTestCase {
                       """)
     }
 
+    @MainActor
     func testThatDataStreamCanBeCancelledByToken() {
         // Given
         // Use .main so that completion can't beat cancellation.
@@ -577,6 +590,7 @@ final class DataStreamTests: BaseTestCase {
                       """)
     }
 
+    @MainActor
     func testThatOnHTTPResponseCanContinueStream() {
         // Given
         let expectedSize = 5
@@ -622,6 +636,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(completeOnMain)
     }
 
+    @MainActor
     func testThatOnHTTPResponseCanCancelStream() {
         // Given
         let expectedSize = 5
@@ -664,6 +679,7 @@ final class DataStreamTests: BaseTestCase {
 // MARK: - Serialization Tests
 
 final class DataStreamSerializationTests: BaseTestCase {
+    @MainActor
     func testThatDataStreamsCanBeAString() {
         // Given
         var responseString: String?
@@ -700,6 +716,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         XCTAssertEqual(response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatDataStreamsCanBeAStringOnAnArbitraryQueue() {
         // Given
         var responseString: String?
@@ -732,6 +749,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         XCTAssertEqual(response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatDataStreamsCanBeDecoded() {
         // Given
         var response: TestResponse?
@@ -772,6 +790,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         XCTAssertNil(decodingError)
     }
 
+    @MainActor
     func testThatDataStreamsCanBeDecodedOnAnArbitraryQueue() {
         // Given
         var response: TestResponse?
@@ -808,6 +827,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         XCTAssertNil(decodingError)
     }
 
+    @MainActor
     func testThatDataStreamSerializerCanBeUsedDirectly() {
         // Given
         var response: HTTPURLResponse?
@@ -853,6 +873,7 @@ final class DataStreamSerializationTests: BaseTestCase {
 // MARK: - Integration Tests
 
 final class DataStreamIntegrationTests: BaseTestCase {
+    @MainActor
     func testThatDataStreamCanFailValidation() {
         // Given
         var dataSeen = false
@@ -880,6 +901,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         XCTAssertFalse(dataSeen, "no data should be seen")
     }
 
+    @MainActor
     func testThatDataStreamsCanBeRetried() {
         // Given
         final class GoodRetry: RequestInterceptor {
@@ -935,6 +957,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         XCTAssertEqual(response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatDataStreamCanBeRedirected() {
         // Given
         var response: HTTPURLResponse?
@@ -981,6 +1004,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         XCTAssertNil(decodingError)
     }
 
+    @MainActor
     func testThatDataStreamCallsCachedResponseHandler() {
         // Given
         var response: HTTPURLResponse?
@@ -1030,6 +1054,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         XCTAssertNil(decodingError)
     }
 
+    @MainActor
     func testThatDataStreamWorksCorrectlyWithMultipleSerialQueues() {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
@@ -1109,6 +1134,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         XCTAssertNil(secondDecodingError)
     }
 
+    @MainActor
     func testThatDataStreamWorksCorrectlyWithMultipleConcurrentQueues() {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
@@ -1182,6 +1208,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         XCTAssertNil(secondDecodingError)
     }
 
+    @MainActor
     func testThatDataStreamCanAuthenticate() {
         // Given
         let user = "userstream", password = "password"
@@ -1216,19 +1243,21 @@ final class DataStreamIntegrationTests: BaseTestCase {
 }
 
 final class DataStreamLifetimeEvents: BaseTestCase {
+    @MainActor
     func testThatDataStreamRequestHasAppropriateLifetimeEvents() {
         // Given
         final class Monitor: EventMonitor {
-            var called: (() -> Void)?
+            private let called: (@Sendable () -> Void)?
+
+            init(called: (@Sendable () -> Void)? = nil) {
+                self.called = called
+            }
 
             func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
                 called?()
             }
         }
         let eventMonitor = ClosureEventMonitor()
-        let parseMonitor = Monitor()
-        let session = Session(eventMonitors: [eventMonitor, parseMonitor])
-
         // Disable event test until Firewalk supports HTTPS.
         //  let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
@@ -1267,7 +1296,8 @@ final class DataStreamLifetimeEvents: BaseTestCase {
         eventMonitor.requestDidResume = { _ in didResume.fulfill() }
         eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.fulfill() }
         eventMonitor.requestDidValidateRequestResponseWithResult = { _, _, _, _ in didValidate.fulfill() }
-        parseMonitor.called = { didParse.fulfill() }
+
+        let session = Session(eventMonitors: [eventMonitor, Monitor { didParse.fulfill() }])
 
         // When
         let request = session.streamRequest(.stream(1))

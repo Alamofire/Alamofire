@@ -164,6 +164,7 @@ final class AdapterTestCase: BaseTestCase {
         XCTAssertEqual(result, .doNotRetry)
     }
 
+    @MainActor
     func testThatAdapterCanBeImplementedAsynchronously() {
         // Given
         let urlRequest = Endpoint().urlRequest
@@ -237,6 +238,7 @@ final class RetrierTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
     }
 
+    @MainActor
     func testThatRetrierCanBeImplementedAsynchronously() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -397,6 +399,7 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertTrue(result.failure is MockError)
     }
 
+    @MainActor
     func testThatInterceptorCanAdaptRequestAsynchronously() {
         // Given
         let urlRequest = Endpoint().urlRequest
@@ -477,6 +480,7 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(result, .retry)
     }
 
+    @MainActor
     func testThatInterceptorCanRetryRequestAsynchronously() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -574,6 +578,7 @@ final class InterceptorTests: BaseTestCase {
 // MARK: - Functional Tests
 
 final class InterceptorRequestTests: BaseTestCase {
+    @MainActor
     func testThatRetryPolicyRetriesRequestTimeout() {
         // Given
         let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))

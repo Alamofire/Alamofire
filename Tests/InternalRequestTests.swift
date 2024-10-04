@@ -26,6 +26,7 @@
 import XCTest
 
 final class InternalRequestTests: BaseTestCase {
+    @MainActor
     func testThatMultipleFinishInvocationsDoNotCallSerializersMoreThanOnce() {
         // Given
         let session = Session(rootQueue: .main, startRequestsImmediately: false)

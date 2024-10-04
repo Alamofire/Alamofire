@@ -142,6 +142,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
     // MARK: - Tests - Adapt
 
+    @MainActor
     func testThatInterceptorCanAdaptURLRequest() {
         // Given
         let credential = TestCredential()
@@ -173,6 +174,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
     }
 
+    @MainActor
     func testThatInterceptorQueuesAdaptOperationWhenRefreshing() {
         // Given
         let credential = TestCredential(requiresRefresh: true)
@@ -215,6 +217,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request2.retryCount, 0)
     }
 
+    @MainActor
     func testThatInterceptorThrowsMissingCredentialErrorWhenCredentialIsNil() {
         // Given
         let authenticator = TestAuthenticator()
@@ -248,6 +251,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
     }
 
+    @MainActor
     func testThatInterceptorRethrowsRefreshErrorFromAdapt() {
         // Given
         let credential = TestCredential(requiresRefresh: true)
@@ -291,6 +295,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
     // If we not using swift-corelibs-foundation where URLRequest to /invalid/path is a fatal error.
     #if !canImport(FoundationNetworking)
+    @MainActor
     func testThatInterceptorDoesNotRetryWithoutResponse() {
         // Given
         let credential = TestCredential()
@@ -326,6 +331,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     }
     #endif
 
+    @MainActor
     func testThatInterceptorDoesNotRetryWhenRequestDoesNotFailDueToAuthError() {
         // Given
         let credential = TestCredential()
@@ -360,6 +366,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
     }
 
+    @MainActor
     func testThatInterceptorThrowsMissingCredentialErrorWhenCredentialIsNilAndRequestShouldBeRetried() {
         // Given
         let credential = TestCredential()
@@ -403,6 +410,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
     }
 
+    @MainActor
     func testThatInterceptorRetriesRequestThatFailedWithOutdatedCredential() {
         // Given
         let credential = TestCredential()
@@ -446,6 +454,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     }
 
     // Produces double lock reported in https://github.com/Alamofire/Alamofire/issues/3294#issuecomment-703241558
+    @MainActor
     func testThatInterceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnCallingQueue() {
         // Given
         let credential = TestCredential(requiresRefresh: true)
@@ -490,6 +499,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
     }
 
+    @MainActor
     func testThatInterceptorRetriesRequestAfterRefresh() {
         // Given
         let credential = TestCredential()
@@ -525,6 +535,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 1)
     }
 
+    @MainActor
     func testThatInterceptorRethrowsRefreshErrorFromRetry() {
         // Given
         let credential = TestCredential()
@@ -564,6 +575,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
     }
 
+    @MainActor
     func testThatInterceptorTriggersRefreshWithMultipleParallelRequestsReturning401Responses() {
         // Given
         let credential = TestCredential()
@@ -612,6 +624,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
     // MARK: - Tests - Excessive Refresh
 
+    @MainActor
     func testThatInterceptorIgnoresExcessiveRefreshWhenRefreshWindowIsNil() {
         // Given
         let credential = TestCredential()
@@ -652,6 +665,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 5)
     }
 
+    @MainActor
     func testThatInterceptorThrowsExcessiveRefreshErrorWhenExcessiveRefreshOccurs() {
         // Given
         let credential = TestCredential()

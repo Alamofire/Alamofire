@@ -34,6 +34,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
 
     // MARK: - Tests - Per Request
 
+    @MainActor
     func testThatRequestRedirectHandlerCanFollowRedirects() {
         // Given
         let session = Session()
@@ -59,6 +60,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatRequestRedirectHandlerCanNotFollowRedirects() {
         // Given
         let session = Session()
@@ -84,6 +86,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 302)
     }
 
+    @MainActor
     func testThatRequestRedirectHandlerCanModifyRedirects() {
         // Given
         let session = Session()
@@ -114,6 +117,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
 
     // MARK: - Tests - Per Session
 
+    @MainActor
     func testThatSessionRedirectHandlerCanFollowRedirects() {
         // Given
         let session = Session(redirectHandler: Redirector.follow)
@@ -139,6 +143,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatSessionRedirectHandlerCanNotFollowRedirects() {
         // Given
         let session = Session(redirectHandler: Redirector.doNotFollow)
@@ -164,6 +169,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 302)
     }
 
+    @MainActor
     func testThatSessionRedirectHandlerCanModifyRedirects() {
         // Given
         let customRedirectEndpoint = Endpoint.method(.patch)
@@ -194,6 +200,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
 
     // MARK: - Tests - Per Request Prioritization
 
+    @MainActor
     func testThatRequestRedirectHandlerIsPrioritizedOverSessionRedirectHandler() {
         // Given
         let session = Session(redirectHandler: Redirector.doNotFollow)

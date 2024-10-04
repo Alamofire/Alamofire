@@ -26,6 +26,7 @@
 
 import Alamofire
 import Foundation
+@preconcurrency import Security
 import XCTest
 
 private enum TestCertificates {

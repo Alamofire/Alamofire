@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if !((os(iOS) && (arch(i386) || arch(arm))) || os(Windows) || os(Linux) || os(Android))
+#if canImport(Combine)
 
 import Alamofire
 import Combine
@@ -31,6 +31,7 @@ import XCTest
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 final class DataRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanBePublished() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -52,6 +53,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatNonAutomaticDataRequestCanBePublished() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -74,6 +76,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanPublishData() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -96,6 +99,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanPublishString() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -118,6 +122,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanBePublishedUnserialized() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -139,6 +144,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanBePublishedWithMultipleHandlers() {
         // Given
         let handlerResponseReceived = expectation(description: "handler response should be received")
@@ -164,6 +170,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanPublishResult() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -186,6 +193,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanPublishValue() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -208,6 +216,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanPublishValueWithFailure() {
         // Given
         let completionReceived = expectation(description: "stream should complete")
@@ -237,6 +246,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatPublishedDataRequestIsNotResumedUnlessSubscribed() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -265,6 +275,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -294,6 +305,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -323,6 +335,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDataRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -352,6 +365,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatPublishedDataRequestCanBeCancelledAutomatically() throws {
         if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
             throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
@@ -381,6 +395,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatPublishedDataRequestCanBeCancelledManually() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -407,6 +422,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatMultipleDataRequestPublishersCanBeCombined() {
         // Given
         let responseReceived = expectation(description: "combined response should be received")
@@ -437,6 +453,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatMultipleDataRequestPublishersCanBeChained() {
         // Given
         let responseReceived = expectation(description: "combined response should be received")
@@ -473,6 +490,7 @@ final class DataRequestCombineTests: CombineTestCase {
 // MARK: - DataStreamRequest
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+@MainActor
 final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanBePublished() {
@@ -985,6 +1003,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 final class DownloadRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanBePublished() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1006,6 +1025,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatNonAutomaticDownloadRequestCanBePublished() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1028,6 +1048,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanPublishData() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1049,6 +1070,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanPublishString() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1070,6 +1092,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanPublishUnserialized() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1091,6 +1114,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanPublishURL() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1112,6 +1136,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanPublishWithMultipleHandlers() {
         // Given
         let handlerResponseReceived = expectation(description: "handler response should be received")
@@ -1137,6 +1162,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanPublishResult() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1159,6 +1185,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanPublishValueWithFailure() {
         // Given
         let completionReceived = expectation(description: "stream should complete")
@@ -1188,6 +1215,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatPublishedDownloadRequestIsNotResumedUnlessSubscribed() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1216,6 +1244,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1245,6 +1274,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1274,6 +1304,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatDownloadRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1303,6 +1334,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatPublishedDownloadRequestCanBeCancelledAutomatically() throws {
         if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
             throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
@@ -1332,6 +1364,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatPublishedDownloadRequestCanBeCancelledManually() {
         // Given
         let responseReceived = expectation(description: "response should be received")
@@ -1358,6 +1391,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatMultipleDownloadRequestPublishersCanBeCombined() {
         // Given
         let responseReceived = expectation(description: "combined response should be received")
@@ -1388,6 +1422,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    @MainActor
     func testThatMultipleDownloadRequestPublishersCanBeChained() {
         // Given
         let responseReceived = expectation(description: "combined response should be received")

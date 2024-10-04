@@ -29,6 +29,7 @@ import XCTest
 final class SessionDelegateTestCase: BaseTestCase {
     // MARK: - Tests - Redirects
 
+    @MainActor
     func testThatRequestWillPerformHTTPRedirectionByDefault() {
         // Given
         let session = Session(configuration: .ephemeral)
@@ -57,6 +58,7 @@ final class SessionDelegateTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
         // Given
         let session = Session(configuration: .ephemeral)
@@ -82,6 +84,7 @@ final class SessionDelegateTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatRequestWillPerformRedirectionFor307Response() {
         // Given
         let session = Session(configuration: .ephemeral)
@@ -112,6 +115,7 @@ final class SessionDelegateTestCase: BaseTestCase {
 
     // MARK: - Tests - Notification
 
+    @MainActor
     func testThatAppropriateNotificationsAreCalledWithRequestForDataRequest() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -166,6 +170,7 @@ final class SessionDelegateTestCase: BaseTestCase {
         XCTAssertEqual(requestResponse?.response?.statusCode, 200)
     }
 
+    @MainActor
     func testThatDidCompleteNotificationIsCalledWithRequestForDownloadRequests() {
         // Given
         let session = Session(startRequestsImmediately: false)
