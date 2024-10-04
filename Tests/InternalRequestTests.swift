@@ -48,7 +48,7 @@ final class InternalRequestTests: BaseTestCase {
         XCTAssertNotNil(response)
     }
 
-    #if canImport(zlib)
+    #if canImport(zlib) && !os(Android) // Match RequestCompression support.
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func testThatRequestCompressorProperlyCalculatesAdler32() {
         // Given
