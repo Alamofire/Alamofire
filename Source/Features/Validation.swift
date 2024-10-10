@@ -94,10 +94,11 @@ extension Request {
 
     fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
                                            response: HTTPURLResponse,
-                                           data: Data?)
+                                           data: Data?,
+                                           skipIfEmpty: Bool = true)
         -> ValidationResult
         where S.Iterator.Element == String {
-        guard let data, !data.isEmpty else { return .success(()) }
+        if (data == nil || data!.isEmpty) && skipIfEmpty { return .success(()) }
 
         return validate(contentType: acceptableContentTypes, response: response)
     }
@@ -268,18 +269,20 @@ extension DownloadRequest {
     /// If validation fails, subsequent calls to response handlers will have an associated error.
     ///
     /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
+    /// - parameter skipIfEmpty: If response is empty, content type validation will be skipped.
     ///
     /// - returns: The request.
     @discardableResult
-    public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @autoclosure () -> S) -> Self where S.Iterator.Element == String {
+    public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @autoclosure () -> S, skipIfEmpty: Bool = true) -> Self where S.Iterator.Element == String {
         validate { [unowned self] _, response, fileURL in
             guard let validFileURL = fileURL else {
                 return .failure(AFError.responseValidationFailed(reason: .dataFileNil))
             }
-
             do {
-                let data = try Data(contentsOf: validFileURL)
-                return self.validate(contentType: acceptableContentTypes(), response: response, data: data)
+                // `data` is only needed if we are skipping validation for empty data
+                // Othewise, avoid reading potentially large files into memory
+                let data = skipIfEmpty ? try Data(contentsOf: validFileURL) : nil
+                return self.validate(contentType: acceptableContentTypes(), response: response, data: data, skipIfEmpty: skipIfEmpty)
             } catch {
                 return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: validFileURL)))
             }
