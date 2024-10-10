@@ -29,7 +29,7 @@ import XCTest
 class BaseRetryPolicyTestCase: BaseTestCase {
     // MARK: Helper Types
 
-    final class StubRequest: DataRequest {
+    final class StubRequest: DataRequest, @unchecked Sendable {
         let urlRequest: URLRequest
         override var request: URLRequest? { urlRequest }
 
@@ -154,6 +154,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     // MARK: Tests - Retry
 
+    @MainActor
     func testThatRetryIsNotPerformedOnCancelledRequests() {
         // Given
         let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
@@ -175,6 +176,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         XCTAssertEqual(retrier.retryCalledCount, 0)
     }
 
+    @MainActor
     func testThatRetryPolicyRetriesRequestsBelowRetryLimit() {
         // Given
         let retryPolicy = RetryPolicy()
@@ -214,6 +216,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
     }
 
+    @MainActor
     func testThatRetryPolicyRetriesIdempotentRequests() {
         // Given
         let retryPolicy = RetryPolicy()
@@ -242,6 +245,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
     }
 
+    @MainActor
     func testThatRetryPolicyRetriesRequestsWithRetryableStatusCodes() {
         // Given
         let retryPolicy = RetryPolicy()
@@ -270,6 +274,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
     }
 
+    @MainActor
     func testThatRetryPolicyRetriesRequestsWithRetryableErrors() {
         // Given
         let retryPolicy = RetryPolicy()
@@ -300,6 +305,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
     }
 
+    @MainActor
     func testThatRetryPolicyRetriesRequestsWithRetryableAFErrors() {
         // Given
         let retryPolicy = RetryPolicy()
@@ -330,15 +336,16 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
     }
 
+    @MainActor
     func testThatRetryPolicyDoesNotRetryErrorsThatAreNotRetryable() {
         // Given
         let retryPolicy = RetryPolicy()
         let request = request(method: .get)
 
         let errors: [any Error] = [resourceUnavailable,
-                               unknown,
-                               resourceUnavailableError,
-                               unknownError]
+                                   unknown,
+                                   resourceUnavailableError,
+                                   unknownError]
 
         var results: [RetryResult] = []
 
@@ -366,6 +373,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
 
     // MARK: Tests - Exponential Backoff
 
+    @MainActor
     func testThatRetryPolicyTimeDelayBacksOffExponentially() {
         // Given
         let retryPolicy = RetryPolicy(retryLimit: 4)

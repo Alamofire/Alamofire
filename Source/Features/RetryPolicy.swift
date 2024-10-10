@@ -26,7 +26,7 @@ import Foundation
 
 /// A retry policy that retries requests using an exponential backoff for allowed HTTP methods and HTTP status codes
 /// as well as certain types of networking errors.
-open class RetryPolicy: RequestInterceptor {
+open class RetryPolicy: @unchecked Sendable, RequestInterceptor {
     /// The default retry limit for retry policies.
     public static let defaultRetryLimit: UInt = 2
 
@@ -377,7 +377,7 @@ extension RequestInterceptor where Self == RetryPolicy {
 /// A retry policy that automatically retries idempotent requests for network connection lost errors. For more
 /// information about retrying network connection lost errors, please refer to Apple's
 /// [technical document](https://developer.apple.com/library/content/qa/qa1941/_index.html).
-open class ConnectionLostRetryPolicy: RetryPolicy {
+open class ConnectionLostRetryPolicy: RetryPolicy, @unchecked Sendable {
     /// Creates a `ConnectionLostRetryPolicy` instance from the specified parameters.
     ///
     /// - Parameters:

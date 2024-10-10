@@ -26,7 +26,7 @@ import Foundation
 
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
-public protocol EventMonitor {
+public protocol EventMonitor: Sendable {
     /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. `.main` by default.
     var queue: DispatchQueue { get }
 
@@ -164,7 +164,7 @@ public protocol EventMonitor {
     func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>)
 
     /// Event called when a `DataRequest` calls a `ResponseSerializer` and creates a generic `DataResponse<Value, AFError>`.
-    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>)
+    func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>)
 
     // MARK: DataStreamRequest Events
 
@@ -185,7 +185,7 @@ public protocol EventMonitor {
     /// - Parameters:
     ///   - request: `DataStreamRequest` for which the value was serialized.
     ///   - result:  `Result` of the serialization attempt.
-    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
+    func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
 
     // MARK: UploadRequest Events
 
@@ -219,7 +219,7 @@ public protocol EventMonitor {
     func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>)
 
     /// Event called when a `DownloadRequest` calls a `DownloadResponseSerializer` and creates a generic `DownloadResponse<Value, AFError>`
-    func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
+    func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
 }
 
 extension EventMonitor {
@@ -291,12 +291,12 @@ extension EventMonitor {
                         data: Data?,
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {}
-    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
     public func request(_ request: DataStreamRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
                         withResult result: Request.ValidationResult) {}
-    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {}
     public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {}
     public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {}
@@ -308,7 +308,7 @@ extension EventMonitor {
                         fileURL: URL?,
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {}
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
@@ -321,7 +321,7 @@ public final class CompositeEventMonitor: EventMonitor {
         self.monitors = Protected(monitors)
     }
 
-    func performEvent(_ event: @escaping (any EventMonitor) -> Void) {
+    func performEvent(_ event: @Sendable @escaping (any EventMonitor) -> Void) {
         queue.async {
             self.monitors.read { monitors in
                 for monitor in monitors {
@@ -532,7 +532,7 @@ public final class CompositeEventMonitor: EventMonitor {
         }
     }
 
-    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
         performEvent { $0.request(request, didParseStream: result) }
     }
 
@@ -572,13 +572,13 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 }
 
 /// `EventMonitor` that allows optional closures to be set to receive events.
-open class ClosureEventMonitor: EventMonitor {
+open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
     open var sessionDidBecomeInvalidWithError: ((URLSession, (any Error)?) -> Void)?
 

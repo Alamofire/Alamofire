@@ -25,10 +25,10 @@
 import Foundation
 
 /// A dictionary of parameters to apply to a `URLRequest`.
-public typealias Parameters = [String: Any]
+public typealias Parameters = [String: any Any & Sendable]
 
 /// A type used to define how a set of parameters are applied to a `URLRequest`.
-public protocol ParameterEncoding {
+public protocol ParameterEncoding: Sendable {
     /// Creates a `URLRequest` by encoding parameters and applying them on the passed request.
     ///
     /// - Parameters:
@@ -61,7 +61,7 @@ public struct URLEncoding: ParameterEncoding {
 
     /// Defines whether the url-encoded query string is applied to the existing query string or HTTP body of the
     /// resulting URL request.
-    public enum Destination {
+    public enum Destination: Sendable {
         /// Applies encoded query string result to existing query string for `GET`, `HEAD` and `DELETE` requests and
         /// sets as the HTTP body for requests with any other HTTP method.
         case methodDependent
@@ -72,15 +72,15 @@ public struct URLEncoding: ParameterEncoding {
 
         func encodesParametersInURL(for method: HTTPMethod) -> Bool {
             switch self {
-            case .methodDependent: return [.get, .head, .delete].contains(method)
-            case .queryString: return true
-            case .httpBody: return false
+            case .methodDependent: [.get, .head, .delete].contains(method)
+            case .queryString: true
+            case .httpBody: false
             }
         }
     }
 
     /// Configures how `Array` parameters are encoded.
-    public enum ArrayEncoding {
+    public enum ArrayEncoding: Sendable {
         /// An empty set of square brackets is appended to the key for every value. This is the default behavior.
         case brackets
         /// No brackets are appended. The key is encoded as is.
@@ -88,24 +88,24 @@ public struct URLEncoding: ParameterEncoding {
         /// Brackets containing the item index are appended. This matches the jQuery and Node.js behavior.
         case indexInBrackets
         /// Provide a custom array key encoding with the given closure.
-        case custom((_ key: String, _ index: Int) -> String)
+        case custom(@Sendable (_ key: String, _ index: Int) -> String)
 
         func encode(key: String, atIndex index: Int) -> String {
             switch self {
             case .brackets:
-                return "\(key)[]"
+                "\(key)[]"
             case .noBrackets:
-                return key
+                key
             case .indexInBrackets:
-                return "\(key)[\(index)]"
+                "\(key)[\(index)]"
             case let .custom(encoding):
-                return encoding(key, index)
+                encoding(key, index)
             }
         }
     }
 
     /// Configures how `Bool` parameters are encoded.
-    public enum BoolEncoding {
+    public enum BoolEncoding: Sendable {
         /// Encode `true` as `1` and `false` as `0`. This is the default behavior.
         case numeric
         /// Encode `true` and `false` as string literals.
@@ -114,9 +114,9 @@ public struct URLEncoding: ParameterEncoding {
         func encode(value: Bool) -> String {
             switch self {
             case .numeric:
-                return value ? "1" : "0"
+                value ? "1" : "0"
             case .literal:
-                return value ? "true" : "false"
+                value ? "true" : "false"
             }
         }
     }

@@ -101,9 +101,14 @@ final class AdapterTestCase: BaseTestCase {
 
     func testThatAdapterCallsAdaptHandlerWithStateAPI() {
         // Given
-        class StateCaptureAdapter: Adapter {
+        final class StateCaptureAdapter: Adapter {
             private(set) var urlRequest: URLRequest?
             private(set) var state: RequestAdapterState?
+
+            @preconcurrency
+            override init(_ adaptHandler: @escaping AdaptHandler) {
+                super.init(adaptHandler)
+            }
 
             override func adapt(_ urlRequest: URLRequest,
                                 using state: RequestAdapterState,
@@ -159,6 +164,7 @@ final class AdapterTestCase: BaseTestCase {
         XCTAssertEqual(result, .doNotRetry)
     }
 
+    @MainActor
     func testThatAdapterCanBeImplementedAsynchronously() {
         // Given
         let urlRequest = Endpoint().urlRequest
@@ -232,6 +238,7 @@ final class RetrierTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
     }
 
+    @MainActor
     func testThatRetrierCanBeImplementedAsynchronously() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -392,6 +399,7 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertTrue(result.failure is MockError)
     }
 
+    @MainActor
     func testThatInterceptorCanAdaptRequestAsynchronously() {
         // Given
         let urlRequest = Endpoint().urlRequest
@@ -472,6 +480,7 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(result, .retry)
     }
 
+    @MainActor
     func testThatInterceptorCanRetryRequestAsynchronously() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -569,6 +578,7 @@ final class InterceptorTests: BaseTestCase {
 // MARK: - Functional Tests
 
 final class InterceptorRequestTests: BaseTestCase {
+    @MainActor
     func testThatRetryPolicyRetriesRequestTimeout() {
         // Given
         let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
@@ -694,11 +704,11 @@ extension Alamofire.RetryResult: Swift.Equatable {
         case (.retry, .retry),
              (.doNotRetry, .doNotRetry),
              (.doNotRetryWithError, .doNotRetryWithError):
-            return true
+            true
         case let (.retryWithDelay(leftDelay), .retryWithDelay(rightDelay)):
-            return leftDelay == rightDelay
+            leftDelay == rightDelay
         default:
-            return false
+            false
         }
     }
 }

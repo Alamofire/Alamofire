@@ -72,10 +72,10 @@ public final class URLEncodedFormEncoder {
         /// - Returns:   The encoded key.
         func encode(_ key: String, atIndex index: Int) -> String {
             switch self {
-            case .brackets: return "\(key)[]"
-            case .noBrackets: return key
-            case .indexInBrackets: return "\(key)[\(index)]"
-            case let .custom(encoding): return encoding(key, index)
+            case .brackets: "\(key)[]"
+            case .noBrackets: key
+            case .indexInBrackets: "\(key)[\(index)]"
+            case let .custom(encoding): encoding(key, index)
             }
         }
     }
@@ -94,8 +94,8 @@ public final class URLEncodedFormEncoder {
         /// - Returns:         The encoded `String`.
         func encode(_ value: Bool) -> String {
             switch self {
-            case .numeric: return value ? "1" : "0"
-            case .literal: return value ? "true" : "false"
+            case .numeric: value ? "1" : "0"
+            case .literal: value ? "true" : "false"
             }
         }
     }
@@ -117,9 +117,9 @@ public final class URLEncodedFormEncoder {
         ///                   `Encodable` implementation.
         func encode(_ data: Data) throws -> String? {
             switch self {
-            case .deferredToData: return nil
-            case .base64: return data.base64EncodedString()
-            case let .custom(encoding): return try encoding(data)
+            case .deferredToData: nil
+            case .base64: data.base64EncodedString()
+            case let .custom(encoding): try encoding(data)
             }
         }
     }
@@ -127,11 +127,11 @@ public final class URLEncodedFormEncoder {
     /// Encoding to use for `Date` values.
     public enum DateEncoding {
         /// ISO8601 and RFC3339 formatter.
-        private static let iso8601Formatter: ISO8601DateFormatter = {
+        private static let iso8601Formatter = Protected<ISO8601DateFormatter>({
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = .withInternetDateTime
             return formatter
-        }()
+        }())
 
         /// Defers encoding to the `Date` type. This is the default encoding.
         case deferredToDate
@@ -155,17 +155,17 @@ public final class URLEncodedFormEncoder {
         func encode(_ date: Date) throws -> String? {
             switch self {
             case .deferredToDate:
-                return nil
+                nil
             case .secondsSince1970:
-                return String(date.timeIntervalSince1970)
+                String(date.timeIntervalSince1970)
             case .millisecondsSince1970:
-                return String(date.timeIntervalSince1970 * 1000.0)
+                String(date.timeIntervalSince1970 * 1000.0)
             case .iso8601:
-                return DateEncoding.iso8601Formatter.string(from: date)
+                DateEncoding.iso8601Formatter.read { $0.string(from: date) }
             case let .formatted(formatter):
-                return formatter.string(from: date)
+                formatter.string(from: date)
             case let .custom(closure):
-                return try closure(date)
+                try closure(date)
             }
         }
     }
@@ -213,13 +213,13 @@ public final class URLEncodedFormEncoder {
 
         func encode(_ key: String) -> String {
             switch self {
-            case .useDefaultKeys: return key
-            case .convertToSnakeCase: return convertToSnakeCase(key)
-            case .convertToKebabCase: return convertToKebabCase(key)
-            case .capitalized: return String(key.prefix(1).uppercased() + key.dropFirst())
-            case .uppercased: return key.uppercased()
-            case .lowercased: return key.lowercased()
-            case let .custom(encoding): return encoding(key)
+            case .useDefaultKeys: key
+            case .convertToSnakeCase: convertToSnakeCase(key)
+            case .convertToKebabCase: convertToKebabCase(key)
+            case .capitalized: String(key.prefix(1).uppercased() + key.dropFirst())
+            case .uppercased: key.uppercased()
+            case .lowercased: key.lowercased()
+            case let .custom(encoding): encoding(key)
             }
         }
 
@@ -295,18 +295,18 @@ public final class URLEncodedFormEncoder {
     ///
     /// This encoding affects how the `parent`, `child`, `grandchild` path is encoded. Brackets are used by default.
     /// e.g. `parent[child][grandchild]=value`.
-    public struct KeyPathEncoding {
+    public struct KeyPathEncoding: Sendable {
         /// Encodes key paths by wrapping each component in brackets. e.g. `parent[child][grandchild]`.
         public static let brackets = KeyPathEncoding { "[\($0)]" }
         /// Encodes key paths by separating each component with dots. e.g. `parent.child.grandchild`.
         public static let dots = KeyPathEncoding { ".\($0)" }
 
-        private let encoding: (_ subkey: String) -> String
+        private let encoding: @Sendable (_ subkey: String) -> String
 
         /// Creates an instance with the encoding closure called for each sub-key in a key path.
         ///
         /// - Parameter encoding: Closure used to perform the encoding.
-        public init(encoding: @escaping (_ subkey: String) -> String) {
+        public init(encoding: @Sendable @escaping (_ subkey: String) -> String) {
             self.encoding = encoding
         }
 
@@ -316,7 +316,7 @@ public final class URLEncodedFormEncoder {
     }
 
     /// Encoding to use for `nil` values.
-    public struct NilEncoding {
+    public struct NilEncoding: Sendable {
         /// Encodes `nil` by dropping the entire key / value pair.
         public static let dropKey = NilEncoding { nil }
         /// Encodes `nil` by dropping only the value. e.g. `value1=one&nilValue=&value2=two`.
@@ -324,12 +324,12 @@ public final class URLEncodedFormEncoder {
         /// Encodes `nil` as `null`.
         public static let null = NilEncoding { "null" }
 
-        private let encoding: () -> String?
+        private let encoding: @Sendable () -> String?
 
         /// Creates an instance with the encoding closure called for `nil` values.
         ///
         /// - Parameter encoding: Closure used to perform the encoding.
-        public init(encoding: @escaping () -> String?) {
+        public init(encoding: @Sendable @escaping () -> String?) {
             self.encoding = encoding
         }
 
@@ -352,8 +352,8 @@ public final class URLEncodedFormEncoder {
         /// - Returns:          The encoded `String`.
         func encode(_ string: String) -> String {
             switch self {
-            case .percentEscaped: return string.replacingOccurrences(of: " ", with: "%20")
-            case .plusReplaced: return string.replacingOccurrences(of: " ", with: "+")
+            case .percentEscaped: string.replacingOccurrences(of: " ", with: "%20")
+            case .plusReplaced: string.replacingOccurrences(of: " ", with: "+")
             }
         }
     }
@@ -366,7 +366,7 @@ public final class URLEncodedFormEncoder {
         var localizedDescription: String {
             switch self {
             case let .invalidRootObject(object):
-                return "URLEncodedFormEncoder requires keyed root object. Received \(object) instead."
+                "URLEncodedFormEncoder requires keyed root object. Received \(object) instead."
             }
         }
     }
@@ -557,16 +557,16 @@ enum URLEncodedFormComponent {
     /// Converts self to an `[URLEncodedFormData]` or returns `nil` if not convertible.
     var array: [URLEncodedFormComponent]? {
         switch self {
-        case let .array(array): return array
-        default: return nil
+        case let .array(array): array
+        default: nil
         }
     }
 
     /// Converts self to an `Object` or returns `nil` if not convertible.
     var object: Object? {
         switch self {
-        case let .object(object): return object
-        default: return nil
+        case let .object(object): object
+        default: nil
         }
     }
 
@@ -1088,9 +1088,9 @@ final class URLEncodedFormSerializer {
 
     func serialize(_ component: URLEncodedFormComponent, forKey key: String) -> String {
         switch component {
-        case let .string(string): return "\(escape(keyEncoding.encode(key)))=\(escape(string))"
-        case let .array(array): return serialize(array, forKey: key)
-        case let .object(object): return serialize(object, forKey: key)
+        case let .string(string): "\(escape(keyEncoding.encode(key)))=\(escape(string))"
+        case let .array(array): serialize(array, forKey: key)
+        case let .object(object): serialize(object, forKey: key)
         }
     }
 

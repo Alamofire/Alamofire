@@ -26,6 +26,7 @@
 
 import Alamofire
 import Foundation
+@preconcurrency import Security
 import XCTest
 
 private enum TestCertificates {
@@ -66,6 +67,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Default Behavior Tests
 
+    @MainActor
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
         // Given
         let expectation = expectation(description: "\(expiredURLString)")
@@ -91,6 +93,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func disabled_testRevokedCertificateRequestBehaviorWithNoServerTrustPolicy() {
         // Disabled due to the instability of due revocation testing of default evaluation from all platforms. This
         // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
@@ -121,6 +124,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Server Trust Policy - Perform Default Tests
 
+    @MainActor
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
         let evaluators = [expiredHost: DefaultTrustEvaluator(validateHost: true)]
@@ -154,6 +158,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func disabled_testRevokedCertificateRequestBehaviorWithDefaultServerTrustPolicy() {
         // Disabled due to the instability of due revocation testing of default evaluation from all platforms. This
         // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
@@ -188,6 +193,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Server Trust Policy - Perform Revoked Tests
 
+    @MainActor
     func testThatExpiredCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
         let policy = RevocationTrustEvaluator()
@@ -226,6 +232,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // watchOS doesn't perform revocation checking at all.
     #if !os(watchOS)
+    @MainActor
     func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
         let policy = RevocationTrustEvaluator()
@@ -267,6 +274,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Server Trust Policy - Certificate Pinning Tests
 
+    @MainActor
     func testThatExpiredCertificateRequestFailsWhenPinningLeafCertificateWithCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.leaf]
@@ -302,6 +310,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatExpiredCertificateRequestFailsWhenPinningAllCertificatesWithCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.leaf,
@@ -341,6 +350,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainOrHostValidation() {
         // Given
         let certificates = [TestCertificates.leaf]
@@ -365,6 +375,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
+    @MainActor
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainOrHostValidation() {
         // Given
         let certificates = [TestCertificates.intermediateCA2]
@@ -389,6 +400,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
+    @MainActor
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCACertificateWithoutCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.rootCA]
@@ -419,6 +431,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Server Trust Policy - Public Key Pinning Tests
 
+    @MainActor
     func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWithCertificateChainValidation() {
         // Given
         let keys = [TestCertificates.leaf].af.publicKeys
@@ -454,6 +467,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
         let keys = [TestCertificates.leaf].af.publicKeys
@@ -478,6 +492,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
+    @MainActor
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
         let keys = [TestCertificates.intermediateCA2].af.publicKeys
@@ -502,6 +517,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
+    @MainActor
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyWithoutCertificateChainValidation() {
         // Given
         let keys = [TestCertificates.rootCA].af.publicKeys
@@ -532,6 +548,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Server Trust Policy - Disabling Evaluation Tests
 
+    @MainActor
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
         let evaluators = [expiredHost: DisabledTrustEvaluator()]

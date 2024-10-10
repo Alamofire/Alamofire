@@ -23,9 +23,12 @@
 //
 
 import Foundation
+#if canImport(Security)
+@preconcurrency import Security
+#endif
 
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
-open class ServerTrustManager {
+open class ServerTrustManager: @unchecked Sendable {
     /// Determines whether all hosts for this `ServerTrustManager` must be evaluated. `true` by default.
     public let allHostsMustBeEvaluated: Bool
 
@@ -74,7 +77,7 @@ open class ServerTrustManager {
 }
 
 /// A protocol describing the API used to evaluate server trusts.
-public protocol ServerTrustEvaluating {
+public protocol ServerTrustEvaluating: Sendable {
     #if !canImport(Security)
     // Implement this once other platforms have API for evaluating server trusts.
     #else
@@ -122,7 +125,7 @@ public final class DefaultTrustEvaluator: ServerTrustEvaluating {
 public final class RevocationTrustEvaluator: ServerTrustEvaluating {
     /// Represents the options to be use when evaluating the status of a certificate.
     /// Only Revocation Policy Constants are valid, and can be found in [Apple's documentation](https://developer.apple.com/documentation/security/certificate_key_and_trust_services/policies/1563600-revocation_policy_constants).
-    public struct Options: OptionSet {
+    public struct Options: OptionSet, Sendable {
         /// Perform revocation checking using the CRL (Certification Revocation List) method.
         public static let crl = Options(rawValue: kSecRevocationCRLMethod)
         /// Consult only locally cached replies; do not use network access.

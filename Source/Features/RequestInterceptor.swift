@@ -25,7 +25,7 @@
 import Foundation
 
 /// Stores all state associated with a `URLRequest` being adapted.
-public struct RequestAdapterState {
+public struct RequestAdapterState: Sendable {
     /// The `UUID` of the `Request` associated with the `URLRequest` to adapt.
     public let requestID: UUID
 
@@ -36,14 +36,14 @@ public struct RequestAdapterState {
 // MARK: -
 
 /// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
-public protocol RequestAdapter {
+public protocol RequestAdapter: Sendable {
     /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
     ///
     /// - Parameters:
     ///   - urlRequest: The `URLRequest` to adapt.
     ///   - session:    The `Session` that will execute the `URLRequest`.
     ///   - completion: The completion handler that must be called when adaptation is complete.
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void)
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @Sendable @escaping (_ result: Result<URLRequest, any Error>) -> Void)
 
     /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
     ///
@@ -51,11 +51,11 @@ public protocol RequestAdapter {
     ///   - urlRequest: The `URLRequest` to adapt.
     ///   - state:      The `RequestAdapterState` associated with the `URLRequest`.
     ///   - completion: The completion handler that must be called when adaptation is complete.
-    func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void)
+    func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @Sendable @escaping (_ result: Result<URLRequest, any Error>) -> Void)
 }
 
 extension RequestAdapter {
-    public func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @Sendable @escaping (_ result: Result<URLRequest, any Error>) -> Void) {
         adapt(urlRequest, for: state.session, completion: completion)
     }
 }
@@ -63,7 +63,7 @@ extension RequestAdapter {
 // MARK: -
 
 /// Outcome of determination whether retry is necessary.
-public enum RetryResult {
+public enum RetryResult: Sendable {
     /// Retry should be attempted immediately.
     case retry
     /// Retry should be attempted after the associated `TimeInterval`.
@@ -77,15 +77,15 @@ public enum RetryResult {
 extension RetryResult {
     var retryRequired: Bool {
         switch self {
-        case .retry, .retryWithDelay: return true
-        default: return false
+        case .retry, .retryWithDelay: true
+        default: false
         }
     }
 
     var delay: TimeInterval? {
         switch self {
-        case let .retryWithDelay(delay): return delay
-        default: return nil
+        case let .retryWithDelay(delay): delay
+        default: nil
         }
     }
 
@@ -97,7 +97,7 @@ extension RetryResult {
 
 /// A type that determines whether a request should be retried after being executed by the specified session manager
 /// and encountering an error.
-public protocol RequestRetrier {
+public protocol RequestRetrier: Sendable {
     /// Determines whether the `Request` should be retried by calling the `completion` closure.
     ///
     /// This operation is fully asynchronous. Any amount of time can be taken to determine whether the request needs
@@ -109,7 +109,7 @@ public protocol RequestRetrier {
     ///   - session:    `Session` that produced the `Request`.
     ///   - error:      `Error` encountered while executing the `Request`.
     ///   - completion: Completion closure to be executed when a retry decision has been determined.
-    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void)
+    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @Sendable @escaping (RetryResult) -> Void)
 }
 
 // MARK: -
@@ -118,40 +118,51 @@ public protocol RequestRetrier {
 public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
 
 extension RequestInterceptor {
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+    @preconcurrency
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         completion(.success(urlRequest))
     }
 
+    @preconcurrency
     public func retry(_ request: Request,
                       for session: Session,
                       dueTo error: any Error,
-                      completion: @escaping (RetryResult) -> Void) {
+                      completion: @Sendable @escaping (RetryResult) -> Void) {
         completion(.doNotRetry)
     }
 }
 
 /// `RequestAdapter` closure definition.
-public typealias AdaptHandler = (URLRequest, Session, _ completion: @escaping (Result<URLRequest, any Error>) -> Void) -> Void
+public typealias AdaptHandler = @Sendable (_ request: URLRequest,
+                                           _ session: Session,
+                                           _ completion: @escaping (Result<URLRequest, any Error>) -> Void) -> Void
 /// `RequestRetrier` closure definition.
-public typealias RetryHandler = (Request, Session, any Error, _ completion: @escaping (RetryResult) -> Void) -> Void
+public typealias RetryHandler = @Sendable (_ request: Request,
+                                           _ session: Session,
+                                           _ error: any Error,
+                                           _ completion: @escaping (RetryResult) -> Void) -> Void
 
 // MARK: -
 
 /// Closure-based `RequestAdapter`.
-open class Adapter: RequestInterceptor {
+open class Adapter: @unchecked Sendable, RequestInterceptor {
     private let adaptHandler: AdaptHandler
 
     /// Creates an instance using the provided closure.
     ///
     /// - Parameter adaptHandler: `AdaptHandler` closure to be executed when handling request adaptation.
+    ///
+    @preconcurrency
     public init(_ adaptHandler: @escaping AdaptHandler) {
         self.adaptHandler = adaptHandler
     }
 
+    @preconcurrency
     open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         adaptHandler(urlRequest, session, completion)
     }
 
+    @preconcurrency
     open func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         adaptHandler(urlRequest, state.session, completion)
     }
@@ -170,12 +181,13 @@ extension RequestAdapter where Self == Adapter {
 // MARK: -
 
 /// Closure-based `RequestRetrier`.
-open class Retrier: RequestInterceptor {
+open class Retrier: @unchecked Sendable, RequestInterceptor {
     private let retryHandler: RetryHandler
 
     /// Creates an instance using the provided closure.
     ///
     /// - Parameter retryHandler: `RetryHandler` closure to be executed when handling request retry.
+    @preconcurrency
     public init(_ retryHandler: @escaping RetryHandler) {
         self.retryHandler = retryHandler
     }
@@ -201,7 +213,7 @@ extension RequestRetrier where Self == Retrier {
 // MARK: -
 
 /// `RequestInterceptor` which can use multiple `RequestAdapter` and `RequestRetrier` values.
-open class Interceptor: RequestInterceptor {
+open class Interceptor: @unchecked Sendable, RequestInterceptor {
     /// All `RequestAdapter`s associated with the instance. These adapters will be run until one fails.
     public let adapters: [any RequestAdapter]
     /// All `RequestRetrier`s associated with the instance. These retriers will be run one at a time until one triggers retry.
@@ -233,26 +245,29 @@ open class Interceptor: RequestInterceptor {
     ///   - adapters:     `RequestAdapter` values to be used.
     ///   - retriers:     `RequestRetrier` values to be used.
     ///   - interceptors: `RequestInterceptor`s to be used.
-    public init(adapters: [any RequestAdapter] = [], retriers: [any RequestRetrier] = [], interceptors: [any RequestInterceptor] = []) {
+    public init(adapters: [any RequestAdapter] = [],
+                retriers: [any RequestRetrier] = [],
+                interceptors: [any RequestInterceptor] = []) {
         self.adapters = adapters + interceptors
         self.retriers = retriers + interceptors
     }
 
-    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+    @preconcurrency
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         adapt(urlRequest, for: session, using: adapters, completion: completion)
     }
 
     private func adapt(_ urlRequest: URLRequest,
                        for session: Session,
                        using adapters: [any RequestAdapter],
-                       completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+                       completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         var pendingAdapters = adapters
 
         guard !pendingAdapters.isEmpty else { completion(.success(urlRequest)); return }
 
         let adapter = pendingAdapters.removeFirst()
 
-        adapter.adapt(urlRequest, for: session) { result in
+        adapter.adapt(urlRequest, for: session) { [pendingAdapters] result in
             switch result {
             case let .success(urlRequest):
                 self.adapt(urlRequest, for: session, using: pendingAdapters, completion: completion)
@@ -262,21 +277,22 @@ open class Interceptor: RequestInterceptor {
         }
     }
 
-    open func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+    @preconcurrency
+    open func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         adapt(urlRequest, using: state, adapters: adapters, completion: completion)
     }
 
     private func adapt(_ urlRequest: URLRequest,
                        using state: RequestAdapterState,
                        adapters: [any RequestAdapter],
-                       completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+                       completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         var pendingAdapters = adapters
 
         guard !pendingAdapters.isEmpty else { completion(.success(urlRequest)); return }
 
         let adapter = pendingAdapters.removeFirst()
 
-        adapter.adapt(urlRequest, using: state) { result in
+        adapter.adapt(urlRequest, using: state) { [pendingAdapters] result in
             switch result {
             case let .success(urlRequest):
                 self.adapt(urlRequest, using: state, adapters: pendingAdapters, completion: completion)
@@ -286,10 +302,11 @@ open class Interceptor: RequestInterceptor {
         }
     }
 
+    @preconcurrency
     open func retry(_ request: Request,
                     for session: Session,
                     dueTo error: any Error,
-                    completion: @escaping (RetryResult) -> Void) {
+                    completion: @Sendable @escaping (RetryResult) -> Void) {
         retry(request, for: session, dueTo: error, using: retriers, completion: completion)
     }
 
@@ -297,14 +314,14 @@ open class Interceptor: RequestInterceptor {
                        for session: Session,
                        dueTo error: any Error,
                        using retriers: [any RequestRetrier],
-                       completion: @escaping (RetryResult) -> Void) {
+                       completion: @Sendable @escaping (RetryResult) -> Void) {
         var pendingRetriers = retriers
 
         guard !pendingRetriers.isEmpty else { completion(.doNotRetry); return }
 
         let retrier = pendingRetriers.removeFirst()
 
-        retrier.retry(request, for: session, dueTo: error) { result in
+        retrier.retry(request, for: session, dueTo: error) { [pendingRetriers] result in
             switch result {
             case .retry, .retryWithDelay, .doNotRetryWithError:
                 completion(result)

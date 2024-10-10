@@ -197,6 +197,11 @@
 		312930AF263E187800473CEA /* empty_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F21D7D2FA20056F249 /* empty_string.txt */; };
 		312930B0263E187800473CEA /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
 		312930B1263E187800473CEA /* utf32_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F31D7D2FA20056F249 /* utf32_string.txt */; };
+		312FC4FF2CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
+		312FC5002CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
+		312FC5012CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
+		312FC5022CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
+		312FC5032CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
 		31425AC1241F098000EE3CCC /* InternalRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31425AC0241F098000EE3CCC /* InternalRequestTests.swift */; };
 		31425AC2241F098000EE3CCC /* InternalRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31425AC0241F098000EE3CCC /* InternalRequestTests.swift */; };
 		31425AC3241F098000EE3CCC /* InternalRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31425AC0241F098000EE3CCC /* InternalRequestTests.swift */; };
@@ -651,6 +656,7 @@
 		31293065263E17D600473CEA /* Alamofire watchOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire watchOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
 		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
+		312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalHelpers.swift; sourceTree = "<group>"; };
 		31425AC0241F098000EE3CCC /* InternalRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestTests.swift; sourceTree = "<group>"; };
 		3145E0E227977AA300949557 /* iOS-NoTS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iOS-NoTS.xctestplan"; sourceTree = "<group>"; };
 		3145E0E32797A8EF00949557 /* tvOS-NoTS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tvOS-NoTS.xctestplan"; sourceTree = "<group>"; };
@@ -1224,6 +1230,7 @@
 			isa = PBXGroup;
 			children = (
 				4C256A501B096C2C0065714F /* BaseTestCase.swift */,
+				312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */,
 				31762DC9247738FA0025C704 /* LeaksTests.swift */,
 				31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */,
 				31727421218BB9A50039FFCC /* TestHelpers.swift */,
@@ -1431,7 +1438,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1530;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					31293064263E17D600473CEA = {
@@ -1739,6 +1746,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				312FC5012CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31293080263E184000473CEA /* AFError+AlamofireTests.swift in Sources */,
 				31293077263E183C00473CEA /* ResponseTests.swift in Sources */,
 				31293081263E184000473CEA /* FileManager+AlamofireTests.swift in Sources */,
@@ -1834,6 +1842,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				312FC5022CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				317338FE2A43BE9000D4EA0A /* BaseTestCase.swift in Sources */,
 				317338FF2A43BE9000D4EA0A /* LeaksTests.swift in Sources */,
 				317339002A43BE9000D4EA0A /* NSLoggingEventMonitor.swift in Sources */,
@@ -1929,6 +1938,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				312FC5002CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31B51E8E2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				4CF627181BA7CC240011A099 /* RequestTests.swift in Sources */,
 				3111CE9720A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
@@ -2122,6 +2132,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				312FC5032CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31B51E8C2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */,
 				3111CE9520A7EC39008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
@@ -2168,6 +2179,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				312FC4FF2CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31B51E8D2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
 				3111CE9620A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
@@ -2569,6 +2581,10 @@
 				PRODUCT_NAME = Alamofire;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = "$(SWIFT_STRICT_CONCURRENCY_XCODE_$(XCODE_VERSION_MAJOR))";
+				SWIFT_STRICT_CONCURRENCY_XCODE_1500 = minimal;
+				SWIFT_STRICT_CONCURRENCY_XCODE_1600 = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2635,6 +2651,10 @@
 				PRODUCT_NAME = Alamofire;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = "$(SWIFT_STRICT_CONCURRENCY_XCODE_$(XCODE_VERSION_MAJOR))";
+				SWIFT_STRICT_CONCURRENCY_XCODE_1500 = minimal;
+				SWIFT_STRICT_CONCURRENCY_XCODE_1600 = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VALIDATE_PRODUCT = YES;

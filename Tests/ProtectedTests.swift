@@ -84,16 +84,16 @@ final class ProtectedWrapperTests: BaseTestCase {
 
     func testThatDynamicMembersAreSetSafely() {
         // Given
-        struct Mutable { var value = "value" }
+        struct Mutable { var string = "value" }
         let mutable = Protected<Mutable>(.init())
 
         // When
         DispatchQueue.concurrentPerform(iterations: 10_000) { i in
-            mutable.value = "\(i)"
+            mutable.string = "\(i)"
         }
 
         // Then
-        XCTAssertNotEqual(mutable.value, "value")
+        XCTAssertNotEqual(mutable.string, "value")
     }
 }
 

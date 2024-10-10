@@ -25,9 +25,9 @@
 import Foundation
 
 /// The type to which all data response serializers must conform in order to serialize a response.
-public protocol DataResponseSerializerProtocol<SerializedObject> {
+public protocol DataResponseSerializerProtocol<SerializedObject>: Sendable {
     /// The type of serialized object to be created.
-    associatedtype SerializedObject
+    associatedtype SerializedObject: Sendable
 
     /// Serialize the response `Data` into the provided type.
     ///
@@ -43,9 +43,9 @@ public protocol DataResponseSerializerProtocol<SerializedObject> {
 }
 
 /// The type to which all download response serializers must conform in order to serialize a response.
-public protocol DownloadResponseSerializerProtocol<SerializedObject> {
+public protocol DownloadResponseSerializerProtocol<SerializedObject>: Sendable {
     /// The type of serialized object to be created.
-    associatedtype SerializedObject
+    associatedtype SerializedObject: Sendable
 
     /// Serialize the downloaded response `Data` from disk into the provided type.
     ///
@@ -71,7 +71,7 @@ public protocol ResponseSerializer<SerializedObject>: DataResponseSerializerProt
 }
 
 /// Type used to preprocess `Data` before it handled by a serializer.
-public protocol DataPreprocessor {
+public protocol DataPreprocessor: Sendable {
     /// Process           `Data` before it's handled by a serializer.
     /// - Parameter data: The raw `Data` to process.
     func preprocess(_ data: Data) throws -> Data
@@ -381,7 +381,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
         self.options = options
     }
 
-    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Any {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> any Any & Sendable {
         guard error == nil else { throw error! }
 
         guard var data, !data.isEmpty else {
@@ -405,7 +405,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
 // MARK: - Empty
 
 /// Protocol representing an empty response. Use `T.emptyValue()` to get an instance.
-public protocol EmptyResponse {
+public protocol EmptyResponse: Sendable {
     /// Empty value for the conforming type.
     ///
     /// - Returns: Value of `Self` to use for empty values.
@@ -427,7 +427,7 @@ extension Empty: EmptyResponse {
 // MARK: - DataDecoder Protocol
 
 /// Any type which can decode `Data` into a `Decodable` type.
-public protocol DataDecoder {
+public protocol DataDecoder: Sendable {
     /// Decode `Data` into the provided type.
     ///
     /// - Parameters:
@@ -446,13 +446,20 @@ extension PropertyListDecoder: DataDecoder {}
 
 // MARK: - Decodable
 
-/// A `ResponseSerializer` that decodes the response data as a generic value using any type that conforms to
-/// `DataDecoder`. By default, this is an instance of `JSONDecoder`. Additionally, a request returning `nil` or no data
-/// is considered an error. However, if the request has an `HTTPMethod` or the response has an HTTP status code valid
-/// for empty responses then an empty value will be returned. If the decoded type conforms to `EmptyResponse`, the
-/// type's `emptyValue()` will be returned. If the decoded type is `Empty`, the `.value` instance is returned. If the
-/// decoded type *does not* conform to `EmptyResponse` and isn't `Empty`, an error will be produced.
-public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer {
+/// A `ResponseSerializer` that decodes the response data as a `Decodable` value using any decoder that conforms to
+/// `DataDecoder`. By default, this is an instance of `JSONDecoder`.
+///
+/// - Note: A request returning `nil` or no data is considered an error. However, if the request has an `HTTPMethod` or
+///         the response has an HTTP status code valid for empty responses then an empty value will be returned. If the
+///         decoded type conforms to `EmptyResponse`, the type's `emptyValue()` will be returned. If the decoded type is
+///         `Empty`, the `.value` instance is returned. If the decoded type *does not* conform to `EmptyResponse` and
+///         isn't `Empty`, an error will be produced.
+///
+/// - Note: `JSONDecoder` and `PropertyListDecoder` are not `Sendable` on Apple platforms until macOS 13+ or iOS 16+, so
+///         instances passed to a serializer should not be used outside of the serializer. Additionally, ensure a new
+///         serializer is created for each request, do not use a single, shared serializer, so as to ensure separate
+///         decoder instances.
+public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer where T: Sendable {
     public let dataPreprocessor: any DataPreprocessor
     /// The `DataDecoder` instance used to decode responses.
     public let decoder: any DataDecoder

@@ -26,6 +26,7 @@
 
 import Alamofire
 import Foundation
+@preconcurrency import Security
 import XCTest
 
 private enum TestCertificates {
@@ -79,52 +80,50 @@ private enum TestTrusts {
     case leafValidDNSNameWithIncorrectIntermediate
 
     var trust: SecTrust {
-        let trust: SecTrust
-
-        switch self {
+        let trust: SecTrust = switch self {
         case .leafWildcard:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafWildcard,
-                                                      TestCertificates.intermediateCA1,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafWildcard,
+                                              TestCertificates.intermediateCA1,
+                                              TestCertificates.rootCA])
         case .leafMultipleDNSNames:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafMultipleDNSNames,
-                                                      TestCertificates.intermediateCA1,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafMultipleDNSNames,
+                                              TestCertificates.intermediateCA1,
+                                              TestCertificates.rootCA])
         case .leafSignedByCA1:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafSignedByCA1,
-                                                      TestCertificates.intermediateCA1,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafSignedByCA1,
+                                              TestCertificates.intermediateCA1,
+                                              TestCertificates.rootCA])
         case .leafDNSNameAndURI:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafDNSNameAndURI,
-                                                      TestCertificates.intermediateCA1,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafDNSNameAndURI,
+                                              TestCertificates.intermediateCA1,
+                                              TestCertificates.rootCA])
         case .leafExpired:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafExpired,
-                                                      TestCertificates.intermediateCA2,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafExpired,
+                                              TestCertificates.intermediateCA2,
+                                              TestCertificates.rootCA])
         case .leafMissingDNSNameAndURI:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafMissingDNSNameAndURI,
-                                                      TestCertificates.intermediateCA2,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafMissingDNSNameAndURI,
+                                              TestCertificates.intermediateCA2,
+                                              TestCertificates.rootCA])
         case .leafSignedByCA2:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafSignedByCA2,
-                                                      TestCertificates.intermediateCA2,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafSignedByCA2,
+                                              TestCertificates.intermediateCA2,
+                                              TestCertificates.rootCA])
         case .leafValidDNSName:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafValidDNSName,
-                                                      TestCertificates.intermediateCA2,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafValidDNSName,
+                                              TestCertificates.intermediateCA2,
+                                              TestCertificates.rootCA])
         case .leafValidURI:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafValidURI,
-                                                      TestCertificates.intermediateCA2,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafValidURI,
+                                              TestCertificates.intermediateCA2,
+                                              TestCertificates.rootCA])
         case .leafValidDNSNameMissingIntermediate:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafValidDNSName,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafValidDNSName,
+                                              TestCertificates.rootCA])
         case .leafValidDNSNameWithIncorrectIntermediate:
-            trust = TestTrusts.trustWithCertificates([TestCertificates.leafValidDNSName,
-                                                      TestCertificates.intermediateCA1,
-                                                      TestCertificates.rootCA])
+            TestTrusts.trustWithCertificates([TestCertificates.leafValidDNSName,
+                                              TestCertificates.intermediateCA1,
+                                              TestCertificates.rootCA])
         }
 
         return trust

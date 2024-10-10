@@ -27,6 +27,7 @@ import Foundation
 import XCTest
 
 final class StatusCodeValidationTestCase: BaseTestCase {
+    @MainActor
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
         let endpoint = Endpoint.status(200)
@@ -59,6 +60,7 @@ final class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let endpoint = Endpoint.status(404)
@@ -96,6 +98,7 @@ final class StatusCodeValidationTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
         let endpoint = Endpoint.status(201)
@@ -137,6 +140,7 @@ final class StatusCodeValidationTestCase: BaseTestCase {
 // MARK: -
 
 final class ContentTypeValidationTestCase: BaseTestCase {
+    @MainActor
     func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
         let endpoint = Endpoint.ip
@@ -173,6 +177,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
         let endpoint = Endpoint.ip
@@ -209,6 +214,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
         let endpoint = Endpoint.xml
@@ -247,6 +253,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatContentTypeValidationFailureSortsPossibleContentTypes() {
         // Given
         let endpoint = Endpoint.xml
@@ -319,6 +326,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
         let endpoint = Endpoint.xml
@@ -357,6 +365,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseSucceedsWhenNoDataIsReturned() {
         // Given
         let endpoint = Endpoint.status(204)
@@ -393,6 +402,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
 // MARK: -
 
 final class MultipleValidationTestCase: BaseTestCase {
+    @MainActor
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let endpoint = Endpoint.ip
@@ -427,6 +437,7 @@ final class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() {
         // Given
         let endpoint = Endpoint.xml
@@ -466,6 +477,7 @@ final class MultipleValidationTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithContentTypeError() {
         // Given
         let endpoint = Endpoint.xml
@@ -510,6 +522,7 @@ final class MultipleValidationTestCase: BaseTestCase {
 // MARK: -
 
 final class AutomaticValidationTestCase: BaseTestCase {
+    @MainActor
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/json")])
@@ -538,6 +551,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let request = Endpoint.status(404)
@@ -575,6 +589,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
         let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/*")])
@@ -603,6 +618,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
         // Given
         var urlRequest = Endpoint.xml.urlRequest
@@ -634,6 +650,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
         let urlRequest = Endpoint.xml.modifying(\.headers, to: [.accept("application/json")])
@@ -710,6 +727,7 @@ extension DownloadRequest {
 // MARK: -
 
 final class CustomValidationTestCase: BaseTestCase {
+    @MainActor
     func testThatCustomValidationClosureHasAccessToServerResponseData() {
         // Given
         let endpoint = Endpoint()
@@ -754,6 +772,7 @@ final class CustomValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatCustomValidationCanThrowCustomError() {
         // Given
         let endpoint = Endpoint()
@@ -788,6 +807,7 @@ final class CustomValidationTestCase: BaseTestCase {
         XCTAssertEqual(downloadError?.asAFError?.underlyingError as? ValidationError, .missingFile)
     }
 
+    @MainActor
     func testThatValidationExtensionHasAccessToServerResponseData() {
         // Given
         let endpoint = Endpoint()
@@ -820,6 +840,7 @@ final class CustomValidationTestCase: BaseTestCase {
         XCTAssertNil(downloadError)
     }
 
+    @MainActor
     func testThatValidationExtensionCanThrowCustomError() {
         // Given
         let endpoint = Endpoint()

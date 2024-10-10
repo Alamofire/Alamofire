@@ -44,9 +44,9 @@ public protocol AuthenticationCredential {
 
 /// Types adopting the `Authenticator` protocol can be used to authenticate `URLRequest`s with an
 /// `AuthenticationCredential` as well as refresh the `AuthenticationCredential` when required.
-public protocol Authenticator: AnyObject {
+public protocol Authenticator: AnyObject, Sendable {
     /// The type of credential associated with the `Authenticator` instance.
-    associatedtype Credential: AuthenticationCredential
+    associatedtype Credential: AuthenticationCredential & Sendable
 
     /// Applies the `Credential` to the `URLRequest`.
     ///
@@ -157,7 +157,7 @@ public enum AuthenticationError: Error {
 
 /// The `AuthenticationInterceptor` class manages the queuing and threading complexity of authenticating requests.
 /// It relies on an `Authenticator` type to handle the actual `URLRequest` authentication and `Credential` refresh.
-public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor where AuthenticatorType: Authenticator {
+public final class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor, Sendable where AuthenticatorType: Authenticator {
     // MARK: Typealiases
 
     /// Type of credential used to authenticate requests.
@@ -193,7 +193,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
     private struct AdaptOperation {
         let urlRequest: URLRequest
         let session: Session
-        let completion: (Result<URLRequest, any Error>) -> Void
+        let completion: @Sendable (Result<URLRequest, any Error>) -> Void
     }
 
     private enum AdaptResult {
@@ -210,7 +210,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
         var refreshWindow: RefreshWindow?
 
         var adaptOperations: [AdaptOperation] = []
-        var requestsToRetry: [(RetryResult) -> Void] = []
+        var requestsToRetry: [@Sendable (RetryResult) -> Void] = []
     }
 
     // MARK: Properties
@@ -246,7 +246,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Adapt
 
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
         let adaptResult: AdaptResult = mutableState.write { mutableState in
             // Queue the adapt operation if a refresh is already in place.
             guard !mutableState.isRefreshing else {
@@ -289,7 +289,7 @@ public class AuthenticationInterceptor<AuthenticatorType>: RequestInterceptor wh
 
     // MARK: Retry
 
-    public func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
+    public func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @Sendable @escaping (RetryResult) -> Void) {
         // Do not attempt retry if there was not an original request and response from the server.
         guard let urlRequest = request.request, let response = request.response else {
             completion(.doNotRetry)

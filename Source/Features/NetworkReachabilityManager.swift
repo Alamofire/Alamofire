@@ -33,9 +33,9 @@ import SystemConfiguration
 /// Reachability can be used to determine background information about why a network operation failed, or to retry
 /// network requests when a connection is established. It should not be used to prevent a user from initiating a network
 /// request, as it's possible that an initial request may be required to establish reachability.
-open class NetworkReachabilityManager {
+open class NetworkReachabilityManager: @unchecked Sendable {
     /// Defines the various states of network reachability.
-    public enum NetworkReachabilityStatus {
+    public enum NetworkReachabilityStatus: Sendable {
         /// It is unknown whether the network is reachable.
         case unknown
         /// The network is not reachable.
@@ -54,7 +54,7 @@ open class NetworkReachabilityManager {
         }
 
         /// Defines the various connection types detected by reachability flags.
-        public enum ConnectionType {
+        public enum ConnectionType: Sendable {
             /// The connection type is either over Ethernet or WiFi.
             case ethernetOrWiFi
             /// The connection type is a cellular connection.
@@ -64,7 +64,7 @@ open class NetworkReachabilityManager {
 
     /// A closure executed when the network reachability status changes. The closure takes a single argument: the
     /// network reachability status.
-    public typealias Listener = (NetworkReachabilityStatus) -> Void
+    public typealias Listener = @Sendable (NetworkReachabilityStatus) -> Void
 
     /// Default `NetworkReachabilityManager` for the zero address and a `listenerQueue` of `.main`.
     public static let `default` = NetworkReachabilityManager()
@@ -162,6 +162,7 @@ open class NetworkReachabilityManager {
     ///   - listener: `Listener` closure called when reachability changes.
     ///
     /// - Returns: `true` if listening was started successfully, `false` otherwise.
+    @preconcurrency
     @discardableResult
     open func startListening(onQueue queue: DispatchQueue = .main,
                              onUpdatePerforming listener: @escaping Listener) -> Bool {
@@ -236,7 +237,7 @@ open class NetworkReachabilityManager {
     func notifyListener(_ flags: SCNetworkReachabilityFlags) {
         let newStatus = NetworkReachabilityStatus(flags)
 
-        mutableState.write { state in
+        mutableState.write { [newStatus] state in
             guard state.previousStatus != newStatus else { return }
 
             state.previousStatus = newStatus

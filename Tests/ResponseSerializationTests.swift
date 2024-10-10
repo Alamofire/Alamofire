@@ -1181,6 +1181,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
 }
 
 final class CustomResponseSerializerTests: BaseTestCase {
+    @MainActor
     func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
         // Given
         final class UselessResponseSerializer: ResponseSerializer {

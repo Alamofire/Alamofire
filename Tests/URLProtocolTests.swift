@@ -132,6 +132,7 @@ class URLProtocolTestCase: BaseTestCase {
 
     // MARK: Tests
 
+    @MainActor
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
         let endpoint = Endpoint.responseHeaders.modifying(\.headers, to: ["Request-Header": "foobar"])

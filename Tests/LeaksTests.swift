@@ -30,6 +30,7 @@ import XCTest
 // Sample code from the Swift forums: https://forums.swift.org/t/test-for-memory-leaks-in-ci/36526/19
 #if SWIFT_PACKAGE && LEAKS && os(macOS)
 final class LeaksTests: XCTestCase {
+    @MainActor
     func testForLeaks() {
         // Sets up an atexit handler that invokes the leaks tool.
         atexit {

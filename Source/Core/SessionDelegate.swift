@@ -25,7 +25,7 @@
 import Foundation
 
 /// Class which implements the various `URLSessionDelegate` methods to connect various Alamofire features.
-open class SessionDelegate: NSObject {
+open class SessionDelegate: NSObject, @unchecked Sendable {
     private let fileManager: FileManager
 
     weak var stateProvider: (any SessionStateProvider)?
@@ -55,7 +55,7 @@ open class SessionDelegate: NSObject {
 }
 
 /// Type which provides various `Session` state values.
-protocol SessionStateProvider: AnyObject {
+protocol SessionStateProvider: AnyObject, Sendable {
     var serverTrustManager: ServerTrustManager? { get }
     var redirectHandler: (any RedirectHandler)? { get }
     var cachedResponseHandler: (any CachedResponseHandler)? { get }
@@ -234,7 +234,7 @@ extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession,
                          dataTask: URLSessionDataTask,
                          didReceive response: URLResponse,
-                         completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+                         completionHandler: @escaping @Sendable (URLSession.ResponseDisposition) -> Void) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: response)
 
         guard let response = response as? HTTPURLResponse else { completionHandler(.allow); return }
