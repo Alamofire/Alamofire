@@ -433,6 +433,8 @@ public final class DownloadRequest: Request, @unchecked Sendable {
 
     /// Adds a handler to be called once the request has finished.
     ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
+    ///
     /// - Parameters:
     ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
@@ -449,6 +451,8 @@ public final class DownloadRequest: Request, @unchecked Sendable {
     }
 
     /// Adds a handler to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
@@ -481,6 +485,8 @@ public final class DownloadRequest: Request, @unchecked Sendable {
 
     /// Adds a handler using a `DataResponseSerializer` to be called once the request has finished.
     ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
+    ///
     /// - Parameters:
     ///   - queue:               The queue on which the completion handler is called. `.main` by default.
     ///   - dataPreprocessor:    `DataPreprocessor` which processes the received `Data` before calling the
@@ -505,6 +511,8 @@ public final class DownloadRequest: Request, @unchecked Sendable {
     }
 
     /// Adds a handler using a `StringResponseSerializer` to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - queue:               The queue on which the completion handler is dispatched. `.main` by default.
@@ -535,6 +543,8 @@ public final class DownloadRequest: Request, @unchecked Sendable {
 
     /// Adds a handler using a `JSONResponseSerializer` to be called once the request has finished.
     ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
+    ///
     /// - Parameters:
     ///   - queue:               The queue on which the completion handler is dispatched. `.main` by default.
     ///   - dataPreprocessor:    `DataPreprocessor` which processes the received `Data` before calling the
@@ -564,6 +574,8 @@ public final class DownloadRequest: Request, @unchecked Sendable {
     }
 
     /// Adds a handler using a `DecodableResponseSerializer` to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - type:                `Decodable` type to decode from response data.
