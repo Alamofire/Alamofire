@@ -94,10 +94,10 @@ extension Request {
 
     fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
                                            response: HTTPURLResponse,
-                                           data: Data?)
+                                           isEmpty: Bool)
         -> ValidationResult
         where S.Iterator.Element == String {
-        guard let data, !data.isEmpty else { return .success(()) }
+        guard !isEmpty else { return .success(()) }
 
         return validate(contentType: acceptableContentTypes, response: response)
     }
@@ -172,7 +172,7 @@ extension DataRequest {
     @discardableResult
     public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @autoclosure () -> S) -> Self where S.Iterator.Element == String {
         validate { [unowned self] _, response, data in
-            self.validate(contentType: acceptableContentTypes(), response: response, data: data)
+            self.validate(contentType: acceptableContentTypes(), response: response, isEmpty: (data == nil || data?.isEmpty == true))
         }
     }
 
@@ -263,7 +263,7 @@ extension DownloadRequest {
         }
     }
 
-    /// Validates that the response has a content type in the specified sequence.
+    /// Validates that the response has a `Content-Type` in the specified sequence.
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
     ///
@@ -273,15 +273,15 @@ extension DownloadRequest {
     @discardableResult
     public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @autoclosure () -> S) -> Self where S.Iterator.Element == String {
         validate { [unowned self] _, response, fileURL in
-            guard let validFileURL = fileURL else {
+            guard let fileURL else {
                 return .failure(AFError.responseValidationFailed(reason: .dataFileNil))
             }
 
             do {
-                let data = try Data(contentsOf: validFileURL)
-                return self.validate(contentType: acceptableContentTypes(), response: response, data: data)
+                let isEmpty = try (fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0) == 0
+                return self.validate(contentType: acceptableContentTypes(), response: response, isEmpty: isEmpty)
             } catch {
-                return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: validFileURL)))
+                return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: fileURL)))
             }
         }
     }
