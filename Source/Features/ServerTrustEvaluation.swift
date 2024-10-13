@@ -600,9 +600,9 @@ extension AlamofireExtension where ExtendedType == SecTrust {
     /// The `SecCertificate`s contained in `self`.
     public var certificates: [SecCertificate] {
         if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, visionOS 1, *) {
-            return (SecTrustCopyCertificateChain(type) as? [SecCertificate]) ?? []
+            (SecTrustCopyCertificateChain(type) as? [SecCertificate]) ?? []
         } else {
-            return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
+            (0..<SecTrustGetCertificateCount(type)).compactMap { index in
                 SecTrustGetCertificateAtIndex(type, index)
             }
         }
