@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.9.1 Docs
+          Alamofire 5.10.0 Docs
         </a>
          (96% documented)
       </p>
@@ -48,7 +48,9 @@
     </header>
 
     <p class="breadcrumbs">
-      <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
+      <a class="breadcrumb" href="../index.html">Alamofire</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      <a class="breadcrumb" href="../Protocols.html">Protocols</a>
       <img class="carat" src="../img/carat.png" alt=""/>
       EventMonitor Protocol Reference
     </p>
@@ -301,6 +303,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -566,7 +571,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">EventMonitor</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">EventMonitor</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -655,7 +660,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="n">didBecomeInvalidWithError</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="n">didBecomeInvalidWithError</span> <span class="nv">error</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt">Error</span><span class="p">)?)</span></code></pre>
 
                         </div>
                       </div>
@@ -879,7 +884,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">,</span> <span class="n">didCompleteWithError</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">,</span> <span class="n">didCompleteWithError</span> <span class="nv">error</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt">Error</span><span class="p">)?)</span></code></pre>
 
                         </div>
                       </div>
@@ -1833,9 +1838,9 @@ multiple times if it is retried.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA11DataRequestC_AA0hG0Vyqd__AA7AFErrorOGtlF"></a>
+                    <a name="/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA11DataRequestC_AA0hG0Vyqd__AA7AFErrorOGts8SendableRd__lF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didParseResponse:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA11DataRequestC_AA0hG0Vyqd__AA7AFErrorOGtlF">request(_:<wbr>didParseResponse:<wbr>)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA11DataRequestC_AA0hG0Vyqd__AA7AFErrorOGts8SendableRd__lF">request(_:<wbr>didParseResponse:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1850,7 +1855,7 @@ multiple times if it is retried.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span><span class="p">,</span> <span class="n">didParseResponse</span> <span class="nv">response</span><span class="p">:</span> <span class="kt"><a href="../Structs/DataResponse.html">DataResponse</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span><span class="p">,</span> <span class="n">didParseResponse</span> <span class="nv">response</span><span class="p">:</span> <span class="kt"><a href="../Structs/DataResponse.html">DataResponse</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="k">where</span> <span class="kt">Value</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -1965,9 +1970,9 @@ multiple times if it is retried.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire12EventMonitorP7request_14didParseStreamyAA04DataG7RequestC_s6ResultOyqd__AA7AFErrorOGtlF"></a>
+                    <a name="/s:9Alamofire12EventMonitorP7request_14didParseStreamyAA04DataG7RequestC_s6ResultOyqd__AA7AFErrorOGts8SendableRd__lF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didParseStream:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_14didParseStreamyAA04DataG7RequestC_s6ResultOyqd__AA7AFErrorOGtlF">request(_:<wbr>didParseStream:<wbr>)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_14didParseStreamyAA04DataG7RequestC_s6ResultOyqd__AA7AFErrorOGts8SendableRd__lF">request(_:<wbr>didParseStream:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Default implementation
@@ -1989,7 +1994,7 @@ multiple times if it is retried.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span><span class="p">,</span> <span class="n">didParseStream</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Value</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span><span class="p">,</span> <span class="n">didParseStream</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Value</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="k">where</span> <span class="kt">Value</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -2293,9 +2298,9 @@ downloaded file will be moved to.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA15DownloadRequestC_AA0hG0Vyqd__AA7AFErrorOGtlF"></a>
+                    <a name="/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA15DownloadRequestC_AA0hG0Vyqd__AA7AFErrorOGts8SendableRd__lF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didParseResponse:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA15DownloadRequestC_AA0hG0Vyqd__AA7AFErrorOGtlF">request(_:<wbr>didParseResponse:<wbr>)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA15DownloadRequestC_AA0hG0Vyqd__AA7AFErrorOGts8SendableRd__lF">request(_:<wbr>didParseResponse:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2310,7 +2315,7 @@ downloaded file will be moved to.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="p">,</span> <span class="n">didParseResponse</span> <span class="nv">response</span><span class="p">:</span> <span class="kt"><a href="../Structs/DownloadResponse.html">DownloadResponse</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="p">,</span> <span class="n">didParseResponse</span> <span class="nv">response</span><span class="p">:</span> <span class="kt"><a href="../Structs/DownloadResponse.html">DownloadResponse</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="p">,</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="k">where</span> <span class="kt">Value</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -2325,8 +2330,8 @@ downloaded file will be moved to.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

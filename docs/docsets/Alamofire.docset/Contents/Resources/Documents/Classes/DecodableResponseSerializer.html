@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.9.1 Docs
+          Alamofire 5.10.0 Docs
         </a>
          (96% documented)
       </p>
@@ -48,7 +48,9 @@
     </header>
 
     <p class="breadcrumbs">
-      <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
+      <a class="breadcrumb" href="../index.html">Alamofire</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      <a class="breadcrumb" href="../Classes.html">Classes</a>
       <img class="carat" src="../img/carat.png" alt=""/>
       DecodableResponseSerializer Class Reference
     </p>
@@ -301,6 +303,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -566,16 +571,28 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DecodableResponseSerializer</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DecodableResponseSerializer</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span><span class="p">,</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
-            <p>A <code><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></code> that decodes the response data as a generic value using any type that conforms to
-<code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code>. By default, this is an instance of <code>JSONDecoder</code>. Additionally, a request returning <code>nil</code> or no data
-is considered an error. However, if the request has an <code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> or the response has an HTTP status code valid
-for empty responses then an empty value will be returned. If the decoded type conforms to <code><a href="../Protocols/EmptyResponse.html">EmptyResponse</a></code>, the
-type&rsquo;s <code>emptyValue()</code> will be returned. If the decoded type is <code><a href="../Structs/Empty.html">Empty</a></code>, the <code>.value</code> instance is returned. If the
-decoded type <em>does not</em> conform to <code><a href="../Protocols/EmptyResponse.html">EmptyResponse</a></code> and isn&rsquo;t <code><a href="../Structs/Empty.html">Empty</a></code>, an error will be produced.</p>
+            <p>A <code><a href="../Protocols/ResponseSerializer.html">ResponseSerializer</a></code> that decodes the response data as a <code>Decodable</code> value using any decoder that conforms to
+<code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code>. By default, this is an instance of <code>JSONDecoder</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>A request returning <code>nil</code> or no data is considered an error. However, if the request has an <code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> or
+    the response has an HTTP status code valid for empty responses then an empty value will be returned. If the
+    decoded type conforms to <code><a href="../Protocols/EmptyResponse.html">EmptyResponse</a></code>, the type&rsquo;s <code>emptyValue()</code> will be returned. If the decoded type is
+    <code><a href="../Structs/Empty.html">Empty</a></code>, the <code>.value</code> instance is returned. If the decoded type <em>does not</em> conform to <code><a href="../Protocols/EmptyResponse.html">EmptyResponse</a></code> and
+    isn&rsquo;t <code><a href="../Structs/Empty.html">Empty</a></code>, an error will be produced.</p>
+
+</div><div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p><code>JSONDecoder</code> and <code>PropertyListDecoder</code> are not <code>Sendable</code> on Apple platforms until macOS 13+ or iOS 16+, so
+    instances passed to a serializer should not be used outside of the serializer. Additionally, ensure a new
+    serializer is created for each request, do not use a single, shared serializer, so as to ensure separate
+    decoder instances.</p>
+
+</div>
 
           </div>
         </section>
@@ -603,7 +620,7 @@ decoded type <em>does not</em> conform to <code><a href="../Protocols/EmptyRespo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -630,7 +647,7 @@ decoded type <em>does not</em> conform to <code><a href="../Protocols/EmptyRespo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">decoder</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span></code></pre>
 
                         </div>
                       </div>
@@ -709,8 +726,8 @@ decoded type <em>does not</em> conform to <code><a href="../Protocols/EmptyRespo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt">DecodableResponseSerializer</span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
-            <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="o">=</span> <span class="kt">DecodableResponseSerializer</span><span class="o">.</span><span class="n">defaultDataPreprocessor</span><span class="p">,</span>
+            <span class="nv">decoder</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
             <span class="nv">emptyResponseCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">DecodableResponseSerializer</span><span class="o">.</span><span class="n">defaultEmptyResponseCodes</span><span class="p">,</span>
             <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">DecodableResponseSerializer</span><span class="o">.</span><span class="n">defaultEmptyRequestMethods</span><span class="p">)</span></code></pre>
 
@@ -793,7 +810,7 @@ decoded type <em>does not</em> conform to <code><a href="../Protocols/EmptyRespo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serialize</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?,</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">T</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serialize</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?,</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span> <span class="nv">error</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt">Error</span><span class="p">)?)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">T</span></code></pre>
 
                         </div>
                       </div>
@@ -808,8 +825,8 @@ decoded type <em>does not</em> conform to <code><a href="../Protocols/EmptyRespo
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

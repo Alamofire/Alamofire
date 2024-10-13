@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.9.1 Docs
+          Alamofire 5.10.0 Docs
         </a>
          (96% documented)
       </p>
@@ -48,7 +48,7 @@
     </header>
 
     <p class="breadcrumbs">
-      <a class="breadcrumb" href="index.html">Alamofire Reference</a>
+      <a class="breadcrumb" href="index.html">Alamofire</a>
       <img class="carat" src="img/carat.png" alt=""/>
       Classes  Reference
     </p>
@@ -301,6 +301,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -593,7 +596,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DataRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DataRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span><span class="p">,</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -621,7 +624,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DataStreamRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DataStreamRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span><span class="p">,</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -649,7 +652,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DownloadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DownloadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/Request.html">Request</a></span><span class="p">,</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -678,7 +681,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Request</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Request</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Request</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Request</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Request</span><span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
@@ -739,7 +742,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">JSONParameterEncoder</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">JSONParameterEncoder</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
 
                         </div>
                       </div>
@@ -773,7 +776,7 @@ on the <code>Destination</code> set.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">URLEncodedFormParameterEncoder</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">URLEncodedFormParameterEncoder</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
 
                         </div>
                       </div>
@@ -803,7 +806,7 @@ cache handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Session</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Session</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Session</span><span class="p">:</span> <span class="kt"><a href="Protocols/RequestDelegate.html">RequestDelegate</a></span></code></pre>
 
                         </div>
@@ -832,7 +835,7 @@ cache handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">SessionDelegate</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">SessionDelegate</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDelegate</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionTaskDelegate</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">URLSessionDataDelegate</span></code></pre>
@@ -865,7 +868,7 @@ cache handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">UploadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/DataRequest.html">DataRequest</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">UploadRequest</span> <span class="p">:</span> <span class="kt"><a href="Classes/DataRequest.html">DataRequest</a></span><span class="p">,</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -894,7 +897,7 @@ It relies on an <code><a href="Protocols/Authenticator.html">Authenticator</a></
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AuthenticationInterceptor</span><span class="o">&lt;</span><span class="kt">AuthenticatorType</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span> <span class="k">where</span> <span class="kt">AuthenticatorType</span> <span class="p">:</span> <span class="kt"><a href="Protocols/Authenticator.html">Authenticator</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">AuthenticationInterceptor</span><span class="o">&lt;</span><span class="kt">AuthenticatorType</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">,</span> <span class="kt">Sendable</span> <span class="k">where</span> <span class="kt">AuthenticatorType</span> <span class="p">:</span> <span class="kt"><a href="Protocols/Authenticator.html">Authenticator</a></span></code></pre>
 
                         </div>
                       </div>
@@ -950,7 +953,7 @@ It relies on an <code><a href="Protocols/Authenticator.html">Authenticator</a></
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ClosureEventMonitor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/EventMonitor.html">EventMonitor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ClosureEventMonitor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/EventMonitor.html">EventMonitor</a></span><span class="p">,</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -1024,7 +1027,7 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">NetworkReachabilityManager</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">NetworkReachabilityManager</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -1052,7 +1055,7 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Adapter</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Adapter</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1080,7 +1083,7 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Retrier</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Retrier</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1108,7 +1111,7 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Interceptor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Interceptor</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1277,12 +1280,24 @@ HTTP status code valid for empty responses, then an <code>NSNull</code> value is
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A <code><a href="Protocols/ResponseSerializer.html">ResponseSerializer</a></code> that decodes the response data as a generic value using any type that conforms to
-<code><a href="Protocols/DataDecoder.html">DataDecoder</a></code>. By default, this is an instance of <code>JSONDecoder</code>. Additionally, a request returning <code>nil</code> or no data
-is considered an error. However, if the request has an <code><a href="Structs/HTTPMethod.html">HTTPMethod</a></code> or the response has an HTTP status code valid
-for empty responses then an empty value will be returned. If the decoded type conforms to <code><a href="Protocols/EmptyResponse.html">EmptyResponse</a></code>, the
-type&rsquo;s <code>emptyValue()</code> will be returned. If the decoded type is <code><a href="Structs/Empty.html">Empty</a></code>, the <code>.value</code> instance is returned. If the
-decoded type <em>does not</em> conform to <code><a href="Protocols/EmptyResponse.html">EmptyResponse</a></code> and isn&rsquo;t <code><a href="Structs/Empty.html">Empty</a></code>, an error will be produced.</p>
+                        <p>A <code><a href="Protocols/ResponseSerializer.html">ResponseSerializer</a></code> that decodes the response data as a <code>Decodable</code> value using any decoder that conforms to
+<code><a href="Protocols/DataDecoder.html">DataDecoder</a></code>. By default, this is an instance of <code>JSONDecoder</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>A request returning <code>nil</code> or no data is considered an error. However, if the request has an <code><a href="Structs/HTTPMethod.html">HTTPMethod</a></code> or
+    the response has an HTTP status code valid for empty responses then an empty value will be returned. If the
+    decoded type conforms to <code><a href="Protocols/EmptyResponse.html">EmptyResponse</a></code>, the type&rsquo;s <code>emptyValue()</code> will be returned. If the decoded type is
+    <code><a href="Structs/Empty.html">Empty</a></code>, the <code>.value</code> instance is returned. If the decoded type <em>does not</em> conform to <code><a href="Protocols/EmptyResponse.html">EmptyResponse</a></code> and
+    isn&rsquo;t <code><a href="Structs/Empty.html">Empty</a></code>, an error will be produced.</p>
+
+</div><div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p><code>JSONDecoder</code> and <code>PropertyListDecoder</code> are not <code>Sendable</code> on Apple platforms until macOS 13+ or iOS 16+, so
+    instances passed to a serializer should not be used outside of the serializer. Additionally, ensure a new
+    serializer is created for each request, do not use a single, shared serializer, so as to ensure separate
+    decoder instances.</p>
+
+</div>
 
                         <a href="Classes/DecodableResponseSerializer.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1290,7 +1305,7 @@ decoded type <em>does not</em> conform to <code><a href="Protocols/EmptyResponse
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DecodableResponseSerializer</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ResponseSerializer.html">ResponseSerializer</a></span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">DecodableResponseSerializer</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ResponseSerializer.html">ResponseSerializer</a></span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span><span class="p">,</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -1319,7 +1334,7 @@ as well as certain types of networking errors.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">RetryPolicy</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">RetryPolicy</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt"><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1353,7 +1368,7 @@ information about retrying network connection lost errors, please refer to Apple
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ConnectionLostRetryPolicy</span> <span class="p">:</span> <span class="kt"><a href="Classes/RetryPolicy.html">RetryPolicy</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ConnectionLostRetryPolicy</span> <span class="p">:</span> <span class="kt"><a href="Classes/RetryPolicy.html">RetryPolicy</a></span><span class="p">,</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -1381,7 +1396,7 @@ information about retrying network connection lost errors, please refer to Apple
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ServerTrustManager</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ServerTrustManager</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -1654,8 +1669,8 @@ replacing spaces with <code>%20</code>.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>
