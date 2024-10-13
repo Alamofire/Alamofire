@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.9.1 Docs
+          Alamofire 5.10.0 Docs
         </a>
          (96% documented)
       </p>
@@ -48,7 +48,9 @@
     </header>
 
     <p class="breadcrumbs">
-      <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
+      <a class="breadcrumb" href="../index.html">Alamofire</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      <a class="breadcrumb" href="../Classes.html">Classes</a>
       <img class="carat" src="../img/carat.png" alt=""/>
       NetworkReachabilityManager Class Reference
     </p>
@@ -301,6 +303,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -566,7 +571,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">NetworkReachabilityManager</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">NetworkReachabilityManager</span> <span class="p">:</span> <span class="kd">@unchecked</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -605,7 +610,7 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">NetworkReachabilityStatus</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">NetworkReachabilityStatus</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../Classes/NetworkReachabilityManager.html">NetworkReachabilityManager</a></span><span class="o">.</span><span class="kt">NetworkReachabilityStatus</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 
                         </div>
@@ -634,7 +639,7 @@ network reachability status.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Listener</span> <span class="o">=</span> <span class="p">(</span><span class="kt"><a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">NetworkReachabilityStatus</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Listener</span> <span class="o">=</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="kt"><a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">NetworkReachabilityStatus</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span></code></pre>
 
                         </div>
                       </div>
@@ -982,6 +987,7 @@ status of the device, both IPv4 and IPv6.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@preconcurrency</span>
 <span class="kd">open</span> <span class="kd">func</span> <span class="nf">startListening</span><span class="p">(</span><span class="n">onQueue</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
                          <span class="n">onUpdatePerforming</span> <span class="nv">listener</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/NetworkReachabilityManager.html#/s:9Alamofire26NetworkReachabilityManagerC8Listenera">Listener</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
 
@@ -1060,8 +1066,8 @@ status of the device, both IPv4 and IPv6.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

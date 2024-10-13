@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.9.1 Docs
+          Alamofire 5.10.0 Docs
         </a>
          (96% documented)
       </p>
@@ -48,7 +48,9 @@
     </header>
 
     <p class="breadcrumbs">
-      <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
+      <a class="breadcrumb" href="../index.html">Alamofire</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      <a class="breadcrumb" href="../Structs.html">Structures</a>
       <img class="carat" src="../img/carat.png" alt=""/>
       URLEncoding Structure Reference
     </p>
@@ -301,6 +303,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -623,7 +628,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Destination</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Destination</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -651,7 +656,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ArrayEncoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ArrayEncoding</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -679,7 +684,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">BoolEncoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">BoolEncoding</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -963,9 +968,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire17ParameterEncodingP6encode_4with10Foundation10URLRequestVAA0G11Convertible_p_SDySSypGSgtKF"></a>
+                    <a name="/s:9Alamofire17ParameterEncodingP6encode_4with10Foundation10URLRequestVAA0G11Convertible_p_SDySSs8Sendable_pGSgtKF"></a>
                     <a name="//apple_ref/swift/Method/encode(_:with:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire17ParameterEncodingP6encode_4with10Foundation10URLRequestVAA0G11Convertible_p_SDySSypGSgtKF">encode(_:<wbr>with:<wbr>)</a>
+                    <a class="token" href="#/s:9Alamofire17ParameterEncodingP6encode_4with10Foundation10URLRequestVAA0G11Convertible_p_SDySSs8Sendable_pGSgtKF">encode(_:<wbr>with:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -979,7 +984,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="n">_</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">URLRequest</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="n">_</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">URLRequest</span></code></pre>
 
                         </div>
                       </div>
@@ -1106,8 +1111,8 @@ resulting URL request.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-03-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>
