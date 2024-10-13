@@ -446,7 +446,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertEqual(datas.count, 2)
     }
 
-    #if swift(>=5.8) && canImport(Darwin)
+    #if canImport(Darwin)
     func testThatDataStreamHasAsyncOnHTTPResponse() async {
         // Given
         let session = stored(Session())
@@ -669,7 +669,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 
 // Avoid when using swift-corelibs-foundation.
 // Only Xcode 14.3+ has async fulfillment.
-#if !canImport(FoundationNetworking) && swift(>=5.8)
+#if !canImport(FoundationNetworking)
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class UploadConcurrencyTests: BaseTestCase {
     func testThatDelayedUploadStreamResultsInMultipleProgressValues() async throws {
