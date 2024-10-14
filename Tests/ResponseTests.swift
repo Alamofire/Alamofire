@@ -191,7 +191,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<any Sendable, AFError>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -216,7 +216,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
-        var response: DataResponse<any Sendable, AFError>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -240,7 +240,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<any Sendable, AFError>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -272,7 +272,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<any Sendable, AFError>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         AF.request(.method(.post), parameters: ["foo": "bar"]).responseJSON { resp in

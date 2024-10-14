@@ -381,7 +381,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
         self.options = options
     }
 
-    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> any Any & Sendable {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Any {
         guard error == nil else { throw error! }
 
         guard var data, !data.isEmpty else {
