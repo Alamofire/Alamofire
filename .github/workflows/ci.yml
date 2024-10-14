@@ -337,7 +337,7 @@ jobs:
       - name: Clone
         uses: actions/checkout@v4
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: swift
       - name: Build macOS
