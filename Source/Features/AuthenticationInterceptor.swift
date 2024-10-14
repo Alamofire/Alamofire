@@ -81,7 +81,7 @@ public protocol Authenticator: AnyObject, Sendable {
     ///   - credential: The `Credential` to refresh.
     ///   - session:    The `Session` requiring the refresh.
     ///   - completion: The closure to be executed once the refresh is complete.
-    func refresh(_ credential: Credential, for session: Session, completion: @escaping (Result<Credential, any Error>) -> Void)
+    func refresh(_ credential: Credential, for session: Session, completion: @Sendable @escaping (Result<Credential, any Error>) -> Void)
 
     /// Determines whether the `URLRequest` failed due to an authentication error based on the `HTTPURLResponse`.
     ///
