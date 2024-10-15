@@ -284,6 +284,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertEqual(interceptor.adapters.count, 1)
         XCTAssertEqual(interceptor.retriers.count, 1)
+        checkMemoryLeaks(interceptor)
     }
 
     func testAdapterAndRetrierDefaultInitializer() {
@@ -297,6 +298,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertEqual(interceptor.adapters.count, 1)
         XCTAssertEqual(interceptor.retriers.count, 1)
+        checkMemoryLeaks(interceptor)
     }
 
     func testAdaptersAndRetriersDefaultInitializer() {
@@ -310,6 +312,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertEqual(interceptor.adapters.count, 2)
         XCTAssertEqual(interceptor.retriers.count, 2)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanBeComposedOfMultipleRequestInterceptors() {
@@ -324,6 +327,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertEqual(interceptor.adapters.count, 1)
         XCTAssertEqual(interceptor.retriers.count, 1)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanAdaptRequestWithNoAdapters() {
@@ -340,6 +344,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess)
         XCTAssertEqual(result.success, urlRequest)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanAdaptRequestWithOneAdapter() {
@@ -358,6 +363,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertTrue(result.failure is MockError)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanAdaptRequestWithMultipleAdapters() {
@@ -377,6 +383,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertTrue(result.failure is MockError)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanAdaptRequestWithMultipleAdaptersUsingStateAPI() {
@@ -397,6 +404,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertTrue(result.failure is MockError)
+        checkMemoryLeaks(interceptor)
     }
 
     @MainActor
@@ -427,6 +435,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertTrue(result.failure is MockError)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanRetryRequestWithNoRetriers() {
@@ -443,6 +452,7 @@ final class InterceptorTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result, .doNotRetry)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanRetryRequestWithOneRetrier() {
@@ -460,6 +470,7 @@ final class InterceptorTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result, .retry)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorCanRetryRequestWithMultipleRetriers() {
@@ -478,6 +489,7 @@ final class InterceptorTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result, .retry)
+        checkMemoryLeaks(interceptor)
     }
 
     @MainActor
@@ -507,6 +519,7 @@ final class InterceptorTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result, .retry)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorStopsIteratingThroughPendingRetriersWithRetryResult() {
@@ -528,6 +541,7 @@ final class InterceptorTests: BaseTestCase {
         // Then
         XCTAssertEqual(result, .retry)
         XCTAssertFalse(retrier2Called)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorStopsIteratingThroughPendingRetriersWithRetryWithDelayResult() {
@@ -550,6 +564,7 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(result, .retryWithDelay(1.0))
         XCTAssertEqual(result.delay, 1.0)
         XCTAssertFalse(retrier2Called)
+        checkMemoryLeaks(interceptor)
     }
 
     func testThatInterceptorStopsIteratingThroughPendingRetriersWithDoNotRetryResult() {
@@ -572,6 +587,7 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(result, RetryResult.doNotRetryWithError(RetryError()))
         XCTAssertTrue(result.error is RetryError)
         XCTAssertFalse(retrier2Called)
+        checkMemoryLeaks(interceptor)
     }
 }
 

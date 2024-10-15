@@ -127,4 +127,18 @@ class BaseTestCase: XCTestCase {
 
         waitForExpectations(timeout: timeout)
     }
+    
+    /// Check memory leaks for an object when a test operation has been finished.
+    ///
+    /// - Parameters:
+    ///   - object: The testing object for each class.
+    ///   - file: Which file that failure test happens.
+    ///   - line: Which line that failure test happens.
+    func checkMemoryLeaks(_ object: AnyObject, file: StaticString = #file, line: UInt = #line) {
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+            addTeardownBlock { [weak object] in
+                XCTAssertNil(object, "The object should be deallocated. Memory leaks may happen in the object.", file: file, line: line)
+            }
+        }
+    }
 }
