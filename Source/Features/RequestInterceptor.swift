@@ -172,7 +172,7 @@ extension RequestAdapter where Self == Adapter {
     /// - Parameter closure: `AdaptHandler` to use to adapt the request.
     /// - Returns:           The `Adapter`.
     @preconcurrency
-    public static func adapter(using closure: @escaping @Sendable AdaptHandler) -> Adapter {
+    public static func adapter(using closure: @escaping AdaptHandler) -> Adapter {
         Adapter(closure)
     }
 }
