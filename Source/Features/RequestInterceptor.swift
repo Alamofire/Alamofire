@@ -130,7 +130,7 @@ extension RequestInterceptor {
     }
 }
 
-#if swift(>=6)
+#if compiler(>=6)
 /// `RequestAdapter` closure definition.
 public typealias AdaptHandler = @Sendable (_ request: URLRequest,
                                            _ session: Session,
