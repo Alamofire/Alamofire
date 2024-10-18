@@ -131,10 +131,12 @@ extension RequestInterceptor {
 }
 
 /// `RequestAdapter` closure definition.
+@preconcurrency
 public typealias AdaptHandler = @Sendable (_ request: URLRequest,
                                            _ session: Session,
                                            _ completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) -> Void
 /// `RequestRetrier` closure definition.
+@preconcurrency
 public typealias RetryHandler = @Sendable (_ request: Request,
                                            _ session: Session,
                                            _ error: any Error,
