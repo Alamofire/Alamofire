@@ -130,17 +130,29 @@ extension RequestInterceptor {
     }
 }
 
+#if swift(>=6)
 /// `RequestAdapter` closure definition.
-@preconcurrency
 public typealias AdaptHandler = @Sendable (_ request: URLRequest,
                                            _ session: Session,
                                            _ completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) -> Void
+
 /// `RequestRetrier` closure definition.
-@preconcurrency
 public typealias RetryHandler = @Sendable (_ request: Request,
                                            _ session: Session,
                                            _ error: any Error,
                                            _ completion: @escaping @Sendable (RetryResult) -> Void) -> Void
+#else
+/// `RequestAdapter` closure definition.
+public typealias AdaptHandler = @Sendable (_ request: URLRequest,
+                                           _ session: Session,
+                                           _ completion: @escaping (Result<URLRequest, any Error>) -> Void) -> Void
+
+/// `RequestRetrier` closure definition.
+public typealias RetryHandler = @Sendable (_ request: Request,
+                                           _ session: Session,
+                                           _ error: any Error,
+                                           _ completion: @escaping (RetryResult) -> Void) -> Void
+#endif
 
 // MARK: -
 
