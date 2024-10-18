@@ -36,7 +36,7 @@ public struct DataResponsePublisher<Value: Sendable>: Publisher {
     public typealias Output = DataResponse<Value, AFError>
     public typealias Failure = Never
 
-    private typealias Handler = (@Sendable @escaping (_ response: DataResponse<Value, AFError>) -> Void) -> DataRequest
+    private typealias Handler = (@escaping @Sendable (_ response: DataResponse<Value, AFError>) -> Void) -> DataRequest
 
     private let request: DataRequest
     private let responseHandler: Handler
@@ -404,7 +404,7 @@ public struct DownloadResponsePublisher<Value: Sendable>: Publisher {
     public typealias Output = DownloadResponse<Value, AFError>
     public typealias Failure = Never
 
-    private typealias Handler = (@Sendable @escaping (_ response: DownloadResponse<Value, AFError>) -> Void) -> DownloadRequest
+    private typealias Handler = (@escaping @Sendable (_ response: DownloadResponse<Value, AFError>) -> Void) -> DownloadRequest
 
     private let request: DownloadRequest
     private let responseHandler: Handler

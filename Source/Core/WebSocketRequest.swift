@@ -72,7 +72,7 @@ import Foundation
             socket?.cancel()
         }
 
-        public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @Sendable @escaping (PingResponse) -> Void) {
+        public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping @Sendable (PingResponse) -> Void) {
             socket?.sendPing(respondingOn: queue, onResponse: onResponse)
         }
     }
@@ -274,7 +274,7 @@ import Foundation
     }
 
     @preconcurrency
-    public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @Sendable @escaping (PingResponse) -> Void) {
+    public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping @Sendable (PingResponse) -> Void) {
         guard isResumed else {
             queue.async { onResponse(.unsent) }
             return
@@ -375,7 +375,7 @@ import Foundation
     public func streamSerializer<Serializer>(
         _ serializer: Serializer,
         on queue: DispatchQueue = .main,
-        handler: @Sendable @escaping (_ event: Event<Serializer.Output, Serializer.Failure>) -> Void
+        handler: @escaping @Sendable (_ event: Event<Serializer.Output, Serializer.Failure>) -> Void
     ) -> Self where Serializer: WebSocketMessageSerializer, Serializer.Failure == any Error {
         forIncomingEvent(on: queue) { incomingEvent in
             let event: Event<Serializer.Output, Serializer.Failure>
@@ -405,7 +405,7 @@ import Foundation
         _ type: Value.Type = Value.self,
         on queue: DispatchQueue = .main,
         using decoder: any DataDecoder = JSONDecoder(),
-        handler: @Sendable @escaping (_ event: Event<Value, any Error>) -> Void
+        handler: @escaping @Sendable (_ event: Event<Value, any Error>) -> Void
     ) -> Self where Value: Decodable {
         streamSerializer(DecodableWebSocketMessageDecoder<Value>(decoder: decoder), on: queue, handler: handler)
     }
@@ -416,7 +416,7 @@ import Foundation
         _ type: Value.Type = Value.self,
         on queue: DispatchQueue = .main,
         using decoder: any DataDecoder = JSONDecoder(),
-        handler: @Sendable @escaping (_ value: Value) -> Void
+        handler: @escaping @Sendable (_ value: Value) -> Void
     ) -> Self where Value: Decodable & Sendable {
         streamDecodableEvents(Value.self, on: queue) { event in
             event.message.map(handler)
@@ -427,7 +427,7 @@ import Foundation
     @discardableResult
     public func streamMessageEvents(
         on queue: DispatchQueue = .main,
-        handler: @Sendable @escaping (_ event: Event<URLSessionWebSocketTask.Message, Never>) -> Void
+        handler: @escaping @Sendable (_ event: Event<URLSessionWebSocketTask.Message, Never>) -> Void
     ) -> Self {
         forIncomingEvent(on: queue) { incomingEvent in
             let event: Event<URLSessionWebSocketTask.Message, Never> = switch incomingEvent {
@@ -449,14 +449,14 @@ import Foundation
     @discardableResult
     public func streamMessages(
         on queue: DispatchQueue = .main,
-        handler: @Sendable @escaping (_ message: URLSessionWebSocketTask.Message) -> Void
+        handler: @escaping @Sendable (_ message: URLSessionWebSocketTask.Message) -> Void
     ) -> Self {
         streamMessageEvents(on: queue) { event in
             event.message.map(handler)
         }
     }
 
-    func forIncomingEvent(on queue: DispatchQueue, handler: @Sendable @escaping (IncomingEvent) -> Void) -> Self {
+    func forIncomingEvent(on queue: DispatchQueue, handler: @escaping @Sendable (IncomingEvent) -> Void) -> Self {
         socketMutableState.write { state in
             state.handlers.append((queue: queue, handler: { incomingEvent in
                 self.serializationQueue.async {
@@ -482,7 +482,7 @@ import Foundation
     @preconcurrency
     public func send(_ message: URLSessionWebSocketTask.Message,
                      queue: DispatchQueue = .main,
-                     completionHandler: @Sendable @escaping (Result<Void, any Error>) -> Void) {
+                     completionHandler: @escaping @Sendable (Result<Void, any Error>) -> Void) {
         guard !(isCancelled || isFinished) else { return }
 
         guard let socket else {

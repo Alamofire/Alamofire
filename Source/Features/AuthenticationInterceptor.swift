@@ -81,7 +81,7 @@ public protocol Authenticator: AnyObject, Sendable {
     ///   - credential: The `Credential` to refresh.
     ///   - session:    The `Session` requiring the refresh.
     ///   - completion: The closure to be executed once the refresh is complete.
-    func refresh(_ credential: Credential, for session: Session, completion: @Sendable @escaping (Result<Credential, any Error>) -> Void)
+    func refresh(_ credential: Credential, for session: Session, completion: @escaping @Sendable (Result<Credential, any Error>) -> Void)
 
     /// Determines whether the `URLRequest` failed due to an authentication error based on the `HTTPURLResponse`.
     ///
@@ -246,7 +246,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
 
     // MARK: Adapt
 
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @Sendable @escaping (Result<URLRequest, any Error>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
         let adaptResult: AdaptResult = mutableState.write { mutableState in
             // Queue the adapt operation if a refresh is already in place.
             guard !mutableState.isRefreshing else {
@@ -289,7 +289,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
 
     // MARK: Retry
 
-    public func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @Sendable @escaping (RetryResult) -> Void) {
+    public func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
         // Do not attempt retry if there was not an original request and response from the server.
         guard let urlRequest = request.request, let response = request.response else {
             completion(.doNotRetry)
