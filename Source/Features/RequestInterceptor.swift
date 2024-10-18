@@ -55,6 +55,7 @@ public protocol RequestAdapter: Sendable {
 }
 
 extension RequestAdapter {
+    @preconcurrency
     public func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping @Sendable (_ result: Result<URLRequest, any Error>) -> Void) {
         adapt(urlRequest, for: state.session, completion: completion)
     }
@@ -118,10 +119,12 @@ public protocol RequestRetrier: Sendable {
 public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
 
 extension RequestInterceptor {
+    @preconcurrency
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
         completion(.success(urlRequest))
     }
 
+    @preconcurrency
     public func retry(_ request: Request,
                       for session: Session,
                       dueTo error: any Error,
@@ -130,7 +133,6 @@ extension RequestInterceptor {
     }
 }
 
-#if compiler(>=6)
 /// `RequestAdapter` closure definition.
 public typealias AdaptHandler = @Sendable (_ request: URLRequest,
                                            _ session: Session,
@@ -141,18 +143,6 @@ public typealias RetryHandler = @Sendable (_ request: Request,
                                            _ session: Session,
                                            _ error: any Error,
                                            _ completion: @escaping @Sendable (RetryResult) -> Void) -> Void
-#else
-/// `RequestAdapter` closure definition.
-public typealias AdaptHandler = @Sendable (_ request: URLRequest,
-                                           _ session: Session,
-                                           _ completion: @escaping (Result<URLRequest, any Error>) -> Void) -> Void
-
-/// `RequestRetrier` closure definition.
-public typealias RetryHandler = @Sendable (_ request: Request,
-                                           _ session: Session,
-                                           _ error: any Error,
-                                           _ completion: @escaping (RetryResult) -> Void) -> Void
-#endif
 
 // MARK: -
 
