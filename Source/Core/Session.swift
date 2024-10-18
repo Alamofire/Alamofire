@@ -217,7 +217,7 @@ open class Session: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - action:     Closure to perform with all `Request`s.
-    public func withAllRequests(perform action: @Sendable @escaping (Set<Request>) -> Void) {
+    public func withAllRequests(perform action: @escaping @Sendable (Set<Request>) -> Void) {
         rootQueue.async {
             action(self.activeRequests)
         }
@@ -1134,7 +1134,7 @@ open class Session: @unchecked Sendable {
 
     func performSetupOperations(for request: Request,
                                 convertible: any URLRequestConvertible,
-                                shouldCreateTask: @Sendable @escaping () -> Bool = { true }) {
+                                shouldCreateTask: @escaping @Sendable () -> Bool = { true }) {
         dispatchPrecondition(condition: .onQueue(requestQueue))
 
         let initialRequest: URLRequest
@@ -1268,7 +1268,7 @@ extension Session: RequestDelegate {
         activeRequests.remove(request)
     }
 
-    public func retryResult(for request: Request, dueTo error: AFError, completion: @Sendable @escaping (RetryResult) -> Void) {
+    public func retryResult(for request: Request, dueTo error: AFError, completion: @escaping @Sendable (RetryResult) -> Void) {
         guard let retrier = retrier(for: request) else {
             rootQueue.async { completion(.doNotRetry) }
             return

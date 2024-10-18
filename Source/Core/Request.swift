@@ -533,7 +533,7 @@ public class Request: @unchecked Sendable {
     ///  - Note: This method will also `resume` the instance if `delegate.startImmediately` returns `true`.
     ///
     /// - Parameter closure: The closure containing the response serialization call.
-    func appendResponseSerializer(_ closure: @Sendable @escaping () -> Void) {
+    func appendResponseSerializer(_ closure: @escaping @Sendable () -> Void) {
         mutableState.write { mutableState in
             mutableState.responseSerializers.append(closure)
 
@@ -607,7 +607,7 @@ public class Request: @unchecked Sendable {
     ///
     /// - Parameter completion: The completion handler provided with the response serializer, called when all serializers
     ///                         are complete.
-    func responseSerializerDidComplete(completion: @Sendable @escaping () -> Void) {
+    func responseSerializerDidComplete(completion: @escaping @Sendable () -> Void) {
         mutableState.write { $0.responseSerializerCompletions.append(completion) }
         processNextResponseSerializer()
     }
@@ -849,7 +849,7 @@ public class Request: @unchecked Sendable {
     /// - Returns:           The instance.
     @preconcurrency
     @discardableResult
-    public func cURLDescription(on queue: DispatchQueue, calling handler: @Sendable @escaping (String) -> Void) -> Self {
+    public func cURLDescription(on queue: DispatchQueue, calling handler: @escaping @Sendable (String) -> Void) -> Self {
         mutableState.write { mutableState in
             if mutableState.requests.last != nil {
                 queue.async { handler(self.cURLDescription()) }
@@ -871,7 +871,7 @@ public class Request: @unchecked Sendable {
     /// - Returns:           The instance.
     @preconcurrency
     @discardableResult
-    public func cURLDescription(calling handler: @Sendable @escaping (String) -> Void) -> Self {
+    public func cURLDescription(calling handler: @escaping @Sendable (String) -> Void) -> Self {
         cURLDescription(on: underlyingQueue, calling: handler)
 
         return self
@@ -888,7 +888,7 @@ public class Request: @unchecked Sendable {
     /// - Returns:   The instance.
     @preconcurrency
     @discardableResult
-    public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @Sendable @escaping (URLRequest) -> Void) -> Self {
+    public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (URLRequest) -> Void) -> Self {
         mutableState.write { state in
             if let request = state.requests.last {
                 queue.async { handler(request) }
@@ -913,7 +913,7 @@ public class Request: @unchecked Sendable {
     /// - Returns:   The instance.
     @preconcurrency
     @discardableResult
-    public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @Sendable @escaping (URLSessionTask) -> Void) -> Self {
+    public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (URLSessionTask) -> Void) -> Self {
         mutableState.write { state in
             if let task = state.tasks.last {
                 queue.async { handler(task) }
@@ -1089,7 +1089,7 @@ public protocol RequestDelegate: AnyObject, Sendable {
     ///   - request:    `Request` which failed.
     ///   - error:      `Error` which produced the failure.
     ///   - completion: Closure taking the `RetryResult` for evaluation.
-    func retryResult(for request: Request, dueTo error: AFError, completion: @Sendable @escaping (RetryResult) -> Void)
+    func retryResult(for request: Request, dueTo error: AFError, completion: @escaping @Sendable (RetryResult) -> Void)
 
     /// Asynchronously retry the `Request`.
     ///

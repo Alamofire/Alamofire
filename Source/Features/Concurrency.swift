@@ -346,7 +346,7 @@ extension DataRequest {
     }
 
     private func dataTask<Value>(automaticallyCancelling shouldAutomaticallyCancel: Bool,
-                                 forResponse onResponse: @Sendable @escaping (@Sendable @escaping (DataResponse<Value, AFError>) -> Void) -> Void)
+                                 forResponse onResponse: @Sendable @escaping (@escaping @Sendable (DataResponse<Value, AFError>) -> Void) -> Void)
         -> DataTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
@@ -555,7 +555,7 @@ extension DownloadRequest {
     }
 
     private func downloadTask<Value>(automaticallyCancelling shouldAutomaticallyCancel: Bool,
-                                     forResponse onResponse: @Sendable @escaping (@Sendable @escaping (DownloadResponse<Value, AFError>) -> Void) -> Void)
+                                     forResponse onResponse: @Sendable @escaping (@escaping @Sendable (DownloadResponse<Value, AFError>) -> Void) -> Void)
         -> DownloadTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
@@ -653,7 +653,7 @@ public struct DataStreamTask: Sendable {
 
     private func createStream<Success, Failure: Error>(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                                        bufferingPolicy: Stream<Success, Failure>.BufferingPolicy = .unbounded,
-                                                       forResponse onResponse: @Sendable @escaping (@Sendable @escaping (DataStreamRequest.Stream<Success, Failure>) -> Void) -> Void)
+                                                       forResponse onResponse: @Sendable @escaping (@escaping @Sendable (DataStreamRequest.Stream<Success, Failure>) -> Void) -> Void)
         -> Stream<Success, Failure> {
         StreamOf(bufferingPolicy: bufferingPolicy) {
             guard shouldAutomaticallyCancel,
@@ -827,8 +827,8 @@ extension DataStreamRequest {
     private func createStream<Success, Value, Failure: Error>(
         automaticallyCancelling shouldAutomaticallyCancel: Bool,
         bufferingPolicy: StreamOf<Value>.BufferingPolicy,
-        transform: @Sendable @escaping (WebSocketRequest.Event<Success, Failure>) -> Value?,
-        forResponse onResponse: @Sendable @escaping (@Sendable @escaping (WebSocketRequest.Event<Success, Failure>) -> Void) -> Void
+        transform: @escaping @Sendable (WebSocketRequest.Event<Success, Failure>) -> Value?,
+        forResponse onResponse: @Sendable @escaping (@escaping @Sendable (WebSocketRequest.Event<Success, Failure>) -> Void) -> Void
     ) -> StreamOf<Value> {
         StreamOf(bufferingPolicy: bufferingPolicy) {
             guard shouldAutomaticallyCancel,

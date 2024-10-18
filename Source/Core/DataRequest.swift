@@ -35,7 +35,7 @@ public class DataRequest: Request, @unchecked Sendable {
         var data: Data?
         var httpResponseHandler: (queue: DispatchQueue,
                                   handler: @Sendable (_ response: HTTPURLResponse,
-                                                      _ completionHandler: @Sendable @escaping (ResponseDisposition) -> Void) -> Void)?
+                                                      _ completionHandler: @escaping @Sendable (ResponseDisposition) -> Void) -> Void)?
     }
 
     private let dataMutableState = Protected(DataMutableState())
@@ -93,7 +93,7 @@ public class DataRequest: Request, @unchecked Sendable {
         updateDownloadProgress()
     }
 
-    func didReceiveResponse(_ response: HTTPURLResponse, completionHandler: @Sendable @escaping (URLSession.ResponseDisposition) -> Void) {
+    func didReceiveResponse(_ response: HTTPURLResponse, completionHandler: @escaping @Sendable (URLSession.ResponseDisposition) -> Void) {
         dataMutableState.read { dataMutableState in
             guard let httpResponseHandler = dataMutableState.httpResponseHandler else {
                 underlyingQueue.async { completionHandler(.allow) }
@@ -176,8 +176,8 @@ public class DataRequest: Request, @unchecked Sendable {
     @discardableResult
     public func onHTTPResponse(
         on queue: DispatchQueue = .main,
-        perform handler: @Sendable @escaping (_ response: HTTPURLResponse,
-                                              _ completionHandler: @Sendable @escaping (ResponseDisposition) -> Void) -> Void
+        perform handler: @escaping @Sendable (_ response: HTTPURLResponse,
+                                              _ completionHandler: @escaping @Sendable (ResponseDisposition) -> Void) -> Void
     ) -> Self {
         dataMutableState.write { mutableState in
             mutableState.httpResponseHandler = (queue, handler)
@@ -196,7 +196,7 @@ public class DataRequest: Request, @unchecked Sendable {
     @preconcurrency
     @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main,
-                               perform handler: @Sendable @escaping (HTTPURLResponse) -> Void) -> Self {
+                               perform handler: @escaping @Sendable (HTTPURLResponse) -> Void) -> Self {
         onHTTPResponse(on: queue) { response, completionHandler in
             handler(response)
             completionHandler(.allow)
@@ -241,7 +241,7 @@ public class DataRequest: Request, @unchecked Sendable {
 
     private func _response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
                                                                        responseSerializer: Serializer,
-                                                                       completionHandler: @Sendable @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
+                                                                       completionHandler: @escaping @Sendable (AFDataResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
@@ -320,7 +320,7 @@ public class DataRequest: Request, @unchecked Sendable {
     @discardableResult
     public func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
                                                                      responseSerializer: Serializer,
-                                                                     completionHandler: @Sendable @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
+                                                                     completionHandler: @escaping @Sendable (AFDataResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
@@ -337,7 +337,7 @@ public class DataRequest: Request, @unchecked Sendable {
     @discardableResult
     public func response<Serializer: ResponseSerializer>(queue: DispatchQueue = .main,
                                                          responseSerializer: Serializer,
-                                                         completionHandler: @Sendable @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
+                                                         completionHandler: @escaping @Sendable (AFDataResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
@@ -359,7 +359,7 @@ public class DataRequest: Request, @unchecked Sendable {
                              dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                              emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods,
-                             completionHandler: @Sendable @escaping (AFDataResponse<Data>) -> Void) -> Self {
+                             completionHandler: @escaping @Sendable (AFDataResponse<Data>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: DataResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                             emptyResponseCodes: emptyResponseCodes,
@@ -387,7 +387,7 @@ public class DataRequest: Request, @unchecked Sendable {
                                encoding: String.Encoding? = nil,
                                emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                                emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods,
-                               completionHandler: @Sendable @escaping (AFDataResponse<String>) -> Void) -> Self {
+                               completionHandler: @escaping @Sendable (AFDataResponse<String>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: StringResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                               encoding: encoding,
@@ -417,7 +417,7 @@ public class DataRequest: Request, @unchecked Sendable {
                              emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @Sendable @escaping (AFDataResponse<Any>) -> Void) -> Self {
+                             completionHandler: @escaping @Sendable (AFDataResponse<Any>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: JSONResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                             emptyResponseCodes: emptyResponseCodes,
@@ -447,7 +447,7 @@ public class DataRequest: Request, @unchecked Sendable {
                                          decoder: any DataDecoder = JSONDecoder(),
                                          emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
                                          emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods,
-                                         completionHandler: @Sendable @escaping (AFDataResponse<Value>) -> Void) -> Self where Value: Decodable, Value: Sendable {
+                                         completionHandler: @escaping @Sendable (AFDataResponse<Value>) -> Void) -> Self where Value: Decodable, Value: Sendable {
         response(queue: queue,
                  responseSerializer: DecodableResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                                  decoder: decoder,

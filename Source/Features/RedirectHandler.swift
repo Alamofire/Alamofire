@@ -105,7 +105,7 @@ extension RedirectHandler where Self == Redirector {
     ///
     /// - Parameter closure: Closure used to modify the redirect.
     /// - Returns:           The `Redirector`.
-    public static func modify(using closure: @Sendable @escaping (URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?) -> Redirector {
+    public static func modify(using closure: @escaping @Sendable (URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?) -> Redirector {
         Redirector(behavior: .modify(closure))
     }
 }

@@ -306,7 +306,7 @@ public final class URLEncodedFormEncoder {
         /// Creates an instance with the encoding closure called for each sub-key in a key path.
         ///
         /// - Parameter encoding: Closure used to perform the encoding.
-        public init(encoding: @Sendable @escaping (_ subkey: String) -> String) {
+        public init(encoding: @escaping @Sendable (_ subkey: String) -> String) {
             self.encoding = encoding
         }
 
@@ -329,7 +329,7 @@ public final class URLEncodedFormEncoder {
         /// Creates an instance with the encoding closure called for `nil` values.
         ///
         /// - Parameter encoding: Closure used to perform the encoding.
-        public init(encoding: @Sendable @escaping () -> String?) {
+        public init(encoding: @escaping @Sendable () -> String?) {
             self.encoding = encoding
         }
 
