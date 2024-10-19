@@ -5,7 +5,7 @@ GEM
       base64
       nkf
       rexml
-    activesupport (7.2.1)
+    activesupport (7.2.1.1)
       base64
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.3.1)
@@ -76,7 +76,7 @@ GEM
     httpclient (2.8.3)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
-    jazzy (0.15.2)
+    jazzy (0.15.3)
       cocoapods (~> 1.5)
       mustache (~> 1.1)
       open4 (~> 1.3)
