@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.10.0 Docs
+          Alamofire 5.10.1 Docs
         </a>
          (96% documented)
       </p>
@@ -607,7 +607,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@preconcurrency</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">adapt</span><span class="p">(</span><span class="n">_</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="k">for</span> <span class="nv">session</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html">Session</a></span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@Sendable</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Result</span><span class="o">&lt;</span><span class="kt">URLRequest</span><span class="p">,</span> <span class="n">any</span> <span class="kt">Error</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">adapt</span><span class="p">(</span><span class="n">_</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="k">for</span> <span class="nv">session</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html">Session</a></span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="kt">Result</span><span class="o">&lt;</span><span class="kt">URLRequest</span><span class="p">,</span> <span class="n">any</span> <span class="kt">Error</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -640,7 +640,7 @@
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">retry</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span>
                   <span class="k">for</span> <span class="nv">session</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html">Session</a></span><span class="p">,</span>
                   <span class="n">dueTo</span> <span class="nv">error</span><span class="p">:</span> <span class="n">any</span> <span class="kt">Error</span><span class="p">,</span>
-                  <span class="nv">completion</span><span class="p">:</span> <span class="kd">@Sendable</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+                  <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -775,9 +775,9 @@ closure.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire18RequestInterceptorPA2A0C0CRszrlE11interceptor7adapter7retrierAEy10Foundation10URLRequestV_AA7SessionCys6ResultOyAKs5Error_pGctYbc_yAA0B0C_AMsAP_pyAA05RetryJ0OctYbctFZ"></a>
+                    <a name="/s:9Alamofire18RequestInterceptorPA2A0C0CRszrlE11interceptor7adapter7retrierAEy10Foundation10URLRequestV_AA7SessionCys6ResultOyAKs5Error_pGctc_yAA0B0C_AMsAP_pyAA05RetryJ0OctctFZ"></a>
                     <a name="//apple_ref/swift/Method/interceptor(adapter:retrier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire18RequestInterceptorPA2A0C0CRszrlE11interceptor7adapter7retrierAEy10Foundation10URLRequestV_AA7SessionCys6ResultOyAKs5Error_pGctYbc_yAA0B0C_AMsAP_pyAA05RetryJ0OctYbctFZ">interceptor(adapter:<wbr>retrier:<wbr>)</a>
+                    <a class="token" href="#/s:9Alamofire18RequestInterceptorPA2A0C0CRszrlE11interceptor7adapter7retrierAEy10Foundation10URLRequestV_AA7SessionCys6ResultOyAKs5Error_pGctc_yAA0B0C_AMsAP_pyAA05RetryJ0OctctFZ">interceptor(adapter:<wbr>retrier:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Extension method
@@ -795,7 +795,8 @@ closure.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">interceptor</span><span class="p">(</span><span class="nv">adapter</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire12AdaptHandlera">AdaptHandler</a></span><span class="p">,</span> <span class="nv">retrier</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire12RetryHandlera">RetryHandler</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interceptor.html">Interceptor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@preconcurrency</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">interceptor</span><span class="p">(</span><span class="nv">adapter</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire12AdaptHandlera">AdaptHandler</a></span><span class="p">,</span> <span class="nv">retrier</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire12RetryHandlera">RetryHandler</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interceptor.html">Interceptor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -860,7 +861,8 @@ closure.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">interceptor</span><span class="p">(</span><span class="nv">adapter</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">,</span> <span class="nv">retrier</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/RequestRetrier.html">RequestRetrier</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interceptor.html">Interceptor</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@preconcurrency</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">interceptor</span><span class="p">(</span><span class="nv">adapter</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">,</span> <span class="nv">retrier</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/RequestRetrier.html">RequestRetrier</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interceptor.html">Interceptor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -925,7 +927,8 @@ closure.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">interceptor</span><span class="p">(</span><span class="nv">adapters</span><span class="p">:</span> <span class="p">[</span><span class="n">any</span> <span class="kt"><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+                          <pre class="highlight swift"><code><span class="kd">@preconcurrency</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">interceptor</span><span class="p">(</span><span class="nv">adapters</span><span class="p">:</span> <span class="p">[</span><span class="n">any</span> <span class="kt"><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
                                <span class="nv">retriers</span><span class="p">:</span> <span class="p">[</span><span class="n">any</span> <span class="kt"><a href="../Protocols/RequestRetrier.html">RequestRetrier</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
                                <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="n">any</span> <span class="kt">RequestInterceptor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interceptor.html">Interceptor</a></span></code></pre>
 
@@ -1292,8 +1295,8 @@ closure.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-13)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-19)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>
