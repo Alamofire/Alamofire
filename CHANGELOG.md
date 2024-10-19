@@ -6,7 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
-- `5.10.x` Releases - [5.10.0](#5100)
+- `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101)
 - `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
 - `5.8.x`  Releases - [5.8.0](#580) | [5.8.1](#581)
 - `5.7.x`  Releases - [5.7.0](#570) | [5.7.1](#571)
@@ -57,6 +57,18 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.10.1](https://github.com/Alamofire/Alamofire/releases/tag/5.10.1)
+
+Released on 2024-10-19. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/92?closed=1).
+
+### Fixed
+- `@Sendable` in `AdaptHandler` and `RetryHandler` types.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3906](https://github.com/Alamofire/Alamofire/pull/3906).
+- Downstream `JSONResponseSerializer` wrapper by reverting output type to just `Any`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3903](https://github.com/Alamofire/Alamofire/pull/3903).
+- Missing `@Sendable` on `Authenticator.refresh`.
+  - Fixed by [rono23](https://github.com/rono23) in Pull Request [#3901](https://github.com/Alamofire/Alamofire/pull/3901).
 
 ## [5.10.0](https://github.com/Alamofire/Alamofire/releases/tag/5.10.0)
 
