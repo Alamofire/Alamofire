@@ -49,4 +49,4 @@ let package = Package(name: "Alamofire",
                                             path: "Tests",
                                             exclude: ["Info.plist", "Test Plans"],
                                             resources: [.process("Resources")])],
-                      swiftLanguageVersions: [.v5])
+                      swiftLanguageModes: [.v5])
