@@ -59,6 +59,12 @@ public protocol ParameterEncoding {
 public struct URLEncoding: ParameterEncoding {
     // MARK: Helper Types
 
+    public enum ParametersSorting {
+        case normal
+        case byArrayKeys
+    }
+    
+    
     /// Defines whether the url-encoded query string is applied to the existing query string or HTTP body of the
     /// resulting URL request.
     public enum Destination {
@@ -141,6 +147,9 @@ public struct URLEncoding: ParameterEncoding {
     /// The encoding to use for `Bool` parameters.
     public let boolEncoding: BoolEncoding
 
+    /// The sorting to use for  parameters.
+    public let  parametersSorting:ParametersSorting
+    
     // MARK: Initialization
 
     /// Creates an instance using the specified parameters.
@@ -152,10 +161,12 @@ public struct URLEncoding: ParameterEncoding {
     ///   - boolEncoding:  `BoolEncoding` to use. `.numeric` by default.
     public init(destination: Destination = .methodDependent,
                 arrayEncoding: ArrayEncoding = .brackets,
-                boolEncoding: BoolEncoding = .numeric) {
+                boolEncoding: BoolEncoding = .numeric,
+                parametersSorting:ParametersSorting = .normal) {
         self.destination = destination
         self.arrayEncoding = arrayEncoding
         self.boolEncoding = boolEncoding
+        self.parametersSorting = parametersSorting
     }
 
     // MARK: Encoding
@@ -230,10 +241,20 @@ public struct URLEncoding: ParameterEncoding {
     private func query(_ parameters: [String: Any]) -> String {
         var components: [(String, String)] = []
 
-        for key in parameters.keys.sorted(by: <) {
-            let value = parameters[key]!
-            components += queryComponents(fromKey: key, value: value)
+        switch parametersSorting {
+        case .normal:
+            for key in parameters.keys.sorted(by: <) {
+                let value = parameters[key]!
+                components += queryComponents(fromKey: key, value: value)
+            }
+        case .byArrayKeys:
+            let sorted = parameters.sortedByArrayKeys()
+            for parameter in sorted {
+                let value = parameters[parameter.key]!
+                components += queryComponents(fromKey: parameter.key, value: value)
+            }
         }
+  
         return components.map { "\($0)=\($1)" }.joined(separator: "&")
     }
 }
@@ -347,3 +368,46 @@ extension NSNumber {
         String(cString: objCType) == "c"
     }
 }
+
+extension Dictionary where Key == String {
+    fileprivate func sortedByArrayKeys() -> [(key: String, value: Value)] {
+        return sorted { compareKeys($0.key, $1.key) }
+    }
+
+    private func compareKeys(_ lhs: String, _ rhs: String) -> Bool {
+        let lhsBase = extractBase(from: lhs)
+        let rhsBase = extractBase(from: rhs)
+
+        if lhsBase != rhsBase {
+            return lhsBase < rhsBase
+        }
+
+        let lhsIndex = extractIndex(from: lhs)
+        let rhsIndex = extractIndex(from: rhs)
+
+        if lhsIndex != rhsIndex {
+            return lhsIndex < rhsIndex
+        }
+
+        return lhs < rhs
+    }
+
+    private func extractIndex(from key: String) -> Int {
+        let pattern = "\\[(\\d+)\\]"
+        if let range = key.range(of: pattern, options: .regularExpression),
+           let index = Int(key[range].dropFirst().dropLast()) {
+            return index
+        }
+        return Int.max
+    }
+
+    private func extractBase(from key: String) -> String {
+        let pattern = "^(.*?)\\["
+        if let range = key.range(of: pattern, options: .regularExpression) {
+            return String(key[key.startIndex..<range.upperBound].dropLast())
+        }
+        return key
+    }
+}
+
+
