@@ -6,7 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
-- `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101)
+- `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101) | [5.10.2](#5102)
 - `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
 - `5.8.x`  Releases - [5.8.0](#580) | [5.8.1](#581)
 - `5.7.x`  Releases - [5.7.0](#570) | [5.7.1](#571)
@@ -57,6 +57,16 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.10.2](https://github.com/Alamofire/Alamofire/releases/tag/5.10.2]
+
+Released on 2024-11-249. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/93?closed=1).
+
+### Fixed
+- Runtime crash when calling `validate` from a Swift 6-compiled target.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3920](https://github.com/Alamofire/Alamofire/pull/3920).
+- Swift 6.0 `Package.swift` deprecation warning.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3911](https://github.com/Alamofire/Alamofire/pull/3911).
 
 ## [5.10.1](https://github.com/Alamofire/Alamofire/releases/tag/5.10.1)
 
