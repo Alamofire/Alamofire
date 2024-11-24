@@ -143,7 +143,7 @@ public class DataRequest: Request, @unchecked Sendable {
     @preconcurrency
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
-        let validator: () -> Void = { [unowned self] in
+        let validator: @Sendable () -> Void = { [unowned self] in
             guard error == nil, let response else { return }
 
             let result = validation(request, response, data)
