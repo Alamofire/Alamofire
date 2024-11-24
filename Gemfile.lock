@@ -5,8 +5,9 @@ GEM
       base64
       nkf
       rexml
-    activesupport (7.2.1.1)
+    activesupport (7.2.2)
       base64
+      benchmark (>= 0.3)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.3.1)
       connection_pool (>= 2.2.5)
@@ -23,12 +24,13 @@ GEM
       json (>= 1.5.1)
     atomos (0.1.3)
     base64 (0.2.0)
+    benchmark (0.4.0)
     bigdecimal (3.1.8)
     claide (1.1.0)
-    cocoapods (1.15.2)
+    cocoapods (1.16.2)
       addressable (~> 2.8)
       claide (>= 1.0.2, < 2.0)
-      cocoapods-core (= 1.15.2)
+      cocoapods-core (= 1.16.2)
       cocoapods-deintegrate (>= 1.0.3, < 2.0)
       cocoapods-downloader (>= 2.1, < 3.0)
       cocoapods-plugins (>= 1.0.0, < 2.0)
@@ -42,8 +44,8 @@ GEM
       molinillo (~> 0.8.0)
       nap (~> 1.0)
       ruby-macho (>= 2.3.0, < 3.0)
-      xcodeproj (>= 1.23.0, < 2.0)
-    cocoapods-core (1.15.2)
+      xcodeproj (>= 1.27.0, < 2.0)
+    cocoapods-core (1.16.2)
       activesupport (>= 5.0, < 8)
       addressable (~> 2.8)
       algoliasearch (~> 1.0)
@@ -86,14 +88,14 @@ GEM
       sassc (~> 2.1)
       sqlite3 (~> 1.3)
       xcinvoke (~> 0.3.0)
-    json (2.7.2)
+    json (2.8.2)
     liferaft (0.0.6)
     logger (1.6.1)
-    mini_portile2 (2.8.7)
-    minitest (5.25.1)
+    mini_portile2 (2.8.8)
+    minitest (5.25.2)
     molinillo (0.8.0)
     mustache (1.1.1)
-    nanaimo (0.3.0)
+    nanaimo (0.4.0)
     nap (1.1.0)
     netrc (0.11.0)
     nkf (0.2.0)
@@ -101,11 +103,11 @@ GEM
     public_suffix (4.0.7)
     redcarpet (3.6.0)
     rexml (3.3.9)
-    rouge (2.0.7)
+    rouge (4.5.1)
     ruby-macho (2.5.1)
     sassc (2.4.0)
       ffi (~> 1.9)
-    securerandom (0.3.1)
+    securerandom (0.3.2)
     sqlite3 (1.7.3)
       mini_portile2 (~> 2.8.0)
     typhoeus (1.4.1)
@@ -114,15 +116,13 @@ GEM
       concurrent-ruby (~> 1.0)
     xcinvoke (0.3.0)
       liferaft (~> 0.0.6)
-    xcodeproj (1.25.1)
+    xcodeproj (1.27.0)
       CFPropertyList (>= 2.3.3, < 4.0)
       atomos (~> 0.1.3)
       claide (>= 1.0.2, < 2.0)
       colored2 (~> 3.1)
-      nanaimo (~> 0.3.0)
+      nanaimo (~> 0.4.0)
       rexml (>= 3.3.6, < 4.0)
-    xcpretty (0.3.0)
-      rouge (~> 2.0.7)
 
 PLATFORMS
   ruby
@@ -130,7 +130,6 @@ PLATFORMS
 DEPENDENCIES
   cocoapods
   jazzy
-  xcpretty
 
 BUNDLED WITH
-   2.5.16
+   2.5.22
