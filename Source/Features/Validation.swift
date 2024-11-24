@@ -155,6 +155,7 @@ extension DataRequest {
     /// - Parameter acceptableStatusCodes: `Sequence` of acceptable response status codes.
     ///
     /// - Returns:                         The instance.
+    @preconcurrency
     @discardableResult
     public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int, S: Sendable {
         validate { [unowned self] _, response, _ in
@@ -169,6 +170,7 @@ extension DataRequest {
     /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
     ///
     /// - returns: The request.
+    @preconcurrency
     @discardableResult
     public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @Sendable @autoclosure () -> S) -> Self where S.Iterator.Element == String, S: Sendable {
         validate { [unowned self] _, response, data in
@@ -203,6 +205,7 @@ extension DataStreamRequest {
     /// - Parameter acceptableStatusCodes: `Sequence` of acceptable response status codes.
     ///
     /// - Returns:                         The instance.
+    @preconcurrency
     @discardableResult
     public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int, S: Sendable {
         validate { [unowned self] _, response in
@@ -217,6 +220,7 @@ extension DataStreamRequest {
     /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
     ///
     /// - returns: The request.
+    @preconcurrency
     @discardableResult
     public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @Sendable @autoclosure () -> S) -> Self where S.Iterator.Element == String, S: Sendable {
         validate { [unowned self] _, response in
@@ -256,6 +260,7 @@ extension DownloadRequest {
     /// - Parameter acceptableStatusCodes: `Sequence` of acceptable response status codes.
     ///
     /// - Returns:                         The instance.
+    @preconcurrency
     @discardableResult
     public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int, S: Sendable {
         validate { [unowned self] _, response, _ in
@@ -270,6 +275,7 @@ extension DownloadRequest {
     /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
     ///
     /// - returns: The request.
+    @preconcurrency
     @discardableResult
     public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @Sendable @autoclosure () -> S) -> Self where S.Iterator.Element == String, S: Sendable {
         validate { [unowned self] _, response, fileURL in
