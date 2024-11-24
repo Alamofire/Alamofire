@@ -188,7 +188,7 @@ public class Request: @unchecked Sendable {
     // MARK: Validators
 
     /// `Validator` callback closures that store the validation calls enqueued.
-    let validators = Protected<[() -> Void]>([])
+    let validators = Protected<[@Sendable () -> Void]>([])
 
     // MARK: URLRequests
 

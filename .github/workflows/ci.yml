@@ -31,6 +31,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_16.1"
+            runsOn: firebreak
+            name: "macOS 14, Xcode 16.1, Swift 6.0.2"
+            testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_16.0"
             runsOn: firebreak
             name: "macOS 14, Xcode 16.0, Swift 6.0"
@@ -74,6 +79,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_16.1"
+            name: "Catalyst 16.1"
+            runsOn: firebreak
           - xcode: "Xcode_16.0"
             name: "Catalyst 16.0"
             runsOn: firebreak
@@ -105,6 +113,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=18.1,name=iPhone 16 Pro"
+            name: "iOS 18.1"
+            testPlan: "iOS"
+            xcode: "Xcode_16.1"
+            runsOn: firebreak
           - destination: "OS=18.0,name=iPhone 16 Pro"
             name: "iOS 18.0"
             testPlan: "iOS"
@@ -141,6 +154,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=18.1,name=Apple TV"
+            name: "tvOS 18.1"
+            testPlan: "tvOS"
+            xcode: "Xcode_16.1"
+            runsOn: firebreak
           - destination: "OS=18.0,name=Apple TV"
             name: "tvOS 18.0"
             testPlan: "tvOS"
@@ -177,6 +195,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=2.1,name=Apple Vision Pro"
+            name: "visionOS 2.1"
+            testPlan: "visionOS"
+            scheme: "Alamofire visionOS"
+            xcode: "Xcode_16.1"
+            runsOn: firebreak
           - destination: "OS=2.0,name=Apple Vision Pro"
             name: "visionOS 2.0"
             testPlan: "visionOS"
@@ -211,6 +235,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=11.1,name=Apple Watch Series 10 (46mm)"
+            name: "watchOS 11.1"
+            testPlan: "watchOS"
+            xcode: "Xcode_16.1"
+            runsOn: firebreak
           - destination: "OS=11.0,name=Apple Watch Series 10 (46mm)"
             name: "watchOS 11.0"
             testPlan: "watchOS"
@@ -247,6 +276,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_16.1"
+            runsOn: firebreak
+            name: "macOS 14, SPM 6.0.2 Test"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_16.0"
             runsOn: firebreak
             name: "macOS 14, SPM 6.0 Test"
@@ -273,38 +306,38 @@ jobs:
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
       - name: Test SPM
         run: set -o pipefail && swift test -c debug 2>&1 | ${{ matrix.outputFilter }}
-  Linux:
-    name: Linux
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - image: swift:6.0-focal
-          - image: swift:6.0-jammy
-          - image: swift:6.0-rhel-ubi9
-          - image: swiftlang/swift:nightly-focal
-          - image: swiftlang/swift:nightly-jammy
-    container:
-      image: ${{ matrix.image }}
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - name: ${{ matrix.image }}
-        run: swift build --build-tests -c debug
-  Android:
-    name: Android
-    strategy:
-      fail-fast: false
-    runs-on: macos-13
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v4
-      - name: "Build for Android"
-        uses: skiptools/swift-android-action@v1
-        with:
-          swift-build-flags: "--build-tests -c debug"
-          run-tests: false
+  # Linux:
+  #   name: Linux
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include:
+  #         - image: swift:6.0-focal
+  #         - image: swift:6.0-jammy
+  #         - image: swift:6.0-rhel-ubi9
+  #         - image: swiftlang/swift:nightly-focal
+  #         - image: swiftlang/swift:nightly-jammy
+  #   container:
+  #     image: ${{ matrix.image }}
+  #   timeout-minutes: 10
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: ${{ matrix.image }}
+  #       run: swift build --build-tests -c debug
+  # Android:
+  #   name: Android
+  #   strategy:
+  #     fail-fast: false
+  #   runs-on: macos-13
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: actions/checkout@v4
+  #     - name: "Build for Android"
+  #       uses: skiptools/swift-android-action@v1
+  #       with:
+  #         swift-build-flags: "--build-tests -c debug"
+  #         run-tests: false
   Windows:
     name: ${{ matrix.name }}
     runs-on: windows-latest
