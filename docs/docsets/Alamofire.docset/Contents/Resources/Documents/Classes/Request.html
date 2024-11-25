@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.10.1 Docs
+          Alamofire 5.10.2 Docs
         </a>
          (96% documented)
       </p>
@@ -731,7 +731,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">eventMonitor</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt"><a href="../Protocols/EventMonitor.html">EventMonitor</a></span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">eventMonitor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/EventMonitor.html">EventMonitor</a></span><span class="p">)?</span></code></pre>
 
                         </div>
                       </div>
@@ -758,7 +758,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span></code></pre>
 
                         </div>
                       </div>
@@ -785,7 +785,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt"><a href="../Protocols/RequestDelegate.html">RequestDelegate</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestDelegate.html">RequestDelegate</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1148,7 +1148,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">redirectHandler</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt"><a href="../Protocols/RedirectHandler.html">RedirectHandler</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">redirectHandler</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RedirectHandler.html">RedirectHandler</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1188,7 +1188,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">cachedResponseHandler</span><span class="p">:</span> <span class="p">(</span><span class="n">any</span> <span class="kt"><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">cachedResponseHandler</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -2173,7 +2173,7 @@ last <code>URLSessionTask</code>.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">@preconcurrency</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">redirect</span><span class="p">(</span><span class="n">using</span> <span class="nv">handler</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/RedirectHandler.html">RedirectHandler</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">redirect</span><span class="p">(</span><span class="n">using</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/RedirectHandler.html">RedirectHandler</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
                         </div>
                       </div>
@@ -2243,7 +2243,7 @@ last <code>URLSessionTask</code>.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">@preconcurrency</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">cacheResponse</span><span class="p">(</span><span class="n">using</span> <span class="nv">handler</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">cacheResponse</span><span class="p">(</span><span class="n">using</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
                         </div>
                       </div>
@@ -3217,7 +3217,7 @@ created, as well as the response status code, if a response has been received.</
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ValidationResult</span> <span class="o">=</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Void</span><span class="p">,</span> <span class="n">any</span> <span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ValidationResult</span> <span class="o">=</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Void</span><span class="p">,</span> <span class="nf">any</span> <span class="p">(</span><span class="kt">Error</span> <span class="o">&amp;</span> <span class="kt">Sendable</span><span class="p">)</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -3232,7 +3232,7 @@ created, as well as the response status code, if a response has been received.</
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-10-19)</p>
+      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-11-24)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
