@@ -39,7 +39,12 @@ import Foundation
         case disconnected(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
         case completed(Completion)
     }
-
+    
+    public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse?, _ error: AFError?) -> ValidationResult
+    
+    
+    private var validations: [Validation] = []
+    
     public struct Event<Success: Sendable, Failure: Error>: Sendable {
         public enum Kind: Sendable {
             case connected(protocol: String?)
@@ -49,34 +54,34 @@ import Foundation
             case disconnected(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
             case completed(Completion)
         }
-
+        
         weak var socket: WebSocketRequest?
-
+        
         public let kind: Kind
         public var message: Success? {
             guard case let .receivedMessage(message) = kind else { return nil }
-
+            
             return message
         }
-
+        
         init(socket: WebSocketRequest, kind: Kind) {
             self.socket = socket
             self.kind = kind
         }
-
+        
         public func close(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) {
             socket?.close(sending: closeCode, reason: reason)
         }
-
+        
         public func cancel() {
             socket?.cancel()
         }
-
+        
         public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping @Sendable (PingResponse) -> Void) {
             socket?.sendPing(respondingOn: queue, onResponse: onResponse)
         }
     }
-
+    
     public struct Completion: Sendable {
         /// Last `URLRequest` issued by the instance.
         public let request: URLRequest?
@@ -87,33 +92,33 @@ import Foundation
         /// `AFError` produced for the instance, if any.
         public let error: AFError?
     }
-
+    
     public struct Configuration {
         public static var `default`: Self { Self() }
-
+        
         public static func `protocol`(_ protocol: String) -> Self {
             Self(protocol: `protocol`)
         }
-
+        
         public static func maximumMessageSize(_ maximumMessageSize: Int) -> Self {
             Self(maximumMessageSize: maximumMessageSize)
         }
-
+        
         public static func pingInterval(_ pingInterval: TimeInterval) -> Self {
             Self(pingInterval: pingInterval)
         }
-
+        
         public let `protocol`: String?
         public let maximumMessageSize: Int
         public let pingInterval: TimeInterval?
-
+        
         init(protocol: String? = nil, maximumMessageSize: Int = 1_048_576, pingInterval: TimeInterval? = nil) {
             self.protocol = `protocol`
             self.maximumMessageSize = maximumMessageSize
             self.pingInterval = pingInterval
         }
     }
-
+    
     /// Response to a sent ping.
     public enum PingResponse: Sendable {
         public struct Pong: Sendable {
@@ -121,7 +126,7 @@ import Foundation
             let end: Date
             let latency: TimeInterval
         }
-
+        
         /// Received a pong with the associated state.
         case pong(Pong)
         /// Received an error.
@@ -129,7 +134,12 @@ import Foundation
         /// Did not send the ping, the request is cancelled or suspended.
         case unsent
     }
-
+    
+    public enum ValidationResult {
+        case success
+        case failure(Error)
+    }
+    
     struct SocketMutableState {
         var enqueuedSends: [(message: URLSessionWebSocketTask.Message,
                              queue: DispatchQueue,
@@ -137,16 +147,16 @@ import Foundation
         var handlers: [(queue: DispatchQueue, handler: (_ event: IncomingEvent) -> Void)] = []
         var pingTimerItem: DispatchWorkItem?
     }
-
+    
     let socketMutableState = Protected(SocketMutableState())
-
+    
     var socket: URLSessionWebSocketTask? {
         task as? URLSessionWebSocketTask
     }
-
+    
     public let convertible: any URLRequestConvertible
     public let configuration: Configuration
-
+    
     init(id: UUID = UUID(),
          convertible: any URLRequestConvertible,
          configuration: Configuration,
@@ -157,7 +167,7 @@ import Foundation
          delegate: any RequestDelegate) {
         self.convertible = convertible
         self.configuration = configuration
-
+        
         super.init(id: id,
                    underlyingQueue: underlyingQueue,
                    serializationQueue: serializationQueue,
@@ -165,10 +175,11 @@ import Foundation
                    interceptor: interceptor,
                    delegate: delegate)
     }
-
+    
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
         var copiedRequest = request
         let task: URLSessionWebSocketTask
+        
         if let `protocol` = configuration.protocol {
             copiedRequest.headers.update(.websocketProtocol(`protocol`))
             task = session.webSocketTask(with: copiedRequest)
@@ -176,23 +187,23 @@ import Foundation
             task = session.webSocketTask(with: copiedRequest)
         }
         task.maximumMessageSize = configuration.maximumMessageSize
-
+        
         return task
     }
-
+    
     override func didCreateTask(_ task: URLSessionTask) {
         super.didCreateTask(task)
-
+        
         guard let webSocketTask = task as? URLSessionWebSocketTask else {
             fatalError("Invalid task of type \(task.self) created for WebSocketRequest.")
         }
         // TODO: What about the any old tasks? Reset their receive?
         listen(to: webSocketTask)
-
+        
         // Empty pending messages.
         socketMutableState.write { state in
             guard !state.enqueuedSends.isEmpty else { return }
-
+            
             let sends = state.enqueuedSends
             self.underlyingQueue.async {
                 for send in sends {
@@ -203,14 +214,14 @@ import Foundation
                     }
                 }
             }
-
+            
             state.enqueuedSends = []
         }
     }
-
+    
     func didClose() {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
-
+        
         mutableState.write { mutableState in
             // Check whether error is cancellation or other websocket closing error.
             // If so, remove it.
@@ -219,47 +230,53 @@ import Foundation
                 mutableState.error = nil
             }
         }
-
+        
         // TODO: Still issue this event?
         eventMonitor?.requestDidCancel(self)
     }
-
+    
     @discardableResult
     public func close(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) -> Self {
         cancelAutomaticPing()
-
+        
         mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
-
+            
             mutableState.state = .cancelled
-
+            
             underlyingQueue.async { self.didClose() }
-
+            
             guard let task = mutableState.tasks.last, task.state != .completed else {
                 underlyingQueue.async { self.finish() }
                 return
             }
-
+            
             // Resume to ensure metrics are gathered.
             task.resume()
             // Cast from state directly, not the property, otherwise the lock is recursive.
             (mutableState.tasks.last as? URLSessionWebSocketTask)?.cancel(with: closeCode, reason: reason)
             underlyingQueue.async { self.didCancelTask(task) }
         }
-
+        
         return self
     }
-
+    
+    @discardableResult
+    public func validate(_ validation: @escaping Validation) -> Self {
+        validations.append(validation)
+        return self
+    }
+    
     @discardableResult
     override public func cancel() -> Self {
         cancelAutomaticPing()
-
+        
         return super.cancel()
     }
-
+    
     func didConnect(protocol: String?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
-
+        
         socketMutableState.read { state in
             // TODO: Capture HTTPURLResponse here too?
             for handler in state.handlers {
@@ -267,19 +284,39 @@ import Foundation
                 handler.handler(.connected(protocol: `protocol`))
             }
         }
-
+        
         if let pingInterval = configuration.pingInterval {
             startAutomaticPing(every: pingInterval)
         }
     }
-
+    
+    func validateResponse(request: URLRequest?, response: HTTPURLResponse?, error: AFError?) -> ValidationResult {
+        for validation in validations {
+            let result = validation(request, response, error)
+            if case .failure = result {
+                return result
+            }
+        }
+        
+        return .success
+    }
+    
+    public func handleResponse(request: URLRequest?, response: HTTPURLResponse?, error: AFError?) {
+        let validationResult = validateResponse(request: request, response: response, error: error)
+        
+        if case let .failure(validationError) = validationResult {
+            self.error = validationError as! AFError
+        }
+    }
+    
+    
     @preconcurrency
     public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping @Sendable (PingResponse) -> Void) {
         guard isResumed else {
             queue.async { onResponse(.unsent) }
             return
         }
-
+        
         let start = Date()
         let startTimestamp = ProcessInfo.processInfo.systemUptime
         socket?.sendPing { error in
@@ -293,14 +330,14 @@ import Foundation
                 let end = Date()
                 let endTimestamp = ProcessInfo.processInfo.systemUptime
                 let pong = PingResponse.Pong(start: start, end: end, latency: endTimestamp - startTimestamp)
-
+                
                 queue.async {
                     onResponse(.pong(pong))
                 }
             }
         }
     }
-
+    
     func startAutomaticPing(every pingInterval: TimeInterval) {
         socketMutableState.write { mutableState in
             guard isResumed else {
@@ -308,38 +345,38 @@ import Foundation
                 defer { cancelAutomaticPing() }
                 return
             }
-
+            
             let item = DispatchWorkItem { [weak self] in
                 guard let self, isResumed else { return }
-
+                
                 sendPing(respondingOn: underlyingQueue) { response in
                     guard case .pong = response else { return }
-
+                    
                     self.startAutomaticPing(every: pingInterval)
                 }
             }
-
+            
             mutableState.pingTimerItem = item
             underlyingQueue.asyncAfter(deadline: .now() + pingInterval, execute: item)
         }
     }
-
+    
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func startAutomaticPing(every duration: Duration) {
         let interval = TimeInterval(duration.components.seconds) + (Double(duration.components.attoseconds) / 1e18)
         startAutomaticPing(every: interval)
     }
-
+    
     func cancelAutomaticPing() {
         socketMutableState.write { mutableState in
             mutableState.pingTimerItem?.cancel()
             mutableState.pingTimerItem = nil
         }
     }
-
+    
     func didDisconnect(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
-
+        
         cancelAutomaticPing()
         socketMutableState.read { state in
             for handler in state.handlers {
@@ -348,6 +385,7 @@ import Foundation
             }
         }
     }
+    
 
     private func listen(to task: URLSessionWebSocketTask) {
         // TODO: Do we care about the cycle while receiving?
