@@ -330,6 +330,8 @@ jobs:
         run: swift build --build-tests -c debug
   Android:
     name: Android
+    strategy:
+      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
