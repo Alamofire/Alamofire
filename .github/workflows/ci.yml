@@ -306,38 +306,44 @@ jobs:
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
       - name: Test SPM
         run: set -o pipefail && swift test -c debug 2>&1 | ${{ matrix.outputFilter }}
-  # Linux:
-  #   name: Linux
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       include:
-  #         - image: swift:6.0-focal
-  #         - image: swift:6.0-jammy
-  #         - image: swift:6.0-rhel-ubi9
-  #         - image: swiftlang/swift:nightly-focal
-  #         - image: swiftlang/swift:nightly-jammy
-  #   container:
-  #     image: ${{ matrix.image }}
-  #   timeout-minutes: 10
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: ${{ matrix.image }}
-  #       run: swift build --build-tests -c debug
-  # Android:
-  #   name: Android
-  #   strategy:
-  #     fail-fast: false
-  #   runs-on: macos-13
-  #   steps:
-  #     - name: "Checkout"
-  #       uses: actions/checkout@v4
-  #     - name: "Build for Android"
-  #       uses: skiptools/swift-android-action@v1
-  #       with:
-  #         swift-build-flags: "--build-tests -c debug"
-  #         run-tests: false
+  Linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: swift:6.0-focal
+          - image: swift:6.0-jammy
+          - image: swift:6.0-rhel-ubi9
+          - image: swiftlang/swift:nightly-focal
+          - image: swiftlang/swift:nightly-jammy
+    container:
+      image: ${{ matrix.image }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Fix @MainActor in Tests"
+        # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
+        run: sed -i'' 's;@MainActor;;g' Tests/*.swift
+      - name: ${{ matrix.image }}
+        run: swift build --build-tests -c debug
+  Android:
+    name: Android
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+      - name: "Fix @MainActor in Tests"
+        # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
+        run: sed -i'' 's;@MainActor;;g' Tests/*.swift
+      - name: "Build for Android"
+        uses: skiptools/swift-android-action@v2
+        with:
+          build-tests: true
+          run-tests: false
   Windows:
     name: ${{ matrix.name }}
     runs-on: windows-latest
