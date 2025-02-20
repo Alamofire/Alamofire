@@ -40,7 +40,7 @@ extension String: URLConvertible {
     /// - Returns: The `URL` initialized with `self`.
     /// - Throws:  An `AFError.invalidURL` instance.
     public func asURL() throws -> URL {
-        guard let components = URLComponents(string: self), let url = components.url else {
+        guard let components = URLComponents(string: self), let url = components.url, !self.isEmpty else {
             throw AFError.invalidURL(url: self)
         }
 
