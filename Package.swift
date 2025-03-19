@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version: 6.0
 //
 //  Package.swift
 //
@@ -38,6 +38,7 @@ let package = Package(name: "Alamofire",
                                         path: "Source",
                                         exclude: ["Info.plist"],
                                         resources: [.process("PrivacyInfo.xcprivacy")],
+                                        swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
                                         linkerSettings: [.linkedFramework("CFNetwork",
                                                                           .when(platforms: [.iOS,
                                                                                             .macOS,
@@ -48,4 +49,4 @@ let package = Package(name: "Alamofire",
                                             path: "Tests",
                                             exclude: ["Info.plist", "Test Plans"],
                                             resources: [.process("Resources")])],
-                      swiftLanguageVersions: [.v5])
+                      swiftLanguageModes: [.v5])

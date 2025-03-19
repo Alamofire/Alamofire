@@ -32,11 +32,11 @@ import Foundation
 
 /// A Combine `Publisher` that publishes the `DataResponse<Value, AFError>` of the provided `DataRequest`.
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-public struct DataResponsePublisher<Value>: Publisher {
+public struct DataResponsePublisher<Value: Sendable>: Publisher {
     public typealias Output = DataResponse<Value, AFError>
     public typealias Failure = Never
 
-    private typealias Handler = (@escaping (_ response: DataResponse<Value, AFError>) -> Void) -> DataRequest
+    private typealias Handler = (@escaping @Sendable (_ response: DataResponse<Value, AFError>) -> Void) -> DataRequest
 
     private let request: DataRequest
     private let responseHandler: Handler
@@ -81,13 +81,13 @@ public struct DataResponsePublisher<Value>: Publisher {
         setFailureType(to: AFError.self).flatMap(\.result.publisher).eraseToAnyPublisher()
     }
 
-    public func receive<S>(subscriber: S) where S: Subscriber, DataResponsePublisher.Failure == S.Failure, DataResponsePublisher.Output == S.Input {
+    public func receive<S>(subscriber: S) where S: Subscriber & Sendable, DataResponsePublisher.Failure == S.Failure, DataResponsePublisher.Output == S.Input {
         subscriber.receive(subscription: Inner(request: request,
                                                responseHandler: responseHandler,
                                                downstream: subscriber))
     }
 
-    private final class Inner<Downstream: Subscriber>: Subscription
+    private final class Inner<Downstream: Subscriber & Sendable>: Subscription
         where Downstream.Input == Output {
         typealias Failure = Downstream.Failure
 
@@ -158,7 +158,7 @@ extension DataRequest {
     /// - Returns:               The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishData(queue: DispatchQueue = .main,
-                            preprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                            preprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                             emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                             emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataResponsePublisher<Data> {
         publishResponse(using: DataResponseSerializer(dataPreprocessor: preprocessor,
@@ -185,7 +185,7 @@ extension DataRequest {
     /// - Returns:               The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishString(queue: DispatchQueue = .main,
-                              preprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                              preprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                               encoding: String.Encoding? = nil,
                               emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                               emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DataResponsePublisher<String> {
@@ -201,8 +201,8 @@ extension DataRequest {
     @available(*, deprecated, message: "Renamed publishDecodable(type:queue:preprocessor:decoder:emptyResponseCodes:emptyRequestMethods).")
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
-                                               preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                               decoder: DataDecoder = JSONDecoder(),
+                                               preprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                               decoder: any DataDecoder = JSONDecoder(),
                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<T> {
         publishResponse(using: DecodableResponseSerializer(dataPreprocessor: preprocessor,
@@ -231,8 +231,8 @@ extension DataRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
-                                               preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                               decoder: DataDecoder = JSONDecoder(),
+                                               preprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                               decoder: any DataDecoder = JSONDecoder(),
                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<T> {
         publishResponse(using: DecodableResponseSerializer(dataPreprocessor: preprocessor,
@@ -255,7 +255,7 @@ extension DataRequest {
 
 // A Combine `Publisher` that publishes a sequence of `Stream<Value, AFError>` values received by the provided `DataStreamRequest`.
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-public struct DataStreamPublisher<Value>: Publisher {
+public struct DataStreamPublisher<Value: Sendable>: Publisher {
     public typealias Output = DataStreamRequest.Stream<Value, AFError>
     public typealias Failure = Never
 
@@ -284,10 +284,10 @@ public struct DataStreamPublisher<Value>: Publisher {
         compactMap { stream in
             switch stream.event {
             case let .stream(result):
-                return result
+                result
             // If the stream has completed with an error, send the error value downstream as a `.failure`.
             case let .complete(completion):
-                return completion.error.map(Result.failure)
+                completion.error.map(Result.failure)
             }
         }
         .eraseToAnyPublisher()
@@ -301,13 +301,13 @@ public struct DataStreamPublisher<Value>: Publisher {
         result().setFailureType(to: AFError.self).flatMap(\.publisher).eraseToAnyPublisher()
     }
 
-    public func receive<S>(subscriber: S) where S: Subscriber, DataStreamPublisher.Failure == S.Failure, DataStreamPublisher.Output == S.Input {
+    public func receive<S>(subscriber: S) where S: Subscriber & Sendable, DataStreamPublisher.Failure == S.Failure, DataStreamPublisher.Output == S.Input {
         subscriber.receive(subscription: Inner(request: request,
                                                streamHandler: streamHandler,
                                                downstream: subscriber))
     }
 
-    private final class Inner<Downstream: Subscriber>: Subscription
+    private final class Inner<Downstream: Subscriber & Sendable>: Subscription
         where Downstream.Input == Output {
         typealias Failure = Downstream.Failure
 
@@ -390,8 +390,8 @@ extension DataStreamRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
-                                               decoder: DataDecoder = JSONDecoder(),
-                                               preprocessor: DataPreprocessor = PassthroughPreprocessor()) -> DataStreamPublisher<T> {
+                                               decoder: any DataDecoder = JSONDecoder(),
+                                               preprocessor: any DataPreprocessor = PassthroughPreprocessor()) -> DataStreamPublisher<T> {
         publishStream(using: DecodableStreamSerializer(decoder: decoder,
                                                        dataPreprocessor: preprocessor),
                       on: queue)
@@ -400,11 +400,11 @@ extension DataStreamRequest {
 
 /// A Combine `Publisher` that publishes the `DownloadResponse<Value, AFError>` of the provided `DownloadRequest`.
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-public struct DownloadResponsePublisher<Value>: Publisher {
+public struct DownloadResponsePublisher<Value: Sendable>: Publisher {
     public typealias Output = DownloadResponse<Value, AFError>
     public typealias Failure = Never
 
-    private typealias Handler = (@escaping (_ response: DownloadResponse<Value, AFError>) -> Void) -> DownloadRequest
+    private typealias Handler = (@escaping @Sendable (_ response: DownloadResponse<Value, AFError>) -> Void) -> DownloadRequest
 
     private let request: DownloadRequest
     private let responseHandler: Handler
@@ -450,13 +450,13 @@ public struct DownloadResponsePublisher<Value>: Publisher {
         setFailureType(to: AFError.self).flatMap(\.result.publisher).eraseToAnyPublisher()
     }
 
-    public func receive<S>(subscriber: S) where S: Subscriber, DownloadResponsePublisher.Failure == S.Failure, DownloadResponsePublisher.Output == S.Input {
+    public func receive<S>(subscriber: S) where S: Subscriber & Sendable, DownloadResponsePublisher.Failure == S.Failure, DownloadResponsePublisher.Output == S.Input {
         subscriber.receive(subscription: Inner(request: request,
                                                responseHandler: responseHandler,
                                                downstream: subscriber))
     }
 
-    private final class Inner<Downstream: Subscriber>: Subscription
+    private final class Inner<Downstream: Subscriber & Sendable>: Subscription
         where Downstream.Input == Output {
         typealias Failure = Downstream.Failure
 
@@ -543,7 +543,7 @@ extension DownloadRequest {
     /// - Returns:               The `DownloadResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishData(queue: DispatchQueue = .main,
-                            preprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                            preprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                             emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                             emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DownloadResponsePublisher<Data> {
         publishResponse(using: DataResponseSerializer(dataPreprocessor: preprocessor,
@@ -570,7 +570,7 @@ extension DownloadRequest {
     /// - Returns:               The `DownloadResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishString(queue: DispatchQueue = .main,
-                              preprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                              preprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                               encoding: String.Encoding? = nil,
                               emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                               emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DownloadResponsePublisher<String> {
@@ -586,8 +586,8 @@ extension DownloadRequest {
     @available(*, deprecated, message: "Renamed publishDecodable(type:queue:preprocessor:decoder:emptyResponseCodes:emptyRequestMethods).")
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
-                                               preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                               decoder: DataDecoder = JSONDecoder(),
+                                               preprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                               decoder: any DataDecoder = JSONDecoder(),
                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DownloadResponsePublisher<T> {
         publishResponse(using: DecodableResponseSerializer(dataPreprocessor: preprocessor,
@@ -615,8 +615,8 @@ extension DownloadRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
-                                               preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                               decoder: DataDecoder = JSONDecoder(),
+                                               preprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                               decoder: any DataDecoder = JSONDecoder(),
                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DownloadResponsePublisher<T> {
         publishResponse(using: DecodableResponseSerializer(dataPreprocessor: preprocessor,

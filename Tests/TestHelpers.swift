@@ -40,8 +40,8 @@ struct Endpoint {
 
         var port: Int {
             switch self {
-            case .http: return 80
-            case .https: return 443
+            case .http: 80
+            case .https: 443
             }
         }
     }
@@ -52,8 +52,8 @@ struct Endpoint {
 
         func port(for scheme: Scheme) -> Int {
             switch self {
-            case .localhost: return 8080
-            case .httpBin: return scheme.port
+            case .localhost: 8080
+            case .httpBin: scheme.port
             }
         }
     }
@@ -87,53 +87,53 @@ struct Endpoint {
         var string: String {
             switch self {
             case let .basicAuth(username: username, password: password):
-                return "/basic-auth/\(username)/\(password)"
+                "/basic-auth/\(username)/\(password)"
             case let .bytes(count):
-                return "/bytes/\(count)"
+                "/bytes/\(count)"
             case .cache:
-                return "/cache"
+                "/cache"
             case let .chunked(count):
-                return "/chunked/\(count)"
+                "/chunked/\(count)"
             case let .compression(compression):
-                return "/\(compression.rawValue)"
+                "/\(compression.rawValue)"
             case let .delay(interval):
-                return "/delay/\(interval)"
+                "/delay/\(interval)"
             case let .digestAuth(qop, username, password):
-                return "/digest-auth/\(qop)/\(username)/\(password)"
+                "/digest-auth/\(qop)/\(username)/\(password)"
             case let .download(count):
-                return "/download/\(count)"
+                "/download/\(count)"
             case let .hiddenBasicAuth(username, password):
-                return "/hidden-basic-auth/\(username)/\(password)"
+                "/hidden-basic-auth/\(username)/\(password)"
             case let .image(type):
-                return "/image/\(type.rawValue)"
+                "/image/\(type.rawValue)"
             case .ip:
-                return "/ip"
+                "/ip"
             case let .method(method):
-                return "/\(method.rawValue.lowercased())"
+                "/\(method.rawValue.lowercased())"
             case let .payloads(count):
-                return "/payloads/\(count)"
+                "/payloads/\(count)"
             case let .redirect(count):
-                return "/redirect/\(count)"
+                "/redirect/\(count)"
             case .redirectTo:
-                return "/redirect-to"
+                "/redirect-to"
             case .responseHeaders:
-                return "/response-headers"
+                "/response-headers"
             case let .status(code):
-                return "/status/\(code)"
+                "/status/\(code)"
             case let .stream(count):
-                return "/stream/\(count)"
+                "/stream/\(count)"
             case .upload:
-                return "/upload"
+                "/upload"
             case .websocket:
-                return "/websocket"
+                "/websocket"
             case let .websocketCount(count):
-                return "/websocket/payloads/\(count)"
+                "/websocket/payloads/\(count)"
             case .websocketEcho:
-                return "/websocket/echo"
+                "/websocket/echo"
             case let .websocketPingCount(count):
-                return "/websocket/ping/\(count)"
+                "/websocket/ping/\(count)"
             case .xml:
-                return "/xml"
+                "/xml"
             }
         }
     }
@@ -237,13 +237,13 @@ struct Endpoint {
     #if canImport(Darwin) && !canImport(FoundationNetworking)
     static var defaultCloseDelay: Int64 {
         if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-            return 0
+            0
         } else if #available(macOS 11.3, iOS 14.5, tvOS 14.5, watchOS 7.4, *) {
             // iOS 14.5 to 14.7 have a bug where immediate connection closure will drop messages, so delay close by 60
             // milliseconds.
-            return 60
+            60
         } else {
-            return 0
+            0
         }
     }
 
@@ -348,11 +348,11 @@ extension URLRequestConvertible where Self == EndpointSequence {
 extension Session {
     func request(_ endpoint: Endpoint,
                  parameters: Parameters? = nil,
-                 encoding: ParameterEncoding = URLEncoding.default,
+                 encoding: any ParameterEncoding = URLEncoding.default,
                  headers: HTTPHeaders? = nil,
-                 interceptor: RequestInterceptor? = nil,
+                 interceptor: (any RequestInterceptor)? = nil,
                  requestModifier: RequestModifier? = nil) -> DataRequest {
-        request(endpoint as URLConvertible,
+        request(endpoint as (any URLConvertible),
                 method: endpoint.method,
                 parameters: parameters,
                 encoding: encoding,
@@ -363,11 +363,11 @@ extension Session {
 
     func request<Parameters: Encodable>(_ endpoint: Endpoint,
                                         parameters: Parameters? = nil,
-                                        encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                        encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                         headers: HTTPHeaders? = nil,
-                                        interceptor: RequestInterceptor? = nil,
+                                        interceptor: (any RequestInterceptor)? = nil,
                                         requestModifier: RequestModifier? = nil) -> DataRequest {
-        request(endpoint as URLConvertible,
+        request(endpoint as (any URLConvertible),
                 method: endpoint.method,
                 parameters: parameters,
                 encoder: encoder,
@@ -376,16 +376,16 @@ extension Session {
                 requestModifier: requestModifier)
     }
 
-    func request(_ endpoint: Endpoint, interceptor: RequestInterceptor? = nil) -> DataRequest {
-        request(endpoint as URLRequestConvertible, interceptor: interceptor)
+    func request(_ endpoint: Endpoint, interceptor: (any RequestInterceptor)? = nil) -> DataRequest {
+        request(endpoint as (any URLRequestConvertible), interceptor: interceptor)
     }
 
     func streamRequest(_ endpoint: Endpoint,
                        headers: HTTPHeaders? = nil,
                        automaticallyCancelOnStreamError: Bool = false,
-                       interceptor: RequestInterceptor? = nil,
+                       interceptor: (any RequestInterceptor)? = nil,
                        requestModifier: RequestModifier? = nil) -> DataStreamRequest {
-        streamRequest(endpoint as URLConvertible,
+        streamRequest(endpoint as (any URLConvertible),
                       method: endpoint.method,
                       headers: headers,
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
@@ -395,20 +395,20 @@ extension Session {
 
     func streamRequest(_ endpoint: Endpoint,
                        automaticallyCancelOnStreamError: Bool = false,
-                       interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
-        streamRequest(endpoint as URLRequestConvertible,
+                       interceptor: (any RequestInterceptor)? = nil) -> DataStreamRequest {
+        streamRequest(endpoint as (any URLRequestConvertible),
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                       interceptor: interceptor)
     }
 
     func download<Parameters: Encodable>(_ endpoint: Endpoint,
                                          parameters: Parameters? = nil,
-                                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                         encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                          headers: HTTPHeaders? = nil,
-                                         interceptor: RequestInterceptor? = nil,
+                                         interceptor: (any RequestInterceptor)? = nil,
                                          requestModifier: RequestModifier? = nil,
                                          to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint as URLConvertible,
+        download(endpoint as (any URLConvertible),
                  method: endpoint.method,
                  parameters: parameters,
                  encoder: encoder,
@@ -420,12 +420,12 @@ extension Session {
 
     func download(_ endpoint: Endpoint,
                   parameters: Parameters? = nil,
-                  encoding: ParameterEncoding = URLEncoding.default,
+                  encoding: any ParameterEncoding = URLEncoding.default,
                   headers: HTTPHeaders? = nil,
-                  interceptor: RequestInterceptor? = nil,
+                  interceptor: (any RequestInterceptor)? = nil,
                   requestModifier: RequestModifier? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint as URLConvertible,
+        download(endpoint as (any URLConvertible),
                  method: endpoint.method,
                  parameters: parameters,
                  encoding: encoding,
@@ -436,18 +436,18 @@ extension Session {
     }
 
     func download(_ endpoint: Endpoint,
-                  interceptor: RequestInterceptor? = nil,
+                  interceptor: (any RequestInterceptor)? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint as URLRequestConvertible, interceptor: interceptor, to: destination)
+        download(endpoint as (any URLRequestConvertible), interceptor: interceptor, to: destination)
     }
 
     func upload(_ data: Data,
                 to endpoint: Endpoint,
                 headers: HTTPHeaders? = nil,
-                interceptor: RequestInterceptor? = nil,
+                interceptor: (any RequestInterceptor)? = nil,
                 fileManager: FileManager = .default,
                 requestModifier: RequestModifier? = nil) -> UploadRequest {
-        upload(data, to: endpoint as URLConvertible,
+        upload(data, to: endpoint as (any URLConvertible),
                method: endpoint.method,
                headers: headers,
                interceptor: interceptor,
@@ -475,8 +475,8 @@ struct TestResponse: Decodable {
     let args: [String: String]
 }
 
-extension HTTPHeaders: Decodable {
-    public init(from decoder: Decoder) throws {
+extension Alamofire.HTTPHeaders: Swift.Decodable {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
 
         let headers = try container.decode([HTTPHeader].self)
@@ -485,12 +485,12 @@ extension HTTPHeaders: Decodable {
     }
 }
 
-extension HTTPHeader: Decodable {
+extension Alamofire.HTTPHeader: Swift.Decodable {
     enum CodingKeys: String, CodingKey {
         case name, value
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let name = try container.decode(String.self, forKey: .name)

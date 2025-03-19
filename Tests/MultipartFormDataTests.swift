@@ -36,15 +36,13 @@ enum BoundaryGenerator {
     }
 
     static func boundary(forBoundaryType boundaryType: BoundaryType, boundaryKey: String) -> String {
-        let boundary: String
-
-        switch boundaryType {
+        let boundary = switch boundaryType {
         case .initial:
-            boundary = "--\(boundaryKey)\(EncodingCharacters.crlf)"
+            "--\(boundaryKey)\(EncodingCharacters.crlf)"
         case .encapsulated:
-            boundary = "\(EncodingCharacters.crlf)--\(boundaryKey)\(EncodingCharacters.crlf)"
+            "\(EncodingCharacters.crlf)--\(boundaryKey)\(EncodingCharacters.crlf)"
         case .final:
-            boundary = "\(EncodingCharacters.crlf)--\(boundaryKey)--\(EncodingCharacters.crlf)"
+            "\(EncodingCharacters.crlf)--\(boundaryKey)--\(EncodingCharacters.crlf)"
         }
 
         return boundary
@@ -433,7 +431,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -473,7 +471,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         multipartFormData.append(japaneseData, withName: "japanese")
         multipartFormData.append(emojiData, withName: "emoji")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -516,7 +514,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         let unicornImageURL = url(forResource: "unicorn", withExtension: "png")
         multipartFormData.append(unicornImageURL, withName: "unicorn")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -558,7 +556,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         multipartFormData.append(unicornImageURL, withName: "unicorn")
         multipartFormData.append(rainbowImageURL, withName: "rainbow")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -613,7 +611,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
                                  fileName: "unicorn.png",
                                  mimeType: "image/png")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -658,7 +656,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
                                  fileName: "unicorn.png",
                                  mimeType: "image/png")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -713,7 +711,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
                                  fileName: "rainbow.jpg",
                                  mimeType: "image/jpeg")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -772,7 +770,7 @@ final class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
                                  fileName: "rainbow.jpg",
                                  mimeType: "image/jpeg")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -826,7 +824,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let multipartFormData = MultipartFormData()
         multipartFormData.append(fileURL, withName: "empty_data")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -848,7 +846,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let multipartFormData = MultipartFormData()
         multipartFormData.append(fileURL, withName: "empty_data")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -870,7 +868,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let multipartFormData = MultipartFormData()
         multipartFormData.append(fileURL, withName: "empty_data")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -892,7 +890,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let multipartFormData = MultipartFormData()
         multipartFormData.append(directoryURL, withName: "empty_data", fileName: "empty", mimeType: "application/octet")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -911,7 +909,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Given
         let fileURL = temporaryFileURL
 
-        var writerError: Error?
+        var writerError: (any Error)?
 
         do {
             try "dummy data".write(to: fileURL, atomically: true, encoding: .utf8)
@@ -923,7 +921,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -946,7 +944,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
 
-        var encodingError: Error?
+        var encodingError: (any Error)?
 
         // When
         do {
@@ -965,8 +963,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let multipartFormData = MultipartFormData()
         let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
-        var firstError: Error?
-        var secondError: Error?
+        var firstError: (any Error)?
+        var secondError: (any Error)?
 
         // When
         do {

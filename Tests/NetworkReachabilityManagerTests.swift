@@ -127,6 +127,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertEqual(manager?.status, .reachable(.ethernetOrWiFi))
     }
 
+    @MainActor
     func testThatHostManagerCanBeDeinitialized() {
         // Given
         let expect = expectation(description: "reachability queue should clear")
@@ -146,6 +147,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertNil(weakManager, "weak reference should be nil")
     }
 
+    @MainActor
     func testThatAddressManagerCanBeDeinitialized() {
         // Given
         let expect = expectation(description: "reachability queue should clear")
@@ -167,6 +169,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
 
     // MARK: - Listener
 
+    @MainActor
     func testThatHostManagerIsNotifiedWhenStartListeningIsCalled() {
         // Given
         guard let manager = NetworkReachabilityManager(host: "store.apple.com") else {
@@ -189,6 +192,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))
     }
 
+    @MainActor
     func testThatAddressManagerIsNotifiedWhenStartListeningIsCalled() {
         // Given
         let manager = NetworkReachabilityManager()

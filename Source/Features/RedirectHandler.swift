@@ -25,7 +25,7 @@
 import Foundation
 
 /// A type that handles how an HTTP redirect response from a remote server should be redirected to the new request.
-public protocol RedirectHandler {
+public protocol RedirectHandler: Sendable {
     /// Determines how the HTTP redirect response should be redirected to the new request.
     ///
     /// The `completion` closure should be passed one of three possible options:
@@ -50,13 +50,13 @@ public protocol RedirectHandler {
 /// `Redirector` is a convenience `RedirectHandler` making it easy to follow, not follow, or modify a redirect.
 public struct Redirector {
     /// Defines the behavior of the `Redirector` type.
-    public enum Behavior {
+    public enum Behavior: Sendable {
         /// Follow the redirect as defined in the response.
         case follow
         /// Do not follow the redirect defined in the response.
         case doNotFollow
         /// Modify the redirect request defined in the response.
-        case modify((URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?)
+        case modify(@Sendable (_ task: URLSessionTask, _ request: URLRequest, _ response: HTTPURLResponse) -> URLRequest?)
     }
 
     /// Returns a `Redirector` with a `.follow` `Behavior`.
@@ -105,7 +105,7 @@ extension RedirectHandler where Self == Redirector {
     ///
     /// - Parameter closure: Closure used to modify the redirect.
     /// - Returns:           The `Redirector`.
-    public static func modify(using closure: @escaping (URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?) -> Redirector {
+    public static func modify(using closure: @escaping @Sendable (URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?) -> Redirector {
         Redirector(behavior: .modify(closure))
     }
 }

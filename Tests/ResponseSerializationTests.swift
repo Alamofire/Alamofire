@@ -571,7 +571,7 @@ final class URLResponseSerializerTests: BaseTestCase {
 // MARK: -
 
 // used by testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseConformingTypeAndEmptyResponseStatusCode
-extension Bool: EmptyResponse {
+extension Swift.Bool: Alamofire.EmptyResponse {
     public static func emptyValue() -> Bool {
         true
     }
@@ -1181,10 +1181,11 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
 }
 
 final class CustomResponseSerializerTests: BaseTestCase {
+    @MainActor
     func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
         // Given
         final class UselessResponseSerializer: ResponseSerializer {
-            func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data? {
+            func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Data? {
                 data
             }
         }
@@ -1382,7 +1383,7 @@ final class DataPreprocessorTests: BaseTestCase {
 }
 
 final class StaticDataPreprocessorTests: BaseTestCase {
-    func consumeDataPreprocessor(_ dataPreprocessor: DataPreprocessor) {
+    func consumeDataPreprocessor(_ dataPreprocessor: any DataPreprocessor) {
         _ = dataPreprocessor
     }
 

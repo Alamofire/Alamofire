@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if canImport(zlib)
+#if canImport(zlib) && !os(Android)
 import Foundation
 import zlib
 
@@ -36,9 +36,9 @@ import zlib
 ///         want to use a dedicated `requestQueue` in your `Session` instance. Finally, not all servers support request
 ///         compression, so test with all of your server configurations before deploying.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DeflateRequestCompressor: RequestInterceptor {
+public struct DeflateRequestCompressor: Sendable, RequestInterceptor {
     /// Type that determines the action taken when the `URLRequest` already has a `Content-Encoding` header.
-    public enum DuplicateHeaderBehavior {
+    public enum DuplicateHeaderBehavior: Sendable {
         /// Throws a `DuplicateHeaderError`. The default.
         case error
         /// Replaces the existing header value with `deflate`.
@@ -54,7 +54,7 @@ public struct DeflateRequestCompressor: RequestInterceptor {
     /// Behavior to use when the outgoing `URLRequest` already has a `Content-Encoding` header.
     public let duplicateHeaderBehavior: DuplicateHeaderBehavior
     /// Closure which determines whether the outgoing body data should be compressed.
-    public let shouldCompressBodyData: (_ bodyData: Data) -> Bool
+    public let shouldCompressBodyData: @Sendable (_ bodyData: Data) -> Bool
 
     /// Creates an instance with the provided parameters.
     ///
@@ -62,12 +62,12 @@ public struct DeflateRequestCompressor: RequestInterceptor {
     ///   - duplicateHeaderBehavior: `DuplicateHeaderBehavior` to use. `.error` by default.
     ///   - shouldCompressBodyData:  Closure which determines whether the outgoing body data should be compressed. `true` by default.
     public init(duplicateHeaderBehavior: DuplicateHeaderBehavior = .error,
-                shouldCompressBodyData: @escaping (_ bodyData: Data) -> Bool = { _ in true }) {
+                shouldCompressBodyData: @escaping @Sendable (_ bodyData: Data) -> Bool = { _ in true }) {
         self.duplicateHeaderBehavior = duplicateHeaderBehavior
         self.shouldCompressBodyData = shouldCompressBodyData
     }
 
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         // No need to compress unless we have body data. No support for compressing streams.
         guard let bodyData = urlRequest.httpBody else {
             completion(.success(urlRequest))
@@ -137,7 +137,7 @@ extension RequestInterceptor where Self == DeflateRequestCompressor {
     /// - Returns: The `DeflateRequestCompressor`.
     public static func deflateCompressor(
         duplicateHeaderBehavior: DeflateRequestCompressor.DuplicateHeaderBehavior = .error,
-        shouldCompressBodyData: @escaping (_ bodyData: Data) -> Bool = { _ in true }
+        shouldCompressBodyData: @escaping @Sendable (_ bodyData: Data) -> Bool = { _ in true }
     ) -> DeflateRequestCompressor {
         DeflateRequestCompressor(duplicateHeaderBehavior: duplicateHeaderBehavior,
                                  shouldCompressBodyData: shouldCompressBodyData)

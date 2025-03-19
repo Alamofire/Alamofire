@@ -29,8 +29,8 @@ import Foundation
 #endif
 
 // Enforce minimum Swift version for all platforms and build systems.
-#if swift(<5.7.1)
-#error("Alamofire doesn't support Swift versions below 5.7.1.")
+#if swift(<5.9.0)
+#error("Alamofire doesn't support Swift versions below 5.9.")
 #endif
 
 /// Reference to `Session.default` for quick bootstrapping and examples.
@@ -39,5 +39,5 @@ public let AF = Session.default
 /// Namespace for informational Alamofire values.
 public enum AFInfo {
     /// Current Alamofire version.
-    public static let version = "5.9.1"
+    public static let version = "5.10.2"
 }

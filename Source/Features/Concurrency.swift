@@ -112,18 +112,18 @@ extension Request {
 
 /// Value used to `await` a `DataResponse` and associated values.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DataTask<Value> {
+public struct DataTask<Value>: Sendable where Value: Sendable {
     /// `DataResponse` produced by the `DataRequest` and its response handler.
     public var response: DataResponse<Value, AFError> {
         get async {
             if shouldAutomaticallyCancel {
-                return await withTaskCancellationHandler {
+                await withTaskCancellationHandler {
                     await task.value
                 } onCancel: {
                     cancel()
                 }
             } else {
-                return await task.value
+                await task.value
             }
         }
     }
@@ -243,7 +243,7 @@ extension DataRequest {
     ///
     /// - Returns: The `DataTask`.
     public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                                dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataTask<Data> {
         serializingResponse(using: DataResponseSerializer(dataPreprocessor: dataPreprocessor,
@@ -268,8 +268,8 @@ extension DataRequest {
     /// - Returns: The `DataTask`.
     public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
                                                        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                                       dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
-                                                       decoder: DataDecoder = JSONDecoder(),
+                                                       dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
+                                                       decoder: any DataDecoder = JSONDecoder(),
                                                        emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
                                                        emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DataTask<Value> {
         serializingResponse(using: DecodableResponseSerializer<Value>(dataPreprocessor: dataPreprocessor,
@@ -295,7 +295,7 @@ extension DataRequest {
     ///
     /// - Returns: The `DataTask`.
     public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                  dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                                  dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                   encoding: String.Encoding? = nil,
                                   emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                                   emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DataTask<String> {
@@ -346,7 +346,7 @@ extension DataRequest {
     }
 
     private func dataTask<Value>(automaticallyCancelling shouldAutomaticallyCancel: Bool,
-                                 forResponse onResponse: @escaping (@escaping (DataResponse<Value, AFError>) -> Void) -> Void)
+                                 forResponse onResponse: @Sendable @escaping (@escaping @Sendable (DataResponse<Value, AFError>) -> Void) -> Void)
         -> DataTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
@@ -368,18 +368,18 @@ extension DataRequest {
 
 /// Value used to `await` a `DownloadResponse` and associated values.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DownloadTask<Value> {
+public struct DownloadTask<Value>: Sendable where Value: Sendable {
     /// `DownloadResponse` produced by the `DownloadRequest` and its response handler.
     public var response: DownloadResponse<Value, AFError> {
         get async {
             if shouldAutomaticallyCancel {
-                return await withTaskCancellationHandler {
+                await withTaskCancellationHandler {
                     await task.value
                 } onCancel: {
                     cancel()
                 }
             } else {
-                return await task.value
+                await task.value
             }
         }
     }
@@ -436,7 +436,7 @@ extension DownloadRequest {
     ///
     /// - Returns:                   The `DownloadTask`.
     public func serializingData(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                                dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DownloadTask<Data> {
         serializingDownload(using: DataResponseSerializer(dataPreprocessor: dataPreprocessor,
@@ -463,8 +463,8 @@ extension DownloadRequest {
     /// - Returns:                   The `DownloadTask`.
     public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
                                                        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                                       dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
-                                                       decoder: DataDecoder = JSONDecoder(),
+                                                       dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
+                                                       decoder: any DataDecoder = JSONDecoder(),
                                                        emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
                                                        emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DownloadTask<Value> {
         serializingDownload(using: DecodableResponseSerializer<Value>(dataPreprocessor: dataPreprocessor,
@@ -503,7 +503,7 @@ extension DownloadRequest {
     ///
     /// - Returns:                   The `DownloadTask`.
     public func serializingString(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                  dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                                  dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                   encoding: String.Encoding? = nil,
                                   emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                                   emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DownloadTask<String> {
@@ -555,7 +555,7 @@ extension DownloadRequest {
     }
 
     private func downloadTask<Value>(automaticallyCancelling shouldAutomaticallyCancel: Bool,
-                                     forResponse onResponse: @escaping (@escaping (DownloadResponse<Value, AFError>) -> Void) -> Void)
+                                     forResponse onResponse: @Sendable @escaping (@escaping @Sendable (DownloadResponse<Value, AFError>) -> Void) -> Void)
         -> DownloadTask<Value> {
         let task = Task {
             await withTaskCancellationHandler {
@@ -576,7 +576,7 @@ extension DownloadRequest {
 // MARK: - DataStreamTask
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct DataStreamTask {
+public struct DataStreamTask: Sendable {
     // Type of created streams.
     public typealias Stream<Success, Failure: Error> = StreamOf<DataStreamRequest.Stream<Success, Failure>>
 
@@ -625,7 +625,7 @@ public struct DataStreamTask {
     public func streamingDecodables<T>(_ type: T.Type = T.self,
                                        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                        bufferingPolicy: Stream<T, AFError>.BufferingPolicy = .unbounded)
-        -> Stream<T, AFError> where T: Decodable {
+        -> Stream<T, AFError> where T: Decodable & Sendable {
         streamingResponses(serializedUsing: DecodableStreamSerializer<T>(),
                            automaticallyCancelling: shouldAutomaticallyCancel,
                            bufferingPolicy: bufferingPolicy)
@@ -653,7 +653,7 @@ public struct DataStreamTask {
 
     private func createStream<Success, Failure: Error>(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
                                                        bufferingPolicy: Stream<Success, Failure>.BufferingPolicy = .unbounded,
-                                                       forResponse onResponse: @escaping (@escaping (DataStreamRequest.Stream<Success, Failure>) -> Void) -> Void)
+                                                       forResponse onResponse: @Sendable @escaping (@escaping @Sendable (DataStreamRequest.Stream<Success, Failure>) -> Void) -> Void)
         -> Stream<Success, Failure> {
         StreamOf(bufferingPolicy: bufferingPolicy) {
             guard shouldAutomaticallyCancel,
@@ -761,7 +761,7 @@ extension DataStreamRequest {
 // - MARK: WebSocketTask
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-@_spi(WebSocket) public struct WebSocketTask {
+@_spi(WebSocket) public struct WebSocketTask: Sendable {
     private let request: WebSocketRequest
 
     fileprivate init(request: WebSocketRequest) {
@@ -792,12 +792,12 @@ extension DataStreamRequest {
         }
     }
 
-    public func streamingDecodableEvents<Value: Decodable>(
+    public func streamingDecodableEvents<Value: Decodable & Sendable>(
         _ type: Value.Type = Value.self,
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-        using decoder: DataDecoder = JSONDecoder(),
-        bufferingPolicy: EventStreamOf<Value, Error>.BufferingPolicy = .unbounded
-    ) -> EventStreamOf<Value, Error> {
+        using decoder: any DataDecoder = JSONDecoder(),
+        bufferingPolicy: EventStreamOf<Value, any Error>.BufferingPolicy = .unbounded
+    ) -> EventStreamOf<Value, any Error> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy,
                      transform: { $0 }) { onEvent in
@@ -808,10 +808,10 @@ extension DataStreamRequest {
         }
     }
 
-    public func streamingDecodable<Value: Decodable>(
+    public func streamingDecodable<Value: Decodable & Sendable>(
         _ type: Value.Type = Value.self,
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-        using decoder: DataDecoder = JSONDecoder(),
+        using decoder: any DataDecoder = JSONDecoder(),
         bufferingPolicy: StreamOf<Value>.BufferingPolicy = .unbounded
     ) -> StreamOf<Value> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
@@ -827,8 +827,8 @@ extension DataStreamRequest {
     private func createStream<Success, Value, Failure: Error>(
         automaticallyCancelling shouldAutomaticallyCancel: Bool,
         bufferingPolicy: StreamOf<Value>.BufferingPolicy,
-        transform: @escaping (WebSocketRequest.Event<Success, Failure>) -> Value?,
-        forResponse onResponse: @escaping (@escaping (WebSocketRequest.Event<Success, Failure>) -> Void) -> Void
+        transform: @escaping @Sendable (WebSocketRequest.Event<Success, Failure>) -> Value?,
+        forResponse onResponse: @Sendable @escaping (@escaping @Sendable (WebSocketRequest.Event<Success, Failure>) -> Void) -> Void
     ) -> StreamOf<Value> {
         StreamOf(bufferingPolicy: bufferingPolicy) {
             guard shouldAutomaticallyCancel,

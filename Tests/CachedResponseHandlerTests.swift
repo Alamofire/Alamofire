@@ -29,6 +29,7 @@ import XCTest
 final class CachedResponseHandlerTestCase: BaseTestCase {
     // MARK: Tests - Per Request
 
+    @MainActor
     func testThatRequestCachedResponseHandlerCanCacheResponse() {
         // Given
         let session = session()
@@ -49,6 +50,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         XCTAssertTrue(session.cachedResponseExists(for: request))
     }
 
+    @MainActor
     func testThatRequestCachedResponseHandlerCanNotCacheResponse() {
         // Given
         let session = session()
@@ -69,6 +71,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         XCTAssertFalse(session.cachedResponseExists(for: request))
     }
 
+    @MainActor
     func testThatRequestCachedResponseHandlerCanModifyCacheResponse() {
         // Given
         let session = session()
@@ -99,6 +102,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
     // MARK: Tests - Per Session
 
+    @MainActor
     func testThatSessionCachedResponseHandlerCanCacheResponse() {
         // Given
         let session = session(using: ResponseCacher.cache)
@@ -119,6 +123,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         XCTAssertTrue(session.cachedResponseExists(for: request))
     }
 
+    @MainActor
     func testThatSessionCachedResponseHandlerCanNotCacheResponse() {
         // Given
         let session = session(using: ResponseCacher.doNotCache)
@@ -139,6 +144,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         XCTAssertFalse(session.cachedResponseExists(for: request))
     }
 
+    @MainActor
     func testThatSessionCachedResponseHandlerCanModifyCacheResponse() {
         // Given
         let cacher = ResponseCacher(behavior: .modify { _, response in
@@ -169,6 +175,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
     // MARK: Tests - Per Request Prioritization
 
+    @MainActor
     func testThatRequestCachedResponseHandlerIsPrioritizedOverSessionCachedResponseHandler() {
         // Given
         let session = session(using: ResponseCacher.cache)
@@ -191,7 +198,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
     // MARK: Private - Test Helpers
 
-    private func session(using handler: CachedResponseHandler? = nil) -> Session {
+    private func session(using handler: (any CachedResponseHandler)? = nil) -> Session {
         let configuration = URLSessionConfiguration.af.default
         let capacity = 100_000_000
         let cache: URLCache
@@ -209,7 +216,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 }
 
 final class StaticCachedResponseHandlerTests: BaseTestCase {
-    func takeCachedResponseHandler(_ handler: CachedResponseHandler) {
+    func takeCachedResponseHandler(_ handler: any CachedResponseHandler) {
         _ = handler
     }
 

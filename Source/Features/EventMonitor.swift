@@ -26,7 +26,7 @@ import Foundation
 
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
-public protocol EventMonitor {
+public protocol EventMonitor: Sendable {
     /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. `.main` by default.
     var queue: DispatchQueue { get }
 
@@ -35,7 +35,7 @@ public protocol EventMonitor {
     // MARK: URLSessionDelegate Events
 
     /// Event called during `URLSessionDelegate`'s `urlSession(_:didBecomeInvalidWithError:)` method.
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?)
+    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?)
 
     // MARK: URLSessionTaskDelegate Events
 
@@ -62,7 +62,7 @@ public protocol EventMonitor {
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics)
 
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:task:didCompleteWithError:)` method.
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?)
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?)
 
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:taskIsWaitingForConnectivity:)` method.
     func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask)
@@ -164,7 +164,7 @@ public protocol EventMonitor {
     func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>)
 
     /// Event called when a `DataRequest` calls a `ResponseSerializer` and creates a generic `DataResponse<Value, AFError>`.
-    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>)
+    func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>)
 
     // MARK: DataStreamRequest Events
 
@@ -185,7 +185,7 @@ public protocol EventMonitor {
     /// - Parameters:
     ///   - request: `DataStreamRequest` for which the value was serialized.
     ///   - result:  `Result` of the serialization attempt.
-    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
+    func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
 
     // MARK: UploadRequest Events
 
@@ -219,7 +219,7 @@ public protocol EventMonitor {
     func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>)
 
     /// Event called when a `DownloadRequest` calls a `DownloadResponseSerializer` and creates a generic `DownloadResponse<Value, AFError>`
-    func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
+    func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
 }
 
 extension EventMonitor {
@@ -228,7 +228,7 @@ extension EventMonitor {
 
     // MARK: Default Implementations
 
-    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {}
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {}
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didReceive challenge: URLAuthenticationChallenge) {}
@@ -245,7 +245,7 @@ extension EventMonitor {
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didFinishCollecting metrics: URLSessionTaskMetrics) {}
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {}
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {}
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {}
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse) {}
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {}
@@ -291,12 +291,12 @@ extension EventMonitor {
                         data: Data?,
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {}
-    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
     public func request(_ request: DataStreamRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
                         withResult result: Request.ValidationResult) {}
-    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {}
     public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {}
     public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {}
@@ -308,28 +308,30 @@ extension EventMonitor {
                         fileURL: URL?,
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {}
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
+    public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
 public final class CompositeEventMonitor: EventMonitor {
     public let queue = DispatchQueue(label: "org.alamofire.compositeEventMonitor")
 
-    let monitors: [EventMonitor]
+    let monitors: Protected<[any EventMonitor]>
 
-    init(monitors: [EventMonitor]) {
-        self.monitors = monitors
+    init(monitors: [any EventMonitor]) {
+        self.monitors = Protected(monitors)
     }
 
-    func performEvent(_ event: @escaping (EventMonitor) -> Void) {
+    func performEvent(_ event: @escaping @Sendable (any EventMonitor) -> Void) {
         queue.async {
-            for monitor in self.monitors {
-                monitor.queue.async { event(monitor) }
+            self.monitors.read { monitors in
+                for monitor in monitors {
+                    monitor.queue.async { event(monitor) }
+                }
             }
         }
     }
 
-    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
         performEvent { $0.urlSession(session, didBecomeInvalidWithError: error) }
     }
 
@@ -375,7 +377,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, task: task, didFinishCollecting: metrics) }
     }
 
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
         performEvent { $0.urlSession(session, task: task, didCompleteWithError: error) }
     }
 
@@ -530,7 +532,7 @@ public final class CompositeEventMonitor: EventMonitor {
         }
     }
 
-    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
         performEvent { $0.request(request, didParseStream: result) }
     }
 
@@ -570,15 +572,15 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 }
 
 /// `EventMonitor` that allows optional closures to be set to receive events.
-open class ClosureEventMonitor: EventMonitor {
+open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
-    open var sessionDidBecomeInvalidWithError: ((URLSession, Error?) -> Void)?
+    open var sessionDidBecomeInvalidWithError: ((URLSession, (any Error)?) -> Void)?
 
     /// Closure called on the `urlSession(_:task:didReceive:completionHandler:)`.
     open var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> Void)?
@@ -596,7 +598,7 @@ open class ClosureEventMonitor: EventMonitor {
     open var taskDidFinishCollectingMetrics: ((URLSession, URLSessionTask, URLSessionTaskMetrics) -> Void)?
 
     /// Closure called on the `urlSession(_:task:didCompleteWithError:)` event.
-    open var taskDidComplete: ((URLSession, URLSessionTask, Error?) -> Void)?
+    open var taskDidComplete: ((URLSession, URLSessionTask, (any Error)?) -> Void)?
 
     /// Closure called on the `urlSession(_:taskIsWaitingForConnectivity:)` event.
     open var taskIsWaitingForConnectivity: ((URLSession, URLSessionTask) -> Void)?
@@ -712,7 +714,7 @@ open class ClosureEventMonitor: EventMonitor {
         self.queue = queue
     }
 
-    open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+    open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
         sessionDidBecomeInvalidWithError?(session, error)
     }
 
@@ -743,7 +745,7 @@ open class ClosureEventMonitor: EventMonitor {
         taskDidFinishCollectingMetrics?(session, task, metrics)
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
         taskDidComplete?(session, task, error)
     }
 

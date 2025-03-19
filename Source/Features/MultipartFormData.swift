@@ -62,15 +62,13 @@ open class MultipartFormData {
         }
 
         static func boundaryData(forBoundaryType boundaryType: BoundaryType, boundary: String) -> Data {
-            let boundaryText: String
-
-            switch boundaryType {
+            let boundaryText = switch boundaryType {
             case .initial:
-                boundaryText = "--\(boundary)\(EncodingCharacters.crlf)"
+                "--\(boundary)\(EncodingCharacters.crlf)"
             case .encapsulated:
-                boundaryText = "\(EncodingCharacters.crlf)--\(boundary)\(EncodingCharacters.crlf)"
+                "\(EncodingCharacters.crlf)--\(boundary)\(EncodingCharacters.crlf)"
             case .final:
-                boundaryText = "\(EncodingCharacters.crlf)--\(boundary)--\(EncodingCharacters.crlf)"
+                "\(EncodingCharacters.crlf)--\(boundary)--\(EncodingCharacters.crlf)"
             }
 
             return Data(boundaryText.utf8)
@@ -480,7 +478,7 @@ open class MultipartFormData {
 
     private func writeFinalBoundaryData(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
         if bodyPart.hasFinalBoundary {
-            return try write(finalBoundaryData(), to: outputStream)
+            try write(finalBoundaryData(), to: outputStream)
         }
     }
 
@@ -552,7 +550,6 @@ extension MultipartFormData {
     // MARK: - Private - Mime Type
 
     private func mimeType(forPathExtension pathExtension: String) -> String {
-        #if swift(>=5.9)
         if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, visionOS 1, *) {
             return UTType(filenameExtension: pathExtension)?.preferredMIMEType ?? "application/octet-stream"
         } else {
@@ -564,19 +561,6 @@ extension MultipartFormData {
 
             return "application/octet-stream"
         }
-        #else
-        if #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) {
-            return UTType(filenameExtension: pathExtension)?.preferredMIMEType ?? "application/octet-stream"
-        } else {
-            if
-                let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
-                let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {
-                return contentType as String
-            }
-
-            return "application/octet-stream"
-        }
-        #endif
     }
 }
 

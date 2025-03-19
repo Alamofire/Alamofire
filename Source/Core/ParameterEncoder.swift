@@ -25,7 +25,7 @@
 import Foundation
 
 /// A type that can encode any `Encodable` type into a `URLRequest`.
-public protocol ParameterEncoder {
+public protocol ParameterEncoder: Sendable {
     /// Encode the provided `Encodable` parameters into `request`.
     ///
     /// - Parameters:
@@ -35,13 +35,13 @@ public protocol ParameterEncoder {
     /// - Returns:      A `URLRequest` with the result of the encoding.
     /// - Throws:       An `Error` when encoding fails. For Alamofire provided encoders, this will be an instance of
     ///                 `AFError.parameterEncoderFailed` with an associated `ParameterEncoderFailureReason`.
-    func encode<Parameters: Encodable>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest
+    func encode<Parameters: Encodable & Sendable>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest
 }
 
 /// A `ParameterEncoder` that encodes types as JSON body data.
 ///
 /// If no `Content-Type` header is already set on the provided `URLRequest`s, it's set to `application/json`.
-open class JSONParameterEncoder: ParameterEncoder {
+open class JSONParameterEncoder: @unchecked Sendable, ParameterEncoder {
     /// Returns an encoder with default parameters.
     public static var `default`: JSONParameterEncoder { JSONParameterEncoder() }
 
@@ -112,7 +112,7 @@ extension ParameterEncoder where Self == JSONParameterEncoder {
 /// `application/x-www-form-urlencoded; charset=utf-8`.
 ///
 /// Encoding behavior can be customized by passing an instance of `URLEncodedFormEncoder` to the initializer.
-open class URLEncodedFormParameterEncoder: ParameterEncoder {
+open class URLEncodedFormParameterEncoder: @unchecked Sendable, ParameterEncoder {
     /// Defines where the URL-encoded string should be set for each `URLRequest`.
     public enum Destination {
         /// Applies the encoded query string to any existing query string for `.get`, `.head`, and `.delete` request.
@@ -130,9 +130,9 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
         /// - Returns:          Whether the URL-encoded string should be applied to a `URL`.
         func encodesParametersInURL(for method: HTTPMethod) -> Bool {
             switch self {
-            case .methodDependent: return [.get, .head, .delete].contains(method)
-            case .queryString: return true
-            case .httpBody: return false
+            case .methodDependent: [.get, .head, .delete].contains(method)
+            case .queryString: true
+            case .httpBody: false
             }
         }
     }
@@ -173,7 +173,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 
         if destination.encodesParametersInURL(for: method),
            var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-            let query: String = try Result<String, Error> { try encoder.encode(parameters) }
+            let query: String = try Result<String, any Error> { try encoder.encode(parameters) }
                 .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.get()
             let newQueryString = [components.percentEncodedQuery, query].compactMap { $0 }.joinedWithAmpersands()
             components.percentEncodedQuery = newQueryString.isEmpty ? nil : newQueryString
@@ -188,7 +188,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
                 request.headers.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
             }
 
-            request.httpBody = try Result<Data, Error> { try encoder.encode(parameters) }
+            request.httpBody = try Result<Data, any Error> { try encoder.encode(parameters) }
                 .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.get()
         }
 

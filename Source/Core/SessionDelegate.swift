@@ -25,11 +25,11 @@
 import Foundation
 
 /// Class which implements the various `URLSessionDelegate` methods to connect various Alamofire features.
-open class SessionDelegate: NSObject {
+open class SessionDelegate: NSObject, @unchecked Sendable {
     private let fileManager: FileManager
 
-    weak var stateProvider: SessionStateProvider?
-    var eventMonitor: EventMonitor?
+    weak var stateProvider: (any SessionStateProvider)?
+    var eventMonitor: (any EventMonitor)?
 
     /// Creates an instance from the given `FileManager`.
     ///
@@ -55,22 +55,22 @@ open class SessionDelegate: NSObject {
 }
 
 /// Type which provides various `Session` state values.
-protocol SessionStateProvider: AnyObject {
+protocol SessionStateProvider: AnyObject, Sendable {
     var serverTrustManager: ServerTrustManager? { get }
-    var redirectHandler: RedirectHandler? { get }
-    var cachedResponseHandler: CachedResponseHandler? { get }
+    var redirectHandler: (any RedirectHandler)? { get }
+    var cachedResponseHandler: (any CachedResponseHandler)? { get }
 
     func request(for task: URLSessionTask) -> Request?
     func didGatherMetricsForTask(_ task: URLSessionTask)
     func didCompleteTask(_ task: URLSessionTask, completion: @escaping () -> Void)
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential?
-    func cancelRequestsForSessionInvalidation(with error: Error?)
+    func cancelRequestsForSessionInvalidation(with error: (any Error)?)
 }
 
 // MARK: URLSessionDelegate
 
 extension SessionDelegate: URLSessionDelegate {
-    open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+    open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
         eventMonitor?.urlSession(session, didBecomeInvalidWithError: error)
 
         stateProvider?.cancelRequestsForSessionInvalidation(with: error)
@@ -211,7 +211,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         stateProvider?.didGatherMetricsForTask(task)
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
 //        NSLog("URLSession: \(session), task: \(task), didCompleteWithError: \(error)")
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
@@ -234,7 +234,7 @@ extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession,
                          dataTask: URLSessionDataTask,
                          didReceive response: URLResponse,
-                         completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+                         completionHandler: @escaping @Sendable (URLSession.ResponseDisposition) -> Void) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: response)
 
         guard let response = response as? HTTPURLResponse else { completionHandler(.allow); return }

@@ -27,6 +27,7 @@ import Foundation
 import XCTest
 
 final class ResponseTestCase: BaseTestCase {
+    @MainActor
     func testThatResponseReturnsSuccessResultWithValidData() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -49,6 +50,7 @@ final class ResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatResponseReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
@@ -77,6 +79,7 @@ final class ResponseTestCase: BaseTestCase {
 // MARK: -
 
 final class ResponseDataTestCase: BaseTestCase {
+    @MainActor
     func testThatResponseDataReturnsSuccessResultWithValidData() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -100,6 +103,7 @@ final class ResponseDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
@@ -128,6 +132,7 @@ final class ResponseDataTestCase: BaseTestCase {
 // MARK: -
 
 final class ResponseStringTestCase: BaseTestCase {
+    @MainActor
     func testThatResponseStringReturnsSuccessResultWithValidString() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -151,6 +156,7 @@ final class ResponseStringTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
@@ -180,6 +186,7 @@ final class ResponseStringTestCase: BaseTestCase {
 
 @available(*, deprecated)
 final class ResponseJSONTestCase: BaseTestCase {
+    @MainActor
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -203,6 +210,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
@@ -227,6 +235,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -258,6 +267,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testThatResponseJSONReturnsSuccessResultForPOSTRequest() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -291,6 +301,7 @@ final class ResponseJSONTestCase: BaseTestCase {
 }
 
 final class ResponseJSONDecodableTestCase: BaseTestCase {
+    @MainActor
     func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {
         // Given
         let url = Endpoint().url
@@ -315,6 +326,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
         // Given
         let url = Endpoint().url
@@ -339,6 +351,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = String.invalidURL
@@ -367,6 +380,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
 // MARK: -
 
 final class ResponseMapTestCase: BaseTestCase {
+    @MainActor
     func testThatMapTransformsSuccessValue() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -393,6 +407,7 @@ final class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatMapPreservesFailureError() {
         // Given
         let urlString = String.invalidURL
@@ -421,11 +436,12 @@ final class ResponseMapTestCase: BaseTestCase {
 // MARK: -
 
 final class ResponseTryMapTestCase: BaseTestCase {
+    @MainActor
     func testThatTryMapTransformsSuccessValue() {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<String, Error>?
+        var response: DataResponse<String, any Error>?
 
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
@@ -447,13 +463,14 @@ final class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatTryMapCatchesTransformationError() {
         // Given
         struct TransformError: Error {}
 
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<String, Error>?
+        var response: DataResponse<String, any Error>?
 
         // When
         AF.request(.default, parameters: ["foo": "bar"]).responseData { resp in
@@ -481,12 +498,13 @@ final class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatTryMapPreservesFailureError() {
         // Given
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL error")
 
-        var response: DataResponse<String, Error>?
+        var response: DataResponse<String, any Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
@@ -521,6 +539,7 @@ enum TransformationError: Error {
 }
 
 final class ResponseMapErrorTestCase: BaseTestCase {
+    @MainActor
     func testThatMapErrorTransformsFailureValue() {
         // Given
         let urlString = String.invalidURL
@@ -549,6 +568,7 @@ final class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatMapErrorPreservesSuccessValue() {
         // Given
         let expectation = expectation(description: "request should succeed")
@@ -575,11 +595,12 @@ final class ResponseMapErrorTestCase: BaseTestCase {
 // MARK: -
 
 final class ResponseTryMapErrorTestCase: BaseTestCase {
+    @MainActor
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
         let expectation = expectation(description: "request should succeed")
 
-        var response: DataResponse<Data, Error>?
+        var response: DataResponse<Data, any Error>?
 
         // When
         AF.request(.default).responseData { resp in
@@ -597,12 +618,13 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatTryMapErrorCatchesTransformationError() {
         // Given
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
-        var response: DataResponse<Data, Error>?
+        var response: DataResponse<Data, any Error>?
 
         // When
         AF.request(urlString).responseData { resp in
@@ -627,12 +649,13 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    @MainActor
     func testThatTryMapErrorTransformsError() {
         // Given
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
-        var response: DataResponse<Data, Error>?
+        var response: DataResponse<Data, any Error>?
 
         // When
         AF.request(urlString).responseData { resp in

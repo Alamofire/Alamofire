@@ -28,6 +28,7 @@ import XCTest
 final class RequestModifierTests: BaseTestCase {
     // MARK: - DataRequest
 
+    @MainActor
     func testThatDataRequestsCanHaveCustomTimeoutValueSet() {
         // Given
         let completed = expectation(description: "request completed")
@@ -44,6 +45,7 @@ final class RequestModifierTests: BaseTestCase {
         XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
     }
 
+    @MainActor
     func testThatDataRequestsCallRequestModifiersOnRetry() {
         // Given
         let inspector = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0))
@@ -66,6 +68,7 @@ final class RequestModifierTests: BaseTestCase {
 
     // MARK: - UploadRequest
 
+    @MainActor
     func testThatUploadRequestsCanHaveCustomTimeoutValueSet() {
         // Given
         let endpoint = Endpoint.delay(1).modifying(\.method, to: .post)
@@ -84,6 +87,7 @@ final class RequestModifierTests: BaseTestCase {
         XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
     }
 
+    @MainActor
     func testThatUploadRequestsCallRequestModifiersOnRetry() {
         // Given
         let endpoint = Endpoint.delay(1).modifying(\.method, to: .post)
@@ -109,6 +113,7 @@ final class RequestModifierTests: BaseTestCase {
 
     // MARK: - DownloadRequest
 
+    @MainActor
     func testThatDownloadRequestsCanHaveCustomTimeoutValueSet() {
         // Given
         let url = Endpoint.delay(1).url
@@ -126,6 +131,7 @@ final class RequestModifierTests: BaseTestCase {
         XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
     }
 
+    @MainActor
     func testThatDownloadRequestsCallRequestModifiersOnRetry() {
         // Given
         let inspector = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0))
@@ -148,6 +154,7 @@ final class RequestModifierTests: BaseTestCase {
 
     // MARK: - DataStreamRequest
 
+    @MainActor
     func testThatDataStreamRequestsCanHaveCustomTimeoutValueSet() {
         // Given
         let completed = expectation(description: "request completed")
@@ -169,6 +176,7 @@ final class RequestModifierTests: BaseTestCase {
         XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
     }
 
+    @MainActor
     func testThatDataStreamRequestsCallRequestModifiersOnRetry() {
         // Given
         let inspector = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0))

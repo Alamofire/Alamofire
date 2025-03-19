@@ -136,11 +136,12 @@ final class CacheTestCase: BaseTestCase {
 
     // MARK: - Request Helper Methods
 
+    @preconcurrency
     @discardableResult
     private func startRequest(cacheControl: CacheControl,
                               cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
                               queue: DispatchQueue = .main,
-                              completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
+                              completion: @escaping @Sendable (URLRequest?, HTTPURLResponse?) -> Void)
         -> URLRequest {
         let urlRequest = Endpoint(path: .cache,
                                   timeout: 30,
@@ -157,6 +158,7 @@ final class CacheTestCase: BaseTestCase {
 
     // MARK: - Test Execution and Verification
 
+    @MainActor
     private func executeTest(cachePolicy: URLRequest.CachePolicy,
                              cacheControl: CacheControl,
                              shouldReturnCachedResponse: Bool) {
@@ -221,6 +223,7 @@ final class CacheTestCase: BaseTestCase {
         XCTAssertNil(noStoreResponse, "\(CacheControl.noStore) response should be nil")
     }
 
+    @MainActor
     func testDefaultCachePolicy() {
         let cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
 
@@ -232,6 +235,7 @@ final class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
     }
 
+    @MainActor
     func testIgnoreLocalCacheDataPolicy() {
         let cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData
 
@@ -243,6 +247,7 @@ final class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
     }
 
+    @MainActor
     func testUseLocalCacheDataIfExistsOtherwiseLoadFromNetworkPolicy() {
         let cachePolicy: URLRequest.CachePolicy = .returnCacheDataElseLoad
 
@@ -254,6 +259,7 @@ final class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
     }
 
+    @MainActor
     func testUseLocalCacheDataAndDontLoadFromNetworkPolicy() {
         let cachePolicy: URLRequest.CachePolicy = .returnCacheDataDontLoad
 

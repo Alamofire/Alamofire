@@ -121,91 +121,91 @@
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 502,
+      "line": 506,
       "symbol": "WebSocketMessageSerializer",
       "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 503,
+      "line": 507,
       "symbol": "WebSocketMessageSerializer.Output",
       "symbol_kind": "source.lang.swift.decl.associatedtype",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 504,
+      "line": 508,
       "symbol": "WebSocketMessageSerializer.Failure",
       "symbol_kind": "source.lang.swift.decl.associatedtype",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 506,
+      "line": 510,
       "symbol": "WebSocketMessageSerializer.decode(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 510,
+      "line": 514,
       "symbol": "WebSocketMessageSerializer",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 511,
+      "line": 515,
       "symbol": "WebSocketMessageSerializer.json(decoding:using:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 533,
+      "line": 537,
       "symbol": "DecodableWebSocketMessageDecoder",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 534,
+      "line": 538,
       "symbol": "DecodableWebSocketMessageDecoder.Error",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 535,
+      "line": 539,
       "symbol": "DecodableWebSocketMessageDecoder.Error.decoding(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 536,
+      "line": 540,
       "symbol": "DecodableWebSocketMessageDecoder.Error.unknownMessage(description:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 539,
+      "line": 543,
       "symbol": "DecodableWebSocketMessageDecoder.decoder",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 541,
+      "line": 545,
       "symbol": "DecodableWebSocketMessageDecoder.init(decoder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Core/WebSocketRequest.swift",
-      "line": 545,
+      "line": 549,
       "symbol": "DecodableWebSocketMessageDecoder.decode(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

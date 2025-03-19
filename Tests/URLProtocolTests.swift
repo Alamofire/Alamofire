@@ -98,7 +98,7 @@ extension ProxyURLProtocol: URLSessionDataDelegate {
         client?.urlProtocol(self, didLoad: data)
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
         if let response = task.response {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
@@ -132,6 +132,7 @@ class URLProtocolTestCase: BaseTestCase {
 
     // MARK: Tests
 
+    @MainActor
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
         let endpoint = Endpoint.responseHeaders.modifying(\.headers, to: ["Request-Header": "foobar"])

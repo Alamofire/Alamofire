@@ -26,7 +26,7 @@ import Foundation
 
 /// Types adopting the `URLConvertible` protocol can be used to construct `URL`s, which can then be used to construct
 /// `URLRequest`s.
-public protocol URLConvertible {
+public protocol URLConvertible: Sendable {
     /// Returns a `URL` from the conforming instance or throws.
     ///
     /// - Returns: The `URL` created from the instance.
@@ -66,7 +66,7 @@ extension URLComponents: URLConvertible {
 // MARK: -
 
 /// Types adopting the `URLRequestConvertible` protocol can be used to safely construct `URLRequest`s.
-public protocol URLRequestConvertible {
+public protocol URLRequestConvertible: Sendable {
     /// Returns a `URLRequest` or throws if an `Error` was encountered.
     ///
     /// - Returns: A `URLRequest`.
@@ -94,7 +94,7 @@ extension URLRequest {
     ///   - method:  The `HTTPMethod`.
     ///   - headers: The `HTTPHeaders`, `nil` by default.
     /// - Throws:    Any error thrown while converting the `URLConvertible` to a `URL`.
-    public init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
+    public init(url: any URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
         let url = try url.asURL()
 
         self.init(url: url)

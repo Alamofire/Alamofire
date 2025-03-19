@@ -26,7 +26,7 @@ import Foundation
 
 /// `Request` is the common superclass of all Alamofire request types and provides common state, delegate, and callback
 /// handling.
-public class Request {
+public class Request: @unchecked Sendable {
     /// State of the `Request`, with managed transitions between states set when calling `resume()`, `suspend()`, or
     /// `cancel()` on the `Request`.
     public enum State {
@@ -50,15 +50,15 @@ public class Request {
         func canTransitionTo(_ state: State) -> Bool {
             switch (self, state) {
             case (.initialized, _):
-                return true
+                true
             case (_, .initialized), (.cancelled, _), (.finished, _):
-                return false
+                false
             case (.resumed, .cancelled), (.suspended, .cancelled), (.resumed, .suspended), (.suspended, .resumed):
-                return true
+                true
             case (.suspended, .suspended), (.resumed, .resumed):
-                return false
+                false
             case (_, .finished):
-                return true
+                true
             }
         }
     }
@@ -72,11 +72,11 @@ public class Request {
     /// The queue used for all serialization actions. By default it's a serial queue that targets `underlyingQueue`.
     public let serializationQueue: DispatchQueue
     /// `EventMonitor` used for event callbacks.
-    public let eventMonitor: EventMonitor?
+    public let eventMonitor: (any EventMonitor)?
     /// The `Request`'s interceptor.
-    public let interceptor: RequestInterceptor?
+    public let interceptor: (any RequestInterceptor)?
     /// The `Request`'s delegate.
-    public private(set) weak var delegate: RequestDelegate?
+    public private(set) weak var delegate: (any RequestDelegate)?
 
     // MARK: - Mutable State
 
@@ -89,19 +89,19 @@ public class Request {
         /// `ProgressHandler` and `DispatchQueue` provided for download progress callbacks.
         var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
         /// `RedirectHandler` provided for to handle request redirection.
-        var redirectHandler: RedirectHandler?
+        var redirectHandler: (any RedirectHandler)?
         /// `CachedResponseHandler` provided to handle response caching.
-        var cachedResponseHandler: CachedResponseHandler?
+        var cachedResponseHandler: (any CachedResponseHandler)?
         /// Queue and closure called when the `Request` is able to create a cURL description of itself.
-        var cURLHandler: (queue: DispatchQueue, handler: (String) -> Void)?
+        var cURLHandler: (queue: DispatchQueue, handler: @Sendable (String) -> Void)?
         /// Queue and closure called when the `Request` creates a `URLRequest`.
-        var urlRequestHandler: (queue: DispatchQueue, handler: (URLRequest) -> Void)?
+        var urlRequestHandler: (queue: DispatchQueue, handler: @Sendable (URLRequest) -> Void)?
         /// Queue and closure called when the `Request` creates a `URLSessionTask`.
-        var urlSessionTaskHandler: (queue: DispatchQueue, handler: (URLSessionTask) -> Void)?
+        var urlSessionTaskHandler: (queue: DispatchQueue, handler: @Sendable (URLSessionTask) -> Void)?
         /// Response serialization closures that handle response parsing.
-        var responseSerializers: [() -> Void] = []
+        var responseSerializers: [@Sendable () -> Void] = []
         /// Response serialization completion closures executed once all response serializers are complete.
-        var responseSerializerCompletions: [() -> Void] = []
+        var responseSerializerCompletions: [@Sendable () -> Void] = []
         /// Whether response serializer processing is finished.
         var responseSerializerProcessingFinished = false
         /// `URLCredential` used for authentication challenges.
@@ -143,7 +143,7 @@ public class Request {
     // MARK: Progress
 
     /// Closure type executed when monitoring the upload or download progress of a request.
-    public typealias ProgressHandler = (Progress) -> Void
+    public typealias ProgressHandler = @Sendable (_ progress: Progress) -> Void
 
     /// `Progress` of the upload of the body of the executed `URLRequest`. Reset to `0` if the `Request` is retried.
     public let uploadProgress = Progress(totalUnitCount: 0)
@@ -164,7 +164,7 @@ public class Request {
     // MARK: Redirect Handling
 
     /// `RedirectHandler` set on the instance.
-    public internal(set) var redirectHandler: RedirectHandler? {
+    public internal(set) var redirectHandler: (any RedirectHandler)? {
         get { mutableState.redirectHandler }
         set { mutableState.redirectHandler = newValue }
     }
@@ -172,7 +172,7 @@ public class Request {
     // MARK: Cached Response Handling
 
     /// `CachedResponseHandler` set on the instance.
-    public internal(set) var cachedResponseHandler: CachedResponseHandler? {
+    public internal(set) var cachedResponseHandler: (any CachedResponseHandler)? {
         get { mutableState.cachedResponseHandler }
         set { mutableState.cachedResponseHandler = newValue }
     }
@@ -188,7 +188,7 @@ public class Request {
     // MARK: Validators
 
     /// `Validator` callback closures that store the validation calls enqueued.
-    let validators = Protected<[() -> Void]>([])
+    let validators = Protected<[@Sendable () -> Void]>([])
 
     // MARK: URLRequests
 
@@ -259,9 +259,9 @@ public class Request {
     init(id: UUID = UUID(),
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
-         delegate: RequestDelegate) {
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
+         delegate: any RequestDelegate) {
         self.id = id
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue
@@ -342,7 +342,9 @@ public class Request {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
         mutableState.read { state in
-            state.urlRequestHandler?.queue.async { state.urlRequestHandler?.handler(request) }
+            guard let urlRequestHandler = state.urlRequestHandler else { return }
+
+            urlRequestHandler.queue.async { urlRequestHandler.handler(request) }
         }
 
         eventMonitor?.request(self, didCreateURLRequest: request)
@@ -531,7 +533,7 @@ public class Request {
     ///  - Note: This method will also `resume` the instance if `delegate.startImmediately` returns `true`.
     ///
     /// - Parameter closure: The closure containing the response serialization call.
-    func appendResponseSerializer(_ closure: @escaping () -> Void) {
+    func appendResponseSerializer(_ closure: @escaping @Sendable () -> Void) {
         mutableState.write { mutableState in
             mutableState.responseSerializers.append(closure)
 
@@ -552,8 +554,8 @@ public class Request {
     /// Returns the next response serializer closure to execute if there's one left.
     ///
     /// - Returns: The next response serialization closure, if there is one.
-    func nextResponseSerializer() -> (() -> Void)? {
-        var responseSerializer: (() -> Void)?
+    func nextResponseSerializer() -> (@Sendable () -> Void)? {
+        var responseSerializer: (@Sendable () -> Void)?
 
         mutableState.write { mutableState in
             let responseSerializerIndex = mutableState.responseSerializerCompletions.count
@@ -570,7 +572,7 @@ public class Request {
     func processNextResponseSerializer() {
         guard let responseSerializer = nextResponseSerializer() else {
             // Execute all response serializer completions and clear them
-            var completions: [() -> Void] = []
+            var completions: [@Sendable () -> Void] = []
 
             mutableState.write { mutableState in
                 completions = mutableState.responseSerializerCompletions
@@ -605,7 +607,7 @@ public class Request {
     ///
     /// - Parameter completion: The completion handler provided with the response serializer, called when all serializers
     ///                         are complete.
-    func responseSerializerDidComplete(completion: @escaping () -> Void) {
+    func responseSerializerDidComplete(completion: @escaping @Sendable () -> Void) {
         mutableState.write { $0.responseSerializerCompletions.append(completion) }
         processNextResponseSerializer()
     }
@@ -769,6 +771,7 @@ public class Request {
     ///   - closure: The closure to be executed periodically as data is read from the server.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         mutableState.downloadProgressHandler = (handler: closure, queue: queue)
@@ -785,6 +788,7 @@ public class Request {
     ///   - closure: The closure to be executed periodically as data is sent to the server.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
     public func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         mutableState.uploadProgressHandler = (handler: closure, queue: queue)
@@ -801,8 +805,9 @@ public class Request {
     /// - Parameter handler: The `RedirectHandler`.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
-    public func redirect(using handler: RedirectHandler) -> Self {
+    public func redirect(using handler: any RedirectHandler) -> Self {
         mutableState.write { mutableState in
             precondition(mutableState.redirectHandler == nil, "Redirect handler has already been set.")
             mutableState.redirectHandler = handler
@@ -820,8 +825,9 @@ public class Request {
     /// - Parameter handler: The `CachedResponseHandler`.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
-    public func cacheResponse(using handler: CachedResponseHandler) -> Self {
+    public func cacheResponse(using handler: any CachedResponseHandler) -> Self {
         mutableState.write { mutableState in
             precondition(mutableState.cachedResponseHandler == nil, "Cached response handler has already been set.")
             mutableState.cachedResponseHandler = handler
@@ -841,8 +847,9 @@ public class Request {
     ///   - handler: Closure to be called when the cURL description is available.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
-    public func cURLDescription(on queue: DispatchQueue, calling handler: @escaping (String) -> Void) -> Self {
+    public func cURLDescription(on queue: DispatchQueue, calling handler: @escaping @Sendable (String) -> Void) -> Self {
         mutableState.write { mutableState in
             if mutableState.requests.last != nil {
                 queue.async { handler(self.cURLDescription()) }
@@ -862,8 +869,9 @@ public class Request {
     ///                      `underlyingQueue` by default.
     ///
     /// - Returns:           The instance.
+    @preconcurrency
     @discardableResult
-    public func cURLDescription(calling handler: @escaping (String) -> Void) -> Self {
+    public func cURLDescription(calling handler: @escaping @Sendable (String) -> Void) -> Self {
         cURLDescription(on: underlyingQueue, calling: handler)
 
         return self
@@ -878,8 +886,9 @@ public class Request {
     ///   - handler: Closure to be called when a `URLRequest` is available.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
-    public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @escaping (URLRequest) -> Void) -> Self {
+    public func onURLRequestCreation(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (URLRequest) -> Void) -> Self {
         mutableState.write { state in
             if let request = state.requests.last {
                 queue.async { handler(request) }
@@ -902,8 +911,9 @@ public class Request {
     ///   - handler: Closure to be called when the `URLSessionTask` is available.
     ///
     /// - Returns:   The instance.
+    @preconcurrency
     @discardableResult
-    public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @escaping (URLSessionTask) -> Void) -> Self {
+    public func onURLSessionTaskCreation(on queue: DispatchQueue = .main, perform handler: @escaping @Sendable (URLSessionTask) -> Void) -> Self {
         mutableState.write { state in
             if let task = state.tasks.last {
                 queue.async { handler(task) }
@@ -942,7 +952,7 @@ public class Request {
 
 extension Request {
     /// Type indicating how a `DataRequest` or `DataStreamRequest` should proceed after receiving an `HTTPURLResponse`.
-    public enum ResponseDisposition {
+    public enum ResponseDisposition: Sendable {
         /// Allow the request to continue normally.
         case allow
         /// Cancel the request, similar to calling `cancel()`.
@@ -950,8 +960,8 @@ extension Request {
 
         var sessionDisposition: URLSession.ResponseDisposition {
             switch self {
-            case .allow: return .allow
-            case .cancel: return .cancel
+            case .allow: .allow
+            case .cancel: .cancel
             }
         }
     }
@@ -1061,7 +1071,7 @@ extension Request {
 }
 
 /// Protocol abstraction for `Request`'s communication back to the `SessionDelegate`.
-public protocol RequestDelegate: AnyObject {
+public protocol RequestDelegate: AnyObject, Sendable {
     /// `URLSessionConfiguration` used to create the underlying `URLSessionTask`s.
     var sessionConfiguration: URLSessionConfiguration { get }
 
@@ -1079,7 +1089,7 @@ public protocol RequestDelegate: AnyObject {
     ///   - request:    `Request` which failed.
     ///   - error:      `Error` which produced the failure.
     ///   - completion: Closure taking the `RetryResult` for evaluation.
-    func retryResult(for request: Request, dueTo error: AFError, completion: @escaping (RetryResult) -> Void)
+    func retryResult(for request: Request, dueTo error: AFError, completion: @escaping @Sendable (RetryResult) -> Void)
 
     /// Asynchronously retry the `Request`.
     ///

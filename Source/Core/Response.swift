@@ -30,7 +30,7 @@ public typealias AFDataResponse<Success> = DataResponse<Success, AFError>
 public typealias AFDownloadResponse<Success> = DownloadResponse<Success, AFError>
 
 /// Type used to store all values associated with a serialized response of a `DataRequest` or `UploadRequest`.
-public struct DataResponse<Success, Failure: Error> {
+public struct DataResponse<Success, Failure: Error>: Sendable where Success: Sendable, Failure: Sendable {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -159,13 +159,13 @@ extension DataResponse {
     ///
     /// - returns: A success or failure `DataResponse` depending on the result of the given closure. If this instance's
     ///            result is a failure, returns the same failure.
-    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DataResponse<NewSuccess, Error> {
-        DataResponse<NewSuccess, Error>(request: request,
-                                        response: response,
-                                        data: data,
-                                        metrics: metrics,
-                                        serializationDuration: serializationDuration,
-                                        result: result.tryMap(transform))
+    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DataResponse<NewSuccess, any Error> {
+        DataResponse<NewSuccess, any Error>(request: request,
+                                            response: response,
+                                            data: data,
+                                            metrics: metrics,
+                                            serializationDuration: serializationDuration,
+                                            result: result.tryMap(transform))
     }
 
     /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
@@ -199,20 +199,20 @@ extension DataResponse {
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
-    public func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> DataResponse<Success, Error> {
-        DataResponse<Success, Error>(request: request,
-                                     response: response,
-                                     data: data,
-                                     metrics: metrics,
-                                     serializationDuration: serializationDuration,
-                                     result: result.tryMapError(transform))
+    public func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> DataResponse<Success, any Error> {
+        DataResponse<Success, any Error>(request: request,
+                                         response: response,
+                                         data: data,
+                                         metrics: metrics,
+                                         serializationDuration: serializationDuration,
+                                         result: result.tryMapError(transform))
     }
 }
 
 // MARK: -
 
 /// Used to store all data associated with a serialized response of a download request.
-public struct DownloadResponse<Success, Failure: Error> {
+public struct DownloadResponse<Success, Failure: Error>: Sendable where Success: Sendable, Failure: Sendable {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -341,14 +341,14 @@ extension DownloadResponse {
     ///
     /// - returns: A success or failure `DownloadResponse` depending on the result of the given closure. If this
     /// instance's result is a failure, returns the same failure.
-    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DownloadResponse<NewSuccess, Error> {
-        DownloadResponse<NewSuccess, Error>(request: request,
-                                            response: response,
-                                            fileURL: fileURL,
-                                            resumeData: resumeData,
-                                            metrics: metrics,
-                                            serializationDuration: serializationDuration,
-                                            result: result.tryMap(transform))
+    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DownloadResponse<NewSuccess, any Error> {
+        DownloadResponse<NewSuccess, any Error>(request: request,
+                                                response: response,
+                                                fileURL: fileURL,
+                                                resumeData: resumeData,
+                                                metrics: metrics,
+                                                serializationDuration: serializationDuration,
+                                                result: result.tryMap(transform))
     }
 
     /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
@@ -383,14 +383,14 @@ extension DownloadResponse {
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
     /// - Returns: A `DownloadResponse` instance containing the result of the transform.
-    public func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> DownloadResponse<Success, Error> {
-        DownloadResponse<Success, Error>(request: request,
-                                         response: response,
-                                         fileURL: fileURL,
-                                         resumeData: resumeData,
-                                         metrics: metrics,
-                                         serializationDuration: serializationDuration,
-                                         result: result.tryMapError(transform))
+    public func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> DownloadResponse<Success, any Error> {
+        DownloadResponse<Success, any Error>(request: request,
+                                             response: response,
+                                             fileURL: fileURL,
+                                             resumeData: resumeData,
+                                             metrics: metrics,
+                                             serializationDuration: serializationDuration,
+                                             result: result.tryMapError(transform))
     }
 }
 

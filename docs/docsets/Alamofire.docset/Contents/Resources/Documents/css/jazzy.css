@@ -259,10 +259,11 @@ pre code {
     padding-left: 3px;
     margin-left: 20px;
     font-size: 1rem; }
-  .item .declaration-note {
-    font-size: .85em;
-    color: #808080;
-    font-style: italic; }
+
+.declaration-note {
+  font-size: .85em;
+  color: #808080;
+  font-style: italic; }
 
 .pointer-container {
   border-bottom: 1px solid #ddd;

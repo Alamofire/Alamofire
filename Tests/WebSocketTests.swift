@@ -691,7 +691,7 @@ final class WebSocketIntegrationTests: BaseTestCase {
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension WebSocketRequest {
     @discardableResult
-    func onCompletion(queue: DispatchQueue = .main, handler: @escaping () -> Void) -> Self {
+    func onCompletion(queue: DispatchQueue = .main, handler: @escaping @Sendable () -> Void) -> Self {
         streamMessageEvents(on: queue) { event in
             guard case .completed = event.kind else { return }
 
@@ -701,15 +701,15 @@ extension WebSocketRequest {
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-extension URLSessionWebSocketTask.Message: Equatable {
+extension Foundation.URLSessionWebSocketTask.Message: Swift.Equatable {
     public static func ==(lhs: URLSessionWebSocketTask.Message, rhs: URLSessionWebSocketTask.Message) -> Bool {
         switch (lhs, rhs) {
         case let (.string(left), .string(right)):
-            return left == right
+            left == right
         case let (.data(left), .data(right)):
-            return left == right
+            left == right
         default:
-            return false
+            false
         }
     }
 
@@ -730,8 +730,8 @@ extension Session {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func webSocketRequest(_ endpoint: Endpoint,
                           configuration: WebSocketRequest.Configuration = .default,
-                          interceptor: RequestInterceptor? = nil) -> WebSocketRequest {
-        webSocketRequest(performing: endpoint as URLRequestConvertible,
+                          interceptor: (any RequestInterceptor)? = nil) -> WebSocketRequest {
+        webSocketRequest(performing: endpoint as (any URLRequestConvertible),
                          configuration: configuration,
                          interceptor: interceptor)
     }

@@ -25,9 +25,9 @@
 import Foundation
 
 /// The type to which all data response serializers must conform in order to serialize a response.
-public protocol DataResponseSerializerProtocol<SerializedObject> {
+public protocol DataResponseSerializerProtocol<SerializedObject>: Sendable {
     /// The type of serialized object to be created.
-    associatedtype SerializedObject
+    associatedtype SerializedObject: Sendable
 
     /// Serialize the response `Data` into the provided type.
     ///
@@ -39,13 +39,13 @@ public protocol DataResponseSerializerProtocol<SerializedObject> {
     ///
     /// - Returns:    The `SerializedObject`.
     /// - Throws:     Any `Error` produced during serialization.
-    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> SerializedObject
+    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> SerializedObject
 }
 
 /// The type to which all download response serializers must conform in order to serialize a response.
-public protocol DownloadResponseSerializerProtocol<SerializedObject> {
+public protocol DownloadResponseSerializerProtocol<SerializedObject>: Sendable {
     /// The type of serialized object to be created.
-    associatedtype SerializedObject
+    associatedtype SerializedObject: Sendable
 
     /// Serialize the downloaded response `Data` from disk into the provided type.
     ///
@@ -57,13 +57,13 @@ public protocol DownloadResponseSerializerProtocol<SerializedObject> {
     ///
     /// - Returns:    The `SerializedObject`.
     /// - Throws:     Any `Error` produced during serialization.
-    func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> SerializedObject
+    func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: (any Error)?) throws -> SerializedObject
 }
 
 /// A serializer that can handle both data and download responses.
 public protocol ResponseSerializer<SerializedObject>: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
     /// `DataPreprocessor` used to prepare incoming `Data` for serialization.
-    var dataPreprocessor: DataPreprocessor { get }
+    var dataPreprocessor: any DataPreprocessor { get }
     /// `HTTPMethod`s for which empty response bodies are considered appropriate.
     var emptyRequestMethods: Set<HTTPMethod> { get }
     /// HTTP response codes for which empty response bodies are considered appropriate.
@@ -71,7 +71,7 @@ public protocol ResponseSerializer<SerializedObject>: DataResponseSerializerProt
 }
 
 /// Type used to preprocess `Data` before it handled by a serializer.
-public protocol DataPreprocessor {
+public protocol DataPreprocessor: Sendable {
     /// Process           `Data` before it's handled by a serializer.
     /// - Parameter data: The raw `Data` to process.
     func preprocess(_ data: Data) throws -> Data
@@ -107,13 +107,13 @@ extension DataPreprocessor where Self == GoogleXSSIPreprocessor {
 
 extension ResponseSerializer {
     /// Default `DataPreprocessor`. `PassthroughPreprocessor` by default.
-    public static var defaultDataPreprocessor: DataPreprocessor { PassthroughPreprocessor() }
+    public static var defaultDataPreprocessor: any DataPreprocessor { PassthroughPreprocessor() }
     /// Default `HTTPMethod`s for which empty response bodies are always considered appropriate. `[.head]` by default.
     public static var defaultEmptyRequestMethods: Set<HTTPMethod> { [.head] }
     /// HTTP response codes for which empty response bodies are always considered appropriate. `[204, 205]` by default.
     public static var defaultEmptyResponseCodes: Set<Int> { [204, 205] }
 
-    public var dataPreprocessor: DataPreprocessor { Self.defaultDataPreprocessor }
+    public var dataPreprocessor: any DataPreprocessor { Self.defaultDataPreprocessor }
     public var emptyRequestMethods: Set<HTTPMethod> { Self.defaultEmptyRequestMethods }
     public var emptyResponseCodes: Set<Int> { Self.defaultEmptyResponseCodes }
 
@@ -153,7 +153,7 @@ extension ResponseSerializer {
 /// By default, any serializer declared to conform to both types will get file serialization for free, as it just feeds
 /// the data read from disk into the data response serializer.
 extension DownloadResponseSerializerProtocol where Self: DataResponseSerializerProtocol {
-    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> Self.SerializedObject {
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: (any Error)?) throws -> Self.SerializedObject {
         guard error == nil else { throw error! }
 
         guard let fileURL else {
@@ -186,7 +186,7 @@ public struct URLResponseSerializer: DownloadResponseSerializerProtocol {
     public func serializeDownload(request: URLRequest?,
                                   response: HTTPURLResponse?,
                                   fileURL: URL?,
-                                  error: Error?) throws -> URL {
+                                  error: (any Error)?) throws -> URL {
         guard error == nil else { throw error! }
 
         guard let url = fileURL else {
@@ -208,7 +208,7 @@ extension DownloadResponseSerializerProtocol where Self == URLResponseSerializer
 /// request returning `nil` or no data is considered an error. However, if the request has an `HTTPMethod` or the
 /// response has an  HTTP status code valid for empty responses, then an empty `Data` value is returned.
 public final class DataResponseSerializer: ResponseSerializer {
-    public let dataPreprocessor: DataPreprocessor
+    public let dataPreprocessor: any DataPreprocessor
     public let emptyResponseCodes: Set<Int>
     public let emptyRequestMethods: Set<HTTPMethod>
 
@@ -218,7 +218,7 @@ public final class DataResponseSerializer: ResponseSerializer {
     ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
-    public init(dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+    public init(dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) {
         self.dataPreprocessor = dataPreprocessor
@@ -226,7 +226,7 @@ public final class DataResponseSerializer: ResponseSerializer {
         self.emptyRequestMethods = emptyRequestMethods
     }
 
-    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Data {
         guard error == nil else { throw error! }
 
         guard var data, !data.isEmpty else {
@@ -255,7 +255,7 @@ extension ResponseSerializer where Self == DataResponseSerializer {
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     ///
     /// - Returns:               The `DataResponseSerializer`.
-    public static func data(dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+    public static func data(dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                             emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                             emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataResponseSerializer {
         DataResponseSerializer(dataPreprocessor: dataPreprocessor,
@@ -270,7 +270,7 @@ extension ResponseSerializer where Self == DataResponseSerializer {
 /// data is considered an error. However, if the request has an `HTTPMethod` or the response has an  HTTP status code
 /// valid for empty responses, then an empty `String` is returned.
 public final class StringResponseSerializer: ResponseSerializer {
-    public let dataPreprocessor: DataPreprocessor
+    public let dataPreprocessor: any DataPreprocessor
     /// Optional string encoding used to validate the response.
     public let encoding: String.Encoding?
     public let emptyResponseCodes: Set<Int>
@@ -284,7 +284,7 @@ public final class StringResponseSerializer: ResponseSerializer {
     ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
-    public init(dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+    public init(dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                 encoding: String.Encoding? = nil,
                 emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) {
@@ -294,7 +294,7 @@ public final class StringResponseSerializer: ResponseSerializer {
         self.emptyRequestMethods = emptyRequestMethods
     }
 
-    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> String {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> String {
         guard error == nil else { throw error! }
 
         guard var data, !data.isEmpty else {
@@ -337,7 +337,7 @@ extension ResponseSerializer where Self == StringResponseSerializer {
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     ///
     /// - Returns:               The `StringResponseSerializer`.
-    public static func string(dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+    public static func string(dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                               encoding: String.Encoding? = nil,
                               emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                               emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> StringResponseSerializer {
@@ -358,7 +358,7 @@ extension ResponseSerializer where Self == StringResponseSerializer {
 ///         `Decodable` and use a `DecodableResponseSerializer`.
 @available(*, deprecated, message: "JSONResponseSerializer deprecated and will be removed in Alamofire 6. Use DecodableResponseSerializer instead.")
 public final class JSONResponseSerializer: ResponseSerializer {
-    public let dataPreprocessor: DataPreprocessor
+    public let dataPreprocessor: any DataPreprocessor
     public let emptyResponseCodes: Set<Int>
     public let emptyRequestMethods: Set<HTTPMethod>
     /// `JSONSerialization.ReadingOptions` used when serializing a response.
@@ -371,7 +371,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     ///   - options:             The options to use. `.allowFragments` by default.
-    public init(dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
+    public init(dataPreprocessor: any DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
                 emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                 options: JSONSerialization.ReadingOptions = .allowFragments) {
@@ -381,7 +381,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
         self.options = options
     }
 
-    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Any {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Any {
         guard error == nil else { throw error! }
 
         guard var data, !data.isEmpty else {
@@ -405,7 +405,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
 // MARK: - Empty
 
 /// Protocol representing an empty response. Use `T.emptyValue()` to get an instance.
-public protocol EmptyResponse {
+public protocol EmptyResponse: Sendable {
     /// Empty value for the conforming type.
     ///
     /// - Returns: Value of `Self` to use for empty values.
@@ -427,7 +427,7 @@ extension Empty: EmptyResponse {
 // MARK: - DataDecoder Protocol
 
 /// Any type which can decode `Data` into a `Decodable` type.
-public protocol DataDecoder {
+public protocol DataDecoder: Sendable {
     /// Decode `Data` into the provided type.
     ///
     /// - Parameters:
@@ -446,16 +446,23 @@ extension PropertyListDecoder: DataDecoder {}
 
 // MARK: - Decodable
 
-/// A `ResponseSerializer` that decodes the response data as a generic value using any type that conforms to
-/// `DataDecoder`. By default, this is an instance of `JSONDecoder`. Additionally, a request returning `nil` or no data
-/// is considered an error. However, if the request has an `HTTPMethod` or the response has an HTTP status code valid
-/// for empty responses then an empty value will be returned. If the decoded type conforms to `EmptyResponse`, the
-/// type's `emptyValue()` will be returned. If the decoded type is `Empty`, the `.value` instance is returned. If the
-/// decoded type *does not* conform to `EmptyResponse` and isn't `Empty`, an error will be produced.
-public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer {
-    public let dataPreprocessor: DataPreprocessor
+/// A `ResponseSerializer` that decodes the response data as a `Decodable` value using any decoder that conforms to
+/// `DataDecoder`. By default, this is an instance of `JSONDecoder`.
+///
+/// - Note: A request returning `nil` or no data is considered an error. However, if the request has an `HTTPMethod` or
+///         the response has an HTTP status code valid for empty responses then an empty value will be returned. If the
+///         decoded type conforms to `EmptyResponse`, the type's `emptyValue()` will be returned. If the decoded type is
+///         `Empty`, the `.value` instance is returned. If the decoded type *does not* conform to `EmptyResponse` and
+///         isn't `Empty`, an error will be produced.
+///
+/// - Note: `JSONDecoder` and `PropertyListDecoder` are not `Sendable` on Apple platforms until macOS 13+ or iOS 16+, so
+///         instances passed to a serializer should not be used outside of the serializer. Additionally, ensure a new
+///         serializer is created for each request, do not use a single, shared serializer, so as to ensure separate
+///         decoder instances.
+public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer where T: Sendable {
+    public let dataPreprocessor: any DataPreprocessor
     /// The `DataDecoder` instance used to decode responses.
-    public let decoder: DataDecoder
+    public let decoder: any DataDecoder
     public let emptyResponseCodes: Set<Int>
     public let emptyRequestMethods: Set<HTTPMethod>
 
@@ -466,8 +473,8 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
     ///   - decoder:             The `DataDecoder`. `JSONDecoder()` by default.
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
-    public init(dataPreprocessor: DataPreprocessor = DecodableResponseSerializer.defaultDataPreprocessor,
-                decoder: DataDecoder = JSONDecoder(),
+    public init(dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer.defaultDataPreprocessor,
+                decoder: any DataDecoder = JSONDecoder(),
                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer.defaultEmptyRequestMethods) {
         self.dataPreprocessor = dataPreprocessor
@@ -476,7 +483,7 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
         self.emptyRequestMethods = emptyRequestMethods
     }
 
-    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> T {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> T {
         guard error == nil else { throw error! }
 
         guard var data, !data.isEmpty else {
@@ -484,7 +491,7 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
 
-            guard let emptyResponseType = T.self as? EmptyResponse.Type, let emptyValue = emptyResponseType.emptyValue() as? T else {
+            guard let emptyResponseType = T.self as? any EmptyResponse.Type, let emptyValue = emptyResponseType.emptyValue() as? T else {
                 throw AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)"))
             }
 
@@ -513,8 +520,8 @@ extension ResponseSerializer {
     ///
     /// - Returns:               The `DecodableResponseSerializer`.
     public static func decodable<T: Decodable>(of type: T.Type,
-                                               dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                               decoder: DataDecoder = JSONDecoder(),
+                                               dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                               decoder: any DataDecoder = JSONDecoder(),
                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DecodableResponseSerializer<T> where Self == DecodableResponseSerializer<T> {
         DecodableResponseSerializer<T>(dataPreprocessor: dataPreprocessor,

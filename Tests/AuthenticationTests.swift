@@ -27,6 +27,7 @@ import Foundation
 import XCTest
 
 final class BasicAuthenticationTestCase: BaseTestCase {
+    @MainActor
     func testHTTPBasicAuthenticationFailsWithInvalidCredentials() {
         // Given
         let session = Session()
@@ -53,6 +54,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
+    @MainActor
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
         let session = Session()
@@ -80,6 +82,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
+    @MainActor
     func testHTTPBasicAuthenticationWithStoredCredentials() {
         // Given
         let session = Session()
@@ -113,6 +116,7 @@ final class BasicAuthenticationTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
+    @MainActor
     func testHiddenHTTPBasicAuthentication() {
         // Given
         let session = Session()
@@ -143,7 +147,8 @@ final class BasicAuthenticationTestCase: BaseTestCase {
 
 // Disabled due to HTTPBin flakiness.
 final class HTTPDigestAuthenticationTestCase: BaseTestCase {
-    func _testHTTPDigestAuthenticationWithInvalidCredentials() {
+    @MainActor
+    func disabled_testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
         let session = Session()
         let endpoint = Endpoint.digestAuth()
@@ -169,7 +174,8 @@ final class HTTPDigestAuthenticationTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
-    func _testHTTPDigestAuthenticationWithValidCredentials() {
+    @MainActor
+    func disabled_testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
         let session = Session()
         let user = "user", password = "password"

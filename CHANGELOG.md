@@ -6,18 +6,19 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
-- `5.9.x` Releases - [5.9.0](#590) | [5.9.1](#591)
-- `5.8.x` Releases - [5.8.0](#580) | [5.8.1](#581)
-- `5.7.x` Releases - [5.7.0](#570) | [5.7.1](#571)
-- `5.6.x` Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563) | [5.6.4](#564)
-- `5.5.x` Releases - [5.5.0](#550)
-- `5.4.x` Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
-- `5.3.x` Releases - [5.3.0](#530)
-- `5.2.x` Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
-- `5.1.x` Releases - [5.1.0](#510)
-- `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
-- `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
-- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
+- `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101) | [5.10.2](#5102)
+- `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
+- `5.8.x`  Releases - [5.8.0](#580) | [5.8.1](#581)
+- `5.7.x`  Releases - [5.7.0](#570) | [5.7.1](#571)
+- `5.6.x`  Releases - [5.6.0](#560) | [5.6.1](#561) | [5.6.2](#562) | [5.6.3](#563) | [5.6.4](#564)
+- `5.5.x`  Releases - [5.5.0](#550)
+- `5.4.x`  Releases - [5.4.0](#540) | [5.4.1](#541) | [5.4.2](#542) | [5.4.3](#543) | [5.4.4](#544)
+- `5.3.x`  Releases - [5.3.0](#530)
+- `5.2.x`  Releases - [5.2.0](#520) | [5.2.1](#521) | [5.2.2](#522)
+- `5.1.x`  Releases - [5.1.0](#510)
+- `5.0.x`  Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504) | [5.0.5](#505)
+- `5.0.0`  Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
+- `5.0.0`  Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
 
 #### 4.x Releases
 
@@ -54,6 +55,56 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [5.10.2](https://github.com/Alamofire/Alamofire/releases/tag/5.10.2]
+
+Released on 2024-11-249. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/93?closed=1).
+
+### Fixed
+- Runtime crash when calling `validate` from a Swift 6-compiled target.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3920](https://github.com/Alamofire/Alamofire/pull/3920).
+- Swift 6.0 `Package.swift` deprecation warning.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3911](https://github.com/Alamofire/Alamofire/pull/3911).
+
+## [5.10.1](https://github.com/Alamofire/Alamofire/releases/tag/5.10.1)
+
+Released on 2024-10-19. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/92?closed=1).
+
+### Fixed
+- `@Sendable` in `AdaptHandler` and `RetryHandler` types.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3906](https://github.com/Alamofire/Alamofire/pull/3906).
+- Downstream `JSONResponseSerializer` wrapper by reverting output type to just `Any`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3903](https://github.com/Alamofire/Alamofire/pull/3903).
+- Missing `@Sendable` on `Authenticator.refresh`.
+  - Fixed by [rono23](https://github.com/rono23) in Pull Request [#3901](https://github.com/Alamofire/Alamofire/pull/3901).
+
+## [5.10.0](https://github.com/Alamofire/Alamofire/releases/tag/5.10.0)
+
+Released on 2024-10-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/91?closed=1).
+
+### Added
+- 🔥 Full Swift concurrency support with `Sendable` requirements. Most APIs are also marked `@preconcurrency`, so there should be no breaking changes. Swift 5.9 now required to build.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3880](https://github.com/Alamofire/Alamofire/pull/3880).
+- Existential `any` now required internally by Alamofire.
+  - Added by [Keita Watanabe](https://github.com/kitwtnb) in Pull Request [#3881](https://github.com/Alamofire/Alamofire/pull/3881).
+
+### Updated
+- 🔥 `Session.init(... eventMonitors:)` to allow no `EventMonitor`s at all, and `CompositeEventMonitor` to fix thread-safety. Potentially breaking if previously passing `[]` but still expecting `Notification`s to be posted. Pass `[AlamofireNotifications()]` if you need that behavior.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3894](https://github.com/Alamofire/Alamofire/pull/3894).
+- `DownloadRequest.validate` to read the `fileSize` rather than the whole file from disk.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3899](https://github.com/Alamofire/Alamofire/pull/3899).
+- Links to `swiftlang` repositories.
+  - Updated by [LamTrinh.Dev](https://github.com/lamtrinhdev) in Pull Request [#3882](https://github.com/Alamofire/Alamofire/pull/3882).
+
+### Fixed
+- Various documentation typos.
+  - Fixed by [Alexander Cyon](https://github.com/Sajjon) in Pull Request [#3891](https://github.com/Alamofire/Alamofire/pull/3891).
+- Passing `queue` parameter to `DataStream` serializers.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3879](https://github.com/Alamofire/Alamofire/pull/3879).
+- `testThatDatesCanBeEncodedAsFormatted` when running with a non-Gregorian calendar.
+  - Fixed by [Kittisak Phetrungnapha](https://github.com/kittisak-phetrungnapha) in Pull Request [#3858](https://github.com/Alamofire/Alamofire/pull/3858).
 
 ---
 
@@ -102,9 +153,9 @@ Released on 2024-03-03. All issues associated with this milestone can be found u
 ### Fixed
 
 - Platform deprecation warnings in `Package.swift` in newer Xcode versions.
-  - Updated by [fess](https://github.com/apps4everyone) in Pull Request [#3823](https://github.com/Alamofire/Alamofire/pull/3823).
+  - Fxied by [fess](https://github.com/apps4everyone) in Pull Request [#3823](https://github.com/Alamofire/Alamofire/pull/3823).
 - `Alamofire.podspec` after project restructuring.
-  - Updated by [mlch](https://github.com/mlch911) in Pull Request [#3825](https://github.com/Alamofire/Alamofire/pull/3825).
+  - Fixed by [mlch](https://github.com/mlch911) in Pull Request [#3825](https://github.com/Alamofire/Alamofire/pull/3825).
 - Various documentation typos.
   - Fixed by [JaewoongLee-swift](https://github.com/JaewoongLee-swift), [TaeHyun](https://github.com/kth1210), and [hugo-syn](https://github.com/hugo-syn) in various Pull Requests.
 
@@ -521,7 +572,7 @@ Released on 2020-05-16. All issues associated with this milestone can be found u
 - Thread-safety issue in `Session`.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3179](https://github.com/Alamofire/Alamofire/pull/3179).
 - Memory leak in `NetworkReachabilityManager`.
-  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Reqeust [#3180](https://github.com/Alamofire/Alamofire/pull/3180).
+  - Fixed by [dirtmelon](https://github.com/dirtmelon) in Pull Request [#3180](https://github.com/Alamofire/Alamofire/pull/3180).
 
 ---
 
@@ -1943,7 +1994,7 @@ Released on 2016-05-08. All issues associated with this milestone can be found u
 - URLProtocol tests to demonstrate using `NSURLProtocol` with `NSURLSession`.
   - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
     [#1160](https://github.com/Alamofire/Alamofire/issues/1160).
-- The `SesionDelegate` to no longer be `final` to allow subclassing.
+- The `SessionDelegate` to no longer be `final` to allow subclassing.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
     [#1172](https://github.com/Alamofire/Alamofire/issues/1172) in regards to Issue
     [#1145](https://github.com/Alamofire/Alamofire/issues/1145).
@@ -3088,7 +3139,7 @@ Released on 2015-04-09.
 #### Fixed
 
 - Async tests where asserts were potentially not being run by by moving
-  `expectation.fullfill()` to end of closures.
+  `expectation.fulfill()` to end of closures.
   - Fixed by [Nate Cook](https://github.com/natecook1000) in Pull Request
     [#420](https://github.com/Alamofire/Alamofire/pull/420).
 - Small grammatical error in the ParameterEncoding section of the README.
@@ -3196,7 +3247,7 @@ Released on 2015-01-30.
 - Spec validation error with CocoaPods 0.36.0.beta-1 by disabling -b flags in `cURL`
   debug on OSX.
   - Fixed by [Mattt Thompson](https://github.com/mattt).
-- Travis-CI build issue by adding suppport for an `iOS Example` scheme.
+- Travis-CI build issue by adding support for an `iOS Example` scheme.
   - Fixed by [Yasuharu Ozaki](https://github.com/yasuoza) in Pull Request
     [#322](https://github.com/Alamofire/Alamofire/pull/322).
 

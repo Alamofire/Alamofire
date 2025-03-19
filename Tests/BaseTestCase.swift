@@ -35,21 +35,21 @@ class BaseTestCase: XCTestCase {
             switch self {
             case .twenty:
                 if #available(macOS 11, iOS 14, tvOS 14, watchOS 7, *) {
-                    return false
+                    false
                 } else {
-                    return true
+                    true
                 }
             case .none:
-                return false
+                false
             }
         }
 
         var reason: String {
             switch self {
             case .twenty:
-                return "Skipped due to being iOS 13 or below."
+                "Skipped due to being iOS 13 or below."
             case .none:
-                return "This should never skip."
+                "This should never skip."
             }
         }
     }
@@ -116,7 +116,8 @@ class BaseTestCase: XCTestCase {
     /// - Parameters:
     ///   - queue: The `DispatchQueue` on which to run the assertions.
     ///   - assertions: Closure containing assertions to run
-    func assert(on queue: DispatchQueue, assertions: @escaping () -> Void) {
+    @MainActor
+    func assert(on queue: DispatchQueue, assertions: @escaping @Sendable () -> Void) {
         let expect = expectation(description: "all assertions are complete")
 
         queue.async {

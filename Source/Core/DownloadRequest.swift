@@ -25,10 +25,10 @@
 import Foundation
 
 /// `Request` subclass which downloads `Data` to a file on disk using `URLSessionDownloadTask`.
-public final class DownloadRequest: Request {
+public final class DownloadRequest: Request, @unchecked Sendable {
     /// A set of options to be executed prior to moving a downloaded file from the temporary `URL` to the destination
     /// `URL`.
-    public struct Options: OptionSet {
+    public struct Options: OptionSet, Sendable {
         /// Specifies that intermediate directories for the destination URL should be created.
         public static let createIntermediateDirectories = Options(rawValue: 1 << 0)
         /// Specifies that any previous file at the destination `URL` should be removed.
@@ -50,8 +50,8 @@ public final class DownloadRequest: Request {
     ///
     /// - Note: Downloads from a local `file://` `URL`s do not use the `Destination` closure, as those downloads do not
     ///         return an `HTTPURLResponse`. Instead the file is merely moved within the temporary directory.
-    public typealias Destination = (_ temporaryURL: URL,
-                                    _ response: HTTPURLResponse) -> (destinationURL: URL, options: Options)
+    public typealias Destination = @Sendable (_ temporaryURL: URL,
+                                              _ response: HTTPURLResponse) -> (destinationURL: URL, options: Options)
 
     /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
     /// file URL in the first available directory with the specified search path directory and search path domain mask.
@@ -83,7 +83,7 @@ public final class DownloadRequest: Request {
 
     /// Default `URL` creation closure. Creates a `URL` in the temporary directory with `Alamofire_` prepended to the
     /// provided file name.
-    static let defaultDestinationURL: (URL) -> URL = { url in
+    static let defaultDestinationURL: @Sendable (URL) -> URL = { url in
         let filename = "Alamofire_\(url.lastPathComponent)"
         let destination = url.deletingLastPathComponent().appendingPathComponent(filename)
 
@@ -95,7 +95,7 @@ public final class DownloadRequest: Request {
     /// Type describing the source used to create the underlying `URLSessionDownloadTask`.
     public enum Downloadable {
         /// Download should be started from the `URLRequest` produced by the associated `URLRequestConvertible` value.
-        case request(URLRequestConvertible)
+        case request(any URLRequestConvertible)
         /// Download should be started from the associated resume `Data` value.
         case resumeData(Data)
     }
@@ -151,9 +151,9 @@ public final class DownloadRequest: Request {
          downloadable: Downloadable,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
-         delegate: RequestDelegate,
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
+         delegate: any RequestDelegate,
          destination: @escaping Destination) {
         self.downloadable = downloadable
         self.destination = destination
@@ -236,7 +236,7 @@ public final class DownloadRequest: Request {
     /// - Returns: The instance.
     @discardableResult
     public func cancel(producingResumeData shouldProduceResumeData: Bool) -> Self {
-        cancel(optionallyProducingResumeData: shouldProduceResumeData ? { _ in } : nil)
+        cancel(optionallyProducingResumeData: shouldProduceResumeData ? { @Sendable _ in } : nil)
     }
 
     /// Cancels the instance while producing resume data. Once cancelled, a `DownloadRequest` can no longer be resumed
@@ -250,8 +250,9 @@ public final class DownloadRequest: Request {
     ///                                want use an appropriate queue to perform your work.
     ///
     /// - Returns:                     The instance.
+    @preconcurrency
     @discardableResult
-    public func cancel(byProducingResumeData completionHandler: @escaping (_ data: Data?) -> Void) -> Self {
+    public func cancel(byProducingResumeData completionHandler: @escaping @Sendable (_ data: Data?) -> Void) -> Self {
         cancel(optionallyProducingResumeData: completionHandler)
     }
 
@@ -261,7 +262,7 @@ public final class DownloadRequest: Request {
     /// - Parameter completionHandler: Optional resume data handler.
     ///
     /// - Returns:                     The instance.
-    private func cancel(optionallyProducingResumeData completionHandler: ((_ resumeData: Data?) -> Void)?) -> Self {
+    private func cancel(optionallyProducingResumeData completionHandler: (@Sendable (_ resumeData: Data?) -> Void)?) -> Self {
         mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
 
@@ -302,7 +303,7 @@ public final class DownloadRequest: Request {
     /// - Returns:              The instance.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
-        let validator: () -> Void = { [unowned self] in
+        let validator: @Sendable () -> Void = { [unowned self] in
             guard error == nil, let response else { return }
 
             let result = validation(request, response, fileURL)
@@ -332,9 +333,10 @@ public final class DownloadRequest: Request {
     ///   - completionHandler: The code to be executed once the request has finished.
     ///
     /// - Returns:             The request.
+    @preconcurrency
     @discardableResult
     public func response(queue: DispatchQueue = .main,
-                         completionHandler: @escaping (AFDownloadResponse<URL?>) -> Void)
+                         completionHandler: @escaping @Sendable (AFDownloadResponse<URL?>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
@@ -361,7 +363,7 @@ public final class DownloadRequest: Request {
 
     private func _response<Serializer: DownloadResponseSerializerProtocol>(queue: DispatchQueue = .main,
                                                                            responseSerializer: Serializer,
-                                                                           completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
+                                                                           completionHandler: @escaping @Sendable (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
@@ -394,7 +396,7 @@ public final class DownloadRequest: Request {
                 }
 
                 delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
-                    var didComplete: (() -> Void)?
+                    var didComplete: (@Sendable () -> Void)?
 
                     defer {
                         if let didComplete {
@@ -431,6 +433,8 @@ public final class DownloadRequest: Request {
 
     /// Adds a handler to be called once the request has finished.
     ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
+    ///
     /// - Parameters:
     ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
@@ -441,12 +445,14 @@ public final class DownloadRequest: Request {
     @discardableResult
     public func response<Serializer: DownloadResponseSerializerProtocol>(queue: DispatchQueue = .main,
                                                                          responseSerializer: Serializer,
-                                                                         completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
+                                                                         completionHandler: @escaping @Sendable (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 
     /// Adds a handler to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
@@ -458,7 +464,7 @@ public final class DownloadRequest: Request {
     @discardableResult
     public func response<Serializer: ResponseSerializer>(queue: DispatchQueue = .main,
                                                          responseSerializer: Serializer,
-                                                         completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
+                                                         completionHandler: @escaping @Sendable (AFDownloadResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         _response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
@@ -470,13 +476,16 @@ public final class DownloadRequest: Request {
     ///   - completionHandler: A closure to be executed once the request has finished.
     ///
     /// - Returns:             The request.
+    @preconcurrency
     @discardableResult
     public func responseURL(queue: DispatchQueue = .main,
-                            completionHandler: @escaping (AFDownloadResponse<URL>) -> Void) -> Self {
+                            completionHandler: @escaping @Sendable (AFDownloadResponse<URL>) -> Void) -> Self {
         response(queue: queue, responseSerializer: URLResponseSerializer(), completionHandler: completionHandler)
     }
 
     /// Adds a handler using a `DataResponseSerializer` to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - queue:               The queue on which the completion handler is called. `.main` by default.
@@ -487,12 +496,13 @@ public final class DownloadRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseData(queue: DispatchQueue = .main,
-                             dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                             dataPreprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                              emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods,
-                             completionHandler: @escaping (AFDownloadResponse<Data>) -> Void) -> Self {
+                             completionHandler: @escaping @Sendable (AFDownloadResponse<Data>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: DataResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                             emptyResponseCodes: emptyResponseCodes,
@@ -501,6 +511,8 @@ public final class DownloadRequest: Request {
     }
 
     /// Adds a handler using a `StringResponseSerializer` to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - queue:               The queue on which the completion handler is dispatched. `.main` by default.
@@ -513,13 +525,14 @@ public final class DownloadRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
-                               dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                               dataPreprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                                encoding: String.Encoding? = nil,
                                emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                                emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods,
-                               completionHandler: @escaping (AFDownloadResponse<String>) -> Void) -> Self {
+                               completionHandler: @escaping @Sendable (AFDownloadResponse<String>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: StringResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                               encoding: encoding,
@@ -529,6 +542,8 @@ public final class DownloadRequest: Request {
     }
 
     /// Adds a handler using a `JSONResponseSerializer` to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - queue:               The queue on which the completion handler is dispatched. `.main` by default.
@@ -542,13 +557,14 @@ public final class DownloadRequest: Request {
     ///
     /// - Returns:               The request.
     @available(*, deprecated, message: "responseJSON deprecated and will be removed in Alamofire 6. Use responseDecodable instead.")
+    @preconcurrency
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
-                             dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
+                             dataPreprocessor: any DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
                              emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                              emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @escaping (AFDownloadResponse<Any>) -> Void) -> Self {
+                             completionHandler: @escaping @Sendable (AFDownloadResponse<Any>) -> Void) -> Self {
         response(queue: queue,
                  responseSerializer: JSONResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                             emptyResponseCodes: emptyResponseCodes,
@@ -558,6 +574,8 @@ public final class DownloadRequest: Request {
     }
 
     /// Adds a handler using a `DecodableResponseSerializer` to be called once the request has finished.
+    ///
+    /// - Note: This handler will read the entire downloaded file into memory, use with caution.
     ///
     /// - Parameters:
     ///   - type:                `Decodable` type to decode from response data.
@@ -570,14 +588,15 @@ public final class DownloadRequest: Request {
     ///   - completionHandler:   A closure to be executed once the request has finished.
     ///
     /// - Returns:               The request.
+    @preconcurrency
     @discardableResult
     public func responseDecodable<T: Decodable>(of type: T.Type = T.self,
                                                 queue: DispatchQueue = .main,
-                                                dataPreprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                                decoder: DataDecoder = JSONDecoder(),
+                                                dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                                decoder: any DataDecoder = JSONDecoder(),
                                                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                 emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods,
-                                                completionHandler: @escaping (AFDownloadResponse<T>) -> Void) -> Self {
+                                                completionHandler: @escaping @Sendable (AFDownloadResponse<T>) -> Void) -> Self where T: Sendable {
         response(queue: queue,
                  responseSerializer: DecodableResponseSerializer(dataPreprocessor: dataPreprocessor,
                                                                  decoder: decoder,

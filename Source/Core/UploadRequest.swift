@@ -25,9 +25,9 @@
 import Foundation
 
 /// `DataRequest` subclass which handles `Data` upload from memory, file, or stream using `URLSessionUploadTask`.
-public final class UploadRequest: DataRequest {
+public final class UploadRequest: DataRequest, @unchecked Sendable {
     /// Type describing the origin of the upload, whether `Data`, file, or stream.
-    public enum Uploadable {
+    public enum Uploadable: @unchecked Sendable { // Must be @unchecked Sendable due to InputStream.
         /// Upload from the provided `Data` value.
         case data(Data)
         /// Upload from the provided file `URL`, as well as a `Bool` determining whether the source file should be
@@ -40,7 +40,7 @@ public final class UploadRequest: DataRequest {
     // MARK: Initial State
 
     /// The `UploadableConvertible` value used to produce the `Uploadable` value for this instance.
-    public let upload: UploadableConvertible
+    public let upload: any UploadableConvertible
 
     /// `FileManager` used to perform cleanup tasks, including the removal of multipart form encoded payloads written
     /// to disk.
@@ -65,13 +65,13 @@ public final class UploadRequest: DataRequest {
     ///                         encoded payloads written to disk.
     ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     init(id: UUID = UUID(),
-         convertible: UploadConvertible,
+         convertible: any UploadConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
-         eventMonitor: EventMonitor?,
-         interceptor: RequestInterceptor?,
+         eventMonitor: (any EventMonitor)?,
+         interceptor: (any RequestInterceptor)?,
          fileManager: FileManager,
-         delegate: RequestDelegate) {
+         delegate: any RequestDelegate) {
         upload = convertible
         self.fileManager = fileManager
 
@@ -156,7 +156,7 @@ public final class UploadRequest: DataRequest {
 }
 
 /// A type that can produce an `UploadRequest.Uploadable` value.
-public protocol UploadableConvertible {
+public protocol UploadableConvertible: Sendable {
     /// Produces an `UploadRequest.Uploadable` value from the instance.
     ///
     /// - Returns: The `UploadRequest.Uploadable`.

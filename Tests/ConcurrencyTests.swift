@@ -446,7 +446,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertEqual(datas.count, 2)
     }
 
-    #if swift(>=5.8) && canImport(Darwin)
+    #if canImport(Darwin)
     func testThatDataStreamHasAsyncOnHTTPResponse() async {
         // Given
         let session = stored(Session())
@@ -669,7 +669,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 
 // Avoid when using swift-corelibs-foundation.
 // Only Xcode 14.3+ has async fulfillment.
-#if !canImport(FoundationNetworking) && swift(>=5.8)
+#if !canImport(FoundationNetworking)
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class UploadConcurrencyTests: BaseTestCase {
     func testThatDelayedUploadStreamResultsInMultipleProgressValues() async throws {
@@ -759,7 +759,7 @@ final class UploadConcurrencyTests: BaseTestCase {
 }
 #endif
 
-#if canImport(Darwin) && !canImport(FoundationNetworking) && swift(>=5.8)
+#if canImport(Darwin) && !canImport(FoundationNetworking)
 @_spi(WebSocket) import Alamofire
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -816,11 +816,7 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
                      tasks: [URLSessionTask],
                      descriptions: [String],
                      response: AFDataResponse<TestResponse>)
-        #if swift(>=5.11)
-        values = try! await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
-        #else
         values = await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
-        #endif
 
         // Then
         XCTAssertTrue(values.httpResponses.count == 1, "httpResponses should have one response")

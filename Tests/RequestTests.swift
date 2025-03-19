@@ -27,6 +27,7 @@ import Foundation
 import XCTest
 
 final class RequestResponseTestCase: BaseTestCase {
+    @MainActor
     func testRequestResponse() {
         // Given
         let url = Endpoint.get.url
@@ -49,6 +50,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
+    @MainActor
     func testThatDataRequestReceivesInitialResponse() {
         // Given
         let url = Endpoint.get.url
@@ -78,6 +80,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
+    @MainActor
     func testThatDataRequestOnHTTPResponseCanAllow() {
         // Given
         let url = Endpoint.get.url
@@ -108,6 +111,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
+    @MainActor
     func testThatDataRequestOnHTTPResponseCanCancel() {
         // Given
         let url = Endpoint.get.url
@@ -139,9 +143,10 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled request should be explicitly cancelled")
     }
 
+    @MainActor
     func testRequestResponseWithProgress() {
         // Given
-        let byteCount = 50 * 1024
+        let byteCount = 512
         let url = Endpoint.bytes(byteCount).url
 
         let expectation = expectation(description: "Bytes download progress should be reported: \(url)")
@@ -181,6 +186,7 @@ final class RequestResponseTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testPOSTRequestWithUnicodeParameters() {
         // Given
         let parameters = ["french": "français",
@@ -216,6 +222,7 @@ final class RequestResponseTestCase: BaseTestCase {
         }
     }
 
+    @MainActor
     func testPOSTRequestWithBase64EncodedImages() {
         // Given
         let pngBase64EncodedString: String = {
@@ -266,6 +273,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
     // MARK: Queues
 
+    @MainActor
     func testThatResponseSerializationWorksWithSerializationQueue() {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
@@ -285,6 +293,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
     }
 
+    @MainActor
     func testThatRequestsWorksWithRequestAndSerializationQueues() {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
@@ -305,6 +314,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
     }
 
+    @MainActor
     func testThatRequestsWorksWithConcurrentRequestAndSerializationQueues() {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
@@ -332,6 +342,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
     // MARK: Encodable Parameters
 
+    @MainActor
     func testThatRequestsCanPassEncodableParametersAsJSONBodyData() {
         // Given
         let parameters = TestParameters(property: "one")
@@ -351,6 +362,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(receivedResponse?.result.success?.data, "{\"property\":\"one\"}")
     }
 
+    @MainActor
     func testThatRequestsCanPassEncodableParametersAsAURLQuery() {
         // Given
         let parameters = TestParameters(property: "one")
@@ -370,6 +382,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(receivedResponse?.result.success?.args, ["property": "one"])
     }
 
+    @MainActor
     func testThatRequestsCanPassEncodableParametersAsURLEncodedBodyData() {
         // Given
         let parameters = TestParameters(property: "one")
@@ -391,6 +404,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
     // MARK: Lifetime Events
 
+    @MainActor
     func testThatAutomaticallyResumedRequestReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -417,6 +431,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .finished)
     }
 
+    @MainActor
     func testThatAutomaticallyAndManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -446,6 +461,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .finished)
     }
 
+    @MainActor
     func testThatManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -475,6 +491,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .finished)
     }
 
+    @MainActor
     func testThatRequestManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -504,6 +521,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .finished)
     }
 
+    @MainActor
     func testThatRequestManuallySuspendedManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -530,6 +548,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .suspended)
     }
 
+    @MainActor
     func testThatRequestManuallySuspendedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -558,6 +577,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .suspended)
     }
 
+    @MainActor
     func testThatRequestManuallyCancelledManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -587,6 +607,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .cancelled)
     }
 
+    @MainActor
     func testThatRequestManuallyCancelledManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -618,6 +639,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .cancelled)
     }
 
+    @MainActor
     func testThatRequestManuallyCancelledManyTimesOnManyQueuesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -651,6 +673,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .cancelled)
     }
 
+    @MainActor
     func testThatRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -703,6 +726,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .finished)
     }
 
+    @MainActor
     func testThatCancelledRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -750,6 +774,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(request.state, .cancelled)
     }
 
+    @MainActor
     func testThatAppendingResponseSerializerToCancelledRequestCallsCompletion() {
         // Given
         let session = Session()
@@ -782,6 +807,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(response2?.error?.isExplicitlyCancelledError, true)
     }
 
+    @MainActor
     func testThatAppendingResponseSerializerToCompletedRequestInsideCompletionResumesRequest() {
         // Given
         let session = Session()
@@ -819,6 +845,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response3?.value)
     }
 
+    @MainActor
     func testThatAppendingResponseSerializerToCompletedRequestOutsideCompletionResumesRequest() {
         // Given
         let session = Session()
@@ -851,6 +878,7 @@ final class RequestResponseTestCase: BaseTestCase {
 // MARK: -
 
 final class RequestDescriptionTestCase: BaseTestCase {
+    @MainActor
     func testRequestDescription() {
         // Given
         let url = Endpoint().url
@@ -928,6 +956,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
     // MARK: Tests
 
+    @MainActor
     func testGETRequestCURLDescription() {
         // Given
         let url = Endpoint().url
@@ -948,6 +977,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.last, "\"\(url)\"")
     }
 
+    @MainActor
     func testGETRequestCURLDescriptionOnMainQueue() {
         // Given
         let url = Endpoint().url
@@ -971,6 +1001,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.last, "\"\(url)\"")
     }
 
+    @MainActor
     func testGETRequestCURLDescriptionSynchronous() {
         // Given
         let url = Endpoint().url
@@ -995,6 +1026,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.sorted(), syncComponents?.sorted())
     }
 
+    @MainActor
     func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
         // Given
         let url = Endpoint().url
@@ -1021,6 +1053,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.sorted(), secondComponents?.sorted())
     }
 
+    @MainActor
     func testGETRequestWithCustomHeaderCURLDescription() {
         // Given
         let url = Endpoint().url
@@ -1040,6 +1073,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertNotNil(cURLDescription?.range(of: "-H \"X-Custom-Header: {\\\"key\\\": \\\"value\\\"}\""))
     }
 
+    @MainActor
     func testGETRequestWithDuplicateHeadersDebugDescription() {
         // Given
         let url = Endpoint().url
@@ -1068,6 +1102,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertNotNil(cURLDescription?.range(of: "-H \"Accept-Language: en-GB\""))
     }
 
+    @MainActor
     func testPOSTRequestCURLDescription() {
         // Given
         let url = Endpoint.method(.post).url
@@ -1088,6 +1123,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.last, "\"\(url)\"")
     }
 
+    @MainActor
     func testPOSTRequestWithJSONParametersCURLDescription() {
         // Given
         let url = Endpoint.method(.post).url
@@ -1121,6 +1157,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.last, "\"\(url)\"")
     }
 
+    @MainActor
     func testPOSTRequestWithCookieCURLDescription() {
         // Given
         let url = Endpoint.method(.post).url
@@ -1148,6 +1185,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?[5..<6], ["-b"])
     }
 
+    @MainActor
     func testPOSTRequestWithCookiesDisabledCURLDescriptionHasNoCookies() {
         // Given
         let url = Endpoint.method(.post).url
@@ -1173,6 +1211,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertTrue(cookieComponents?.isEmpty == true)
     }
 
+    @MainActor
     func testMultipartFormDataRequestWithDuplicateHeadersCURLDescriptionHasOneContentTypeHeader() {
         // Given
         let url = Endpoint.method(.post).url
@@ -1203,6 +1242,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertNotNil(cURLDescription?.range(of: "-H \"Content-Type: multipart/form-data;"))
     }
 
+    @MainActor
     func testThatRequestWithInvalidURLDebugDescription() {
         // Given
         let urlString = "invalid_url"
@@ -1230,6 +1270,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 }
 
 final class RequestLifetimeTests: BaseTestCase {
+    @MainActor
     func testThatRequestProvidesURLRequestWhenCreated() {
         // Given
         let didReceiveRequest = expectation(description: "did receive task")
@@ -1247,6 +1288,7 @@ final class RequestLifetimeTests: BaseTestCase {
         XCTAssertNotNil(request)
     }
 
+    @MainActor
     func testThatRequestProvidesTaskWhenCreated() {
         // Given
         let didReceiveTask = expectation(description: "did receive task")
@@ -1268,6 +1310,7 @@ final class RequestLifetimeTests: BaseTestCase {
 // MARK: -
 
 final class RequestInvalidURLTestCase: BaseTestCase {
+    @MainActor
     func testThatDataRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
@@ -1287,6 +1330,7 @@ final class RequestInvalidURLTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
     }
 
+    @MainActor
     func testThatDownloadRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
@@ -1306,6 +1350,7 @@ final class RequestInvalidURLTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
     }
 
+    @MainActor
     func testThatDataStreamRequestWithFileURLThrowsError() {
         // Given
         let fileURL = url(forResource: "valid_data", withExtension: "json")
@@ -1328,7 +1373,7 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     }
 }
 
-#if canImport(zlib) // Same condition as `DeflateRequestCompressor`.
+#if canImport(zlib) && !os(Android) // Same condition as `DeflateRequestCompressor`.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class RequestCompressionTests: BaseTestCase {
     func testThatRequestsCanBeCompressed() async {
