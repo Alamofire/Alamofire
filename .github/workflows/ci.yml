@@ -155,6 +155,8 @@ jobs:
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -201,6 +203,8 @@ jobs:
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -253,6 +257,8 @@ jobs:
             runsOn: firebreak
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -299,6 +305,8 @@ jobs:
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify
       - name: Install Firewalk
         run: brew update && brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -336,6 +344,8 @@ jobs:
             name: "macOS 14, SPM 5.9.0 Test"
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
       - name: Test SPM
