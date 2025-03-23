@@ -29,6 +29,11 @@ import Foundation
 import SystemConfiguration
 import XCTest
 
+@available(macOS, deprecated: 14.4)
+@available(iOS, deprecated: 17.4)
+@available(watchOS, deprecated: 9.4)
+@available(tvOS, deprecated: 17.4)
+@available(visionOS, deprecated: 1.4)
 final class NetworkReachabilityManagerTestCase: BaseTestCase {
     // MARK: - Tests - Initialization
 
