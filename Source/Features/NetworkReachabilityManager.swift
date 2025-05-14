@@ -33,9 +33,14 @@ import SystemConfiguration
 /// Reachability can be used to determine background information about why a network operation failed, or to retry
 /// network requests when a connection is established. It should not be used to prevent a user from initiating a network
 /// request, as it's possible that an initial request may be required to establish reachability.
+@available(macOS, deprecated: 14.4, message: "Use NWPathMonitor instead.")
+@available(iOS, deprecated: 17.4, message: "Use NWPathMonitor instead.")
+@available(watchOS, deprecated: 9.4, message: "Use NWPathMonitor instead.")
+@available(tvOS, deprecated: 17.4, message: "Use NWPathMonitor instead.")
+@available(visionOS, deprecated: 1.4, message: "Use NWPathMonitor instead.")
 open class NetworkReachabilityManager: @unchecked Sendable {
     /// Defines the various states of network reachability.
-    public enum NetworkReachabilityStatus: Sendable {
+    public enum NetworkReachabilityStatus: Equatable, Sendable {
         /// It is unknown whether the network is reachable.
         case unknown
         /// The network is not reachable.
@@ -258,8 +263,6 @@ open class NetworkReachabilityManager: @unchecked Sendable {
 
 // MARK: -
 
-extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable {}
-
 extension SCNetworkReachabilityFlags {
     var isReachable: Bool { contains(.reachable) }
     var isConnectionRequired: Bool { contains(.connectionRequired) }
@@ -267,7 +270,7 @@ extension SCNetworkReachabilityFlags {
     var canConnectWithoutUserInteraction: Bool { canConnectAutomatically && !contains(.interventionRequired) }
     var isActuallyReachable: Bool { isReachable && (!isConnectionRequired || canConnectWithoutUserInteraction) }
     var isCellular: Bool {
-        #if os(iOS) || os(tvOS) || (swift(>=5.9) && os(visionOS))
+        #if os(iOS) || os(tvOS) || os(visionOS)
         return contains(.isWWAN)
         #else
         return false

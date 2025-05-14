@@ -31,44 +31,44 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_16.2"
+            runsOn: firebreak
+            name: "macOS 14, Xcode 16.2, Swift 6.0.3"
+            testPlan: "macOS"
           - xcode: "Xcode_16.1"
             runsOn: firebreak
             name: "macOS 14, Xcode 16.1, Swift 6.0.2"
             testPlan: "macOS"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_16.0"
             runsOn: firebreak
             name: "macOS 14, Xcode 16.0, Swift 6.0"
             testPlan: "macOS"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.4"
             runsOn: macOS-14
             name: "macOS 14, Xcode 15.4, Swift 5.10"
             testPlan: "macOS"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.2"
             runsOn: macOS-14
             name: "macOS 14, Xcode 15.2, Swift 5.9.2"
             testPlan: "macOS"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.1"
             runsOn: macOS-14
             name: "macOS 14, Xcode 15.1, Swift 5.9.1"
             testPlan: "macOS"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.0.1"
             runsOn: macOS-14
             name: "macOS 14, Xcode 15.0.1, Swift 5.9.0"
             testPlan: "macOS"
-            outputFilter: xcbeautify --renderer github-actions
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify -q
       - name: ${{ matrix.name }}
         run: |-
           set -o pipefail
-          brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk
+          brew install alamofire/alamofire/firewalk  -q || brew upgrade alamofire/alamofire/firewalk -q
           firewalk &
-          env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | ${{ matrix.outputFilter }}
+          env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan "${{ matrix.testPlan }}" clean test | xcbeautify --renderer github-actions
   Catalyst:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
@@ -79,6 +79,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_16.2"
+            name: "Catalyst 16.2"
+            runsOn: firebreak
           - xcode: "Xcode_16.1"
             name: "Catalyst 16.1"
             runsOn: firebreak
@@ -99,8 +102,10 @@ jobs:
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify -q
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk -q || brew upgrade alamofire/alamofire/firewalk -q && firewalk &
       - name: Catalyst
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test 2>&1 | xcbeautify --renderer github-actions
   iOS:
@@ -113,6 +118,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=18.3.1,name=iPhone 16 Pro"
+            name: "iOS 18.3"
+            testPlan: "iOS"
+            xcode: "Xcode_16.2"
+            runsOn: firebreak
           - destination: "OS=18.1,name=iPhone 16 Pro"
             name: "iOS 18.1"
             testPlan: "iOS"
@@ -140,8 +150,10 @@ jobs:
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify -q
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk -q || brew upgrade alamofire/alamofire/firewalk -q && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   tvOS:
@@ -154,6 +166,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=18.2,name=Apple TV"
+            name: "tvOS 18.2"
+            testPlan: "tvOS"
+            xcode: "Xcode_16.2"
+            runsOn: firebreak
           - destination: "OS=18.1,name=Apple TV"
             name: "tvOS 18.1"
             testPlan: "tvOS"
@@ -181,8 +198,10 @@ jobs:
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify -q
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk -q || brew upgrade alamofire/alamofire/firewalk -q && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   visionOS:
@@ -195,6 +214,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=2.3,name=Apple Vision Pro"
+            name: "visionOS 2.3"
+            testPlan: "visionOS"
+            scheme: "Alamofire visionOS"
+            xcode: "Xcode_16.2"
+            runsOn: firebreak
           - destination: "OS=2.1,name=Apple Vision Pro"
             name: "visionOS 2.1"
             testPlan: "visionOS"
@@ -221,8 +246,10 @@ jobs:
             runsOn: firebreak
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify -q
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk -q || brew upgrade alamofire/alamofire/firewalk -q && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   watchOS:
@@ -235,6 +262,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=11.2,name=Apple Watch Series 10 (46mm)"
+            name: "watchOS 11.2"
+            testPlan: "watchOS"
+            xcode: "Xcode_16.2"
+            runsOn: firebreak
           - destination: "OS=11.1,name=Apple Watch Series 10 (46mm)"
             name: "watchOS 11.1"
             testPlan: "watchOS"
@@ -262,8 +294,10 @@ jobs:
             runsOn: macOS-14
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify -q
       - name: Install Firewalk
-        run: brew update && brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew update && brew install alamofire/alamofire/firewalk -q || brew upgrade alamofire/alamofire/firewalk -q && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -testPlan "${{ matrix.testPlan }}" clean test 2>&1 | xcbeautify --renderer github-actions
   SPM:
@@ -276,36 +310,35 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_16.2"
+            runsOn: firebreak
+            name: "macOS 14, SPM 6.0.3 Test"
           - xcode: "Xcode_16.1"
             runsOn: firebreak
             name: "macOS 14, SPM 6.0.2 Test"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_16.0"
             runsOn: firebreak
             name: "macOS 14, SPM 6.0 Test"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.4"
             runsOn: macOS-14
             name: "macOS 14, SPM 5.10 Test"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.2"
             runsOn: macOS-14
             name: "macOS 14, SPM 5.9.2 Test"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.1"
             runsOn: macOS-14
             name: "macOS 14, SPM 5.9.1 Test"
-            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_15.0.1"
             runsOn: macOS-14
             name: "macOS 14, SPM 5.9.0 Test"
-            outputFilter: xcbeautify --renderer github-actions
     steps:
       - uses: actions/checkout@v4
+      - name: Update xcbeautify
+        run: brew update && brew upgrade xcbeautify -q
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
+        run: brew install alamofire/alamofire/firewalk -q || brew upgrade alamofire/alamofire/firewalk xcbeautify -q && firewalk &
       - name: Test SPM
-        run: set -o pipefail && swift test -c debug 2>&1 | ${{ matrix.outputFilter }}
+        run: set -o pipefail && swift test -c debug 2>&1 | xcbeautify --renderer github-actions
   Linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -380,7 +413,7 @@ jobs:
         with:
           languages: swift
       - name: Build macOS
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean build | xcpretty
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean build | xcbeautify --renderer github-actions
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
         with:

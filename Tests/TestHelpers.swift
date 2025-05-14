@@ -361,12 +361,12 @@ extension Session {
                 requestModifier: requestModifier)
     }
 
-    func request<Parameters: Encodable>(_ endpoint: Endpoint,
-                                        parameters: Parameters? = nil,
-                                        encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
-                                        headers: HTTPHeaders? = nil,
-                                        interceptor: (any RequestInterceptor)? = nil,
-                                        requestModifier: RequestModifier? = nil) -> DataRequest {
+    func request<Parameters: Encodable & Sendable>(_ endpoint: Endpoint,
+                                                   parameters: Parameters? = nil,
+                                                   encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                   headers: HTTPHeaders? = nil,
+                                                   interceptor: (any RequestInterceptor)? = nil,
+                                                   requestModifier: RequestModifier? = nil) -> DataRequest {
         request(endpoint as (any URLConvertible),
                 method: endpoint.method,
                 parameters: parameters,
@@ -401,13 +401,13 @@ extension Session {
                       interceptor: interceptor)
     }
 
-    func download<Parameters: Encodable>(_ endpoint: Endpoint,
-                                         parameters: Parameters? = nil,
-                                         encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
-                                         headers: HTTPHeaders? = nil,
-                                         interceptor: (any RequestInterceptor)? = nil,
-                                         requestModifier: RequestModifier? = nil,
-                                         to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+    func download<Parameters: Encodable & Sendable>(_ endpoint: Endpoint,
+                                                    parameters: Parameters? = nil,
+                                                    encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                    headers: HTTPHeaders? = nil,
+                                                    interceptor: (any RequestInterceptor)? = nil,
+                                                    requestModifier: RequestModifier? = nil,
+                                                    to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         download(endpoint as (any URLConvertible),
                  method: endpoint.method,
                  parameters: parameters,
