@@ -100,6 +100,26 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
         var httpResponseHandler: (queue: DispatchQueue,
                                   handler: @Sendable (_ response: HTTPURLResponse,
                                                       _ completionHandler: @escaping @Sendable (ResponseDisposition) -> Void) -> Void)?
+        /// `Sendable` OutputStream for boundary isolation
+        var sendableOutputStream: SendableOutputStream? {
+            guard let outputStream else { return nil }
+            return SendableOutputStream(stream: outputStream)
+        }
+    }
+    
+    /// `OutputStream` wrapper object for `Senbable` compliance
+    final class SendableOutputStream: @unchecked Sendable {
+        private var stream: OutputStream
+        
+        init(stream: OutputStream) {
+            
+            self.stream = stream
+        }
+        
+        /// Writes the contents of a provided data buffer to the receiver.
+        func write(_ buffer: UnsafePointer<UInt8>, maxLength: Int) {
+            stream.write(buffer, maxLength: maxLength)
+        }
     }
 
     let streamMutableState = Protected(StreamMutableState())
@@ -156,7 +176,7 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     func didReceive(data: Data) {
         streamMutableState.write { state in
             #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
-            if let stream = state.outputStream {
+            if let stream = state.sendableOutputStream {
                 underlyingQueue.async {
                     var bytes = Array(data)
                     stream.write(&bytes, maxLength: bytes.count)
