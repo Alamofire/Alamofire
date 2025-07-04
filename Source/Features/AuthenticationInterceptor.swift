@@ -309,9 +309,20 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
             return
         }
 
-        // Queue the request for retry and trigger refresh if needed.
-        // Note: We don't immediately retry requests authenticated with old credentials to avoid
-        // duplicate refresh calls when the retry fails again with 401.
+        // Check if request was authenticated with old credentials
+        guard authenticator.isRequest(urlRequest, authenticatedWith: credential) else {
+            // Don't immediately retry old credentials - go directly to refresh to avoid duplicate calls
+            mutableState.write { mutableState in
+                mutableState.requestsToRetry.append(completion)
+                
+                guard !mutableState.isRefreshing else { return }
+                
+                refresh(credential, for: session, insideLock: &mutableState)
+            }
+            return
+        }
+
+        // Current credentials match - queue for refresh
         mutableState.write { mutableState in
             mutableState.requestsToRetry.append(completion)
 

@@ -706,4 +706,101 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         XCTAssertEqual(request.retryCount, 2)
     }
+
+    // MARK: - Tests - Duplicate Refresh Prevention
+
+    @MainActor
+    func testThatInterceptorPreventsDuplicateRefreshCalls() {
+        // Given
+        let credential = TestCredential(accessToken: "old_token")
+        let authenticator = TestAuthenticator()
+        let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
+
+        let expectation = expectation(description: "Request completed")
+
+        // When
+        let request = session.request(urlString, interceptor: interceptor)
+            .validate(statusCode: 200...300)
+            .response { response in
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then - The key test: refresh should be called exactly once
+        XCTAssertEqual(authenticator.refreshCount, 1, "Refresh should be called exactly once, not twice")
+        
+        // Verify request processing
+        XCTAssertNotNil(request.response, "Request should have completed")
+    }
+
+    @MainActor
+    func testThatConcurrentRequestsShareSingleRefresh() {
+        // Given
+        let credential = TestCredential()
+        let authenticator = TestAuthenticator(shouldRefreshAsynchronously: true)
+        let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
+
+        let numberOfRequests = 5
+        let expectation = expectation(description: "All requests completed")
+        expectation.expectedFulfillmentCount = numberOfRequests
+
+        var responses: [DataResponse<Data?, AFError>] = []
+        let responsesLock = NSLock()
+
+        // When
+        // Fire multiple concurrent requests that will all get 401 and need refresh
+        for _ in 0..<numberOfRequests {
+            let request = session.request(urlString, interceptor: interceptor)
+                .validate(statusCode: 200...300)
+                .response { response in
+                    responsesLock.lock()
+                    responses.append(response)
+                    responsesLock.unlock()
+                    expectation.fulfill()
+                }
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        // Even with multiple concurrent requests, refresh should only be called once
+        XCTAssertEqual(authenticator.refreshCount, 1, "Refresh should be called exactly once even with concurrent requests")
+        XCTAssertEqual(responses.count, numberOfRequests, "All requests should complete")
+        
+        // All requests should have been authenticated (after refresh)
+        let authenticatedCount = responses.compactMap { $0.request?.headers["Authorization"] }.count
+        XCTAssertEqual(authenticatedCount, numberOfRequests, "All requests should be authenticated")
+    }
+
+    @MainActor
+    func testThatOldCredentialRequestsDoNotCauseImmediateRetry() {
+        // Given
+        let oldCredential = TestCredential(accessToken: "old_token")
+        let newCredential = TestCredential(accessToken: "new_token")
+        let authenticator = TestAuthenticator(refreshResult: .success(newCredential))
+        let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: oldCredential)
+
+        let expectation = expectation(description: "Request completed")
+
+        // When
+        // Make a request that will fail with 401 (old credential)
+        let request = session.request(urlString, interceptor: interceptor)
+            .validate(statusCode: 200...300)
+            .response { response in
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        // The request should go through refresh process, not immediate retry
+        XCTAssertEqual(authenticator.refreshCount, 1, "Refresh should be called once")
+        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1, "Credential check should happen once")
+        
+        // Final request should use new credential
+        if let finalAuth = request.response?.request?.headers["Authorization"] {
+            XCTAssertEqual(finalAuth, "new_token", "Final request should use refreshed credential")
+        }
+    }
 }
