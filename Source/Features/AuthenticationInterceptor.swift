@@ -309,12 +309,9 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
             return
         }
 
-        // Retry the request if the `Authenticator` verifies it was authenticated with a previous credential.
-        guard authenticator.isRequest(urlRequest, authenticatedWith: credential) else {
-            completion(.retry)
-            return
-        }
-
+        // Queue the request for retry and trigger refresh if needed.
+        // Note: We don't immediately retry requests authenticated with old credentials to avoid
+        // duplicate refresh calls when the retry fails again with 401.
         mutableState.write { mutableState in
             mutableState.requestsToRetry.append(completion)
 
