@@ -604,7 +604,7 @@ AF.request("https://httpbin.org/get").responseDecodable(of: DecodableType.self) 
 Response handlers can also be chained:
 
 ```swift
-AF.request("https://httpbin.org/get")
+Alamofire.request("https://httpbin.org/get")
     .responseString { response in
         print("Response String: \(response.value)")
     }
