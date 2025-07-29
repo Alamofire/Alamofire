@@ -40,8 +40,17 @@ extension String: URLConvertible {
     /// - Returns: The `URL` initialized with `self`.
     /// - Throws:  An `AFError.invalidURL` instance.
     public func asURL() throws -> URL {
-        guard let url = URL(string: self) else { throw AFError.invalidURL(url: self) }
-
+        // First try direct URL creation for performance
+        if let url = URL(string: self) {
+            return url
+        }
+        
+        // If direct creation fails, try URLComponents for better handling of non-ASCII characters
+        guard let components = URLComponents(string: self),
+              let url = components.url else {
+            throw AFError.invalidURL(url: self)
+        }
+        
         return url
     }
 }
