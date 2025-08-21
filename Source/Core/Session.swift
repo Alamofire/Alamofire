@@ -659,7 +659,6 @@ open class Session: @unchecked Sendable {
         return request
     }
 
-    
     // MARK: - UploadRequest
 
     struct ParameterlessRequestConvertible: URLRequestConvertible {
