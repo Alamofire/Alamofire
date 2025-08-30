@@ -577,7 +577,7 @@ enum URLEncodedFormComponent {
     /// - parameters:
     ///     - value: Value of `Self` to set at the supplied path.
     ///     - path: `CodingKey` path to update with the supplied value.
-    public mutating func set(to value: URLEncodedFormComponent, at path: [any CodingKey]) {
+    mutating func set(to value: URLEncodedFormComponent, at path: [any CodingKey]) {
         set(&self, to: value, at: path)
     }
 

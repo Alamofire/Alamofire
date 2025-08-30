@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
+@testable import Alamofire
 import Foundation
 
 extension String {
@@ -326,16 +326,16 @@ extension Endpoint: URLConvertible {
 final class EndpointSequence: URLRequestConvertible {
     enum Error: Swift.Error { case noRemainingEndpoints }
 
-    private var remainingEndpoints: [Endpoint]
+    private let remainingEndpoints: Protected<[Endpoint]>
 
     init(endpoints: [Endpoint]) {
-        remainingEndpoints = endpoints
+        remainingEndpoints = .init(endpoints)
     }
 
     func asURLRequest() throws -> URLRequest {
-        guard !remainingEndpoints.isEmpty else { throw Error.noRemainingEndpoints }
+        guard !remainingEndpoints.value.isEmpty else { throw Error.noRemainingEndpoints }
 
-        return try remainingEndpoints.removeFirst().asURLRequest()
+        return try remainingEndpoints.write { $0.removeFirst() }.asURLRequest()
     }
 }
 

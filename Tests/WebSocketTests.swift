@@ -309,7 +309,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.webSocketRequest(.websocketEcho)
-        request.streamMessageEvents { event in
+        request.streamMessageEvents { [unowned request] event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -353,7 +353,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.webSocketRequest(.websocketEcho)
-        request.streamMessageEvents { event in
+        request.streamMessageEvents { [unowned request] event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -398,7 +398,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.webSocketRequest(.websocketEcho)
-        request.streamMessageEvents { event in
+        request.streamMessageEvents { [unowned request] event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -460,7 +460,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.webSocketRequest(.websocketPings(), configuration: .pingInterval(0.01))
-        request.streamMessageEvents { event in
+        request.streamMessageEvents { [unowned request] event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
