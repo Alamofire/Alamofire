@@ -142,26 +142,26 @@ jobs:
             testPlan: "iOS"
             xcode: "Xcode_16.4"
             runsOn: macOS-15
-          # - destination: "OS=18.3,name=iPhone 16 Pro"
-          #   name: "iOS 18.3"
-          #   testPlan: "iOS"
-          #   xcode: "Xcode_16.3"
-          #   runsOn: macOS-15
-          # - destination: "OS=18.2,name=iPhone 16 Pro"
-          #   name: "iOS 18.2"
-          #   testPlan: "iOS"
-          #   xcode: "Xcode_16.2"
-          #   runsOn: macOS-15
-          # - destination: "OS=18.1,name=iPhone 16 Pro"
-          #   name: "iOS 18.1"
-          #   testPlan: "iOS"
-          #   xcode: "Xcode_16.1"
-          #   runsOn: macOS-15
-          # - destination: "OS=18.0,name=iPhone 16 Pro"
-          #   name: "iOS 18.0"
-          #   testPlan: "iOS"
-          #   xcode: "Xcode_16.0"
-          #   runsOn: macOS-15
+          - destination: "OS=18.3,name=iPhone 16 Pro"
+            name: "iOS 18.3"
+            testPlan: "iOS"
+            xcode: "Xcode_16.3"
+            runsOn: self-xcode163
+          - destination: "OS=18.2,name=iPhone 16 Pro"
+            name: "iOS 18.2"
+            testPlan: "iOS"
+            xcode: "Xcode_16.2"
+            runsOn: self-xcode162
+          - destination: "OS=18.1,name=iPhone 16 Pro"
+            name: "iOS 18.1"
+            testPlan: "iOS"
+            xcode: "Xcode_16.1"
+            runsOn: self-xcode161
+          - destination: "OS=18.0,name=iPhone 16 Pro"
+            name: "iOS 18.0"
+            testPlan: "iOS"
+            xcode: "Xcode_16.0"
+            runsOn: self-xcode160
           - destination: "OS=17.5,name=iPhone 15 Pro"
             name: "iOS 17.5"
             testPlan: "iOS"
@@ -208,16 +208,16 @@ jobs:
             testPlan: "tvOS"
             xcode: "Xcode_16.2"
             runsOn: macOS-15
-          # - destination: "OS=18.1,name=Apple TV"
-          #   name: "tvOS 18.1"
-          #   testPlan: "tvOS"
-          #   xcode: "Xcode_16.1"
-          #   runsOn: macOS-15
-          # - destination: "OS=18.0,name=Apple TV"
-          #   name: "tvOS 18.0"
-          #   testPlan: "tvOS"
-          #   xcode: "Xcode_16.0"
-          #   runsOn: macOS-15
+          - destination: "OS=18.1,name=Apple TV"
+            name: "tvOS 18.1"
+            testPlan: "tvOS"
+            xcode: "Xcode_16.1"
+            runsOn: self-xcode161
+          - destination: "OS=18.0,name=Apple TV"
+            name: "tvOS 18.0"
+            testPlan: "tvOS"
+            xcode: "Xcode_16.0"
+            runsOn: self-xcode160
           - destination: "OS=17.5,name=Apple TV"
             name: "tvOS 17.5"
             testPlan: "tvOS"
@@ -272,18 +272,18 @@ jobs:
             scheme: "Alamofire visionOS"
             xcode: "Xcode_16.3"
             runsOn: macOS-15
-          # - destination: "OS=2.1,name=Apple Vision Pro"
-          #   name: "visionOS 2.1"
-          #   testPlan: "visionOS"
-          #   scheme: "Alamofire visionOS"
-          #   xcode: "Xcode_16.1"
-          #   runsOn: macOS-15
-          # - destination: "OS=2.0,name=Apple Vision Pro"
-          #   name: "visionOS 2.0"
-          #   testPlan: "visionOS"
-          #   scheme: "Alamofire visionOS"
-          #   xcode: "Xcode_16.0"
-          #   runsOn: macOS-15
+          - destination: "OS=2.1,name=Apple Vision Pro"
+            name: "visionOS 2.1"
+            testPlan: "visionOS"
+            scheme: "Alamofire visionOS"
+            xcode: "Xcode_16.1"
+            runsOn: self-xcode161
+          - destination: "OS=2.0,name=Apple Vision Pro"
+            name: "visionOS 2.0"
+            testPlan: "visionOS"
+            scheme: "Alamofire visionOS"
+            xcode: "Xcode_16.0"
+            runsOn: self-xcode160
           - destination: "OS=1.2,name=Apple Vision Pro"
             name: "visionOS 1.2"
             testPlan: "visionOS"
@@ -327,22 +327,22 @@ jobs:
             name: "watchOS 11.4"
             testPlan: "watchOS"
             xcode: "Xcode_16.4"
-            runsOn: firebreak
+            runsOn: self-xcode164
           - destination: "OS=11.2,name=Apple Watch Series 10 (46mm)"
             name: "watchOS 11.2"
             testPlan: "watchOS"
             xcode: "Xcode_16.2"
             runsOn: macOS-15
-          # - destination: "OS=11.1,name=Apple Watch Series 10 (46mm)"
-          #   name: "watchOS 11.1"
-          #   testPlan: "watchOS"
-          #   xcode: "Xcode_16.1"
-          #   runsOn: firebreak
-          # - destination: "OS=11.0,name=Apple Watch Series 10 (46mm)"
-          #   name: "watchOS 11.0"
-          #   testPlan: "watchOS"
-          #   xcode: "Xcode_16.0"
-          #   runsOn: firebreak
+          - destination: "OS=11.1,name=Apple Watch Series 10 (46mm)"
+            name: "watchOS 11.1"
+            testPlan: "watchOS"
+            xcode: "Xcode_16.1"
+            runsOn: self-xcode161
+          - destination: "OS=11.0,name=Apple Watch Series 10 (46mm)"
+            name: "watchOS 11.0"
+            testPlan: "watchOS"
+            xcode: "Xcode_16.0"
+            runsOn: self-xcode160
           - destination: "OS=10.5,name=Apple Watch Series 9 (45mm)"
             name: "watchOS 10.5"
             testPlan: "watchOS"
@@ -468,9 +468,9 @@ jobs:
           - branch: swift-6.1-release
             tag: 6.1-RELEASE
             name: Windows Swift 6.1
-          - branch: swift-6.0-release
-            tag: 6.0-RELEASE
-            name: Windows Swift 6.0
+          # - branch: swift-6.0-release
+          #   tag: 6.0-RELEASE
+          #   name: Windows Swift 6.0
     steps:
       - name: Setup
         uses: compnerd/gha-setup-swift@main
