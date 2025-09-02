@@ -142,8 +142,13 @@ jobs:
             testPlan: "iOS"
             xcode: "Xcode_16.4"
             runsOn: macOS-15
-          - destination: "OS=18.3,name=iPhone 16 Pro"
-            name: "iOS 18.3"
+          - destination: "OS=18.4,name=iPhone 16 Pro"
+            name: "iOS 18.4"
+            testPlan: "iOS"
+            xcode: "Xcode_16.4"
+            runsOn: firebreak
+          - destination: "OS=18.3.1,name=iPhone 16 Pro"
+            name: "iOS 18.3.1"
             testPlan: "iOS"
             xcode: "Xcode_16.3"
             runsOn: firebreak
