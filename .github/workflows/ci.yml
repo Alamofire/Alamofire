@@ -37,7 +37,7 @@ jobs:
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_26.0"
-            runsOn: [self-macos15, self-macos26]
+            runsOn: [self-macos15, self-xcode260]
             name: "macOS 15, Xcode 26.0, Swift 6.2.0"
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
