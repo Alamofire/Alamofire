@@ -174,7 +174,7 @@ jobs:
             name: "iOS 18.2"
             testPlan: "iOS"
             xcode: "Xcode_16.2"
-            runsOn: self.-xcode162
+            runsOn: self-xcode162
           - destination: "OS=18.1,name=iPhone 16 Pro"
             name: "iOS 18.1"
             testPlan: "iOS"
