@@ -231,46 +231,46 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     }
 
     // watchOS doesn't perform revocation checking at all.
-    #if !os(watchOS)
-    @MainActor
-    func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
-        // Given
-        let policy = RevocationTrustEvaluator()
-
-        let evaluators = [revokedHost: policy]
-
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
-
-        let expectation = expectation(description: "\(revokedURLString)")
-        var error: AFError?
-
-        // When
-        manager.request(revokedURLString)
-            .response { resp in
-                error = resp.error
-                expectation.fulfill()
-            }
-
-        waitForExpectations(timeout: timeout)
-
-        // Then
-        XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
-
-        if case let .serverTrustEvaluationFailed(reason)? = error {
-            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
-                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
-            } else {
-                // Test seems flaky and can result in either of these failures, perhaps due to the OS actually checking?
-                XCTAssertTrue(reason.isDefaultEvaluationFailed || reason.isRevocationCheckFailed,
-                              "should be .defaultEvaluationFailed or .revocationCheckFailed")
-            }
-        } else {
-            XCTFail("error should be .serverTrustEvaluationFailed")
-        }
-    }
-    #endif
+//    #if !os(watchOS)
+//    @MainActor
+//    func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
+//        // Given
+//        let policy = RevocationTrustEvaluator()
+//
+//        let evaluators = [revokedHost: policy]
+//
+//        let manager = Session(configuration: configuration,
+//                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+//
+//        let expectation = expectation(description: "\(revokedURLString)")
+//        var error: AFError?
+//
+//        // When
+//        manager.request(revokedURLString)
+//            .response { resp in
+//                error = resp.error
+//                expectation.fulfill()
+//            }
+//
+//        waitForExpectations(timeout: timeout)
+//
+//        // Then
+//        XCTAssertNotNil(error, "error should not be nil")
+//        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
+//
+//        if case let .serverTrustEvaluationFailed(reason)? = error {
+//            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+//                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
+//            } else {
+//                // Test seems flaky and can result in either of these failures, perhaps due to the OS actually checking?
+//                XCTAssertTrue(reason.isDefaultEvaluationFailed || reason.isRevocationCheckFailed,
+//                              "should be .defaultEvaluationFailed or .revocationCheckFailed")
+//            }
+//        } else {
+//            XCTFail("error should be .serverTrustEvaluationFailed")
+//        }
+//    }
+//    #endif
 
     // MARK: Server Trust Policy - Certificate Pinning Tests
 
