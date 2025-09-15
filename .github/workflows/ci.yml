@@ -31,6 +31,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_26.0"
+            runsOn: macos-26
+            name: "macOS 26, Xcode 26.0, Swift 6.2.0"
+            testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
+          - xcode: "Xcode_26.0"
+            runsOn: [self-macos15, self-macos26]
+            name: "macOS 15, Xcode 26.0, Swift 6.2.0"
+            testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_16.4"
             runsOn: macos-15
             name: "macOS 15, Xcode 16.4, Swift 6.1.2"
@@ -94,6 +104,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_26.0"
+            name: "Catalyst 26.0 on macOS 15"
+            runsOn: [self-macos15, self-xcode260]
           - xcode: "Xcode_16.4"
             name: "Catalyst 16.4"
             runsOn: macOS-15
@@ -137,36 +150,41 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=18.6,name=iPhone 16 Pro"
+            name: "iOS 18.6"
+            testPlan: "iOS"
+            xcode: "Xcode_16.4"
+            runsOn: self-xcode164
           - destination: "OS=18.5,name=iPhone 16 Pro"
             name: "iOS 18.5"
             testPlan: "iOS"
             xcode: "Xcode_16.4"
-            runsOn: macOS-15
+            runsOn: self-xcode164
           - destination: "OS=18.4,name=iPhone 16 Pro"
             name: "iOS 18.4"
             testPlan: "iOS"
             xcode: "Xcode_16.4"
-            runsOn: firebreak
+            runsOn: self-xcode164
           - destination: "OS=18.3.1,name=iPhone 16 Pro"
             name: "iOS 18.3.1"
             testPlan: "iOS"
             xcode: "Xcode_16.3"
-            runsOn: firebreak
+            runsOn: self-xcode163
           - destination: "OS=18.2,name=iPhone 16 Pro"
             name: "iOS 18.2"
             testPlan: "iOS"
             xcode: "Xcode_16.2"
-            runsOn: firebreak
+            runsOn: self.-xcode162
           - destination: "OS=18.1,name=iPhone 16 Pro"
             name: "iOS 18.1"
             testPlan: "iOS"
             xcode: "Xcode_16.1"
-            runsOn: firebreak
+            runsOn: self-xcode161
           - destination: "OS=18.0,name=iPhone 16 Pro"
             name: "iOS 18.0"
             testPlan: "iOS"
             xcode: "Xcode_16.0"
-            runsOn: firebreak
+            runsOn: self-xcode160
           - destination: "OS=17.5,name=iPhone 15 Pro"
             name: "iOS 17.5"
             testPlan: "iOS"
