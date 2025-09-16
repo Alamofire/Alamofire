@@ -315,20 +315,20 @@ public final class URLEncodedFormEncoder {
         }
     }
 
-    /// Encoding to use for `nil` values with support for dual strategy pattern.
+    /// Encoding to use for `nil` values.
     public struct NilEncoding: Sendable {
         /// Encodes `nil` by dropping the entire key / value pair.
-        public static let dropKey = NilEncoding(encoding: { nil })
+        public static let dropKey = NilEncoding { nil }
         /// Encodes `nil` by dropping only the value. e.g. `value1=one&nilValue=&value2=two`.
-        public static let dropValue = NilEncoding(encoding: { "" })
+        public static let dropValue = NilEncoding { "" }
         /// Encodes `nil` as `null`.
-        public static let null = NilEncoding(encoding: { "null" })
+        public static let null = NilEncoding { "null" }
         
-        /// Encodes nil only when intentionally specified:
+        /// Encodes `nil` only when intentionally specified:
         /// - `encode(nil)` produces "null"
         /// - `encodeIfPresent(nil)` skips encoding entirely
         public static let intentionalOnly = NilEncoding(
-            encode: { "null" },
+            encodeNil: { "null" },
             encodeIfPresent: { nil }
         )
 
@@ -336,37 +336,37 @@ public final class URLEncodedFormEncoder {
         private let encodeEncoding: @Sendable () -> String?
         private let encodeIfPresentEncoding: @Sendable () -> String?
 
-        /// Creates a NilEncoding with separate strategies for encode and encodeIfPresent methods.
+        /// Creates a `NilEncoding` with separate strategies for `encode` and `encodeIfPresent` methods.
         /// 
         /// - Parameters:
-        ///   - encode: Strategy used when `encode(nil)` or `encodeNil()` is called directly
-        ///   - encodeIfPresent: Strategy used when `encodeIfPresent(nil)` is called
+        ///   - `encodeNil`: Strategy used when `encode(nil)` or `encodeNil()` is called directly
+        ///   - `encodeIfPresent`: Strategy used when `encodeIfPresent(nil)` is called
         public init(
-            encode: @escaping @Sendable () -> String?,
+            encodeNil: @escaping @Sendable () -> String?,
             encodeIfPresent: @escaping @Sendable () -> String?
         ) {
-            self.encodeEncoding = encode
+            self.encodeEncoding = encodeNil
             self.encodeIfPresentEncoding = encodeIfPresent
         }
 
-        /// Creates a NilEncoding with the same strategy for both encode and encodeIfPresent.
+        /// Creates a `NilEncoding` with the same strategy for both `encode` and `encodeIfPresent`.
         ///
-        /// - Parameter encoding: Strategy to use for all nil encoding scenarios
+        /// - Parameter `encoding`: Strategy to use for all `nil` encoding scenarios
         public init(encoding: @escaping @Sendable () -> String?) {
             self.encodeEncoding = encoding
             self.encodeIfPresentEncoding = encoding
         }
 
-        /// Encodes nil when `encode(nil)` or `encodeNil()` is called directly.
+        /// Encodes `nil` when `encode(nil)` or `encodeNil()` is called directly.
         ///
-        /// - Returns: The encoded string representation of nil, or `nil` to skip encoding.
+        /// - Returns: The encoded string representation of `nil`, or `nil` to skip encoding.
         func encodeNil() -> String? {
             encodeEncoding()
         }
         
-        /// Encodes nil when `encodeIfPresent(nil)` is called.
+        /// Encodes `nil` when `encodeIfPresent(nil)` is called.
         ///
-        /// - Returns: The encoded string representation of nil, or `nil` to skip encoding.
+        /// - Returns: The encoded string representation of `nil`, or `nil` to skip encoding.
         func encodeNilIfPresent() -> String? {
             encodeIfPresentEncoding()
         }
@@ -793,7 +793,7 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
         if let value {
             try encode(value, forKey: key)
         } else {
-            // Use the encodeIfPresent strategy for nil values
+            // Use the `encodeIfPresent` strategy for `nil` values
             guard let nilValue = nilEncoding.encodeNilIfPresent() else { return }
             try encode(nilValue, forKey: key)
         }
