@@ -933,6 +933,83 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.success, "one=one&two=")
     }
 
+    func testThatNilCanBeEncodedWithIntentionalOnlyStrategy() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .intentionalOnly)
+        let parameters: [String: String?] = ["a": nil, "b": "value"]
+
+        // When
+        let result = Result<String, any Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "a=null&b=value")
+    }
+
+    func testThatIntentionalOnlyDistinguishesEncodeAndEncodeIfPresent() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .intentionalOnly)
+
+        // When
+        let result = Result<String, any Error> { try encoder.encode(IntentionalNilTestStruct()) }
+
+        // Then
+        XCTAssertEqual(result.success, "encodeIfPresentValue=present&encodeNil=null&encodeValue=encoded")
+    }
+
+    func testThatCustomDualStrategyWorksWithAllCombinations() {
+        // Given
+        let customStrategy = URLEncodedFormEncoder.NilEncoding(
+            encodeNil: { "ENCODE_NULL" },
+            encodeIfPresent: { "IF_PRESENT_NULL" }
+        )
+        let encoder = URLEncodedFormEncoder(nilEncoding: customStrategy)
+
+        // When
+        let result = Result<String, any Error> { try encoder.encode(IntentionalNilTestStruct()) }
+
+        // Then
+        let expected = "encodeIfPresentNil=IF_PRESENT_NULL&encodeIfPresentValue=present&encodeNil=ENCODE_NULL&encodeValue=encoded"
+        XCTAssertEqual(result.success, expected)
+    }
+
+    func testThatSingleStrategyMaintainsBackwardCompatibility() {
+        // Given
+        let legacyStrategy = URLEncodedFormEncoder.NilEncoding { "legacy_null" }
+        let encoder = URLEncodedFormEncoder(nilEncoding: legacyStrategy)
+
+        // When
+        let result = Result<String, any Error> { try encoder.encode(IntentionalNilTestStruct()) }
+
+        // Then
+        let expected = "encodeIfPresentNil=legacy_null&encodeIfPresentValue=present&encodeNil=legacy_null&encodeValue=encoded"
+        XCTAssertEqual(result.success, expected)
+    }
+
+    func testThatIntentionalOnlyHandlesArraysWithNils() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .intentionalOnly)
+        let parameters = ["values": [nil, "a", nil, "b"] as [String?]]
+
+        // When
+        let result = Result<String, any Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "values%5B%5D=a&values%5B%5D=b&values%5B%5D=null&values%5B%5D=null")
+    }
+
+    func testThatIntentionalOnlyWorksWithNestedDictionary() {
+        // Given
+        let encoder = URLEncodedFormEncoder(nilEncoding: .intentionalOnly)
+        let nested: [String: String?] = ["key1": nil, "key2": "value"]
+        let parameters = ["nested": nested]
+
+        // When
+        let result = Result<String, any Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "nested%5Bkey1%5D=null&nested%5Bkey2%5D=value")
+    }
+
     func testThatSpacesCanBeEncodedAsPluses() {
         // Given
         let encoder = URLEncodedFormEncoder(spaceEncoding: .plusReplaced)
@@ -1244,5 +1321,24 @@ private struct FailingOptionalStruct: Encodable {
             var nested = container.nestedUnkeyedContainer(forKey: .a)
             try nested.encodeNil()
         }
+    }
+}
+
+private struct IntentionalNilTestStruct: Encodable {
+    let encodeNil: String? = nil
+    let encodeValue: String = "encoded"
+    let encodeIfPresentNil: String? = nil
+    let encodeIfPresentValue: String? = "present"
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(encodeNil, forKey: .encodeNil)
+        try container.encode(encodeValue, forKey: .encodeValue)
+        try container.encodeIfPresent(encodeIfPresentNil, forKey: .encodeIfPresentNil)
+        try container.encodeIfPresent(encodeIfPresentValue, forKey: .encodeIfPresentValue)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case encodeNil, encodeValue, encodeIfPresentNil, encodeIfPresentValue
     }
 }
