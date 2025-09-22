@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import os
 
 private protocol Lock: Sendable {
     func lock()
@@ -74,6 +75,20 @@ final class UnfairLock: Lock, @unchecked Sendable {
     }
 }
 
+/// An `OSAllocatedUnfairLock` wrapper for iOS 16+/macOS 13+.
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+final class AllocatedUnfairLock: Lock, @unchecked Sendable {
+    private let allocatedUnfairLock = OSAllocatedUnfairLock()
+
+    fileprivate func lock() {
+        allocatedUnfairLock.lock()
+    }
+
+    fileprivate func unlock() {
+        allocatedUnfairLock.unlock()
+    }
+}
+
 #elseif canImport(Foundation)
 extension NSLock: Lock {}
 #else
@@ -84,7 +99,13 @@ extension NSLock: Lock {}
 @dynamicMemberLookup
 final class Protected<Value> {
     #if canImport(Darwin)
-    private let lock = UnfairLock()
+    private let lock: any Lock = {
+        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
+            return AllocatedUnfairLock()
+        } else {
+            return UnfairLock()
+        }
+    }()
     #elseif canImport(Foundation)
     private let lock = NSLock()
     #else
