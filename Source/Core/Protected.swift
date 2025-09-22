@@ -77,7 +77,7 @@ final class UnfairLock: Lock, @unchecked Sendable {
 
 /// An `OSAllocatedUnfairLock` wrapper for iOS 16+/macOS 13+.
 @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
-final class AllocatedUnfairLock: Lock, @unchecked Sendable {
+final class AllocatedUnfairLock: Lock, Sendable {
     private let allocatedUnfairLock = OSAllocatedUnfairLock()
 
     fileprivate func lock() {
