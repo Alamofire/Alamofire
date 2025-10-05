@@ -50,6 +50,9 @@ extension Lock {
     }
 }
 
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *)
+extension OSAllocatedUnfairLock<Void>: Lock {}
+
 #if canImport(Darwin)
 // Number of Apple engineers who insisted on inspecting this: 5
 /// An `os_unfair_lock` wrapper.
@@ -75,20 +78,6 @@ final class UnfairLock: Lock, @unchecked Sendable {
     }
 }
 
-/// An `OSAllocatedUnfairLock` wrapper for iOS 16+/macOS 13+.
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
-final class AllocatedUnfairLock: Lock, Sendable {
-    private let allocatedUnfairLock = OSAllocatedUnfairLock()
-
-    fileprivate func lock() {
-        allocatedUnfairLock.lock()
-    }
-
-    fileprivate func unlock() {
-        allocatedUnfairLock.unlock()
-    }
-}
-
 #elseif canImport(Foundation)
 extension NSLock: Lock {}
 #else
@@ -100,10 +89,10 @@ extension NSLock: Lock {}
 final class Protected<Value> {
     #if canImport(Darwin)
     private let lock: any Lock = {
-        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
-            return AllocatedUnfairLock()
+        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, visionOS 1.0, *) {
+            OSAllocatedUnfairLock<Void>()
         } else {
-            return UnfairLock()
+            UnfairLock()
         }
     }()
     #elseif canImport(Foundation)
