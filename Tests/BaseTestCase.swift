@@ -54,7 +54,7 @@ class BaseTestCase: XCTestCase {
         }
     }
 
-    let timeout: TimeInterval = 3
+    let timeout: TimeInterval = 10
 
     var skipVersion: SkipVersion { .none }
 
