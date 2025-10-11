@@ -511,7 +511,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 
 // MARK: -
 
-//final class DownloadResumeDataTestCase: BaseTestCase {
+// final class DownloadResumeDataTestCase: BaseTestCase {
 //    @MainActor
 //    func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
 //        // Given
@@ -751,7 +751,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 //        XCTAssertEqual(response?.resumeData, receivedResumeData)
 //        XCTAssertEqual(download.resumeData, receivedResumeData)
 //    }
-//}
+// }
 
 // MARK: -
 

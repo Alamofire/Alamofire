@@ -793,8 +793,8 @@ final class WebSocketConcurrencyTests: BaseTestCase {
 }
 #endif
 
-//@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-//final class ClosureAPIConcurrencyTests: BaseTestCase {
+// @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+// final class ClosureAPIConcurrencyTests: BaseTestCase {
 //    func testThatDownloadProgressStreamReturnsProgress() async {
 //        // Given
 //        let session = stored(Session())
@@ -828,7 +828,7 @@ final class WebSocketConcurrencyTests: BaseTestCase {
 //        XCTAssertNotNil(values.descriptions.last, "descriptions should not be empty")
 //        XCTAssertTrue(values.response.result.isSuccess, "request should succeed")
 //    }
-//}
+// }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension AsyncSequence {
