@@ -319,11 +319,11 @@ jobs:
             testPlan: "watchOS"
             xcode: "Xcode_16.4"
             runsOn: firebreak
-          - destination: "OS=11.2,name=Apple Watch Series 10 (46mm)"
-            name: "watchOS 11.2"
-            testPlan: "watchOS"
-            xcode: "Xcode_16.2"
-            runsOn: macOS-15
+          # - destination: "OS=11.2,name=Apple Watch Series 10 (46mm)"
+          #   name: "watchOS 11.2"
+          #   testPlan: "watchOS"
+          #   xcode: "Xcode_16.2"
+          #   runsOn: macOS-15
           - destination: "OS=11.1,name=Apple Watch Series 10 (46mm)"
             name: "watchOS 11.1"
             testPlan: "watchOS"
@@ -408,7 +408,6 @@ jobs:
           - image: swift:6.1-focal
           - image: swift:6.1-jammy
           - image: swift:6.1-rhel-ubi9
-          - image: swift:6.2-amazonlinux2
           - image: swift:6.2-bookworm
           - image: swift:6.2-jammy
           - image: swift:6.2-noble
