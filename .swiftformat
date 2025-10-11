@@ -1,7 +1,8 @@
 # file options
 
 --symlinks ignore
---swiftversion 5.9
+--swiftversion 6.0
+--language-mode 5
 
 # format options
 
