@@ -1096,7 +1096,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertTrue(components?.contains("-X") == true)
         XCTAssertEqual(components?.last, "\"\(url)\"")
 
-        let acceptLanguageCount = components?.filter { $0.contains("Accept-Language") }.count
+        let acceptLanguageCount = components?.count(where: { $0.contains("Accept-Language") })
         XCTAssertEqual(acceptLanguageCount, 1, "command should contain a single Accept-Language header")
 
         XCTAssertNotNil(cURLDescription?.range(of: "-H \"Accept-Language: en-GB\""))
@@ -1236,7 +1236,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertTrue(components?.contains("-X") == true)
         XCTAssertEqual(components?.last, "\"\(url)\"")
 
-        let contentTypeCount = components?.filter { $0.contains("Content-Type") }.count
+        let contentTypeCount = components?.count(where: { $0.contains("Content-Type") })
         XCTAssertEqual(contentTypeCount, 1, "command should contain a single Content-Type header")
 
         XCTAssertNotNil(cURLDescription?.range(of: "-H \"Content-Type: multipart/form-data;"))
