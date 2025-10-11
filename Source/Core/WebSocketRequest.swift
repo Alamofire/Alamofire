@@ -377,7 +377,7 @@ import Foundation
         on queue: DispatchQueue = .main,
         handler: @escaping @Sendable (_ event: Event<Serializer.Output, Serializer.Failure>) -> Void
     ) -> Self where Serializer: WebSocketMessageSerializer, Serializer.Failure == any Error {
-        forIncomingEvent(on: queue) { incomingEvent in
+        forIncomingEvent(on: queue) { [unowned self] incomingEvent in
             let event: Event<Serializer.Output, Serializer.Failure>
             switch incomingEvent {
             case let .connected(`protocol`):
@@ -429,7 +429,7 @@ import Foundation
         on queue: DispatchQueue = .main,
         handler: @escaping @Sendable (_ event: Event<URLSessionWebSocketTask.Message, Never>) -> Void
     ) -> Self {
-        forIncomingEvent(on: queue) { incomingEvent in
+        forIncomingEvent(on: queue) { [unowned self] incomingEvent in
             let event: Event<URLSessionWebSocketTask.Message, Never> = switch incomingEvent {
             case let .connected(`protocol`):
                 .init(socket: self, kind: .connected(protocol: `protocol`))
@@ -458,8 +458,8 @@ import Foundation
 
     func forIncomingEvent(on queue: DispatchQueue, handler: @escaping @Sendable (IncomingEvent) -> Void) -> Self {
         socketMutableState.write { state in
-            state.handlers.append((queue: queue, handler: { incomingEvent in
-                self.serializationQueue.async {
+            state.handlers.append((queue: queue, handler: { [unowned self] incomingEvent in
+                serializationQueue.async {
                     handler(incomingEvent)
                 }
             }))
