@@ -366,7 +366,7 @@ final class SessionTestCase: BaseTestCase {
                 #else
                 return "macOS"
                 #endif
-                #elseif swift(>=5.9.2) && os(visionOS)
+                #elseif os(visionOS)
                 return "visionOS"
                 #elseif os(Linux)
                 return "Linux"
@@ -374,6 +374,8 @@ final class SessionTestCase: BaseTestCase {
                 return "Windows"
                 #elseif os(Android)
                 return "Android"
+                #elseif os(WASI)
+                return "WASI"
                 #else
                 return "Unknown"
                 #endif

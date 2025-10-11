@@ -526,9 +526,9 @@ extension WebSocketMessageSerializer {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 struct PassthroughWebSocketMessageDecoder: WebSocketMessageSerializer {
-    public typealias Failure = Never
+    typealias Failure = Never
 
-    public func decode(_ message: URLSessionWebSocketTask.Message) -> URLSessionWebSocketTask.Message {
+    func decode(_ message: URLSessionWebSocketTask.Message) -> URLSessionWebSocketTask.Message {
         message
     }
 }
