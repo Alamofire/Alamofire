@@ -408,8 +408,10 @@ jobs:
           - image: swift:6.1-focal
           - image: swift:6.1-jammy
           - image: swift:6.1-rhel-ubi9
-          - image: swift:6.2-focal
+          - image: swift:6.2-amazonlinux2
+          - image: swift:6.2-bookworm
           - image: swift:6.2-jammy
+          - image: swift:6.2-noble
           - image: swift:6.2-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
