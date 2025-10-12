@@ -164,20 +164,24 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request) didCancelTask: \(task)")
     }
 
-    public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, any Error>) {
+    public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {
         NSLog("%@", "Request: \(request), didParseResponse: \(response)")
     }
 
-    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, any Error>) {
+    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
         NSLog("%@", "Request: \(request), didParseResponse: \(response)")
     }
 
-    public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Data?, any Error>) {
-        NSLog("%@", "Request: \(request), didParseResponse: \(response)")
+    public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {
+        NSLog("%@", "Download: \(request), didParseResponse: \(response)")
     }
 
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, any Error>) {
-        NSLog("%@", "Request: \(request), didParseResponse: \(response)")
+    public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Data?, AFError>) {
+        NSLog("%@", "Download: \(request), didParseResponse: \(response)")
+    }
+
+    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
+        NSLog("%@", "Download: \(request), didParseResponse: \(response)")
     }
 
     public func requestIsRetrying(_ request: Request) {
