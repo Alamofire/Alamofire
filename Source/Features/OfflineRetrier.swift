@@ -22,6 +22,7 @@
 //  THE SOFTWARE.
 //
 
+#if canImport(Network)
 import Foundation
 import Network
 
@@ -65,7 +66,7 @@ public final class OfflineRetrier: RequestInterceptor, Sendable {
     ///   - monitor:        `NWPathMonitor()` to use to detect connectivity. A new instance is created each time a
     ///                     request fails and retry may be needed.
     ///   - maximumWait:    `DispatchTimeInterval` to wait for connectivity before
-    ///   - isOfflineError: Predicate closure used to determine whether a paricular `any Error` indicates connectivity
+    ///   - isOfflineError: Predicate closure used to determine whether a particular `any Error` indicates connectivity
     ///                     is offline. Returning `false` moves to the next retrier, if any.
     ///
     public init(monitor: @autoclosure @escaping () -> NWPathMonitor = NWPathMonitor(),
@@ -80,7 +81,7 @@ public final class OfflineRetrier: RequestInterceptor, Sendable {
     /// - Parameters:
     ///   - monitor:        `NWInterface.InterfaceType` used to configured the `NWPathMonitor` each time one is needed.
     ///   - maximumWait:    `DispatchTimeInterval` to wait for connectivity before
-    ///   - isOfflineError: Predicate closure used to determine whether a paricular `any Error` indicates connectivity
+    ///   - isOfflineError: Predicate closure used to determine whether a particular `any Error` indicates connectivity
     ///                     is offline. Returning `false` moves to the next retrier, if any.
     ///
     public convenience init(requiredInterfaceType: NWInterface.InterfaceType,
@@ -95,7 +96,7 @@ public final class OfflineRetrier: RequestInterceptor, Sendable {
     /// - Parameters:
     ///   - monitor:        `[NWInterface.InterfaceType]` used to configured the `NWPathMonitor` each time one is needed.
     ///   - maximumWait:    `DispatchTimeInterval` to wait for connectivity before
-    ///   - isOfflineError: Predicate closure used to determine whether a paricular `any Error` indicates connectivity
+    ///   - isOfflineError: Predicate closure used to determine whether a particular `any Error` indicates connectivity
     ///                     is offline. Returning `false` moves to the next retrier, if any.
     ///
     @available(macOS 11, iOS 14, tvOS 14, watchOS 7, visionOS 1, *)
@@ -278,3 +279,4 @@ extension PathMonitor {
         }
     }
 }
+#endif

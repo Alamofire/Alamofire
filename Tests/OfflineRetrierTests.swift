@@ -1,3 +1,4 @@
+#if canImport(Networking)
 import Dispatch
 import Testing
 
@@ -226,3 +227,4 @@ struct OfflineRetrierTests {
         #expect(didStop.value == false)
     }
 }
+#endif
