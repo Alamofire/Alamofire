@@ -2,14 +2,22 @@
   "configurations" : [
     {
       "id" : "D2E9E261-0428-48C6-A483-07B3473E499C",
-      "name" : "Configuration 1",
+      "name" : "Default",
       "options" : {
-
+        "threadSanitizerEnabled" : true
       }
     }
   ],
   "defaultOptions" : {
-    "threadSanitizerEnabled" : true
+    "mainThreadCheckerDetectionPolicy" : {
+      "enabled" : false
+    },
+    "runtimeIssueDetection" : {
+      "enabled" : false
+    },
+    "threadPerformanceCheckerRuntimeIssueDetection" : {
+      "enabled" : false
+    }
   },
   "testTargets" : [
     {

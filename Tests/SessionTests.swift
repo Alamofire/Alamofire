@@ -105,11 +105,11 @@ final class SessionTestCase: BaseTestCase {
 
         private let mutableState: Protected<MutableState>
 
-        var adaptCalledCount: Int { mutableState.adaptCalledCount }
-        var adaptedCount: Int { mutableState.adaptedCount }
-        var retryCalledCount: Int { mutableState.retryCalledCount }
-        var retryCount: Int { mutableState.retryCount }
-        var retryErrors: [any Error] { mutableState.retryErrors }
+        var adaptCalledCount: Int { mutableState.read(\.adaptCalledCount) }
+        var adaptedCount: Int { mutableState.read(\.adaptedCount) }
+        var retryCalledCount: Int { mutableState.read(\.retryCalledCount) }
+        var retryCount: Int { mutableState.read(\.retryCount) }
+        var retryErrors: [any Error] { mutableState.read(\.retryErrors) }
 
         init(adaptedCount: Int = 0,
              throwsErrorOnSecondAdapt: Bool = false,
@@ -202,11 +202,11 @@ final class SessionTestCase: BaseTestCase {
 
         private let mutableState = Protected(MutableState())
 
-        var adaptCalledCount: Int { mutableState.adaptCalledCount }
-        var adaptedCount: Int { mutableState.adaptedCount }
-        var retryCalledCount: Int { mutableState.retryCalledCount }
-        var retryCount: Int { mutableState.retryCount }
-        var retryErrors: [any Error] { mutableState.retryErrors }
+        var adaptCalledCount: Int { mutableState.read(\.adaptCalledCount) }
+        var adaptedCount: Int { mutableState.read(\.adaptedCount) }
+        var retryCalledCount: Int { mutableState.read(\.retryCalledCount) }
+        var retryCount: Int { mutableState.read(\.retryCount) }
+        var retryErrors: [any Error] { mutableState.read(\.retryErrors) }
 
         func adapt(_ urlRequest: URLRequest,
                    using state: RequestAdapterState,

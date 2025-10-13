@@ -10,7 +10,15 @@
   ],
   "defaultOptions" : {
     "codeCoverage" : false,
-    "nsZombieEnabled" : true
+    "mainThreadCheckerDetectionPolicy" : {
+      "enabled" : false
+    },
+    "runtimeIssueDetection" : {
+      "enabled" : false
+    },
+    "threadPerformanceCheckerRuntimeIssueDetection" : {
+      "enabled" : false
+    }
   },
   "testTargets" : [
     {

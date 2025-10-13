@@ -81,20 +81,6 @@ final class ProtectedWrapperTests: BaseTestCase {
         // Then
         XCTAssertNotEqual(value.read { $0 }, initialValue)
     }
-
-    func testThatDynamicMembersAreSetSafely() {
-        // Given
-        struct Mutable { var string = "value" }
-        let mutable = Protected<Mutable>(.init())
-
-        // When
-        DispatchQueue.concurrentPerform(iterations: 10_000) { i in
-            mutable.string = "\(i)"
-        }
-
-        // Then
-        XCTAssertNotEqual(mutable.string, "value")
-    }
 }
 
 final class ProtectedHighContentionTests: BaseTestCase {
@@ -228,9 +214,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
 
         for _ in 1...totalOperations {
             queue1.async {
-                // Reads the total string count in the string array
-                // Using the wrapped value (no $) instead of the wrapper itself triggers the thread sanitizer.
-                let result = self.stringContainer.totalStrings
+                let result = self.stringContainer.read(\.totalStrings)
 
                 self.stringContainerRead.write {
                     $0.results1.append(result)
@@ -246,8 +230,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
             }
 
             queue2.async {
-                // Reads the total string count in the string array
-                let result = self.stringContainer.read { $0.totalStrings }
+                let result = self.stringContainer.read(\.totalStrings)
 
                 self.stringContainerRead.write {
                     $0.results2.append(result)

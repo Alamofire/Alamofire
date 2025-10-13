@@ -100,7 +100,7 @@ public class Request: @unchecked Sendable {
         var urlSessionTaskHandler: (queue: DispatchQueue, handler: @Sendable (URLSessionTask) -> Void)?
         /// Response serialization closures that handle response parsing.
         var responseSerializers: [@Sendable () -> Void] = []
-        /// Response serialization completion closures executed once all response serializers are complete.
+        /// Response serialization completion closures for successful serializers, executed once all response serializers are complete.
         var responseSerializerCompletions: [@Sendable () -> Void] = []
         /// Whether response serializer processing is finished.
         var responseSerializerProcessingFinished = false
@@ -128,7 +128,7 @@ public class Request: @unchecked Sendable {
     let mutableState = Protected(MutableState())
 
     /// `State` of the `Request`.
-    public var state: State { mutableState.state }
+    public var state: State { mutableState.read(\.state) }
     /// Returns whether `state` is `.initialized`.
     public var isInitialized: Bool { state == .initialized }
     /// Returns whether `state` is `.resumed`.
@@ -151,38 +151,38 @@ public class Request: @unchecked Sendable {
     public let downloadProgress = Progress(totalUnitCount: 0)
     /// `ProgressHandler` called when `uploadProgress` is updated, on the provided `DispatchQueue`.
     public internal(set) var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
-        get { mutableState.uploadProgressHandler }
-        set { mutableState.uploadProgressHandler = newValue }
+        get { mutableState.read(\.uploadProgressHandler) }
+        set { mutableState.write { $0.uploadProgressHandler = newValue } }
     }
 
     /// `ProgressHandler` called when `downloadProgress` is updated, on the provided `DispatchQueue`.
     public internal(set) var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
-        get { mutableState.downloadProgressHandler }
-        set { mutableState.downloadProgressHandler = newValue }
+        get { mutableState.read(\.downloadProgressHandler) }
+        set { mutableState.write { $0.downloadProgressHandler = newValue } }
     }
 
     // MARK: Redirect Handling
 
     /// `RedirectHandler` set on the instance.
     public internal(set) var redirectHandler: (any RedirectHandler)? {
-        get { mutableState.redirectHandler }
-        set { mutableState.redirectHandler = newValue }
+        get { mutableState.read(\.redirectHandler) }
+        set { mutableState.write { $0.redirectHandler = newValue } }
     }
 
     // MARK: Cached Response Handling
 
     /// `CachedResponseHandler` set on the instance.
     public internal(set) var cachedResponseHandler: (any CachedResponseHandler)? {
-        get { mutableState.cachedResponseHandler }
-        set { mutableState.cachedResponseHandler = newValue }
+        get { mutableState.read(\.cachedResponseHandler) }
+        set { mutableState.write { $0.cachedResponseHandler = newValue } }
     }
 
     // MARK: URLCredential
 
     /// `URLCredential` used for authentication challenges. Created by calling one of the `authenticate` methods.
     public internal(set) var credential: URLCredential? {
-        get { mutableState.credential }
-        set { mutableState.credential = newValue }
+        get { mutableState.read(\.credential) }
+        set { mutableState.write { $0.credential = newValue } }
     }
 
     // MARK: Validators
@@ -193,7 +193,7 @@ public class Request: @unchecked Sendable {
     // MARK: URLRequests
 
     /// All `URLRequest`s created on behalf of the `Request`, including original and adapted requests.
-    public var requests: [URLRequest] { mutableState.requests }
+    public var requests: [URLRequest] { mutableState.read(\.requests) }
     /// First `URLRequest` created on behalf of the `Request`. May not be the first one actually executed.
     public var firstRequest: URLRequest? { requests.first }
     /// Last `URLRequest` created on behalf of the `Request`.
@@ -214,7 +214,7 @@ public class Request: @unchecked Sendable {
     // MARK: Tasks
 
     /// All `URLSessionTask`s created on behalf of the `Request`.
-    public var tasks: [URLSessionTask] { mutableState.tasks }
+    public var tasks: [URLSessionTask] { mutableState.read(\.tasks) }
     /// First `URLSessionTask` created on behalf of the `Request`.
     public var firstTask: URLSessionTask? { tasks.first }
     /// Last `URLSessionTask` created on behalf of the `Request`.
@@ -225,7 +225,7 @@ public class Request: @unchecked Sendable {
     // MARK: Metrics
 
     /// All `URLSessionTaskMetrics` gathered on behalf of the `Request`. Should correspond to the `tasks` created.
-    public var allMetrics: [URLSessionTaskMetrics] { mutableState.metrics }
+    public var allMetrics: [URLSessionTaskMetrics] { mutableState.read(\.metrics) }
     /// First `URLSessionTaskMetrics` gathered on behalf of the `Request`.
     public var firstMetrics: URLSessionTaskMetrics? { allMetrics.first }
     /// Last `URLSessionTaskMetrics` gathered on behalf of the `Request`.
@@ -236,14 +236,14 @@ public class Request: @unchecked Sendable {
     // MARK: Retry Count
 
     /// Number of times the `Request` has been retried.
-    public var retryCount: Int { mutableState.retryCount }
+    public var retryCount: Int { mutableState.read(\.retryCount) }
 
     // MARK: Error
 
     /// `Error` returned from Alamofire internally, from the network request directly, or any validators executed.
     public internal(set) var error: AFError? {
-        get { mutableState.error }
-        set { mutableState.error = newValue }
+        get { mutableState.read(\.error) }
+        set { mutableState.write { $0.error = newValue } }
     }
 
     /// Default initializer for the `Request` superclass.
@@ -468,9 +468,9 @@ public class Request: @unchecked Sendable {
     func didCompleteTask(_ task: URLSessionTask, with error: AFError?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        self.error = self.error ?? error
+        mutableState.write { $0.error = $0.error ?? error }
 
-        let validators = validators.read { $0 }
+        let validators = validators.read(\.self)
         validators.forEach { $0() }
 
         eventMonitor?.request(self, didCompleteTask: task, with: error)
@@ -516,11 +516,17 @@ public class Request: @unchecked Sendable {
     func finish(error: AFError? = nil) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        guard !mutableState.isFinishing else { return }
+        let shouldStartResponseSerializers = mutableState.write { mutableState in
+            guard !mutableState.isFinishing else { return false }
 
-        mutableState.isFinishing = true
+            mutableState.isFinishing = true
 
-        if let error { self.error = error }
+            if let error { mutableState.error = error }
+
+            return true
+        }
+
+        guard shouldStartResponseSerializers else { return }
 
         // Start response handlers
         processNextResponseSerializer()
@@ -541,6 +547,7 @@ public class Request: @unchecked Sendable {
                 mutableState.state = .resumed
             }
 
+            // If serializers have already been processed, execute the added serializer immediately.
             if mutableState.responseSerializerProcessingFinished {
                 underlyingQueue.async { self.processNextResponseSerializer() }
             }
@@ -551,32 +558,17 @@ public class Request: @unchecked Sendable {
         }
     }
 
-    /// Returns the next response serializer closure to execute if there's one left.
-    ///
-    /// - Returns: The next response serialization closure, if there is one.
-    func nextResponseSerializer() -> (@Sendable () -> Void)? {
-        var responseSerializer: (@Sendable () -> Void)?
-
-        mutableState.write { mutableState in
-            let responseSerializerIndex = mutableState.responseSerializerCompletions.count
-
-            if responseSerializerIndex < mutableState.responseSerializers.count {
-                responseSerializer = mutableState.responseSerializers[responseSerializerIndex]
-            }
-        }
-
-        return responseSerializer
-    }
-
     /// Processes the next response serializer and calls all completions if response serialization is complete.
     func processNextResponseSerializer() {
-        guard let responseSerializer = nextResponseSerializer() else {
-            // Execute all response serializer completions and clear them
-            var completions: [@Sendable () -> Void] = []
+        let executeOutside: () -> Void = mutableState.write { mutableState in
+            let responseSerializerIndex = mutableState.responseSerializerCompletions.count
+            let isAvailableSerializer = responseSerializerIndex < mutableState.responseSerializers.count
+            let responseSerializer = isAvailableSerializer ? mutableState.responseSerializers[responseSerializerIndex] : nil
 
-            mutableState.write { mutableState in
-                completions = mutableState.responseSerializerCompletions
-
+            if let responseSerializer {
+                return { self.serializationQueue.async { responseSerializer() } }
+            } else {
+                let completions = mutableState.responseSerializerCompletions
                 // Clear out all response serializers and response serializer completions in mutable state since the
                 // request is complete. It's important to do this prior to calling the completion closures in case
                 // the completions call back into the request triggering a re-processing of the response serializers.
@@ -590,17 +582,17 @@ public class Request: @unchecked Sendable {
 
                 mutableState.responseSerializerProcessingFinished = true
                 mutableState.isFinishing = false
+
+                return {
+                    completions.forEach { $0() }
+
+                    // Cleanup the request outside the lock
+                    self.cleanup()
+                }
             }
-
-            completions.forEach { $0() }
-
-            // Cleanup the request
-            cleanup()
-
-            return
         }
 
-        serializationQueue.async { responseSerializer() }
+        executeOutside()
     }
 
     /// Notifies the `Request` that the response serializer is complete.
@@ -614,16 +606,15 @@ public class Request: @unchecked Sendable {
 
     /// Resets all task and response serializer related state for retry.
     func reset() {
-        error = nil
-
         uploadProgress.totalUnitCount = 0
         uploadProgress.completedUnitCount = 0
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
 
-        mutableState.write { state in
-            state.isFinishing = false
-            state.responseSerializerCompletions = []
+        mutableState.write { mutableState in
+            mutableState.error = nil
+            mutableState.isFinishing = false
+            mutableState.responseSerializerCompletions = []
         }
     }
 
@@ -757,7 +748,7 @@ public class Request: @unchecked Sendable {
     /// - Returns:              The instance.
     @discardableResult
     public func authenticate(with credential: URLCredential) -> Self {
-        mutableState.credential = credential
+        self.credential = credential
 
         return self
     }
@@ -774,7 +765,7 @@ public class Request: @unchecked Sendable {
     @preconcurrency
     @discardableResult
     public func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
-        mutableState.downloadProgressHandler = (handler: closure, queue: queue)
+        downloadProgressHandler = (handler: closure, queue: queue)
 
         return self
     }
@@ -791,7 +782,7 @@ public class Request: @unchecked Sendable {
     @preconcurrency
     @discardableResult
     public func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
-        mutableState.uploadProgressHandler = (handler: closure, queue: queue)
+        uploadProgressHandler = (handler: closure, queue: queue)
 
         return self
     }
@@ -846,7 +837,7 @@ public class Request: @unchecked Sendable {
     ///   - queue:   `DispatchQueue` on which `handler` will be called.
     ///   - handler: Closure to be called when the cURL description is available.
     ///
-    /// - Returns:           The instance.
+    /// - Returns:   The instance.
     @preconcurrency
     @discardableResult
     public func cURLDescription(on queue: DispatchQueue, calling handler: @escaping @Sendable (String) -> Void) -> Self {
@@ -931,20 +922,28 @@ public class Request: @unchecked Sendable {
     ///
     /// - Parameter closure: Closure to be called when the request finishes.
     func onFinish(perform finishHandler: @escaping () -> Void) {
-        guard !isFinished else { finishHandler(); return }
+        let shouldImmediatelyExecute = mutableState.write { mutableState in
+            if mutableState.state == .finished {
+                return true
+            } else {
+                mutableState.finishHandlers.append(finishHandler)
+                return false
+            }
+        }
 
-        mutableState.write { state in
-            state.finishHandlers.append(finishHandler)
+        if shouldImmediatelyExecute {
+            finishHandler()
         }
     }
 
     /// Final cleanup step executed when the instance finishes response serialization.
     func cleanup() {
-        let handlers = mutableState.finishHandlers
-        handlers.forEach { $0() }
-        mutableState.write { state in
-            state.finishHandlers.removeAll()
+        let finishHandlers = mutableState.write { mutableState in
+            let handlers = mutableState.finishHandlers
+            mutableState.finishHandlers.removeAll()
+            return handlers
         }
+        finishHandlers.forEach { $0() }
 
         delegate?.cleanup(after: self)
     }

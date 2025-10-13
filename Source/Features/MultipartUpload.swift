@@ -55,7 +55,7 @@ final class MultipartUpload: @unchecked Sendable { // Must be @unchecked due to 
 
     func build() throws -> UploadRequest.Uploadable {
         let uploadable: UploadRequest.Uploadable
-        if multipartFormData.contentLength < encodingMemoryThreshold {
+        if multipartFormData.read(\.contentLength) < encodingMemoryThreshold {
             let data = try multipartFormData.read { try $0.encode() }
 
             uploadable = .data(data)

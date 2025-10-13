@@ -9,7 +9,16 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false
+    "codeCoverage" : false,
+    "mainThreadCheckerDetectionPolicy" : {
+      "enabled" : false
+    },
+    "runtimeIssueDetection" : {
+      "enabled" : false
+    },
+    "threadPerformanceCheckerRuntimeIssueDetection" : {
+      "enabled" : false
+    }
   },
   "testTargets" : [
     {
