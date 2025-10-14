@@ -698,7 +698,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isSuccess)
-        XCTAssertNotNil(result.success)
+        XCTAssertEqual(result.success, Empty.value)
         XCTAssertNil(result.failure)
     }
 
@@ -713,7 +713,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isSuccess)
-        XCTAssertNotNil(result.success)
+        XCTAssertEqual(result.success, Empty.value)
         XCTAssertNil(result.failure)
     }
 
@@ -728,7 +728,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isSuccess)
-        XCTAssertNotNil(result.success)
+        XCTAssertEqual(result.success, Empty.value)
         XCTAssertNil(result.failure)
     }
 
@@ -743,7 +743,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isSuccess)
-        XCTAssertNotNil(result.success)
+        XCTAssertEqual(result.success, Empty.value)
         XCTAssertNil(result.failure)
     }
 
