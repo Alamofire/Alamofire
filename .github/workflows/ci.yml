@@ -31,6 +31,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_26.1"
+            runsOn: macos-26
+            name: "macOS 26, Xcode 26.1, Swift 6.2.1"
+            testPlan: "macOS"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_26.0"
             runsOn: macos-26
             name: "macOS 26, Xcode 26.0, Swift 6.2.0"
