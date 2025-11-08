@@ -28,14 +28,14 @@ import Network
 
 /// `RequestRetrier` which uses `NWPathMonitor` to detect when connectivity is restored to retry failed requests.
 @available(macOS 10.14, iOS 12, tvOS 12, watchOS 5, visionOS 1, *)
-public final class OfflineRetrier: RequestInterceptor, Sendable {
+public final class OfflineRetrier: RequestAdapter, RequestRetrier, RequestInterceptor, Sendable {
     /// Default amount of time to wait for connectivity to be restored before failure. `.seconds(5)` by default.
     public static let defaultWait: DispatchTimeInterval = .seconds(5)
-    /// Default `Set<URLError.Code>` used to check for offline errors.
+    /// Default `Set<URLError.Code>` used to check for offline errors. `[.notConnectedToInternet]` by default.
     public static let defaultURLErrorOfflineCodes: Set<URLError.Code> = [
         .notConnectedToInternet
     ]
-    /// Default method of detecting whether a paricular `any Error` means connectivity is offline.
+    /// Default method of detecting whether a particular `any Error` means connectivity is offline.
     public static let defaultIsOfflineError: @Sendable (_ error: any Error) -> Bool = { error in
         if let error = error.asAFError?.underlyingError {
             defaultIsOfflineError(error)
