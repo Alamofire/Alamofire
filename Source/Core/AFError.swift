@@ -372,10 +372,73 @@ extension AFError {
         return url
     }
 
-    /// The `URL` associated with the error.
+    /// Helper method to extract URL from an error if it's URLError or AFError
+    private func extractURL(from error: (any Error)?) -> URL? {
+        guard let error = error else { return nil }
+        
+        if let urlError = error as? URLError {
+            return urlError.failingURL
+        }
+        if let afError = error as? AFError {
+            return afError.url
+        }
+        return nil
+    }
+    
+    /// The `URL` associated with the error, if available.
+    ///
+    /// Extracts URL information from error contexts where applicable. Due to Alamofire's architecture,
+    /// errors don't automatically include request URLs.
+    ///
+    /// **URL extraction by error type:**
+    /// - **Nested reason errors**: `.multipartEncodingFailed`, `.responseValidationFailed`, `.responseSerializationFailed` delegate to their reason's URL
+    /// - **InvalidURL errors**: Use `.urlConvertible` for original input instead
+    /// - **Network errors**: `.sessionTaskFailed`, `.sessionInvalidated`, `.requestAdaptationFailed`, `.requestRetryFailed` extract from underlying `URLError`
+    /// - **Creation/encoding/lifecycle errors**: Return `nil` - use `response.request?.url` for request URL
+    ///
+    /// - Returns: The associated URL, or `nil` if not available.
     public var url: URL? {
-        guard case let .multipartEncodingFailed(reason) = self else { return nil }
-        return reason.url
+        switch self {
+        // Errors that delegate to nested reason's URL extraction
+        case let .multipartEncodingFailed(reason):
+            return reason.url
+        case let .responseValidationFailed(reason):
+            return reason.url
+        case let .responseSerializationFailed(reason):
+            return reason.url
+            
+        // Errors that directly contain URLs
+        case .invalidURL:
+            // Use .urlConvertible for the original input
+            return nil
+            
+        // Errors that may contain URLError from underlying error
+        case let .sessionTaskFailed(error):
+            return extractURL(from: error)
+        case let .sessionInvalidated(error):
+            return extractURL(from: error)
+        case let .requestAdaptationFailed(error):
+            return extractURL(from: error)
+        case let .requestRetryFailed(retryError, originalError):
+            return extractURL(from: originalError) ?? extractURL(from: retryError)
+            
+        // Errors that don't contain URL information
+        case .downloadedFileMoveFailed:
+            return nil
+        case .createURLRequestFailed,
+             .createUploadableFailed,
+             .parameterEncodingFailed,
+             .parameterEncoderFailed:
+            return nil
+        #if canImport(Security)
+        case .serverTrustEvaluationFailed:
+            return nil
+        #endif
+        case .explicitlyCancelled,
+             .sessionDeinitialized,
+             .urlRequestValidationFailed:
+            return nil
+        }
     }
 
     /// The underlying `Error` responsible for generating the failure associated with `.sessionInvalidated`,
@@ -529,6 +592,26 @@ extension AFError.MultipartEncodingFailureReason {
 }
 
 extension AFError.ResponseValidationFailureReason {
+    var url: URL? {
+        switch self {
+        case let .dataFileReadFailed(at: url):
+            return url
+        case let .customValidationFailed(error):
+            if let urlError = error as? URLError {
+                return urlError.failingURL
+            }
+            if let afError = error as? AFError {
+                return afError.url
+            }
+            return nil
+        case .dataFileNil,
+             .missingContentType,
+             .unacceptableContentType,
+             .unacceptableStatusCode:
+            return nil
+        }
+    }
+    
     var acceptableContentTypes: [String]? {
         switch self {
         case let .missingContentType(types),
@@ -583,6 +666,30 @@ extension AFError.ResponseValidationFailureReason {
 }
 
 extension AFError.ResponseSerializationFailureReason {
+    var url: URL? {
+        switch self {
+        case let .inputFileReadFailed(at: url):
+            return url
+        case let .customSerializationFailed(error):
+            if let urlError = error as? URLError {
+                return urlError.failingURL
+            }
+            if let afError = error as? AFError {
+                return afError.url
+            }
+            return nil
+        case .inputDataNilOrZeroLength,
+             .inputFileNil,
+             .stringSerializationFailed,
+             .jsonSerializationFailed,
+             .decodingFailed,
+             .invalidEmptyResponse:
+            // These serialization failures are data/format related, not URL-related
+            // URL should be obtained from DataResponse.request?.url
+            return nil
+        }
+    }
+    
     var failedStringEncoding: String.Encoding? {
         switch self {
         case let .stringSerializationFailed(encoding):

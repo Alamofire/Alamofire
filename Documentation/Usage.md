@@ -628,6 +628,31 @@ AF.request("https://httpbin.org/get").responseDecodable(of: DecodableType.self, 
 }
 ```
 
+#### Extracting URLs from `AFError`
+
+When a request fails, `AFError` instances may contain URL information that can be useful for debugging or error tracking. The `url` property attempts to extract URL information from various error types:
+
+```swift
+AF.request("https://invalid-url.example").responseData { response in
+    switch response.result {
+    case .success:
+        // Handle success
+        break
+    case let .failure(error):
+        if let failingURL = error.url {
+            print("Request failed for URL: \(failingURL)")
+        }
+        
+        // For .invalidURL errors, use .urlConvertible for the original input
+        if case .invalidURL = error, let original = error.urlConvertible {
+            print("Invalid URL input: \(original)")
+        }
+    }
+}
+```
+
+Not all `AFError` types contain URL information. Due to Alamofire's architecture, errors don't automatically include the request URL. The `url` property extracts URLs from underlying errors (like `URLError`) or error-specific contexts (like file URLs in multipart failures). For errors without URL context, use `response.request?.url` to access the original request URL.
+
 ### Response Caching
 
 Response caching is handled on the system framework level by [`URLCache`](https://developer.apple.com/reference/foundation/urlcache). It provides a composite in-memory and on-disk cache and lets you manipulate the sizes of both the in-memory and on-disk portions.
