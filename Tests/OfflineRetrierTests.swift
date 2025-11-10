@@ -1,4 +1,4 @@
-#if canImport(Networking)
+#if canImport(Network)
 import Dispatch
 import Testing
 
@@ -7,7 +7,6 @@ import Testing
 @Suite("OfflineRetrierTests")
 struct OfflineRetrierTests {
     @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, visionOS 1, *)
     func requestIsRetriedWhenConnectivityIsRestored() async throws {
         // Given
         let didStop = Protected(false)
@@ -34,7 +33,6 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, visionOS 1, *)
     func requestIsNotRetriedWhenTheErrorIsNotOfflineError() async throws {
         // Given
         let didStop = Protected(false)
@@ -61,7 +59,6 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, visionOS 1, *)
     func requestIsNotRetriedWhenPathTimesOut() async throws {
         // Given
         let didStop = Protected(false)
@@ -91,7 +88,6 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, visionOS 1, *)
     func sessionWideRetrierCanRetryMultipleRequests() async throws {
         // Given
         let didStop = Protected(false)
@@ -125,7 +121,6 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, visionOS 1, *)
     func sessionWideRetrierCanRetryMultipleRequestsTwice() async throws {
         // Given
         let didStop = Protected(false)
@@ -171,7 +166,6 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, visionOS 1, *)
     func sessionWideRetrierCanTimeOutMultipleRequests() async throws {
         // Given
         let didStop = Protected(false)
@@ -205,7 +199,6 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, visionOS 1, *)
     func offlineRetrierNeverStartsOrStopsWhenImmediatelyDeinited() async throws {
         // Given
         let didStart = Protected(false)
