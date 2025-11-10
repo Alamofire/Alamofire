@@ -225,6 +225,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
     let queue = DispatchQueue(label: "org.alamofire.authentication.inspector")
 
     private let mutableState: Protected<MutableState>
+    private let shouldExcludeErrorFromRefreshWindow: (@Sendable (any Error) -> Bool)?
 
     // MARK: Initialization
 
@@ -237,10 +238,13 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
     ///   - authenticator: The `Authenticator` type.
     ///   - credential:    The `Credential` if it exists. `nil` by default.
     ///   - refreshWindow: The `RefreshWindow` used to identify excessive refresh calls. `RefreshWindow()` by default.
+    ///   - shouldExcludeErrorFromRefreshWindow: Optional closure to determine if an `Error` should be excluded from refresh window counting. Returns `true` if the error should NOT count towards the limit. `nil` by default (all errors count).
     public init(authenticator: AuthenticatorType,
                 credential: Credential? = nil,
-                refreshWindow: RefreshWindow? = RefreshWindow()) {
+                refreshWindow: RefreshWindow? = RefreshWindow(),
+                shouldExcludeErrorFromRefreshWindow: (@Sendable (any Error) -> Bool)? = nil) {
         self.authenticator = authenticator
+        self.shouldExcludeErrorFromRefreshWindow = shouldExcludeErrorFromRefreshWindow
         mutableState = Protected(MutableState(credential: credential, refreshWindow: refreshWindow))
     }
 
@@ -385,6 +389,10 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
     }
 
     private func handleRefreshFailure(_ error: any Error, insideLock mutableState: inout MutableState) {
+        if let shouldExclude = shouldExcludeErrorFromRefreshWindow, shouldExclude(error) {
+            _ = mutableState.refreshTimestamps.popLast()
+        }
+        
         let adaptOperations = mutableState.adaptOperations
         let requestsToRetry = mutableState.requestsToRetry
 

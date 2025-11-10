@@ -52,6 +52,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
     enum TestAuthError: Error {
         case refreshNetworkFailure
+        case refreshServerError
     }
 
     final class TestAuthenticator: Authenticator {
@@ -59,14 +60,19 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         private(set) var refreshCount = 0
         private(set) var didRequestFailDueToAuthErrorCount = 0
         private(set) var isRequestAuthenticatedWithCredentialCount = 0
+        private(set) var excludedErrorCount = 0
 
         let shouldRefreshAsynchronously: Bool
         let refreshResult: Result<TestCredential, any Error>?
+        private var refreshResults: [Result<TestCredential, any Error>]
         let lock = NSLock()
 
-        init(shouldRefreshAsynchronously: Bool = true, refreshResult: Result<TestCredential, any Error>? = nil) {
+        init(shouldRefreshAsynchronously: Bool = true,
+             refreshResult: Result<TestCredential, any Error>? = nil,
+             refreshResults: [Result<TestCredential, any Error>]? = nil) {
             self.shouldRefreshAsynchronously = shouldRefreshAsynchronously
             self.refreshResult = refreshResult
+            self.refreshResults = refreshResults ?? []
         }
 
         func apply(_ credential: TestCredential, to urlRequest: inout URLRequest) {
@@ -84,12 +90,17 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
             refreshCount += 1
 
-            let result = refreshResult ?? .success(
-                TestCredential(accessToken: "a\(refreshCount)",
-                               refreshToken: "a\(refreshCount)",
-                               userID: "u1",
-                               expiration: Date())
-            )
+            let result: Result<TestCredential, any Error>
+            if !refreshResults.isEmpty {
+                result = refreshResults.removeFirst()
+            } else {
+                result = refreshResult ?? .success(
+                    TestCredential(accessToken: "a\(refreshCount)",
+                                   refreshToken: "a\(refreshCount)",
+                                   userID: "u1",
+                                   expiration: Date())
+                )
+            }
 
             if shouldRefreshAsynchronously {
                 // The 10 ms delay here is important to allow multiple requests to queue up while refreshing.
@@ -118,6 +129,11 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
             isRequestAuthenticatedWithCredentialCount += 1
 
             return urlRequest.headers["Authorization"] == credential.accessToken
+        }
+
+        func incrementExcludedErrorCount() {
+            lock.lock(); defer { lock.unlock() }
+            excludedErrorCount += 1
         }
     }
 
@@ -706,4 +722,208 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 //
 //        XCTAssertEqual(request.retryCount, 2)
 //    }
+
+    // MARK: - Tests - Error Filtering
+
+    @MainActor
+    func testThatInterceptorExcludesSpecificErrorsFromRefreshWindow() {
+        // Given
+        let credential = TestCredential()
+        let refreshResults: [Result<TestCredential, any Error>] = [
+            .failure(TestAuthError.refreshNetworkFailure),  // excluded
+            .failure(TestAuthError.refreshNetworkFailure),  // excluded
+            .failure(TestAuthError.refreshNetworkFailure),  // excluded
+            .success(TestCredential(accessToken: "aSuccess", refreshToken: "rSuccess", userID: "uSuccess", expiration: Date()))
+        ]
+        let authenticator = TestAuthenticator(refreshResults: refreshResults)
+        let interceptor = AuthenticationInterceptor(
+            authenticator: authenticator,
+            credential: credential,
+            refreshWindow: .init(interval: 30, maximumAttempts: 2),  // Only allow 2 counted attempts
+            shouldExcludeErrorFromRefreshWindow: { error in
+                let shouldExclude = (error as? TestAuthError) == .refreshNetworkFailure
+                if shouldExclude {
+                    authenticator.incrementExcludedErrorCount()
+                }
+                return shouldExclude
+            }
+        )
+        let pathAdapter = PathAdapter(paths: ["/status/401",
+                                              "/status/401",
+                                              "/status/401",
+                                              "/status/401",
+                                              "/status/200"])
+        let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
+
+        let session = Session()
+        let expect = expectation(description: "requests should complete")
+
+        var finalResponse: AFDataResponse<Data?>?
+        // When - Execute requests sequentially using helper method
+        executeSequentialRequests(
+            session: session,
+            interceptor: compositeInterceptor,
+            endpoints: [.default, .default, .default, .default]
+        ) { allResponses in
+            finalResponse = allResponses.last!
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(finalResponse?.request?.headers["Authorization"], "aSuccess")
+        XCTAssertEqual(finalResponse?.result.isSuccess, true)
+        XCTAssertEqual(authenticator.applyCount, 5)
+        XCTAssertEqual(authenticator.refreshCount, 4)
+        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 4)
+        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 4)
+        XCTAssertEqual(authenticator.excludedErrorCount, 3)
+    }
+
+    @MainActor
+    func testThatInterceptorSucceedsWhenPartialExclusionAndCountedBelowLimit() {
+        // Given
+        let credential = TestCredential()
+        let refreshResults: [Result<TestCredential, any Error>] = [
+            .failure(TestAuthError.refreshNetworkFailure),  // excluded
+            .failure(TestAuthError.refreshServerError),  // counted
+            .success(TestCredential(accessToken: "aSuccess", refreshToken: "rSuccess", userID: "uSuccess", expiration: Date()))
+        ]
+        let authenticator = TestAuthenticator(refreshResults: refreshResults)
+        let interceptor = AuthenticationInterceptor(
+            authenticator: authenticator,
+            credential: credential,
+            refreshWindow: .init(interval: 30, maximumAttempts: 2),  // Allow 2 counted attempts
+            shouldExcludeErrorFromRefreshWindow: { error in
+                let shouldExclude = (error as? TestAuthError) == .refreshNetworkFailure
+                if shouldExclude {
+                    authenticator.incrementExcludedErrorCount()
+                }
+                return shouldExclude
+            }
+        )
+        let pathAdapter = PathAdapter(paths: ["/status/401",
+                                              "/status/401",
+                                              "/status/401",
+                                              "/status/200"])
+        let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
+
+        let session = Session()
+        let expect = expectation(description: "requests should complete")
+
+        var finalResponse: AFDataResponse<Data?>?
+        // When - Execute requests sequentially using helper method
+        executeSequentialRequests(
+            session: session,
+            interceptor: compositeInterceptor,
+            endpoints: [.default, .default, .default]
+        ) { allResponses in
+            finalResponse = allResponses.last!
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(finalResponse?.request?.headers["Authorization"], "aSuccess")
+        XCTAssertEqual(finalResponse?.result.isSuccess, true)
+        XCTAssertEqual(authenticator.applyCount, 4)
+        XCTAssertEqual(authenticator.refreshCount, 3)
+        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 3)
+        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 3)
+        XCTAssertEqual(authenticator.excludedErrorCount, 1)
+    }
+
+    @MainActor
+    func testThatInterceptorTriggersExcessiveRefreshWhenCountedErrorsReachLimitDespiteExclusions() {
+        // Given
+        let credential = TestCredential()
+        let refreshResults: [Result<TestCredential, any Error>] = [
+            .failure(TestAuthError.refreshServerError),  // counted
+            .failure(TestAuthError.refreshNetworkFailure),  // excluded
+            .failure(TestAuthError.refreshServerError),  // counted
+        ]
+        let authenticator = TestAuthenticator(refreshResults: refreshResults)
+        let interceptor = AuthenticationInterceptor(
+            authenticator: authenticator,
+            credential: credential,
+            refreshWindow: .init(interval: 30, maximumAttempts: 2),  // Only allow 2 counted attempts
+            shouldExcludeErrorFromRefreshWindow: { error in
+                let shouldExclude = (error as? TestAuthError) == .refreshNetworkFailure
+                if shouldExclude {
+                    authenticator.incrementExcludedErrorCount()
+                }
+                return shouldExclude
+            }
+        )
+        let pathAdapter = PathAdapter(paths: ["/status/401",
+                                              "/status/401",
+                                              "/status/401",
+                                              "/status/401"])
+        let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
+
+        let session = Session()
+        let expect = expectation(description: "requests should complete")
+
+        var finalResponse: AFDataResponse<Data?>?
+        // When - Execute requests sequentially using helper method
+        executeSequentialRequests(
+            session: session,
+            interceptor: compositeInterceptor,
+            endpoints: [.default, .default, .default, .default]
+        ) { allResponses in
+            finalResponse = allResponses.last!
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(finalResponse?.request?.headers["Authorization"], "a0")
+        XCTAssertEqual(finalResponse?.result.isFailure, true)
+        XCTAssertEqual(finalResponse?.result.failure?.asAFError?.isRequestRetryError, true)
+        XCTAssertEqual(finalResponse?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
+
+        if case let .requestRetryFailed(_, originalError) = finalResponse?.result.failure {
+            XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
+            XCTAssertEqual(originalError.asAFError?.responseCode, 401)
+        }
+
+        XCTAssertEqual(authenticator.applyCount, 4)
+        XCTAssertEqual(authenticator.refreshCount, 3)
+        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 4)
+        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 4)
+        XCTAssertEqual(authenticator.excludedErrorCount, 1)
+    }
+
+    // MARK: Error Filtering Helper Methods
+
+    private func executeSequentialRequests(
+        session: Session,
+        interceptor: Interceptor? = nil,
+        endpoints: [Endpoint],
+        completion: @escaping ([AFDataResponse<Data?>]) -> Void
+    ) {
+        var requestCount = 0
+        let totalRequests = endpoints.count
+        var allResponses: [AFDataResponse<Data?>] = []
+
+        func executeNextRequest() {
+            requestCount += 1
+            let endpoint = endpoints[requestCount - 1]
+
+            session.request(endpoint, interceptor: interceptor)
+                .validate()
+                .response { [requestCount] response in
+                    allResponses.append(response)
+                    if requestCount == totalRequests {
+                        completion(allResponses)
+                    } else {
+                        // Wait a bit to ensure the previous request is fully processed
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            executeNextRequest()
+                        }
+                    }
+                }
+        }
+        executeNextRequest()
+    }
 }
