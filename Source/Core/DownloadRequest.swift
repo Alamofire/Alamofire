@@ -256,6 +256,40 @@ public final class DownloadRequest: Request, @unchecked Sendable {
         cancel(optionallyProducingResumeData: completionHandler)
     }
 
+    /// Cancels the instance while producing structured resume data. Once cancelled, a `DownloadRequest` can no longer be resumed
+    /// or suspended.
+    ///
+    /// This method provides a structured `ResumeData` object that allows safe modification of URLs and other properties
+    /// before resuming the download.
+    ///
+    /// - Note: The resume data passed to the completion handler will also be available on the instance's `resumeData`
+    ///         property.
+    ///
+    /// - Parameter completionHandler: The completion handler that is called when the download has been successfully
+    ///                                cancelled. It receives a `Result` containing either a structured `ResumeData`
+    ///                                or an error if parsing fails. It is not guaranteed to be called on a particular
+    ///                                queue, so you may want use an appropriate queue to perform your work.
+    ///
+    /// - Returns:                     The instance.
+    @preconcurrency
+    @discardableResult
+    public func cancel(byProducingStructuredResumeData completionHandler: @escaping @Sendable (Result<ResumeData?, ResumeData.ResumeDataError>) -> Void) -> Self {
+        cancel(optionallyProducingResumeData: { data in
+            if let data = data {
+                do {
+                    let resumeData = try ResumeData(from: data)
+                    completionHandler(.success(resumeData))
+                } catch let error as ResumeData.ResumeDataError {
+                    completionHandler(.failure(error))
+                } catch {
+                    completionHandler(.failure(.parsingFailed(underlying: error)))
+                }
+            } else {
+                completionHandler(.success(nil))
+            }
+        })
+    }
+
     /// Internal implementation of cancellation that optionally takes a resume data handler. If no handler is passed,
     /// cancellation is performed without producing resume data.
     ///
