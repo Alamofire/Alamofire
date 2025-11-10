@@ -166,7 +166,7 @@ open class MultipartFormData {
     /// `fileURL`. The `Content-Type` header MIME type is derived by mapping the file extension of the `fileURL` to its
     /// system-associated MIME type.
     ///
-    /// If the `fileURL`’s path does not contain a file extension, this method now attempts to extract an extension from the
+    /// If the `fileURL` does not contain a file extension, this method attempts to extract the extension from the
     /// provided `name` parameter instead. This allows uploading files stored without an extension when a filename with a
     /// valid extension is available in the request context.
     ///

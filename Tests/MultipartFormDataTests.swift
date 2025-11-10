@@ -83,6 +83,86 @@ class MultipartFormDataPropertiesTestCase: BaseTestCase {
         let expectedContentLength = UInt64(data1.count + data2.count)
         XCTAssertEqual(multipartFormData.contentLength, expectedContentLength, "content length should match expected value")
     }
+    
+    func testAppendFileURL_UsesURLExtensionWhenAvailable() {
+        // Given
+        let multipartFormData = MultipartFormData()
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try! FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        let fileURL = tempDir.appendingPathComponent("file.json")
+        let data = Data("{\"key\":\"value\"}".utf8)
+        try! data.write(to: fileURL, options: .atomic)
+
+        // When
+        var encodedData: Data?
+        do {
+            multipartFormData.append(fileURL, withName: "file")
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op (Alamofire style)
+        }
+
+        // Then
+        guard let encodedData else { return XCTFail("Encoding failed") }
+        let string = String(data: encodedData, encoding: .utf8)!
+        XCTAssertTrue(string.contains("filename=\"file.json\""))
+        XCTAssertTrue(string.contains("Content-Type: application/json"))
+    }
+
+    func testAppendFileURL_UsesNameExtensionWhenURLExtensionMissing() {
+        // Given
+        let multipartFormData = MultipartFormData()
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try! FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        let fileURL = tempDir.appendingPathComponent("noExtensionFile")
+        let textData = Data("Hello Alamofire!".utf8)
+        try! textData.write(to: fileURL, options: .atomic)
+
+        // When
+        var encodedData: Data?
+        do {
+            multipartFormData.append(fileURL, withName: "file.txt")
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
+
+        // Then
+        guard let encodedData else { return XCTFail("Encoding failed") }
+        let string = String(data: encodedData, encoding: .utf8)!
+        XCTAssertTrue(string.contains("filename=\"file.txt\""))
+        XCTAssertTrue(string.contains("Content-Type: text/plain"))
+    }
+
+    func testAppendFileURL_ThrowsErrorWhenNoExtensionInURLOrName() {
+        // Given
+        let multipartFormData = MultipartFormData()
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try! FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        let fileURL = tempDir.appendingPathComponent("noExtensionFile")
+        try! Data("data".utf8).write(to: fileURL, options: .atomic)
+
+        // When
+        var thrownError: Error?
+        do {
+            multipartFormData.append(fileURL, withName: "file") // no extension anywhere
+            _ = try multipartFormData.encode()
+        } catch {
+            thrownError = error
+        }
+
+        // Then
+        guard let error = thrownError else {
+            return XCTFail("Expected encode() to throw")
+        }
+
+        if case let AFError.multipartEncodingFailed(reason) = error,
+           case .bodyPartFilenameInvalid(let url) = reason {
+            XCTAssertEqual(url, fileURL)
+        } else {
+            XCTFail("Expected .bodyPartFilenameInvalid, got \(error)")
+        }
+    }
 }
 
 // MARK: -
