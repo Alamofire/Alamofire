@@ -308,7 +308,7 @@ open class RetryPolicy: @unchecked Sendable, RequestInterceptor {
     open func retry(_ request: Request,
                     for session: Session,
                     dueTo error: any Error,
-                    completion: @escaping (RetryResult) -> Void) {
+                    completion: @escaping @Sendable (RetryResult) -> Void) {
         if request.retryCount < retryLimit, shouldRetry(request: request, dueTo: error) {
             completion(.retryWithDelay(pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale))
         } else {
