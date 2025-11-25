@@ -374,8 +374,14 @@ extension AFError {
 
     /// The `URL` associated with the error.
     public var url: URL? {
-        guard case let .multipartEncodingFailed(reason) = self else { return nil }
-        return reason.url
+        switch self {
+        case let .multipartEncodingFailed(reason):
+            return reason.url
+        case let .sessionTaskFailed(error):
+            return (error as? URLError)?.failingURL
+        default:
+            return nil
+        }
     }
 
     /// The underlying `Error` responsible for generating the failure associated with `.sessionInvalidated`,
