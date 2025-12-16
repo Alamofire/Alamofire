@@ -53,6 +53,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
                        serializationQueue: session.serializationQueue,
                        eventMonitor: session.eventMonitor,
                        interceptor: nil,
+                       shouldAutomaticallyResume: nil,
                        delegate: session)
         }
     }

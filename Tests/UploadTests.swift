@@ -418,13 +418,15 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
-//    func testThatUploadingMultipartFormDataWhileStreamingFromMemoryMonitorsProgress() {
-//        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: false)
-//    }
-//
-//    func testThatUploadingMultipartFormDataWhileStreamingFromDiskMonitorsProgress() {
-//        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: true)
-//    }
+    @MainActor
+    func testThatUploadingMultipartFormDataWhileStreamingFromMemoryMonitorsProgress() {
+        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: false)
+    }
+
+    @MainActor
+    func testThatUploadingMultipartFormDataWhileStreamingFromDiskMonitorsProgress() {
+        executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: true)
+    }
 
     @MainActor
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
@@ -772,9 +774,8 @@ final class UploadRetryTests: BaseTestCase {
                                 method: .post,
                                 headers: [.contentType("text/plain")],
                                 timeout: 0.1)
-        let retrier = InspectorInterceptor(SingleRetrier())
         let didRetry = expectation(description: "request did retry")
-        retrier.onRetry = { _ in didRetry.fulfill() }
+        let retrier = InspectorInterceptor(SingleRetrier(), onRetry: { _ in didRetry.fulfill() })
         let session = Session(interceptor: retrier)
         let body = "body"
         let data = Data(body.utf8)

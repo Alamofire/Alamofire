@@ -511,247 +511,247 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 
 // MARK: -
 
-// final class DownloadResumeDataTestCase: BaseTestCase {
-//    @MainActor
-//    func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
-//        // Given
-//        let expectation = expectation(description: "Download should be cancelled")
-//        var cancelled = false
-//
-//        var response: DownloadResponse<URL?, AFError>?
-//
-//        // When
-//        let download = AF.download(.download())
-//        download.downloadProgress { [unowned download] progress in
-//            guard !cancelled else { return }
-//
-//            if progress.fractionCompleted > 0.1 {
-//                download.cancel()
-//                cancelled = true
-//            }
-//        }
-//        download.response { resp in
-//            response = resp
-//            expectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: timeout)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertNil(response?.fileURL)
-//        XCTAssertNotNil(response?.error)
-//
-//        XCTAssertNil(response?.resumeData)
-//        XCTAssertNil(download.resumeData)
-//    }
-//
-//    func testThatDownloadRequestProducesResumeDataOnError() {
-//        // Given
-//        let expectation = expectation(description: "download complete")
-//
-//        var response: DownloadResponse<URL?, AFError>?
-//
-//        // When
-//        let download = AF.download(.download(produceError: true))
-//        download.response { resp in
-//            response = resp
-//            expectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: timeout)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertNil(response?.fileURL)
-//        XCTAssertNotNil(response?.error)
-//
-//        XCTAssertNotNil(response?.resumeData)
-//        XCTAssertNotNil(download.resumeData)
-//        #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
-//        XCTAssertNotNil(download.error?.downloadResumeData)
-//        XCTAssertEqual(download.error?.downloadResumeData, response?.resumeData)
-//        #endif
-//        XCTAssertEqual(response?.resumeData, download.resumeData)
-//    }
-//
-//    @MainActor
-//    func testThatCancelledDownloadResponseDataMatchesResumeData() {
-//        // Given
-//        let expectation = expectation(description: "Download should be cancelled")
-//        var cancelled = false
-//
-//        var response: DownloadResponse<URL?, AFError>?
-//
-//        // When
-//        let download = AF.download(.download())
-//        download.downloadProgress { [unowned download] progress in
-//            guard !cancelled else { return }
-//
-//            if progress.fractionCompleted > 0.1 {
-//                download.cancel(producingResumeData: true)
-//                cancelled = true
-//            }
-//        }
-//        download.response { resp in
-//            response = resp
-//            expectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: timeout)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertNil(response?.fileURL)
-//        XCTAssertNotNil(response?.error)
-//
-//        XCTAssertNotNil(response?.resumeData)
-//        XCTAssertNotNil(download.resumeData)
-//
-//        XCTAssertEqual(response?.resumeData, download.resumeData)
-//    }
-//
-//    @MainActor
-//    func testThatCancelledDownloadResumeDataIsAvailableWithDecodableResponseSerializer() {
-//        // Given
-//        let expectation = expectation(description: "Download should be cancelled")
-//        var cancelled = false
-//
-//        var response: DownloadResponse<TestResponse, AFError>?
-//
-//        // When
-//        let download = AF.download(.download())
-//        download.downloadProgress { [unowned download] progress in
-//            guard !cancelled else { return }
-//
-//            if progress.fractionCompleted > 0.1 {
-//                download.cancel(producingResumeData: true)
-//                cancelled = true
-//            }
-//        }
-//        download.responseDecodable(of: TestResponse.self) { resp in
-//            response = resp
-//            expectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: timeout)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertNil(response?.fileURL)
-//        XCTAssertEqual(response?.result.isFailure, true)
-//        XCTAssertNotNil(response?.result.failure)
-//
-//        XCTAssertNotNil(response?.resumeData)
-//        XCTAssertNotNil(download.resumeData)
-//
-//        XCTAssertEqual(response?.resumeData, download.resumeData)
-//    }
-//
-//    @MainActor
-//    func testThatCancelledDownloadCanBeResumedWithResumeData() {
-//        // Given
-//        let expectation1 = expectation(description: "Download should be cancelled")
-//        var cancelled = false
-//
-//        var response1: DownloadResponse<Data, AFError>?
-//
-//        // When
-//        let download = AF.download(.download())
-//        download.downloadProgress { [unowned download] progress in
-//            guard !cancelled else { return }
-//
-//            if progress.fractionCompleted > 0.1 {
-//                download.cancel(producingResumeData: true)
-//                cancelled = true
-//            }
-//        }
-//        download.responseData { resp in
-//            response1 = resp
-//            expectation1.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: timeout)
-//
-//        guard let resumeData = download.resumeData else {
-//            XCTFail("resumeData should not be nil")
-//            return
-//        }
-//
-//        let expectation2 = expectation(description: "Download should complete")
-//
-//        var progressValues: [Double] = []
-//        var response2: DownloadResponse<Data, AFError>?
-//
-//        AF.download(resumingWith: resumeData)
-//            .downloadProgress { progress in
-//                progressValues.append(progress.fractionCompleted)
-//            }
-//            .responseData { resp in
-//                response2 = resp
-//                expectation2.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout)
-//
-//        // Then
-//        XCTAssertNotNil(response1?.request)
-//        XCTAssertNotNil(response1?.response)
-//        XCTAssertNil(response1?.fileURL)
-//        XCTAssertEqual(response1?.result.isFailure, true)
-//        XCTAssertNotNil(response1?.result.failure)
-//
-//        XCTAssertNotNil(response2?.response)
-//        XCTAssertNotNil(response2?.fileURL)
-//        XCTAssertEqual(response2?.result.isSuccess, true)
-//        XCTAssertNil(response2?.result.failure)
-//
-//        progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.1) }
-//    }
-//
-//    @MainActor
-//    func testThatCancelledDownloadProducesMatchingResumeData() {
-//        // Given
-//        let expectation = expectation(description: "Download should be cancelled")
-//        var cancelled = false
-//        var receivedResumeData: Data?
-//        var response: DownloadResponse<URL?, AFError>?
-//
-//        // When
-//        let download = AF.download(.download())
-//        download.downloadProgress { [unowned download] progress in
-//            guard !cancelled else { return }
-//
-//            if progress.fractionCompleted > 0.1 {
-//                download.cancel { receivedResumeData = $0 }
-//                cancelled = true
-//            }
-//        }
-//        download.response { resp in
-//            response = resp
-//            expectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: timeout)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertNil(response?.fileURL)
-//        XCTAssertNotNil(response?.error)
-//
-//        XCTAssertNotNil(response?.resumeData)
-//        XCTAssertNotNil(download.resumeData)
-//
-//        XCTAssertEqual(response?.resumeData, download.resumeData)
-//        XCTAssertEqual(response?.resumeData, receivedResumeData)
-//        XCTAssertEqual(download.resumeData, receivedResumeData)
-//    }
-// }
+final class DownloadResumeDataTestCase: BaseTestCase {
+    @MainActor
+    func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
+        // Given
+        let expectation = expectation(description: "Download should be cancelled")
+        var cancelled = false
+
+        var response: DownloadResponse<URL?, AFError>?
+
+        // When
+        let download = AF.download(.download())
+        download.downloadProgress { [unowned download] progress in
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel()
+                cancelled = true
+            }
+        }
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNotNil(response?.error)
+
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNil(download.resumeData)
+    }
+
+    func testThatDownloadRequestProducesResumeDataOnError() {
+        // Given
+        let expectation = expectation(description: "download complete")
+
+        var response: DownloadResponse<URL?, AFError>?
+
+        // When
+        let download = AF.download(.download(produceError: true))
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNotNil(response?.error)
+
+        XCTAssertNotNil(response?.resumeData)
+        XCTAssertNotNil(download.resumeData)
+        #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
+        XCTAssertNotNil(download.error?.downloadResumeData)
+        XCTAssertEqual(download.error?.downloadResumeData, response?.resumeData)
+        #endif
+        XCTAssertEqual(response?.resumeData, download.resumeData)
+    }
+
+    @MainActor
+    func testThatCancelledDownloadResponseDataMatchesResumeData() {
+        // Given
+        let expectation = expectation(description: "Download should be cancelled")
+        var cancelled = false
+
+        var response: DownloadResponse<URL?, AFError>?
+
+        // When
+        let download = AF.download(.download())
+        download.downloadProgress { [unowned download] progress in
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel(producingResumeData: true)
+                cancelled = true
+            }
+        }
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNotNil(response?.error)
+
+        XCTAssertNotNil(response?.resumeData)
+        XCTAssertNotNil(download.resumeData)
+
+        XCTAssertEqual(response?.resumeData, download.resumeData)
+    }
+
+    @MainActor
+    func testThatCancelledDownloadResumeDataIsAvailableWithDecodableResponseSerializer() {
+        // Given
+        let expectation = expectation(description: "Download should be cancelled")
+        var cancelled = false
+
+        var response: DownloadResponse<TestResponse, AFError>?
+
+        // When
+        let download = AF.download(.download())
+        download.downloadProgress { [unowned download] progress in
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel(producingResumeData: true)
+                cancelled = true
+            }
+        }
+        download.responseDecodable(of: TestResponse.self) { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertNotNil(response?.result.failure)
+
+        XCTAssertNotNil(response?.resumeData)
+        XCTAssertNotNil(download.resumeData)
+
+        XCTAssertEqual(response?.resumeData, download.resumeData)
+    }
+
+    @MainActor
+    func testThatCancelledDownloadCanBeResumedWithResumeData() {
+        // Given
+        let expectation1 = expectation(description: "Download should be cancelled")
+        var cancelled = false
+
+        var response1: DownloadResponse<Data, AFError>?
+
+        // When
+        let download = AF.download(.download())
+        download.downloadProgress { [unowned download] progress in
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel(producingResumeData: true)
+                cancelled = true
+            }
+        }
+        download.responseData { resp in
+            response1 = resp
+            expectation1.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        guard let resumeData = download.resumeData else {
+            XCTFail("resumeData should not be nil")
+            return
+        }
+
+        let expectation2 = expectation(description: "Download should complete")
+
+        var progressValues: [Double] = []
+        var response2: DownloadResponse<Data, AFError>?
+
+        AF.download(resumingWith: resumeData)
+            .downloadProgress { progress in
+                progressValues.append(progress.fractionCompleted)
+            }
+            .responseData { resp in
+                response2 = resp
+                expectation2.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response1?.request)
+        XCTAssertNotNil(response1?.response)
+        XCTAssertNil(response1?.fileURL)
+        XCTAssertEqual(response1?.result.isFailure, true)
+        XCTAssertNotNil(response1?.result.failure)
+
+        XCTAssertNotNil(response2?.response)
+        XCTAssertNotNil(response2?.fileURL)
+        XCTAssertEqual(response2?.result.isSuccess, true)
+        XCTAssertNil(response2?.result.failure)
+
+        progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.1) }
+    }
+
+    @MainActor
+    func testThatCancelledDownloadProducesMatchingResumeData() {
+        // Given
+        let expectation = expectation(description: "Download should be cancelled")
+        var cancelled = false
+        var receivedResumeData: Data?
+        var response: DownloadResponse<URL?, AFError>?
+
+        // When
+        let download = AF.download(.download())
+        download.downloadProgress { [unowned download] progress in
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel { receivedResumeData = $0 }
+                cancelled = true
+            }
+        }
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNotNil(response?.error)
+
+        XCTAssertNotNil(response?.resumeData)
+        XCTAssertNotNil(download.resumeData)
+
+        XCTAssertEqual(response?.resumeData, download.resumeData)
+        XCTAssertEqual(response?.resumeData, receivedResumeData)
+        XCTAssertEqual(download.resumeData, receivedResumeData)
+    }
+}
 
 // MARK: -
 

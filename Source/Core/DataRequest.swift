@@ -57,6 +57,7 @@ public class DataRequest: Request, @unchecked Sendable {
          serializationQueue: DispatchQueue,
          eventMonitor: (any EventMonitor)?,
          interceptor: (any RequestInterceptor)?,
+         shouldAutomaticallyResume: Bool?,
          delegate: any RequestDelegate) {
         self.convertible = convertible
 
@@ -65,6 +66,7 @@ public class DataRequest: Request, @unchecked Sendable {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
+                   shouldAutomaticallyResume: shouldAutomaticallyResume,
                    delegate: delegate)
     }
 

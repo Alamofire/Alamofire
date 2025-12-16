@@ -374,6 +374,11 @@
 		318DD4102439780500963291 /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318DD40E2439780500963291 /* Combine.swift */; };
 		318DD4112439780500963291 /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318DD40E2439780500963291 /* Combine.swift */; };
 		318DD4122439780500963291 /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318DD40E2439780500963291 /* Combine.swift */; };
+		31913E8B2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */; };
+		31913E8C2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */; };
+		31913E8D2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */; };
+		31913E8E2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */; };
+		31913E8F2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */; };
 		3191B5751F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
 		3191B5761F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
 		3191B5771F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
@@ -689,6 +694,7 @@
 		318702FD2B0AEF1D00C10A8C /* DataStreamRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStreamRequest.swift; sourceTree = "<group>"; };
 		318703032B0AEF4B00C10A8C /* DownloadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRequest.swift; sourceTree = "<group>"; };
 		318DD40E2439780500963291 /* Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Combine.swift; sourceTree = "<group>"; };
+		31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorEventMonitor.swift; sourceTree = "<group>"; };
 		3191B5741F5F53A6003960A8 /* Protected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protected.swift; sourceTree = "<group>"; };
 		31991790209CDA7F00103A19 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		31991791209CDA7F00103A19 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
@@ -1235,6 +1241,7 @@
 				312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */,
 				31762DC9247738FA0025C704 /* LeaksTests.swift */,
 				31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */,
+				31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */,
 				31727421218BB9A50039FFCC /* TestHelpers.swift */,
 				4C256A4E1B09656A0065714F /* Core */,
 				4C7C8D201B9D0D7300948136 /* Extensions */,
@@ -1440,7 +1447,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 2610;
+				LastUpgradeCheck = 2620;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					31293064263E17D600473CEA = {
@@ -1756,6 +1763,7 @@
 				31293076263E183C00473CEA /* DownloadTests.swift in Sources */,
 				3129308D263E184500473CEA /* ValidationTests.swift in Sources */,
 				31293084263E184500473CEA /* RetryPolicyTests.swift in Sources */,
+				31913E8B2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */,
 				3129307F263E183C00473CEA /* ParameterEncodingTests.swift in Sources */,
 				3129308C263E184500473CEA /* ResponseSerializationTests.swift in Sources */,
 				31293074263E183C00473CEA /* RequestTests.swift in Sources */,
@@ -1854,6 +1862,7 @@
 				317339022A43BE9000D4EA0A /* AuthenticationTests.swift in Sources */,
 				317339032A43BE9000D4EA0A /* DataStreamTests.swift in Sources */,
 				317339042A43BE9000D4EA0A /* DownloadTests.swift in Sources */,
+				31913E8D2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */,
 				31F032542ABB9C0900D68FB2 /* WebSocketTests.swift in Sources */,
 				317339052A43BE9000D4EA0A /* InternalRequestTests.swift in Sources */,
 				317339062A43BE9000D4EA0A /* ParameterEncoderTests.swift in Sources */,
@@ -1952,6 +1961,7 @@
 				3111CE8E20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,
 				311B199620B0ED990036823B /* UploadTests.swift in Sources */,
 				4C0CB633220BC70300604EDC /* RequestInterceptorTests.swift in Sources */,
+				31913E8F2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */,
 				3107EA3720A11AE200445260 /* AuthenticationTests.swift in Sources */,
 				31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
 				4C0CB64D220CA8D600604EDC /* RedirectHandlerTests.swift in Sources */,
@@ -2150,6 +2160,7 @@
 				3111CE8C20A7EBE6008315E2 /* MultipartFormDataTests.swift in Sources */,
 				311B199420B0ED980036823B /* UploadTests.swift in Sources */,
 				4C0CB631220BC70300604EDC /* RequestInterceptorTests.swift in Sources */,
+				31913E8C2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */,
 				3107EA3520A11AE100445260 /* AuthenticationTests.swift in Sources */,
 				4CFB02901D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
 				4C0CB64B220CA8D600604EDC /* RedirectHandlerTests.swift in Sources */,
@@ -2198,6 +2209,7 @@
 				3111CE8D20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,
 				311B199520B0ED980036823B /* UploadTests.swift in Sources */,
 				4C0CB632220BC70300604EDC /* RequestInterceptorTests.swift in Sources */,
+				31913E8E2EEA2ED800EEB257 /* InspectorEventMonitor.swift in Sources */,
 				3107EA3620A11AE100445260 /* AuthenticationTests.swift in Sources */,
 				4CFB02911D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
 				4C0CB64C220CA8D600604EDC /* RedirectHandlerTests.swift in Sources */,
@@ -2290,7 +2302,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 7.4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
 		};
@@ -2319,7 +2331,7 @@
 				SDKROOT = watchos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 7.4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};
@@ -2432,7 +2444,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
 		};
@@ -2449,7 +2461,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Release;
 		};
@@ -2724,7 +2736,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2744,7 +2756,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2767,7 +2779,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2785,7 +2797,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

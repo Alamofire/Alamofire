@@ -22,17 +22,21 @@
 //  THE SOFTWARE.
 //
 
-@testable import Alamofire
 import Foundation
+import Testing
 import XCTest
+
+@testable import Alamofire
 
 private struct MockError: Error {}
 private struct RetryError: Error {}
 
 // MARK: -
 
-final class RetryResultTestCase: BaseTestCase {
-    func testRetryRequiredProperty() {
+@Suite
+struct RetryResultTests {
+    @Test
+    func retryRequiredProperty() async throws {
         // Given, When
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
@@ -40,13 +44,14 @@ final class RetryResultTestCase: BaseTestCase {
         let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
 
         // Then
-        XCTAssertTrue(retry.retryRequired)
-        XCTAssertTrue(retryWithDelay.retryRequired)
-        XCTAssertFalse(doNotRetry.retryRequired)
-        XCTAssertFalse(doNotRetryWithError.retryRequired)
+        #expect(retry.retryRequired == true)
+        #expect(retryWithDelay.retryRequired == true)
+        #expect(doNotRetry.retryRequired == false)
+        #expect(doNotRetryWithError.retryRequired == false)
     }
 
-    func testDelayProperty() {
+    @Test
+    func delayProperty() async throws {
         // Given, When
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
@@ -54,13 +59,14 @@ final class RetryResultTestCase: BaseTestCase {
         let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
 
         // Then
-        XCTAssertEqual(retry.delay, nil)
-        XCTAssertEqual(retryWithDelay.delay, 1.0)
-        XCTAssertEqual(doNotRetry.delay, nil)
-        XCTAssertEqual(doNotRetryWithError.delay, nil)
+        #expect(retry.delay == nil)
+        #expect(retryWithDelay.delay == 1.0)
+        #expect(doNotRetry.delay == nil)
+        #expect(doNotRetryWithError.delay == nil)
     }
 
-    func testErrorProperty() {
+    @Test
+    func errorProperty() {
         // Given, When
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
@@ -68,17 +74,19 @@ final class RetryResultTestCase: BaseTestCase {
         let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
 
         // Then
-        XCTAssertNil(retry.error)
-        XCTAssertNil(retryWithDelay.error)
-        XCTAssertNil(doNotRetry.error)
-        XCTAssertTrue(doNotRetryWithError.error is MockError)
+        #expect(retry.error == nil)
+        #expect(retryWithDelay.error == nil)
+        #expect(doNotRetry.error == nil)
+        #expect(doNotRetryWithError.error is MockError)
     }
 }
 
 // MARK: -
 
-final class AdapterTestCase: BaseTestCase {
-    func testThatAdapterCallsAdaptHandler() {
+@Suite
+struct AdapterTests {
+    @Test
+    func thatAdapterCallsAdaptHandler() async throws {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -95,185 +103,147 @@ final class AdapterTestCase: BaseTestCase {
         adapter.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(adapted)
-        XCTAssertTrue(result.isSuccess)
+        #expect(adapted)
+        #expect(result.isSuccess)
     }
 
-    func testThatAdapterCallsAdaptHandlerWithStateAPI() {
+    @Test
+    func thatAdapterCallsAdaptHandlerWithStateAPI() async throws {
         // Given
-        final class StateCaptureAdapter: Adapter {
-            private(set) var urlRequest: URLRequest?
-            private(set) var state: RequestAdapterState?
-
-            @preconcurrency
-            override init(_ adaptHandler: @escaping AdaptHandler) {
-                super.init(adaptHandler)
-            }
-
-            override func adapt(_ urlRequest: URLRequest,
-                                using state: RequestAdapterState,
-                                completion: @escaping (Result<URLRequest, any Error>) -> Void) {
-                self.urlRequest = urlRequest
-                self.state = state
-
-                super.adapt(urlRequest, using: state, completion: completion)
-            }
-        }
-
         let urlRequest = Endpoint().urlRequest
         let session = Session()
         let requestID = UUID()
 
-        var adapted = false
-
-        let adapter = StateCaptureAdapter { urlRequest, _, completion in
-            adapted = true
-            completion(.success(urlRequest))
-        }
+        let interceptor = InspectorInterceptor(.adapter { @Sendable request, _, completionHandler in
+            completionHandler(.success(request))
+        })
 
         let state = RequestAdapterState(requestID: requestID, session: session)
 
-        var result: Result<URLRequest, any Error>!
-
         // When
-        adapter.adapt(urlRequest, using: state) { result = $0 }
+        interceptor.adapt(urlRequest, using: state) { _ in }
+        let adaptation = interceptor.adaptations.first
 
         // Then
-        XCTAssertTrue(adapted)
-        XCTAssertTrue(result.isSuccess)
-        XCTAssertEqual(adapter.urlRequest, urlRequest)
-        XCTAssertEqual(adapter.state?.requestID, requestID)
-        XCTAssertEqual(adapter.state?.session.session, session.session)
+        #expect(interceptor.adaptations.count == 1)
+        #expect(adaptation?.result.isSuccess == true)
+        #expect(adaptation?.urlRequest == urlRequest)
+        #expect(adaptation?.state.requestID == requestID)
+        #expect(adaptation.map { ObjectIdentifier($0.state.session) } == ObjectIdentifier(session))
     }
 
-    func testThatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() {
+    @Test
+    func thatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() async throws {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
 
-        let adapter = Adapter { request, _, completion in
+        let adapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in
             completion(.success(request))
-        }
-
-        var result: RetryResult!
+        })
 
         // When
-        adapter.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        adapter.retry(request, for: session, dueTo: MockError()) { _ in }
 
         // Then
-        XCTAssertEqual(result, .doNotRetry)
+        #expect(adapter.retries.first == .doNotRetry)
     }
 
-    @MainActor
-    func testThatAdapterCanBeImplementedAsynchronously() {
+    @Test
+    func thatAdapterCanBeImplementedAsynchronously() async throws {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
-        var adapted = false
 
-        let adapter = Adapter { request, _, completion in
-            adapted = true
+        let adapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in
             DispatchQueue.main.async {
                 completion(.success(request))
             }
-        }
-
-        var result: Result<URLRequest, any Error>!
-
-        let completesExpectation = expectation(description: "adapter completes")
+        })
 
         // When
-        adapter.adapt(urlRequest, for: session) {
-            result = $0
-            completesExpectation.fulfill()
+        await withCheckedContinuation { continuation in
+            adapter.adapt(urlRequest, for: session) { _ in
+                continuation.resume()
+            }
         }
 
-        waitForExpectations(timeout: timeout)
-
         // Then
-        XCTAssertTrue(adapted)
-        XCTAssertTrue(result.isSuccess)
+        #expect(adapter.adaptations.count == 1)
+        #expect(adapter.adaptations.first?.result.isSuccess == true)
     }
 }
 
 // MARK: -
 
-final class RetrierTestCase: BaseTestCase {
-    func testThatRetrierCallsRetryHandler() {
+@Suite
+struct RetrierTests {
+    @Test
+    func thatRetrierCallsRetryHandler() async throws {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
-        var retried = false
 
-        let retrier = Retrier { _, _, _, completion in
-            retried = true
+        let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
             completion(.retry)
-        }
-
-        var result: RetryResult!
+        })
 
         // When
-        retrier.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        retrier.retry(request, for: session, dueTo: MockError()) { _ in }
 
         // Then
-        XCTAssertTrue(retried)
-        XCTAssertEqual(result, .retry)
+        #expect(retrier.retryCalledCount == 1)
+        #expect(retrier.retries.first == .retry)
     }
 
-    func testThatRetrierCallsRequestAdapterDefaultImplementationInProtocolExtension() {
+    @Test
+    func thatRetrierCallsRequestAdapterDefaultImplementationInProtocolExtension() async throws {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
 
-        let retrier = Retrier { _, _, _, completion in
+        let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
             completion(.retry)
-        }
-
-        var result: Result<URLRequest, any Error>!
+        })
 
         // When
-        retrier.adapt(urlRequest, for: session) { result = $0 }
+        retrier.adapt(urlRequest, for: session) { _ in }
 
         // Then
-        XCTAssertTrue(result.isSuccess)
+        #expect(retrier.adaptations.first?.result.isSuccess == true)
     }
 
-    @MainActor
-    func testThatRetrierCanBeImplementedAsynchronously() {
+    @Test
+    func thatRetrierCanBeImplementedAsynchronously() async throws {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
-        var retried = false
 
-        let retrier = Retrier { _, _, _, completion in
-            retried = true
+        let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
             DispatchQueue.main.async {
                 completion(.retry)
             }
-        }
-
-        var result: RetryResult!
-
-        let completesExpectation = expectation(description: "retrier completes")
+        })
 
         // When
-        retrier.retry(request, for: session, dueTo: MockError()) {
-            result = $0
-            completesExpectation.fulfill()
+        await withCheckedContinuation { continuation in
+            retrier.retry(request, for: session, dueTo: MockError()) { _ in
+                continuation.resume()
+            }
         }
 
-        waitForExpectations(timeout: timeout)
-
         // Then
-        XCTAssertTrue(retried)
-        XCTAssertEqual(result, .retry)
+        #expect(retrier.retryCalledCount == 1)
+        #expect(retrier.retries.first == .retry)
     }
 }
 
 // MARK: -
 
-final class InterceptorTests: BaseTestCase {
-    func testAdaptHandlerAndRetryHandlerDefaultInitializer() {
+@Suite
+struct InterceptorTests {
+    @Test
+    func adaptHandlerAndRetryHandlerDefaultInitializer() {
         // Given
         let adaptHandler: AdaptHandler = { urlRequest, _, completion in completion(.success(urlRequest)) }
         let retryHandler: RetryHandler = { _, _, _, completion in completion(.doNotRetry) }
@@ -286,7 +256,8 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(interceptor.retriers.count, 1)
     }
 
-    func testAdapterAndRetrierDefaultInitializer() {
+    @Test
+    func adapterAndRetrierDefaultInitializer() {
         // Given
         let adapter = Adapter { urlRequest, _, completion in completion(.success(urlRequest)) }
         let retrier = Retrier { _, _, _, completion in completion(.doNotRetry) }
@@ -299,7 +270,8 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(interceptor.retriers.count, 1)
     }
 
-    func testAdaptersAndRetriersDefaultInitializer() {
+    @Test
+    func adaptersAndRetriersDefaultInitializer() {
         // Given
         let adapter = Adapter { urlRequest, _, completion in completion(.success(urlRequest)) }
         let retrier = Retrier { _, _, _, completion in completion(.doNotRetry) }
@@ -312,7 +284,8 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(interceptor.retriers.count, 2)
     }
 
-    func testThatInterceptorCanBeComposedOfMultipleRequestInterceptors() {
+    @Test
+    func thatInterceptorCanBeComposedOfMultipleRequestInterceptors() {
         // Given
         let adapter = Adapter { request, _, completion in completion(.success(request)) }
         let retrier = Retrier { _, _, _, completion in completion(.doNotRetry) }
@@ -326,7 +299,8 @@ final class InterceptorTests: BaseTestCase {
         XCTAssertEqual(interceptor.retriers.count, 1)
     }
 
-    func testThatInterceptorCanAdaptRequestWithNoAdapters() {
+    @Test
+    func thatInterceptorCanAdaptRequestWithNoAdapters() {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -338,11 +312,12 @@ final class InterceptorTests: BaseTestCase {
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.isSuccess)
-        XCTAssertEqual(result.success, urlRequest)
+        #expect(result.isSuccess == true)
+        #expect(result.success == urlRequest)
     }
 
-    func testThatInterceptorCanAdaptRequestWithOneAdapter() {
+    @Test
+    func thatInterceptorCanAdaptRequestWithOneAdapter() {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -356,11 +331,12 @@ final class InterceptorTests: BaseTestCase {
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.failure is MockError)
+        #expect(result.isFailure)
+        #expect(result.failure is MockError)
     }
 
-    func testThatInterceptorCanAdaptRequestWithMultipleAdapters() {
+    @Test
+    func thatInterceptorCanAdaptRequestWithMultipleAdapters() {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -375,11 +351,12 @@ final class InterceptorTests: BaseTestCase {
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.failure is MockError)
+        #expect(result.isFailure)
+        #expect(result.failure is MockError)
     }
 
-    func testThatInterceptorCanAdaptRequestWithMultipleAdaptersUsingStateAPI() {
+    @Test
+    func thatInterceptorCanAdaptRequestWithMultipleAdaptersUsingStateAPI() {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -395,12 +372,12 @@ final class InterceptorTests: BaseTestCase {
         interceptor.adapt(urlRequest, using: state) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.failure is MockError)
+        #expect(result.isFailure)
+        #expect(result.failure is MockError)
     }
 
-    @MainActor
-    func testThatInterceptorCanAdaptRequestAsynchronously() {
+    @Test
+    func thatInterceptorCanAdaptRequestAsynchronously() async throws {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -410,26 +387,22 @@ final class InterceptorTests: BaseTestCase {
                 completion(.failure(MockError()))
             }
         }
-        let interceptor = Interceptor(adapters: [adapter])
-
-        var result: Result<URLRequest, any Error>!
-
-        let completesExpectation = expectation(description: "interceptor completes")
+        let interceptor = InspectorInterceptor(Interceptor(adapters: [adapter]))
 
         // When
-        interceptor.adapt(urlRequest, for: session) {
-            result = $0
-            completesExpectation.fulfill()
+        await withCheckedContinuation { continuation in
+            interceptor.adapt(urlRequest, for: session) { _ in
+                continuation.resume()
+            }
         }
 
-        waitForExpectations(timeout: timeout)
-
         // Then
-        XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.failure is MockError)
+        #expect(interceptor.adaptations.first?.result.isFailure == true)
+        #expect(interceptor.adaptations.first?.result.failure is MockError)
     }
 
-    func testThatInterceptorCanRetryRequestWithNoRetriers() {
+    @Test
+    func thatInterceptorCanRetryRequestWithNoRetriers() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -442,10 +415,11 @@ final class InterceptorTests: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .doNotRetry)
+        #expect(result == .doNotRetry)
     }
 
-    func testThatInterceptorCanRetryRequestWithOneRetrier() {
+    @Test
+    func thatInterceptorCanRetryRequestWithOneRetrier() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -459,10 +433,11 @@ final class InterceptorTests: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .retry)
+        #expect(result == .retry)
     }
 
-    func testThatInterceptorCanRetryRequestWithMultipleRetriers() {
+    @Test
+    func thatInterceptorCanRetryRequestWithMultipleRetriers() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -477,11 +452,11 @@ final class InterceptorTests: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .retry)
+        #expect(result == .retry)
     }
 
-    @MainActor
-    func testThatInterceptorCanRetryRequestAsynchronously() {
+    @Test
+    func thatInterceptorCanRetryRequestAsynchronously() async throws {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -491,25 +466,20 @@ final class InterceptorTests: BaseTestCase {
                 completion(.retry)
             }
         }
-        let interceptor = Interceptor(retriers: [retrier])
-
-        var result: RetryResult!
-
-        let completesExpectation = expectation(description: "interceptor completes")
+        let interceptor = InspectorInterceptor(Interceptor(retriers: [retrier]))
 
         // When
-        interceptor.retry(request, for: session, dueTo: MockError()) {
-            result = $0
-            completesExpectation.fulfill()
+        await withCheckedContinuation { continuation in
+            interceptor.retry(request, for: session, dueTo: MockError()) { _ in
+                continuation.resume()
+            }
         }
-
-        waitForExpectations(timeout: timeout)
-
         // Then
-        XCTAssertEqual(result, .retry)
+        #expect(interceptor.retries.first == .retry)
     }
 
-    func testThatInterceptorStopsIteratingThroughPendingRetriersWithRetryResult() {
+    @Test
+    func thatInterceptorStopsIteratingThroughPendingRetriersWithRetryResult() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -526,11 +496,12 @@ final class InterceptorTests: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .retry)
-        XCTAssertFalse(retrier2Called)
+        #expect(result == .retry)
+        #expect(retrier2Called == false)
     }
 
-    func testThatInterceptorStopsIteratingThroughPendingRetriersWithRetryWithDelayResult() {
+    @Test
+    func thatInterceptorStopsIteratingThroughPendingRetriersWithRetryWithDelayResult() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -547,12 +518,13 @@ final class InterceptorTests: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .retryWithDelay(1.0))
-        XCTAssertEqual(result.delay, 1.0)
-        XCTAssertFalse(retrier2Called)
+        #expect(result == .retryWithDelay(1.0))
+        #expect(result.delay == 1.0)
+        #expect(retrier2Called == false)
     }
 
-    func testThatInterceptorStopsIteratingThroughPendingRetriersWithDoNotRetryResult() {
+    @Test
+    func thatInterceptorStopsIteratingThroughPendingRetriersWithDoNotRetryResult() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -569,39 +541,45 @@ final class InterceptorTests: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, RetryResult.doNotRetryWithError(RetryError()))
-        XCTAssertTrue(result.error is RetryError)
-        XCTAssertFalse(retrier2Called)
+        #expect(result == RetryResult.doNotRetryWithError(RetryError()))
+        #expect(result.error is RetryError)
+        #expect(retrier2Called == false)
     }
 }
 
 // MARK: - Functional Tests
 
-final class InterceptorRequestTests: BaseTestCase {
-    @MainActor
-    func testThatRetryPolicyRetriesRequestTimeout() {
+@Suite
+struct InterceptorRequestTests {
+    @Test
+    func thatRetryPolicyRetriesRequestTimeout() async throws {
         // Given
         let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
         let urlRequest = Endpoint.delay(1).modifying(\.timeout, to: 0.01)
-        let expect = expectation(description: "request completed")
 
         // When
-        let request = AF.request(urlRequest, interceptor: interceptor).response { _ in
-            expect.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout)
+        let request = AF.request(urlRequest, interceptor: interceptor)
+        await request.finished()
 
         // Then
-        XCTAssertEqual(request.tasks.count, 2, "There should be two tasks, one original, one retry.")
-        XCTAssertEqual(interceptor.retryCalledCount, 2, "retry() should be called twice.")
-        XCTAssertEqual(interceptor.retries, [.retryWithDelay(0.1), .doNotRetry], "RetryResults should retryWithDelay, doNotRetry")
+        #expect(request.tasks.count == 2, "There should be two tasks, one original, one retry.")
+        #expect(interceptor.retryCalledCount == 2, "retry() should be called twice.")
+        #expect(interceptor.retries == [.retryWithDelay(0.1), .doNotRetry], "RetryResults should be .retryWithDelay(0.1), .doNotRetry")
+    }
+}
+
+extension DataRequest {
+    func finished() async {
+        await withCheckedContinuation { continuation in
+            response { _ in continuation.resume() }
+        }
     }
 }
 
 // MARK: - Static Accessors
 
-final class StaticAccessorTests: BaseTestCase {
+@Suite
+struct StaticAccessorTests {
     func consumeRequestAdapter(_ requestAdapter: any RequestAdapter) {
         _ = requestAdapter
     }
@@ -614,27 +592,32 @@ final class StaticAccessorTests: BaseTestCase {
         _ = requestInterceptor
     }
 
-    func testThatAdapterCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func thatAdapterCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         consumeRequestAdapter(.adapter { request, _, completion in completion(.success(request)) })
     }
 
-    func testThatRetrierCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func thatRetrierCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         consumeRequestRetrier(.retrier { _, _, _, completion in completion(.doNotRetry) })
     }
 
-    func testThatInterceptorCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func thatInterceptorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         consumeRequestInterceptor(.interceptor())
     }
 
-    func testThatRetryPolicyCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func thatRetryPolicyCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         consumeRequestInterceptor(.retryPolicy())
     }
 
-    func testThatConnectionLostRetryPolicyCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func thatConnectionLostRetryPolicyCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         consumeRequestInterceptor(.connectionLostRetryPolicy())
     }
@@ -643,44 +626,86 @@ final class StaticAccessorTests: BaseTestCase {
 // MARK: - Helpers
 
 /// Class which captures the output of any underlying `RequestInterceptor`.
-final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterceptor {
-    var onAdaptation: ((Result<URLRequest, any Error>) -> Void)?
-    var onRetry: ((RetryResult) -> Void)?
+final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterceptor, Sendable {
+    private struct State {
+        let onAdaptation: ((_ result: Result<URLRequest, any Error>) -> Void)?
+        let onRetry: ((_ retryResult: RetryResult) -> Void)?
 
-    private(set) var adaptations: [Result<URLRequest, any Error>] = []
-    private(set) var retries: [RetryResult] = []
+        var adaptations: [Adaptation] = []
+        var retries: [RetryResult] = []
+    }
 
-    /// Number of times `retry` was called.
-    var retryCalledCount: Int { retries.count }
+    private let state: Protected<State>
 
+    struct Adaptation {
+        var urlRequest: URLRequest
+        var state: RequestAdapterState
+        var result: Result<URLRequest, any Error>
+    }
+
+    /// Underlying interceptor.
     let interceptor: Interceptor
+    /// Result of performed adaptations.
+    var adaptations: [Adaptation] { state.read(\.adaptations) }
+    /// Result of performed retries.
+    var retries: [RetryResult] { state.read(\.retries) }
+    /// Number of times `retry` was called.
+    var retryCalledCount: Int { state.read(\.retries.count) }
 
-    init(_ interceptor: Interceptor) {
+    init(_ interceptor: Interceptor,
+         onAdaptation: ((_ result: Result<URLRequest, any Error>) -> Void)? = nil,
+         onRetry: ((_ retryResult: RetryResult) -> Void)? = nil) {
         self.interceptor = interceptor
+        state = Protected(State(onAdaptation: onAdaptation, onRetry: onRetry))
     }
 
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         interceptor.adapt(urlRequest, for: session) { result in
-            self.adaptations.append(result)
+            let onAdaptation = self.state.write { state in
+                state.adaptations.append(.init(urlRequest: urlRequest, state: .init(requestID: .zero, session: session), result: result))
+                return state.onAdaptation
+            }
+
             completion(result)
-            self.onAdaptation?(result)
+            onAdaptation?(result)
         }
     }
 
-    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
-        interceptor.retry(request, for: session, dueTo: error) { result in
-            self.retries.append(result)
+    func adapt(_ urlRequest: URLRequest, using adapterState: RequestAdapterState, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
+        interceptor.adapt(urlRequest, using: adapterState) { result in
+            let onAdaptation = self.state.write { state in
+                state.adaptations.append(.init(urlRequest: urlRequest, state: adapterState, result: result))
+                return state.onAdaptation
+            }
+
             completion(result)
-            self.onRetry?(result)
+            onAdaptation?(result)
+        }
+    }
+
+    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
+        interceptor.retry(request, for: session, dueTo: error) { result in
+            let onRetry = self.state.write { state in
+                state.retries.append(result)
+                return state.onRetry
+            }
+
+            completion(result)
+            onRetry?(result)
         }
     }
 }
 
-/// Retry a request once, allowing the second to succeed using the method path.
-final class SingleRetrier: RequestInterceptor {
-    private var hasRetried = false
+extension UUID {
+    static let zero = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+}
 
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+/// Retry a request once, allowing the second to succeed using the method path.
+final class SingleRetrier: RequestInterceptor, Sendable {
+    private let state = Protected(false)
+    private var hasRetried: Bool { state.read(\.self) }
+
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
         if hasRetried {
             let method = urlRequest.method ?? .get
             let endpoint = Endpoint(path: .method(method),
@@ -692,9 +717,9 @@ final class SingleRetrier: RequestInterceptor {
         }
     }
 
-    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
+    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
         completion(hasRetried ? .doNotRetry : .retry)
-        hasRetried = true
+        state.write(true)
     }
 }
 

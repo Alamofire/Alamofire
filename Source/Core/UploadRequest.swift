@@ -54,22 +54,24 @@ public final class UploadRequest: DataRequest, @unchecked Sendable {
     /// Creates an `UploadRequest` using the provided parameters.
     ///
     /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
-    ///   - convertible:        `UploadConvertible` value used to determine the type of upload to be performed.
-    ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
-    ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
-    ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
-    ///   - eventMonitor:       `EventMonitor` called for event callbacks from internal `Request` actions.
-    ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
-    ///   - fileManager:        `FileManager` used to perform cleanup tasks, including the removal of multipart form
-    ///                         encoded payloads written to disk.
-    ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
+    ///   - id:                        `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
+    ///   - convertible:               `UploadConvertible` value used to determine the type of upload to be performed.
+    ///   - underlyingQueue:           `DispatchQueue` on which all internal `Request` work is performed.
+    ///   - serializationQueue:        `DispatchQueue` on which all serialization work is performed. By default targets
+    ///                                `underlyingQueue`, but can be passed another queue from a `Session`.
+    ///   - eventMonitor:              `EventMonitor` called for event callbacks from internal `Request` actions.
+    ///   - interceptor:               `RequestInterceptor` used throughout the request lifecycle.
+    ///   - shouldAutomaticallyResume: Whether the instance should resume after the first response handler is added.
+    ///   - fileManager:               `FileManager` used to perform cleanup tasks, including the removal of multipart
+    ///                                form encoded payloads written to disk.
+    ///   - delegate:                  `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     init(id: UUID = UUID(),
          convertible: any UploadConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
          eventMonitor: (any EventMonitor)?,
          interceptor: (any RequestInterceptor)?,
+         shouldAutomaticallyResume: Bool?,
          fileManager: FileManager,
          delegate: any RequestDelegate) {
         upload = convertible
@@ -81,6 +83,7 @@ public final class UploadRequest: DataRequest, @unchecked Sendable {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
+                   shouldAutomaticallyResume: shouldAutomaticallyResume,
                    delegate: delegate)
     }
 

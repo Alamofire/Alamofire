@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2610"
+   LastUpgradeVersion = "2620"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -72,12 +72,6 @@
          <TestPlanReference
             reference = "container:Tests/Test Plans/iOS.xctestplan"
             default = "YES">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:Tests/Test Plans/iOS-Old.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:Tests/Test Plans/iOS-NoTS.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

@@ -153,6 +153,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
          serializationQueue: DispatchQueue,
          eventMonitor: (any EventMonitor)?,
          interceptor: (any RequestInterceptor)?,
+         shouldAutomaticallyResume: Bool?,
          delegate: any RequestDelegate,
          destination: @escaping Destination) {
         self.downloadable = downloadable
@@ -163,6 +164,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
+                   shouldAutomaticallyResume: shouldAutomaticallyResume,
                    delegate: delegate)
     }
 

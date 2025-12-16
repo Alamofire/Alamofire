@@ -460,7 +460,7 @@ final class WebSocketTests: BaseTestCase {
 
         // When
         let request = session.webSocketRequest(.websocketPings(), configuration: .pingInterval(0.01))
-        request.streamMessageEvents { [unowned request] event in
+        request.streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`

@@ -72,9 +72,18 @@ public class Request: @unchecked Sendable {
     /// The queue used for all serialization actions. By default it's a serial queue that targets `underlyingQueue`.
     public let serializationQueue: DispatchQueue
     /// `EventMonitor` used for event callbacks.
-    public let eventMonitor: (any EventMonitor)?
+    public var eventMonitor: (any EventMonitor)? {
+        mutableState.read(\.eventMonitor)
+    }
+
     /// The `Request`'s interceptor.
-    public let interceptor: (any RequestInterceptor)?
+    public var interceptor: (any RequestInterceptor)? {
+        mutableState.read(\.interceptor)
+    }
+
+    /// Whether the instance should call `resume()` automatically once the first response handler has been added.
+    /// Overrides the same setting from `Session`, if set. `nil` by default (defers to the `Session`).
+    public let shouldAutomaticallyResume: Bool?
     /// The `Request`'s delegate.
     public private(set) weak var delegate: (any RequestDelegate)?
 
@@ -104,6 +113,11 @@ public class Request: @unchecked Sendable {
         var responseSerializerCompletions: [@Sendable () -> Void] = []
         /// Whether response serializer processing is finished.
         var responseSerializerProcessingFinished = false
+
+        var eventMonitor: (any EventMonitor)?
+
+        var interceptor: (any RequestInterceptor)?
+
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -125,7 +139,7 @@ public class Request: @unchecked Sendable {
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
-    let mutableState = Protected(MutableState())
+    let mutableState: Protected<MutableState>
 
     /// `State` of the `Request`.
     public var state: State { mutableState.read(\.state) }
@@ -249,24 +263,27 @@ public class Request: @unchecked Sendable {
     /// Default initializer for the `Request` superclass.
     ///
     /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
-    ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
-    ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
-    ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
-    ///   - eventMonitor:       `EventMonitor` called for event callbacks from internal `Request` actions.
-    ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
-    ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
+    ///   - id:                        `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
+    ///   - underlyingQueue:           `DispatchQueue` on which all internal `Request` work is performed.
+    ///   - serializationQueue:        `DispatchQueue` on which all serialization work is performed. By default targets
+    ///                                `underlyingQueue`, but can be passed another queue from a `Session`.
+    ///   - eventMonitor:              `EventMonitor` called for event callbacks from internal `Request` actions.
+    ///   - interceptor:               `RequestInterceptor` used throughout the request lifecycle.
+    ///   - shouldAutomaticallyResume: Whether the instance should resume after the first response handler is added.
+    ///   - delegate:                  `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     init(id: UUID = UUID(),
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
          eventMonitor: (any EventMonitor)?,
          interceptor: (any RequestInterceptor)?,
+         shouldAutomaticallyResume: Bool?,
          delegate: any RequestDelegate) {
         self.id = id
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue
-        self.eventMonitor = eventMonitor
-        self.interceptor = interceptor
+        mutableState = Protected(MutableState(eventMonitor: eventMonitor.map { CompositeEventMonitor(monitors: [$0]) },
+                                              interceptor: interceptor.map { Interceptor(interceptors: [$0]) }))
+        self.shouldAutomaticallyResume = shouldAutomaticallyResume
         self.delegate = delegate
     }
 
@@ -553,7 +570,11 @@ public class Request: @unchecked Sendable {
             }
 
             if mutableState.state.canTransitionTo(.resumed) {
-                underlyingQueue.async { if self.delegate?.startImmediately == true { self.resume() } }
+                underlyingQueue.async { [self] in
+                    if (shouldAutomaticallyResume ?? delegate?.startImmediately) == true {
+                        resume()
+                    }
+                }
             }
         }
     }
@@ -708,17 +729,22 @@ public class Request: @unchecked Sendable {
     /// - Returns: The instance.
     @discardableResult
     public func resume() -> Self {
-        mutableState.write { mutableState in
-            guard mutableState.state.canTransitionTo(.resumed) else { return }
+        let needsToPerform = mutableState.write { mutableState in
+            guard mutableState.state.canTransitionTo(.resumed) else { return false }
 
             mutableState.state = .resumed
 
             underlyingQueue.async { self.didResume() }
 
-            guard let task = mutableState.tasks.last, task.state != .completed else { return }
+            guard let task = mutableState.tasks.last, task.state != .completed else { return true }
 
             task.resume()
             underlyingQueue.async { self.didResumeTask(task) }
+            return true
+        }
+
+        if needsToPerform {
+            delegate?.readyToPerform(request: self)
         }
 
         return self
@@ -916,6 +942,90 @@ public class Request: @unchecked Sendable {
         return self
     }
 
+    @preconcurrency
+    @discardableResult
+    public func interceptor(_ interceptor: any RequestInterceptor) -> Self {
+        mutableState.write { mutableState in
+            if let existingInterceptor = mutableState.interceptor {
+                if let existingInterceptor = existingInterceptor as? Interceptor {
+                    // Only Interceptor should be at the root.
+                    mutableState.interceptor = Interceptor(adapters: existingInterceptor.adapters,
+                                                           retriers: existingInterceptor.retriers,
+                                                           interceptors: [interceptor])
+                } else {
+                    // Somehow we have a different root interceptor, split it back up.
+                    mutableState.interceptor = Interceptor(interceptors: [existingInterceptor, interceptor])
+                }
+            } else {
+                mutableState.interceptor = Interceptor(interceptors: [interceptor])
+            }
+        }
+
+        return self
+    }
+
+    @preconcurrency
+    @discardableResult
+    public func adapter(_ adapter: any RequestAdapter) -> Self {
+        mutableState.write { mutableState in
+            if let existingInterceptor = mutableState.interceptor {
+                if let existingInterceptor = existingInterceptor as? Interceptor {
+                    // Only Interceptor should be at the root.
+                    mutableState.interceptor = Interceptor(adapters: existingInterceptor.adapters + [adapter],
+                                                           retriers: existingInterceptor.retriers)
+                } else {
+                    // Somehow we have a different root interceptor, split it back up.
+                    mutableState.interceptor = Interceptor(adapters: [adapter], interceptors: [existingInterceptor])
+                }
+            } else {
+                mutableState.interceptor = Interceptor(adapters: [adapter])
+            }
+        }
+
+        return self
+    }
+
+    @preconcurrency
+    @discardableResult
+    public func retrier(_ retrier: any RequestRetrier) -> Self {
+        mutableState.write { mutableState in
+            if let existingInterceptor = mutableState.interceptor {
+                if let existingInterceptor = existingInterceptor as? Interceptor {
+                    // Only Interceptor should be at the root.
+                    mutableState.interceptor = Interceptor(adapters: existingInterceptor.adapters,
+                                                           retriers: existingInterceptor.retriers + [retrier])
+                } else {
+                    // Somehow we have a different root interceptor, split it back up.
+                    mutableState.interceptor = Interceptor(retriers: [retrier], interceptors: [existingInterceptor])
+                }
+            } else {
+                mutableState.interceptor = Interceptor(retriers: [retrier])
+            }
+        }
+
+        return self
+    }
+
+    @preconcurrency
+    @discardableResult
+    public func eventMonitor(_ eventMonitor: any EventMonitor) -> Self {
+        mutableState.write { mutableState in
+            if let existingMonitor = mutableState.eventMonitor {
+                if let existingMonitor = existingMonitor as? CompositeEventMonitor {
+                    // Only CompositeEventMonitor should be at the root.
+                    mutableState.eventMonitor = CompositeEventMonitor(monitors: existingMonitor.monitors.read(\.self) + [eventMonitor])
+                } else {
+                    // Somehow we have a different root EventMonitor, compose it again.
+                    mutableState.eventMonitor = CompositeEventMonitor(monitors: [existingMonitor, eventMonitor])
+                }
+            } else {
+                mutableState.eventMonitor = CompositeEventMonitor(monitors: [eventMonitor])
+            }
+        }
+
+        return self
+    }
+
     // MARK: Cleanup
 
     /// Adds a `finishHandler` closure to be called when the request completes.
@@ -1076,6 +1186,8 @@ public protocol RequestDelegate: AnyObject, Sendable {
 
     /// Determines whether the `Request` should automatically call `resume()` when adding the first response handler.
     var startImmediately: Bool { get }
+
+    func readyToPerform(request: Request)
 
     /// Notifies the delegate the `Request` has reached a point where it needs cleanup.
     ///

@@ -24,6 +24,7 @@
 
 import Alamofire
 import Foundation
+import Testing
 import XCTest
 
 final class RequestResponseTestCase: BaseTestCase {
@@ -432,6 +433,33 @@ final class RequestResponseTestCase: BaseTestCase {
     }
 
     @MainActor
+    func testThatInstanceAutomaticallyResumedRequestReceivesAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 4
+
+        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidResume = { _ in expect.fulfill() }
+        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
+        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+
+        // When
+        let request = session.request(.default, shouldAutomaticallyResume: true).response { _ in expect.fulfill() }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(request.state, .finished)
+    }
+
+    @MainActor
     func testThatAutomaticallyAndManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -492,6 +520,36 @@ final class RequestResponseTestCase: BaseTestCase {
     }
 
     @MainActor
+    func testThatInstanceManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(eventMonitors: [eventMonitor])
+
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 3
+
+        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidResume = { _ in expect.fulfill() }
+        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
+        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+
+        // When
+        let request = session.request(.default, shouldAutomaticallyResume: false)
+        for _ in 0..<100 {
+            request.resume()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(request.state, .finished)
+    }
+
+    @MainActor
     func testThatRequestManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
@@ -522,10 +580,40 @@ final class RequestResponseTestCase: BaseTestCase {
     }
 
     @MainActor
+    func testThatRequestInstanceManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(eventMonitors: [eventMonitor])
+
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 4
+
+        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidResume = { _ in expect.fulfill() }
+        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
+        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+
+        // When
+        let request = session.request(.default, shouldAutomaticallyResume: false).response { _ in expect.fulfill() }
+        for _ in 0..<100 {
+            request.resume()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(request.state, .finished)
+    }
+
+    @MainActor
     func testThatRequestManuallySuspendedManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -552,7 +640,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatRequestManuallySuspendedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -581,7 +669,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatRequestManuallyCancelledManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = Session(requestSetupTiming: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -611,7 +699,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatRequestManuallyCancelledManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -908,11 +996,7 @@ final class RequestDescriptionTestCase: BaseTestCase {
 final class RequestCURLDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
-    let session: Session = {
-        let manager = Session()
-
-        return manager
-    }()
+    let session: Session = .init(requestSetupTiming: .eager)
 
     let sessionWithAcceptLanguageHeader: Session = {
         var headers = HTTPHeaders.default
@@ -921,9 +1005,9 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        let manager = Session(configuration: configuration)
+        let session = Session(configuration: configuration, requestSetupTiming: .eager)
 
-        return manager
+        return session
     }()
 
     let sessionWithContentTypeHeader: Session = {
@@ -933,25 +1017,25 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        let manager = Session(configuration: configuration)
+        let session = Session(configuration: configuration, requestSetupTiming: .eager)
 
-        return manager
+        return session
     }()
 
     func sessionWithCookie(_ cookie: HTTPCookie) -> Session {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpCookieStorage?.setCookie(cookie)
 
-        return Session(configuration: configuration)
+        return Session(configuration: configuration, requestSetupTiming: .eager)
     }
 
     let sessionDisallowingCookies: Session = {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpShouldSetCookies = false
 
-        let manager = Session(configuration: configuration)
+        let session = Session(configuration: configuration, requestSetupTiming: .eager)
 
-        return manager
+        return session
     }()
 
     // MARK: Tests
@@ -968,6 +1052,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
             components = self.cURLCommandComponents(from: $0)
             expectation.fulfill()
         }
+        // requires eager perform
 
         waitForExpectations(timeout: timeout)
 
@@ -1373,10 +1458,105 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     }
 }
 
+@Suite
+struct RequestInstanceInterceptorTests {
+    @Test
+    func instanceAdaptorIsCalled() async throws {
+        // Given
+        let session = Session()
+        let interceptor = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
+
+        // When
+        let response = await session
+            .request(.get)
+            .adapter(interceptor)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        #expect(interceptor.adaptations.count == 1)
+    }
+
+    @Test
+    func instanceInterceptorIsCalled() async throws {
+        // Given
+        let session = Session()
+        let interceptor = InspectorInterceptor(
+            .interceptor { @Sendable request, _, completion in
+                completion(.success(request))
+            } retrier: { @Sendable _, _, _, completion in
+                completion(.retry)
+            }
+        )
+
+        // When
+        let response = await session
+            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.001), .get))
+            .interceptor(interceptor)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        #expect(interceptor.adaptations.count == 2)
+        #expect(interceptor.retries.count == 1)
+    }
+
+    @Test
+    func instanceRetrierIsCalled() async throws {
+        // Given
+        let session = Session()
+        let interceptor = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.retry) })
+
+        // When
+        let response = await session
+            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.001), .get))
+            .retrier(interceptor)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        #expect(interceptor.retries.count == 1)
+    }
+
+    @Test
+    func instanceEventMonitorIsCalled() async throws {
+        // Given
+        let monitor = InspectorEventMonitor()
+        let session = Session(eventMonitors: [])
+
+        // When
+        let response = await session
+            .request(.get)
+            .eventMonitor(monitor)
+            .serializingDecodable(TestResponse.self).response
+        await monitor.pendingEvents()
+
+        // Then
+        #expect(response.result.isSuccess)
+        #expect(monitor.events == ["requestDidResume(_:)",
+                                   "request(_:didCreateInitialURLRequest:)",
+                                   "request(_:didCreateURLRequest:)",
+                                   "request(_:didCreateTask:)",
+                                   "request(_:didResumeTask:)",
+                                   "request(_:didGatherMetrics:)",
+                                   "requestDidFinish(_:)",
+                                   "request(_:didParseResponse:)"])
+    }
+}
+
+extension DispatchQueue {
+    func pendingWork() async {
+        await withCheckedContinuation { continuation in
+            self.async(flags: .barrier) {
+                continuation.resume()
+            }
+        }
+    }
+}
+
 #if canImport(zlib) && !os(Android) // Same condition as `DeflateRequestCompressor`.
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class RequestCompressionTests: BaseTestCase {
-    func testThatRequestsCanBeCompressed() async {
+@Suite
+struct RequestCompressionTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatRequestsCanBeCompressed() async {
         // Given
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
@@ -1391,10 +1571,12 @@ final class RequestCompressionTests: BaseTestCase {
             .result
 
         // Then
-        XCTAssertTrue(result.isSuccess)
+        #expect(result.isSuccess)
     }
 
-    func testThatDeflateCompressorThrowsErrorByDefaultWhenRequestAlreadyHasHeader() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatDeflateCompressorThrowsErrorByDefaultWhenRequestAlreadyHasHeader() async {
         // Given
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
@@ -1410,11 +1592,13 @@ final class RequestCompressionTests: BaseTestCase {
             .result
 
         // Then
-        XCTAssertFalse(result.isSuccess)
-        XCTAssertNotNil(result.failure?.underlyingError as? DeflateRequestCompressor.DuplicateHeaderError)
+        #expect(result.isFailure)
+        #expect(result.failure?.underlyingError as? DeflateRequestCompressor.DuplicateHeaderError != nil)
     }
 
-    func testThatDeflateCompressorThrowsErrorWhenConfigured() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatDeflateCompressorThrowsErrorWhenConfigured() async {
         // Given
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
@@ -1430,11 +1614,13 @@ final class RequestCompressionTests: BaseTestCase {
             .result
 
         // Then
-        XCTAssertFalse(result.isSuccess)
-        XCTAssertNotNil(result.failure?.underlyingError as? DeflateRequestCompressor.DuplicateHeaderError)
+        #expect(result.isFailure)
+        #expect(result.failure?.underlyingError as? DeflateRequestCompressor.DuplicateHeaderError != nil)
     }
 
-    func testThatDeflateCompressorReplacesHeaderWhenConfigured() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatDeflateCompressorReplacesHeaderWhenConfigured() async {
         // Given
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
@@ -1450,10 +1636,12 @@ final class RequestCompressionTests: BaseTestCase {
             .result
 
         // Then
-        XCTAssertTrue(result.isSuccess)
+        #expect(result.isSuccess)
     }
 
-    func testThatDeflateCompressorSkipsCompressionWhenConfigured() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatDeflateCompressorSkipsCompressionWhenConfigured() async {
         // Given
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
@@ -1470,10 +1658,12 @@ final class RequestCompressionTests: BaseTestCase {
 
         // Then
         // Request fails as the server expects gzip compression.
-        XCTAssertFalse(result.isSuccess)
+        #expect(result.isFailure)
     }
 
-    func testThatDeflateCompressorDoesNotCompressDataWhenClosureReturnsFalse() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatDeflateCompressorDoesNotCompressDataWhenClosureReturnsFalse() async {
         // Given
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
@@ -1488,9 +1678,9 @@ final class RequestCompressionTests: BaseTestCase {
             .result
 
         // Then
-        XCTAssertTrue(result.isSuccess)
+        #expect(result.isSuccess)
         // With no compression, request headers reflected from server should have no Content-Encoding.
-        XCTAssertNil(result.success?.headers["Content-Encoding"])
+        #expect(result.success?.headers["Content-Encoding"] == nil)
     }
 }
 #endif

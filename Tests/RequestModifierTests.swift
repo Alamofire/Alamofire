@@ -36,7 +36,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDataResponse<Data?>?
 
         // When
-        AF.request(.delay(1)) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        AF.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -56,7 +56,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDataResponse<Data?>?
 
         // When
-        session.request(.delay(1)) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        session.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -78,7 +78,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDataResponse<Data?>?
 
         // When
-        AF.upload(data, to: endpoint) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        AF.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -101,7 +101,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDataResponse<Data?>?
 
         // When
-        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -122,7 +122,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDownloadResponse<URL?>?
 
         // When
-        AF.download(url, requestModifier: { $0.timeoutInterval = 0.01; modified.fulfill() })
+        AF.download(url, requestModifier: { $0.timeoutInterval = 0.001; modified.fulfill() })
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -142,7 +142,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDownloadResponse<URL?>?
 
         // When
-        session.download(.delay(1), requestModifier: { $0.timeoutInterval = 0.01; modified.fulfill() })
+        session.download(.delay(1), requestModifier: { $0.timeoutInterval = 0.001; modified.fulfill() })
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -162,7 +162,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: DataStreamRequest.Completion?
 
         // When
-        AF.streamRequest(.delay(1)) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        AF.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
 
@@ -187,7 +187,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: DataStreamRequest.Completion?
 
         // When
-        session.streamRequest(.delay(1)) { $0.timeoutInterval = 0.01; modified.fulfill() }
+        session.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
 

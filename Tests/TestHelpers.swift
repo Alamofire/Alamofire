@@ -351,6 +351,7 @@ extension Session {
                  encoding: any ParameterEncoding = URLEncoding.default,
                  headers: HTTPHeaders? = nil,
                  interceptor: (any RequestInterceptor)? = nil,
+                 shouldAutomaticallyResume: Bool? = nil,
                  requestModifier: RequestModifier? = nil) -> DataRequest {
         request(endpoint as (any URLConvertible),
                 method: endpoint.method,
@@ -358,6 +359,7 @@ extension Session {
                 encoding: encoding,
                 headers: headers,
                 interceptor: interceptor,
+                shouldAutomaticallyResume: shouldAutomaticallyResume,
                 requestModifier: requestModifier)
     }
 
@@ -366,6 +368,7 @@ extension Session {
                                                    encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                    headers: HTTPHeaders? = nil,
                                                    interceptor: (any RequestInterceptor)? = nil,
+                                                   shouldAutomaticallyResume: Bool? = nil,
                                                    requestModifier: RequestModifier? = nil) -> DataRequest {
         request(endpoint as (any URLConvertible),
                 method: endpoint.method,
@@ -373,6 +376,7 @@ extension Session {
                 encoder: encoder,
                 headers: headers,
                 interceptor: interceptor,
+                shouldAutomaticallyResume: shouldAutomaticallyResume,
                 requestModifier: requestModifier)
     }
 
@@ -384,21 +388,25 @@ extension Session {
                        headers: HTTPHeaders? = nil,
                        automaticallyCancelOnStreamError: Bool = false,
                        interceptor: (any RequestInterceptor)? = nil,
+                       shouldAutomaticallyResume: Bool? = nil,
                        requestModifier: RequestModifier? = nil) -> DataStreamRequest {
         streamRequest(endpoint as (any URLConvertible),
                       method: endpoint.method,
                       headers: headers,
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                       interceptor: interceptor,
+                      shouldAutomaticallyResume: shouldAutomaticallyResume,
                       requestModifier: requestModifier)
     }
 
     func streamRequest(_ endpoint: Endpoint,
                        automaticallyCancelOnStreamError: Bool = false,
-                       interceptor: (any RequestInterceptor)? = nil) -> DataStreamRequest {
+                       interceptor: (any RequestInterceptor)? = nil,
+                       shouldAutomaticallyResume: Bool? = nil) -> DataStreamRequest {
         streamRequest(endpoint as (any URLRequestConvertible),
                       automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
-                      interceptor: interceptor)
+                      interceptor: interceptor,
+                      shouldAutomaticallyResume: shouldAutomaticallyResume)
     }
 
     func download<Parameters: Encodable & Sendable>(_ endpoint: Endpoint,
@@ -406,6 +414,7 @@ extension Session {
                                                     encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                     headers: HTTPHeaders? = nil,
                                                     interceptor: (any RequestInterceptor)? = nil,
+                                                    shouldAutomaticallyResume: Bool? = nil,
                                                     requestModifier: RequestModifier? = nil,
                                                     to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         download(endpoint as (any URLConvertible),
@@ -414,6 +423,7 @@ extension Session {
                  encoder: encoder,
                  headers: headers,
                  interceptor: interceptor,
+                 shouldAutomaticallyResume: shouldAutomaticallyResume,
                  requestModifier: requestModifier,
                  to: destination)
     }
@@ -423,6 +433,7 @@ extension Session {
                   encoding: any ParameterEncoding = URLEncoding.default,
                   headers: HTTPHeaders? = nil,
                   interceptor: (any RequestInterceptor)? = nil,
+                  shouldAutomaticallyResume: Bool? = nil,
                   requestModifier: RequestModifier? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         download(endpoint as (any URLConvertible),
@@ -431,26 +442,33 @@ extension Session {
                  encoding: encoding,
                  headers: headers,
                  interceptor: interceptor,
+                 shouldAutomaticallyResume: shouldAutomaticallyResume,
                  requestModifier: requestModifier,
                  to: destination)
     }
 
     func download(_ endpoint: Endpoint,
                   interceptor: (any RequestInterceptor)? = nil,
+                  shouldAutomaticallyResume: Bool? = nil,
                   to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        download(endpoint as (any URLRequestConvertible), interceptor: interceptor, to: destination)
+        download(endpoint as (any URLRequestConvertible),
+                 interceptor: interceptor,
+                 shouldAutomaticallyResume: shouldAutomaticallyResume,
+                 to: destination)
     }
 
     func upload(_ data: Data,
                 to endpoint: Endpoint,
                 headers: HTTPHeaders? = nil,
                 interceptor: (any RequestInterceptor)? = nil,
+                shouldAutomaticallyResume: Bool? = nil,
                 fileManager: FileManager = .default,
                 requestModifier: RequestModifier? = nil) -> UploadRequest {
         upload(data, to: endpoint as (any URLConvertible),
                method: endpoint.method,
                headers: headers,
                interceptor: interceptor,
+               shouldAutomaticallyResume: shouldAutomaticallyResume,
                fileManager: fileManager,
                requestModifier: requestModifier)
     }

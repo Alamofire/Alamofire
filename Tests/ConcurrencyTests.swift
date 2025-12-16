@@ -793,42 +793,42 @@ final class WebSocketConcurrencyTests: BaseTestCase {
 }
 #endif
 
-// @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-// final class ClosureAPIConcurrencyTests: BaseTestCase {
-//    func testThatDownloadProgressStreamReturnsProgress() async {
-//        // Given
-//        let session = stored(Session())
-//
-//        // When
-//        let request = session.request(.get)
-//        async let httpResponses = request.httpResponses().collect()
-//        async let uploadProgress = request.uploadProgress().collect()
-//        async let downloadProgress = request.downloadProgress().collect()
-//        async let requests = request.urlRequests().collect()
-//        async let tasks = request.urlSessionTasks().collect()
-//        async let descriptions = request.cURLDescriptions().collect()
-//        async let response = request.serializingDecodable(TestResponse.self).response
-//
-//        let values: (httpResponses: [HTTPURLResponse],
-//                     uploadProgresses: [Progress],
-//                     downloadProgresses: [Progress],
-//                     requests: [URLRequest],
-//                     tasks: [URLSessionTask],
-//                     descriptions: [String],
-//                     response: AFDataResponse<TestResponse>)
-//        values = await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
-//
-//        // Then
-//        XCTAssertTrue(values.httpResponses.count == 1, "httpResponses should have one response")
-//        XCTAssertTrue(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
-//        XCTAssertNotNil(values.downloadProgresses.last, "downloadProgresses should not be empty")
-//        XCTAssertTrue(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")
-//        XCTAssertNotNil(values.requests.last, "requests should not be empty")
-//        XCTAssertNotNil(values.tasks.last, "tasks should not be empty")
-//        XCTAssertNotNil(values.descriptions.last, "descriptions should not be empty")
-//        XCTAssertTrue(values.response.result.isSuccess, "request should succeed")
-//    }
-// }
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+final class ClosureAPIConcurrencyTests: BaseTestCase {
+    func testThatDownloadProgressStreamReturnsProgress() async {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let request = session.request(.get)
+        async let httpResponses = request.httpResponses().collect()
+        async let uploadProgress = request.uploadProgress().collect()
+        async let downloadProgress = request.downloadProgress().collect()
+        async let requests = request.urlRequests().collect()
+        async let tasks = request.urlSessionTasks().collect()
+        async let descriptions = request.cURLDescriptions().collect()
+        async let response = request.serializingDecodable(TestResponse.self).response
+
+        let values: (httpResponses: [HTTPURLResponse],
+                     uploadProgresses: [Progress],
+                     downloadProgresses: [Progress],
+                     requests: [URLRequest],
+                     tasks: [URLSessionTask],
+                     descriptions: [String],
+                     response: AFDataResponse<TestResponse>)
+        values = await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
+
+        // Then
+        XCTAssertTrue(values.httpResponses.count == 1, "httpResponses should have one response")
+        XCTAssertTrue(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
+        XCTAssertNotNil(values.downloadProgresses.last, "downloadProgresses should not be empty")
+        XCTAssertTrue(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")
+        XCTAssertNotNil(values.requests.last, "requests should not be empty")
+        XCTAssertNotNil(values.tasks.last, "tasks should not be empty")
+        XCTAssertNotNil(values.descriptions.last, "descriptions should not be empty")
+        XCTAssertTrue(values.response.result.isSuccess, "request should succeed")
+    }
+}
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension AsyncSequence {
