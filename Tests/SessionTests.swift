@@ -560,7 +560,7 @@ final class SessionTestCase: BaseTestCase {
         let didCreateRequest = expectation(description: "Request created")
         monitor.requestDidCreateTask = { _, _ in didCreateRequest.fulfill() }
         var session: Session? = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [monitor])
-        #if compiler(>=6.2) // Started emitting a diagnostic in 6.2.2, so lets conditionally use it.
+        #if compiler(>=6.2.3) // Started emitting a diagnostic in 6.2.2, so lets conditionally use it.
         weak let weakSession = session
         #else
         weak var weakSession = session
