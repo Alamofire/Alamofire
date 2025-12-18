@@ -1518,14 +1518,16 @@ struct RequestInstanceInterceptorTests {
     @Test
     func instanceEventMonitorIsCalled() async throws {
         // Given
-        let monitor = InspectorEventMonitor()
-        let session = Session(eventMonitors: [])
+        let queue = DispatchQueue(label: "org.alamofire.eventMonitorTest")
+        let monitor = InspectorEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, eventMonitors: [])
 
         // When
         let response = await session
             .request(.get)
             .eventMonitor(monitor)
-            .serializingDecodable(TestResponse.self).response
+            .serializingDecodable(TestResponse.self)
+            .response
         await monitor.pendingEvents()
 
         // Then

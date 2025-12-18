@@ -27,14 +27,17 @@ import Foundation
 @testable import Alamofire
 
 final class InspectorEventMonitor: EventMonitor {
-    let queue = DispatchQueue(label: "org.alamofire.inspectorEventMonitor")
+    let queue: DispatchQueue
+
     var events: [String] {
         _events.read(\.self)
     }
 
     private let _events = Protected<[String]>([])
 
-    init() {}
+    init(queue: DispatchQueue = DispatchQueue(label: "org.alamofire.inspectorEventMonitor")) {
+        self.queue = queue
+    }
 
     func pendingEvents() async {
         await queue.pendingWork()
