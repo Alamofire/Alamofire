@@ -32,7 +32,7 @@ open class Session: @unchecked Sendable {
     public static let `default` = Session()
 
     /// Type describing the timing of `Request` setup after creation.
-    public enum RequestSetupTiming {
+    public enum RequestSetup {
         /// Calls the needed lifetime methods on created `Request`s only after they have `resume` called. `Request`s are
         /// inert upon creation.
         case lazy
@@ -61,7 +61,7 @@ open class Session: @unchecked Sendable {
     ///
     /// - Note: Prior to Alamofire 5.11, `Session` acted as if this was set to `.eager`, so if any behavior changes are
     ///         noted, `.eager` can be used for backward compatibility.
-    public let requestSetupTiming: RequestSetupTiming
+    public let requestSetup: RequestSetup
     /// `DispatchQueue` on which `URLRequest`s are created asynchronously. By default this queue uses `rootQueue` as its
     /// `target`, but a separate queue can be used if request creation is determined to be a bottleneck. Always profile
     /// and test before introducing an additional queue.
@@ -107,7 +107,7 @@ open class Session: @unchecked Sendable {
     ///   - startRequestsImmediately: Determines whether this instance will automatically start all `Request`s once a
     ///                               response handler is added. `true` by default. If set to `false`, all `Request`s
     ///                               created must have `.resume()` called to start.
-    ///   - requestSetupTiming:       Determines when the `Session` will perform the internal setup for created
+    ///   - requestSetup:       Determines when the `Session` will perform the internal setup for created
     ///                               `Request`s. `.lazy` by default.
     ///   - requestQueue:             `DispatchQueue` on which to perform `URLRequest` creation. By default this queue
     ///                               will use the `rootQueue` as its `target`. A separate queue can be used if it's
@@ -130,7 +130,7 @@ open class Session: @unchecked Sendable {
                 delegate: SessionDelegate,
                 rootQueue: DispatchQueue,
                 startRequestsImmediately: Bool = true,
-                requestSetupTiming: RequestSetupTiming = .lazy,
+                requestSetup: RequestSetup = .lazy,
                 requestQueue: DispatchQueue? = nil,
                 serializationQueue: DispatchQueue? = nil,
                 interceptor: (any RequestInterceptor)? = nil,
@@ -147,7 +147,7 @@ open class Session: @unchecked Sendable {
         self.delegate = delegate
         self.rootQueue = rootQueue
         self.startRequestsImmediately = startRequestsImmediately
-        self.requestSetupTiming = requestSetupTiming
+        self.requestSetup = requestSetup
         self.requestQueue = requestQueue ?? DispatchQueue(label: "\(rootQueue.label).requestQueue", target: rootQueue)
         self.serializationQueue = serializationQueue ?? DispatchQueue(label: "\(rootQueue.label).serializationQueue", target: rootQueue)
         self.interceptor = interceptor
@@ -175,7 +175,7 @@ open class Session: @unchecked Sendable {
     ///   - startRequestsImmediately: Determines whether this instance will automatically start all `Request`s once a
     ///                               response handler is added. `true` by default. If set to `false`, all `Request`s
     ///                               created must have `.resume()` called to start.
-    ///   - requestSetupTiming:       Determines when the `Session` will perform the internal setup for created
+    ///   - requestSetup:       Determines when the `Session` will perform the internal setup for created
     ///                               `Request`s. `.lazy` by default.
     ///   - requestQueue:             `DispatchQueue` on which to perform `URLRequest` creation. By default this queue
     ///                               will use the `rootQueue` as its `target`. A separate queue can be used if it's
@@ -198,7 +198,7 @@ open class Session: @unchecked Sendable {
                             delegate: SessionDelegate = SessionDelegate(),
                             rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.session.rootQueue"),
                             startRequestsImmediately: Bool = true,
-                            requestSetupTiming: RequestSetupTiming = .lazy,
+                            requestSetup: RequestSetup = .lazy,
                             requestQueue: DispatchQueue? = nil,
                             serializationQueue: DispatchQueue? = nil,
                             interceptor: (any RequestInterceptor)? = nil,
@@ -218,7 +218,7 @@ open class Session: @unchecked Sendable {
                   delegate: delegate,
                   rootQueue: serialRootQueue,
                   startRequestsImmediately: startRequestsImmediately,
-                  requestSetupTiming: requestSetupTiming,
+                  requestSetup: requestSetup,
                   requestQueue: requestQueue,
                   serializationQueue: serializationQueue,
                   interceptor: interceptor,
@@ -1145,7 +1145,7 @@ open class Session: @unchecked Sendable {
     // MARK: Perform
 
     func performEagerlyIfNecessary(_ request: Request) {
-        guard requestSetupTiming == .eager else { return }
+        guard requestSetup == .eager else { return }
 
         perform(request)
     }

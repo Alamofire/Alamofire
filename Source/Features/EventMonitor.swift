@@ -334,11 +334,11 @@ public final class CompositeEventMonitor: EventMonitor {
     }
 
     func performEvent(_ event: sending @escaping (any EventMonitor) -> Void) {
-            self._monitors.read { monitors in
-                for monitor in monitors {
-                    monitor.queue.async { event(monitor) }
-                }
+        _monitors.read { monitors in
+            for monitor in monitors {
+                monitor.queue.async { event(monitor) }
             }
+        }
     }
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {

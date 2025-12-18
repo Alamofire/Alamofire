@@ -559,7 +559,7 @@ final class SessionTestCase: BaseTestCase {
         let monitor = ClosureEventMonitor()
         let didCreateRequest = expectation(description: "Request created")
         monitor.requestDidCreateTask = { _, _ in didCreateRequest.fulfill() }
-        var session: Session? = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [monitor])
+        var session: Session? = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [monitor])
         #if compiler(>=6.2.3) // Started emitting a diagnostic in 6.2.2, so lets conditionally use it.
         weak let weakSession = session
         #else
@@ -743,7 +743,7 @@ final class SessionTestCase: BaseTestCase {
         let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = expectation(description: "Request 1 created")
@@ -775,7 +775,7 @@ final class SessionTestCase: BaseTestCase {
         let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = expectation(description: "Request 1 created")
@@ -808,7 +808,7 @@ final class SessionTestCase: BaseTestCase {
         let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = expectation(description: "Request 1 created")
@@ -841,7 +841,7 @@ final class SessionTestCase: BaseTestCase {
         let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = expectation(description: "Request 1 created")
@@ -874,7 +874,7 @@ final class SessionTestCase: BaseTestCase {
         let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = expectation(description: "Request 1 created")
@@ -906,7 +906,7 @@ final class SessionTestCase: BaseTestCase {
         let headerAdapter = HeaderAdapter(throwsError: true)
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = expectation(description: "Request 1 created")
@@ -1508,7 +1508,7 @@ final class SessionTestCase: BaseTestCase {
         events.sessionDidBecomeInvalidWithError = { _, _ in
             invalidationExpectation.fulfill()
         }
-        var session: Session? = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [events])
+        var session: Session? = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [events])
         var error: AFError?
         let requestExpectation = expectation(description: "request should complete")
 
@@ -1656,7 +1656,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         let massActions = expectation(description: "cancel all requests should be called")
         let monitor = ClosureEventMonitor()
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
-        let session = Session(requestSetupTiming: .eager, eventMonitors: [monitor])
+        let session = Session(requestSetup: .eager, eventMonitors: [monitor])
         let request = Endpoint.delay(1)
         var requests: [DataRequest] = []
 
@@ -1687,7 +1687,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         let monitor = ClosureEventMonitor()
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.fulfill() }
-        let session = Session(requestSetupTiming: .eager, eventMonitors: [monitor])
+        let session = Session(requestSetup: .eager, eventMonitors: [monitor])
         let request = Endpoint.delay(1)
         var requests: [DataRequest] = []
         var responses: [DataResponse<Data?, AFError>] = []
@@ -1777,7 +1777,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         let monitor = ClosureEventMonitor()
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.fulfill() }
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [monitor])
         let request = Endpoint.delay(1)
         var requests: [DataRequest] = []
         var responses: [DataResponse<Data?, AFError>] = []
@@ -1822,7 +1822,7 @@ final class SessionMassActionTestCase: BaseTestCase {
         let monitor = ClosureEventMonitor()
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.fulfill() }
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [monitor])
         let request = Endpoint.delay(1)
         var responses: [DataResponse<Data?, AFError>] = []
 

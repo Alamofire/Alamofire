@@ -281,8 +281,8 @@ public class Request: @unchecked Sendable {
         self.id = id
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue
-        mutableState = Protected(MutableState(eventMonitor: eventMonitor.map { CompositeEventMonitor(monitors: [$0]) },
-                                              interceptor: interceptor.map { Interceptor(interceptors: [$0]) }))
+        mutableState = Protected(MutableState(eventMonitor: eventMonitor,
+                                              interceptor: interceptor))
         self.shouldAutomaticallyResume = shouldAutomaticallyResume
         self.delegate = delegate
     }

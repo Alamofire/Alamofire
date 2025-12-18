@@ -27,24 +27,27 @@ import Foundation
 @testable import Alamofire
 
 final class InspectorEventMonitor: EventMonitor {
+    let label: String
     let queue: DispatchQueue
-    
+
     struct TimelineEvent {
         var date: Date
         var event: String
+        var label: String
     }
-    
+
     var events: [String] {
         _timeline.read { $0.map(\.event) }
     }
-    
+
     var timeline: [TimelineEvent] {
         _timeline.read(\.self)
     }
 
     private let _timeline = Protected<[TimelineEvent]>([])
 
-    init(queue: DispatchQueue = DispatchQueue(label: "org.alamofire.inspectorEventMonitor")) {
+    init(label: String = "InspectorEventMonitor", queue: DispatchQueue = DispatchQueue(label: "org.alamofire.inspectorEventMonitor")) {
+        self.label = label
         self.queue = queue
     }
 
@@ -53,7 +56,7 @@ final class InspectorEventMonitor: EventMonitor {
     }
 
     private func append(_ event: String) {
-        _timeline.write { $0.append(TimelineEvent(date: .now, event: event)) }
+        _timeline.write { $0.append(TimelineEvent(date: .now, event: event, label: label)) }
     }
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {

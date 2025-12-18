@@ -613,7 +613,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatRequestManuallySuspendedManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [eventMonitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -640,7 +640,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatRequestManuallySuspendedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [eventMonitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -669,7 +669,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatRequestManuallyCancelledManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(requestSetupTiming: .eager, eventMonitors: [eventMonitor])
+        let session = Session(requestSetup: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -699,7 +699,7 @@ final class RequestResponseTestCase: BaseTestCase {
     func testThatRequestManuallyCancelledManyTimesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, requestSetupTiming: .eager, eventMonitors: [eventMonitor])
+        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 2
@@ -996,7 +996,7 @@ final class RequestDescriptionTestCase: BaseTestCase {
 final class RequestCURLDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
-    let session: Session = .init(requestSetupTiming: .eager)
+    let session: Session = .init(requestSetup: .eager)
 
     let sessionWithAcceptLanguageHeader: Session = {
         var headers = HTTPHeaders.default
@@ -1005,7 +1005,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        let session = Session(configuration: configuration, requestSetupTiming: .eager)
+        let session = Session(configuration: configuration, requestSetup: .eager)
 
         return session
     }()
@@ -1017,7 +1017,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        let session = Session(configuration: configuration, requestSetupTiming: .eager)
+        let session = Session(configuration: configuration, requestSetup: .eager)
 
         return session
     }()
@@ -1026,14 +1026,14 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpCookieStorage?.setCookie(cookie)
 
-        return Session(configuration: configuration, requestSetupTiming: .eager)
+        return Session(configuration: configuration, requestSetup: .eager)
     }
 
     let sessionDisallowingCookies: Session = {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpShouldSetCookies = false
 
-        let session = Session(configuration: configuration, requestSetupTiming: .eager)
+        let session = Session(configuration: configuration, requestSetup: .eager)
 
         return session
     }()
@@ -1545,6 +1545,58 @@ struct RequestInstanceInterceptorTests {
             print("events: \(monitor.events)")
         }
         #expect(monitor.events == expected, "Events didn't match, actual events: \(monitor.events)")
+    }
+
+    @Test
+    func instanceAndSessionEventMonitorsAreCalledInCorrectOrder() async throws {
+        // Given
+        let queue = DispatchQueue(label: "org.alamofire.eventMonitorTest")
+        let sessionMonitor = InspectorEventMonitor(label: "session", queue: queue)
+        let instanceMonitor = InspectorEventMonitor(label: "instance", queue: queue)
+        let session = Session(rootQueue: queue, eventMonitors: [sessionMonitor])
+
+        // When
+        let response = await session
+            .request(.get)
+            .eventMonitor(instanceMonitor)
+            .serializingDecodable(TestResponse.self)
+            .response
+        await sessionMonitor.pendingEvents()
+        await instanceMonitor.pendingEvents()
+
+        // Then
+
+        #expect(response.result.isSuccess)
+        let expectedInstanceEvents = ["requestDidResume(_:)",
+                                      "request(_:didCreateInitialURLRequest:)",
+                                      "request(_:didCreateURLRequest:)",
+                                      "request(_:didCreateTask:)",
+                                      "request(_:didResumeTask:)",
+                                      "request(_:didGatherMetrics:)",
+                                      "requestDidFinish(_:)",
+                                      "request(_:didParseResponse:)"]
+        let expectedSessionEvents = ["requestDidResume(_:)",
+                                     "request(_:didCreateInitialURLRequest:)",
+                                     "request(_:didCreateURLRequest:)",
+                                     "request(_:didCreateTask:)",
+                                     "request(_:didResumeTask:)",
+                                     "urlSession(_:dataTask:didReceive:)",
+                                     "urlSession(_:dataTask:willCacheResponse:)",
+                                     "urlSession(_:task:didFinishCollecting:)",
+                                     "request(_:didGatherMetrics:)",
+                                     "urlSession(_:task:didCompleteWithError:)",
+                                     "requestDidFinish(_:)",
+                                     "request(_:didParseResponse:)"]
+        #expect(sessionMonitor.events == expectedSessionEvents, "Session events didn't match, actual events: \(sessionMonitor.events)")
+        #expect(instanceMonitor.events == expectedInstanceEvents, "Instance events didn't match, actual events: \(instanceMonitor.events)")
+        let instanceEvents = instanceMonitor.timeline
+        var sessionEvents = sessionMonitor.timeline
+        sessionEvents = sessionEvents.filter { session in instanceEvents.contains { $0.event == session.event } }
+        #expect(instanceEvents.count == sessionEvents.count)
+        for combinedEvent in zip(sessionEvents, instanceEvents) {
+            #expect(combinedEvent.0.event == combinedEvent.1.event)
+            #expect(combinedEvent.0.date <= combinedEvent.1.date, "session event wasn't before instance event")
+        }
     }
 }
 
