@@ -27,7 +27,7 @@ import Foundation
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
 public protocol EventMonitor: Sendable {
-    /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. `.main` by default.
+    /// The `DispatchQueue` onto which the conforming instance's events will be called.
     var queue: DispatchQueue { get }
 
     // MARK: - URLSession Events
@@ -313,17 +313,29 @@ extension EventMonitor {
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
 public final class CompositeEventMonitor: EventMonitor {
-    public let queue = DispatchQueue(label: "org.alamofire.compositeEventMonitor")
-
-    let monitors: Protected<[any EventMonitor]>
-
-    init(monitors: [any EventMonitor]) {
-        self.monitors = Protected(monitors)
+    public let queue: DispatchQueue
+    /// Underlying `EventMonitor`s performed by the instance.
+    public var monitors: [any EventMonitor] {
+        _monitors.read(\.self)
     }
 
-    func performEvent(_ event: @escaping @Sendable (any EventMonitor) -> Void) {
+    let _monitors: Protected<[any EventMonitor]>
+
+    /// Creates an instance from the provided `DispatchQueue` and `EventMonitor`s.
+    ///
+    /// - Parameters:
+    ///   - queue:    `DispatchQueue` on which the events will be called.
+    ///               `DispatchQueue(label: "org.alamofire.compositeEventMonitor")` by default.
+    ///   - monitors: `EventMonitor`s performed.
+    ///
+    init(queue: DispatchQueue = DispatchQueue(label: "org.alamofire.compositeEventMonitor"), monitors: [any EventMonitor]) {
+        self.queue = queue
+        _monitors = Protected(monitors)
+    }
+
+    func performEvent(_ event: sending @escaping (any EventMonitor) -> Void) {
         queue.async {
-            self.monitors.read { monitors in
+            self._monitors.read { monitors in
                 for monitor in monitors {
                     monitor.queue.async { event(monitor) }
                 }

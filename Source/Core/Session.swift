@@ -80,7 +80,7 @@ open class Session: @unchecked Sendable {
     /// `CachedResponseHandler` instance used to provide customization of cached response handling.
     public let cachedResponseHandler: (any CachedResponseHandler)?
     /// `CompositeEventMonitor` used to compose any passed `EventMonitor`s. `EventMonitor`s can also be added on a
-    /// per-`Request` basis, in which cased monitors from the `Session` are executed first.
+    /// per-`Request` basis, in which case monitors from the `Session` are executed first.
     public let eventMonitor: CompositeEventMonitor
     /// `EventMonitor`s included in all instances unless overwritten. `[AlamofireNotifications()]` by default.
     @available(*, deprecated, message: "Use [AlamofireNotifications()] directly.")
@@ -154,7 +154,7 @@ open class Session: @unchecked Sendable {
         self.serverTrustManager = serverTrustManager
         self.redirectHandler = redirectHandler
         self.cachedResponseHandler = cachedResponseHandler
-        eventMonitor = CompositeEventMonitor(monitors: eventMonitors)
+        eventMonitor = CompositeEventMonitor(queue: rootQueue, monitors: eventMonitors)
         delegate.eventMonitor = eventMonitor
         delegate.stateProvider = self
     }

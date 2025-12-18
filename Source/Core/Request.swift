@@ -1013,13 +1013,15 @@ public class Request: @unchecked Sendable {
             if let existingMonitor = mutableState.eventMonitor {
                 if let existingMonitor = existingMonitor as? CompositeEventMonitor {
                     // Only CompositeEventMonitor should be at the root.
-                    mutableState.eventMonitor = CompositeEventMonitor(monitors: existingMonitor.monitors.read(\.self) + [eventMonitor])
+                    mutableState.eventMonitor = CompositeEventMonitor(queue: existingMonitor.queue,
+                                                                      monitors: existingMonitor.monitors + [eventMonitor])
                 } else {
                     // Somehow we have a different root EventMonitor, compose it again.
-                    mutableState.eventMonitor = CompositeEventMonitor(monitors: [existingMonitor, eventMonitor])
+                    mutableState.eventMonitor = CompositeEventMonitor(queue: underlyingQueue,
+                                                                      monitors: [existingMonitor, eventMonitor])
                 }
             } else {
-                mutableState.eventMonitor = CompositeEventMonitor(monitors: [eventMonitor])
+                mutableState.eventMonitor = CompositeEventMonitor(queue: underlyingQueue, monitors: [eventMonitor])
             }
         }
 
