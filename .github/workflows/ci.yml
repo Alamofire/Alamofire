@@ -77,7 +77,7 @@ jobs:
             testPlan: "macOS"
             outputFilter: xcbeautify --renderer github-actions
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: ${{ matrix.name }}
         run: |-
           set -o pipefail
@@ -113,7 +113,7 @@ jobs:
             name: "Catalyst 16.0"
             runsOn: macOS-15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: Catalyst
@@ -184,7 +184,7 @@ jobs:
           #   xcode: "Xcode_15.0.1"
           #   runsOn: macOS-14
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -240,7 +240,7 @@ jobs:
           #   xcode: "Xcode_15.0.1"
           #   runsOn: macOS-14
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -304,7 +304,7 @@ jobs:
           #   xcode: "Xcode_15.2"
           #   runsOn: macOS-14
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -360,7 +360,7 @@ jobs:
           #   xcode: "Xcode_15.0.1"
           #   runsOn: macOS-14
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Firewalk
         run: brew update && brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
@@ -408,7 +408,7 @@ jobs:
             name: "macOS 15, SPM 6.0 Test"
             outputFilter: xcbeautify --renderer github-actions
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
       - name: Test SPM
@@ -436,7 +436,7 @@ jobs:
       image: ${{ matrix.image }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: "Fix @MainActor in Tests"
         # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
         run: sed -i'' 's;@MainActor;;g' Tests/*.swift
@@ -449,7 +449,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: "Fix @MainActor in Tests"
         # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
         run: sed -i'' 's;@MainActor;;g' Tests/*.swift
@@ -482,7 +482,7 @@ jobs:
           branch: ${{ matrix.branch }}
           tag: ${{ matrix.tag }}
       - name: Clone
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: SPM ${{ matrix.name }}
         run: |
           swift build --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
@@ -494,7 +494,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Clone
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:

@@ -1531,16 +1531,20 @@ struct RequestInstanceInterceptorTests {
         await monitor.pendingEvents()
 
         // Then
-        print("!!! events: \(monitor.events)")
+
         #expect(response.result.isSuccess)
-        #expect(monitor.events == ["requestDidResume(_:)",
-                                   "request(_:didCreateInitialURLRequest:)",
-                                   "request(_:didCreateURLRequest:)",
-                                   "request(_:didCreateTask:)",
-                                   "request(_:didResumeTask:)",
-                                   "request(_:didGatherMetrics:)",
-                                   "requestDidFinish(_:)",
-                                   "request(_:didParseResponse:)"], "Events didn't match, actual events: \(monitor.events)")
+        let expected = ["requestDidResume(_:)",
+                        "request(_:didCreateInitialURLRequest:)",
+                        "request(_:didCreateURLRequest:)",
+                        "request(_:didCreateTask:)",
+                        "request(_:didResumeTask:)",
+                        "request(_:didGatherMetrics:)",
+                        "requestDidFinish(_:)",
+                        "request(_:didParseResponse:)"]
+        if monitor.events != expected {
+            print("events: \(monitor.events)")
+        }
+        #expect(monitor.events == expected, "Events didn't match, actual events: \(monitor.events)")
     }
 }
 
