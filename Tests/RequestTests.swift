@@ -1539,7 +1539,7 @@ struct RequestInstanceInterceptorTests {
                                    "request(_:didResumeTask:)",
                                    "request(_:didGatherMetrics:)",
                                    "requestDidFinish(_:)",
-                                   "request(_:didParseResponse:)"])
+                                   "request(_:didParseResponse:)"], "Events didn't match, actual events: \(monitor.events)")
     }
 }
 
