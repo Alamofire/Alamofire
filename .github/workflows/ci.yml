@@ -375,6 +375,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_26.2"
+            runsOn: macOS-26
+            name: "macOS 15, SPM 6.2.3 Test"
+            outputFilter: xcbeautify --renderer github-actions
+          - xcode: "Xcode_26.1"
+            runsOn: macOS-15
+            name: "macOS 15, SPM 6.2.1 Test"
+            outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_26.0"
             runsOn: macOS-15
             name: "macOS 15, SPM 6.2.0 Test"
@@ -389,7 +397,7 @@ jobs:
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_16.2"
             runsOn: macOS-15
-            name: "macOS 15, SPM 6.0.2 Test"
+            name: "macOS 15, Xcode 16.2 SPM 6.0.2 Test"
             outputFilter: xcbeautify --renderer github-actions
           - xcode: "Xcode_16.1"
             runsOn: macOS-15
