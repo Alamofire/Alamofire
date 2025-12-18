@@ -1531,6 +1531,7 @@ struct RequestInstanceInterceptorTests {
         await monitor.pendingEvents()
 
         // Then
+        print("!!! events: \(monitor.events)")
         #expect(response.result.isSuccess)
         #expect(monitor.events == ["requestDidResume(_:)",
                                    "request(_:didCreateInitialURLRequest:)",
