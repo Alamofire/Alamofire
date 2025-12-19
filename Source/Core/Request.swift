@@ -113,11 +113,10 @@ public class Request: @unchecked Sendable {
         var responseSerializerCompletions: [@Sendable () -> Void] = []
         /// Whether response serializer processing is finished.
         var responseSerializerProcessingFinished = false
-
+        /// Instance's `EventMonitor`. Receives only `Request`-level events.
         var eventMonitor: (any EventMonitor)?
-
+        /// Instance's `RequestInterceptor` composed of the `Session`'s interceptor and any added to the instance.
         var interceptor: (any RequestInterceptor)?
-
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -942,6 +941,12 @@ public class Request: @unchecked Sendable {
         return self
     }
 
+    /// Adds a `RequestInterceptor` for this instance, called after the interceptors of the parent `Session`.
+    ///
+    /// - Parameter interceptor: `RequestInterceptor` to add.
+    ///
+    /// - Returns:               The instance.
+    ///
     @preconcurrency
     @discardableResult
     public func interceptor(_ interceptor: any RequestInterceptor) -> Self {
@@ -964,9 +969,15 @@ public class Request: @unchecked Sendable {
         return self
     }
 
+    /// Adds a `RequestAdapter` for this instance, called after the adapters of the parent `Session`.
+    ///
+    /// - Parameter adapter: `RequestAdapter` to be called.
+    ///
+    /// - Returns:           The instance.
+    ///
     @preconcurrency
     @discardableResult
-    public func adapter(_ adapter: any RequestAdapter) -> Self {
+    public func adapt(using adapter: any RequestAdapter) -> Self {
         mutableState.write { mutableState in
             if let existingInterceptor = mutableState.interceptor {
                 if let existingInterceptor = existingInterceptor as? Interceptor {
@@ -985,9 +996,15 @@ public class Request: @unchecked Sendable {
         return self
     }
 
+    /// Adds a `RequestRetrier` for this instance, called after the retriers of the parent `Session`.
+    ///
+    /// - Parameter retrier: `RequestRetrier` to add.
+    ///
+    /// - Returns:           The instance.
+    ///
     @preconcurrency
     @discardableResult
-    public func retrier(_ retrier: any RequestRetrier) -> Self {
+    public func retry(using retrier: any RequestRetrier) -> Self {
         mutableState.write { mutableState in
             if let existingInterceptor = mutableState.interceptor {
                 if let existingInterceptor = existingInterceptor as? Interceptor {
@@ -1006,6 +1023,14 @@ public class Request: @unchecked Sendable {
         return self
     }
 
+    /// Adds an `EventMonitor` for this instance, called after the `EventMonitor`s of the parent `Session`.
+    ///
+    /// - Note: `Request` `EventMonitor`s only receive `Request` events (see the "Request Events" section of the `EventMonitor` protocol). `URLSession` events are only sent at the `Session` level.
+    ///
+    /// - Parameter eventMonitor: `EventMonitor` to add.
+    ///
+    /// - Returns:                The instance.
+    ///
     @preconcurrency
     @discardableResult
     public func eventMonitor(_ eventMonitor: any EventMonitor) -> Self {

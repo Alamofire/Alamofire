@@ -1328,7 +1328,7 @@ open class Session: @unchecked Sendable {
 
     func adapter(for request: Request) -> (any RequestAdapter)? {
         if let requestInterceptor = request.interceptor, let sessionInterceptor = interceptor {
-            Interceptor(adapters: [requestInterceptor, sessionInterceptor])
+            Interceptor(adapters: [sessionInterceptor, requestInterceptor])
         } else {
             request.interceptor ?? interceptor
         }
@@ -1336,7 +1336,7 @@ open class Session: @unchecked Sendable {
 
     func retrier(for request: Request) -> (any RequestRetrier)? {
         if let requestInterceptor = request.interceptor, let sessionInterceptor = interceptor {
-            Interceptor(retriers: [requestInterceptor, sessionInterceptor])
+            Interceptor(retriers: [sessionInterceptor, requestInterceptor])
         } else {
             request.interceptor ?? interceptor
         }

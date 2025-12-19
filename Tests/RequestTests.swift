@@ -1469,7 +1469,7 @@ struct RequestInstanceInterceptorTests {
         // When
         let response = await session
             .request(.get)
-            .adapter(interceptor)
+            .adapt(using: interceptor)
             .serializingDecodable(TestResponse.self).response
 
         #expect(response.result.isSuccess)
@@ -1508,7 +1508,7 @@ struct RequestInstanceInterceptorTests {
         // When
         let response = await session
             .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.001), .get))
-            .retrier(interceptor)
+            .retry(using: interceptor)
             .serializingDecodable(TestResponse.self).response
 
         #expect(response.result.isSuccess)

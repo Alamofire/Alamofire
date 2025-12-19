@@ -1068,7 +1068,7 @@ final class SessionTestCase: BaseTestCase {
     }
 
     @MainActor
-    func testThatSessionCallsRequestRetrierThenSessionRetrierWhenRequestEncountersError() {
+    func testThatSessionCallsSessionRetrierTheRequestRetrierWhenRequestEncountersError() {
         // Given
         let sessionHandler = RequestHandler()
         let requestHandler = RequestHandler()
@@ -1091,12 +1091,12 @@ final class SessionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(sessionHandler.adaptCalledCount, 3)
         XCTAssertEqual(sessionHandler.adaptedCount, 3)
-        XCTAssertEqual(sessionHandler.retryCalledCount, 3)
-        XCTAssertEqual(sessionHandler.retryCount, 3)
+        XCTAssertEqual(sessionHandler.retryCalledCount, 4)
+        XCTAssertEqual(sessionHandler.retryCount, 4)
         XCTAssertEqual(requestHandler.adaptCalledCount, 3)
         XCTAssertEqual(requestHandler.adaptedCount, 3)
-        XCTAssertEqual(requestHandler.retryCalledCount, 4)
-        XCTAssertEqual(requestHandler.retryCount, 4)
+        XCTAssertEqual(requestHandler.retryCalledCount, 3)
+        XCTAssertEqual(requestHandler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 2)
         XCTAssertEqual(response?.result.isSuccess, false)
         assert(on: session.rootQueue) {
