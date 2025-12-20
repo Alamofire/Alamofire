@@ -6,6 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
+- `5.11.x` Releases - [5.11.0](#5110)
 - `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101) | [5.10.2](#5102)
 - `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
 - `5.8.x`  Releases - [5.8.0](#580) | [5.8.1](#581)
@@ -58,9 +59,47 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 ---
 
+## [5.11.0](https://github.com/Alamofire/Alamofire/releases/tag/5.11.0]
+
+Released on 2025-12-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/94?closed=1).
+
+### Added
+- Lazy `Request` setup by default. `Request`s are now inert until `resume()`'d, whether automatically or manually. Previous behavior can be restored by using `Session(requestSetup: .eager)`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3996](https://github.com/Alamofire/Alamofire/pull/3996).
+- Inline, per-`Request` `RequestAdapter`, `RequestRetrier`, `RequestInterceptor`, and `EventMonitor` APIs, to add instances after `Request` initialization.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3996](https://github.com/Alamofire/Alamofire/pull/3996).
+- Per-`Request` automatic `resume()` control, with the `shouldAutomaticallyResume` parameter.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3996](https://github.com/Alamofire/Alamofire/pull/3996).
+- `OfflineRetrier`, to retry requests based on `NWPathMonitor` status, as a replacement for `NetworkReachabilityManager`.
+  - Added by [Jon Shier](https://github.com/jshier) and [gourav kumar](https://github.com/gouravkmar) in Pull Request [#3948](https://github.com/Alamofire/Alamofire/pull/3948).
+
+### Updated
+- Alamofire to require Xcode 16.0 and the Swift 6 compiler (Swift 5 or 6 mode).
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3984](https://github.com/Alamofire/Alamofire/pull/3984).
+- Deployment targets for the test targets to match XCTest and Swift Testing availability.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests [#3990](https://github.com/Alamofire/Alamofire/pull/3990) and [#3996](https://github.com/Alamofire/Alamofire/pull/3996).
+- `Empty` to be `Hashable`.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3985](https://github.com/Alamofire/Alamofire/pull/3985).
+- `Request` internals to use more atomic locking.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3948](https://github.com/Alamofire/Alamofire/pull/3948).
+- Deprecated `NetworkReachabilityManager` on iOS 17.4 and later.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3947](https://github.com/Alamofire/Alamofire/pull/3947).
+- Linux and Android CI builds.
+  - Updated by [Marc Prud'hommeaux](https://github.com/marcprux) in Pull Request [#3929](https://github.com/Alamofire/Alamofire/pull/3929).
+
+### Fixed
+- Missing `@Sendable` in `RetryPolicy`.
+  - Fixed by [Colin Willson](https://github.com/CWftw) in Pull Request [#3994](https://github.com/Alamofire/Alamofire/pull/3994).
+- Example in Usage.md.
+  - Fixed by [김영빈 (Rei)](https://github.com/kybeen) in Pull Request [#3955](https://github.com/Alamofire/Alamofire/pull/3955).
+- Deleted `.swiftpm` folder from repo to prevent Xcode from creating Alamofire schemes when used as a package.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3947](https://github.com/Alamofire/Alamofire/pull/3947).
+
+---
+
 ## [5.10.2](https://github.com/Alamofire/Alamofire/releases/tag/5.10.2]
 
-Released on 2024-11-249. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/93?closed=1).
+Released on 2024-11-24. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/93?closed=1).
 
 ### Fixed
 - Runtime crash when calling `validate` from a Swift 6-compiled target.

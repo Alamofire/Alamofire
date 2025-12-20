@@ -1,7 +1,7 @@
 //
 //  Alamofire.swift
 //
-//  Copyright (c) 2014-2021 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2025 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -39,5 +39,5 @@ public let AF = Session.default
 /// Namespace for informational Alamofire values.
 public enum AFInfo {
     /// Current Alamofire version.
-    public static let version = "5.10.2"
+    public static let version = "5.11.0"
 }
