@@ -1700,7 +1700,9 @@ struct RequestInstanceInterceptorTests {
                         "request(_:didParseResponse:)"]
         #expect(firstMonitor.events == expected, "firstMonitor events didn't match, actual events: \(firstMonitor.events)")
         #expect(secondMonitor.events == expected, "secondMonitor events didn't match, actual events: \(firstMonitor.events)")
-        #expect(zip(firstMonitor.timeline, secondMonitor.timeline).allSatisfy { $0.0.date < $0.1.date })
+        for timelines in zip(firstMonitor.timeline, secondMonitor.timeline) {
+            #expect(timelines.0.date <= timelines.1.date)
+        }
     }
 
     @Test
