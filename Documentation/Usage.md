@@ -77,12 +77,14 @@ AF.request("https://httpbin.org/get").response { response in
 This is actually one form of the two top-level APIs on Alamofire's `Session` type for making requests. Its full definition looks like this:
 
 ```swift
-open func request<Parameters: Encodable>(_ convertible: URLConvertible,
-                                         method: HTTPMethod = .get,
-                                         parameters: Parameters? = nil,
-                                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
-                                         headers: HTTPHeaders? = nil,
-                                         interceptor: RequestInterceptor? = nil) -> DataRequest
+open func request<Parameters: Encodable & Sendable>(_ convertible: any URLConvertible,
+                                                    method: HTTPMethod = .get,
+                                                    parameters: Parameters? = nil,
+                                                    encoder: any ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                    headers: HTTPHeaders? = nil,
+                                                    interceptor: (any RequestInterceptor)? = nil,
+                                                    shouldAutomaticallyResume: Bool? = nil,
+                                                    requestModifier: RequestModifier? = nil) -> DataRequest
 ```
 This method creates a `DataRequest` while allowing the composition of requests from individual components, such as the `method` and `headers`, while also allowing per-request `RequestInterceptor`s and `Encodable` parameters.
 
@@ -91,8 +93,9 @@ This method creates a `DataRequest` while allowing the composition of requests f
 The second version of this API is much simpler:
 
 ```swift
-open func request(_ urlRequest: URLRequestConvertible, 
-                  interceptor: RequestInterceptor? = nil) -> DataRequest
+open func request(_ convertible: any URLRequestConvertible,
+                  interceptor: (any RequestInterceptor)? = nil,
+                  shouldAutomaticallyResume: Bool? = nil) -> DataRequest
 ```
 
 This method creates a `DataRequest` for any type conforming to Alamofire's `URLRequestConvertible` protocol. All of the different parameters from the previous version are encapsulated in that value, which can give rise to very powerful abstractions. This is discussed in our [Advanced Usage](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md) documentation.

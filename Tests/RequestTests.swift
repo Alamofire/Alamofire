@@ -1461,19 +1461,70 @@ final class RequestInvalidURLTestCase: BaseTestCase {
 @Suite
 struct RequestInstanceInterceptorTests {
     @Test
-    func instanceAdaptorIsCalled() async throws {
+    func instanceAdapterIsCalled() async throws {
         // Given
         let session = Session()
-        let interceptor = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
+        let adapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
 
         // When
         let response = await session
             .request(.get)
-            .adapt(using: interceptor)
+            .adapt(using: adapter)
             .serializingDecodable(TestResponse.self).response
 
         #expect(response.result.isSuccess)
-        #expect(interceptor.adaptations.count == 1)
+        #expect(adapter.adaptations.count == 1)
+    }
+
+    @Test
+    func instanceAdaptersAreCalledInAddedOrder() async throws {
+        // Given
+        let session = Session()
+        let firstAdapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
+        let secondAdapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
+
+        // When
+        let response = await session
+            .request(.get)
+            .adapt(using: firstAdapter)
+            .adapt(using: secondAdapter)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        #expect(firstAdapter.adaptations.count == 1)
+        #expect(secondAdapter.adaptations.count == 1)
+        #expect(firstAdapter.adaptations[0].date < secondAdapter.adaptations[0].date)
+    }
+
+    @Test
+    func sessionAdapterIsCalledBeforeInstanceAdapter() async throws {
+        // Given
+        let sessionInterceptor = InspectorInterceptor(.adapter { @Sendable request, _, completion in
+            var request = request
+            request.headers["session"] = "\(Date.now.timeIntervalSince1970)"
+            completion(.success(request))
+        })
+        let session = Session(interceptor: sessionInterceptor)
+        let instanceInterceptor = InspectorInterceptor(.adapter { @Sendable request, _, completion in
+            var request = request
+            request.headers["instance"] = "\(Date.now.timeIntervalSince1970)"
+            completion(.success(request))
+        })
+
+        // When
+        let response = await session
+            .request(.get)
+            .adapt(using: instanceInterceptor)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        if let sessionTime = response.request?.headers["session"].flatMap(Double.init),
+           let instanceTime = response.request?.headers["instance"].flatMap(Double.init) {
+            #expect(sessionTime < instanceTime)
+        }
+        #expect(sessionInterceptor.adaptations.count == 1)
+        #expect(instanceInterceptor.adaptations.count == 1)
+        #expect(sessionInterceptor.adaptations[0].date < instanceInterceptor.adaptations[0].date)
     }
 
     @Test
@@ -1490,13 +1541,49 @@ struct RequestInstanceInterceptorTests {
 
         // When
         let response = await session
-            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.001), .get))
+            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.0001), .get))
             .interceptor(interceptor)
             .serializingDecodable(TestResponse.self).response
 
         #expect(response.result.isSuccess)
         #expect(interceptor.adaptations.count == 2)
         #expect(interceptor.retries.count == 1)
+    }
+
+    @Test
+    func multipleInstanceInterceptorsAreCalledInAddedOrder() async throws {
+        // Given
+        let session = Session()
+        let firstInterceptor = InspectorInterceptor(
+            .interceptor { @Sendable request, _, completion in
+                completion(.success(request))
+            } retrier: { @Sendable _, _, _, completion in
+                completion(.doNotRetry)
+            }
+        )
+        let secondInterceptor = InspectorInterceptor(
+            .interceptor { @Sendable request, _, completion in
+                completion(.success(request))
+            } retrier: { @Sendable _, _, _, completion in
+                completion(.retry)
+            }
+        )
+
+        // When
+        let response = await session
+            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.0001), .get))
+            .interceptor(firstInterceptor)
+            .interceptor(secondInterceptor)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        #expect(firstInterceptor.adaptations.count == 2)
+        #expect(firstInterceptor.retries.count == 1)
+        #expect(secondInterceptor.adaptations.count == 2)
+        #expect(secondInterceptor.retries.count == 1)
+        #expect(firstInterceptor.adaptations[0].date < secondInterceptor.adaptations[0].date)
+        #expect(firstInterceptor.adaptations[1].date < secondInterceptor.adaptations[1].date)
+        #expect(firstInterceptor.retries[0].date < secondInterceptor.retries[0].date)
     }
 
     @Test
@@ -1507,7 +1594,7 @@ struct RequestInstanceInterceptorTests {
 
         // When
         let response = await session
-            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.001), .get))
+            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.0001), .get))
             .retry(using: interceptor)
             .serializingDecodable(TestResponse.self).response
 
@@ -1516,9 +1603,48 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
+    func multipleInstanceRetriersAreCalledInAddedOrder() async throws {
+        // Given
+        let session = Session()
+        let firstRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.doNotRetry) })
+        let secondRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.retry) })
+
+        // When
+        let response = await session
+            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.0001), .get))
+            .retry(using: firstRetrier)
+            .retry(using: secondRetrier)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        #expect(firstRetrier.retries.count == 1)
+        #expect(secondRetrier.retries.count == 1)
+        #expect(firstRetrier.retries[0].date < secondRetrier.retries[0].date)
+    }
+
+    @Test
+    func sessionRetrierIsCalledBeforeInstanceRetrier() async throws {
+        // Given
+        let sessionRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.doNotRetry) })
+        let session = Session(interceptor: sessionRetrier)
+        let instanceRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.retry) })
+
+        // When
+        let response = await session
+            .request(.endpoints(.delay(1).modifying(\.timeout, to: 0.0001), .get))
+            .retry(using: instanceRetrier)
+            .serializingDecodable(TestResponse.self).response
+
+        #expect(response.result.isSuccess)
+        #expect(instanceRetrier.retries.count == 1)
+        #expect(sessionRetrier.retries.count == 1)
+        #expect(sessionRetrier.retries[0].date < instanceRetrier.retries[0].date)
+    }
+
+    @Test
     func instanceEventMonitorIsCalled() async throws {
         // Given
-        let queue = DispatchQueue(label: "org.alamofire.eventMonitorTest")
+        let queue = DispatchQueue(label: "org.alamofire.\(#function)")
         let monitor = InspectorEventMonitor(queue: queue)
         let session = Session(rootQueue: queue, eventMonitors: [])
 
@@ -1541,16 +1667,46 @@ struct RequestInstanceInterceptorTests {
                         "request(_:didGatherMetrics:)",
                         "requestDidFinish(_:)",
                         "request(_:didParseResponse:)"]
-        if monitor.events != expected {
-            print("events: \(monitor.events)")
-        }
         #expect(monitor.events == expected, "Events didn't match, actual events: \(monitor.events)")
+    }
+
+    @Test
+    func multipleInstanceEventMonitorsAreCalledInAddedOrder() async throws {
+        // Given
+        let queue = DispatchQueue(label: "org.alamofire.\(#function)")
+        let firstMonitor = InspectorEventMonitor(queue: queue)
+        let secondMonitor = InspectorEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, eventMonitors: [])
+
+        // When
+        let response = await session
+            .request(.get)
+            .eventMonitor(firstMonitor)
+            .eventMonitor(secondMonitor)
+            .serializingDecodable(TestResponse.self)
+            .response
+        await firstMonitor.pendingEvents()
+
+        // Then
+
+        #expect(response.result.isSuccess)
+        let expected = ["requestDidResume(_:)",
+                        "request(_:didCreateInitialURLRequest:)",
+                        "request(_:didCreateURLRequest:)",
+                        "request(_:didCreateTask:)",
+                        "request(_:didResumeTask:)",
+                        "request(_:didGatherMetrics:)",
+                        "requestDidFinish(_:)",
+                        "request(_:didParseResponse:)"]
+        #expect(firstMonitor.events == expected, "firstMonitor events didn't match, actual events: \(firstMonitor.events)")
+        #expect(secondMonitor.events == expected, "secondMonitor events didn't match, actual events: \(firstMonitor.events)")
+        #expect(zip(firstMonitor.timeline, secondMonitor.timeline).allSatisfy { $0.0.date < $0.1.date })
     }
 
     @Test
     func instanceAndSessionEventMonitorsAreCalledInCorrectOrder() async throws {
         // Given
-        let queue = DispatchQueue(label: "org.alamofire.eventMonitorTest")
+        let queue = DispatchQueue(label: "org.alamofire.\(#function)")
         let sessionMonitor = InspectorEventMonitor(label: "session", queue: queue)
         let instanceMonitor = InspectorEventMonitor(label: "instance", queue: queue)
         let session = Session(rootQueue: queue, eventMonitors: [sessionMonitor])
@@ -1596,16 +1752,6 @@ struct RequestInstanceInterceptorTests {
         for combinedEvent in zip(sessionEvents, instanceEvents) {
             #expect(combinedEvent.0.event == combinedEvent.1.event)
             #expect(combinedEvent.0.date <= combinedEvent.1.date, "session event wasn't before instance event")
-        }
-    }
-}
-
-extension DispatchQueue {
-    func pendingWork() async {
-        await withCheckedContinuation { continuation in
-            self.async(flags: .barrier) {
-                continuation.resume()
-            }
         }
     }
 }

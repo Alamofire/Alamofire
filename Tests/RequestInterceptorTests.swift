@@ -146,7 +146,7 @@ struct AdapterTests {
         adapter.retry(request, for: session, dueTo: MockError()) { _ in }
 
         // Then
-        #expect(adapter.retries.first == .doNotRetry)
+        #expect(adapter.retryResults.first == .doNotRetry)
     }
 
     @Test
@@ -193,7 +193,7 @@ struct RetrierTests {
 
         // Then
         #expect(retrier.retryCalledCount == 1)
-        #expect(retrier.retries.first == .retry)
+        #expect(retrier.retryResults.first == .retry)
     }
 
     @Test
@@ -234,7 +234,7 @@ struct RetrierTests {
 
         // Then
         #expect(retrier.retryCalledCount == 1)
-        #expect(retrier.retries.first == .retry)
+        #expect(retrier.retryResults.first == .retry)
     }
 }
 
@@ -475,7 +475,7 @@ struct InterceptorTests {
             }
         }
         // Then
-        #expect(interceptor.retries.first == .retry)
+        #expect(interceptor.retryResults.first == .retry)
     }
 
     @Test
@@ -564,7 +564,7 @@ struct InterceptorRequestTests {
         // Then
         #expect(request.tasks.count == 2, "There should be two tasks, one original, one retry.")
         #expect(interceptor.retryCalledCount == 2, "retry() should be called twice.")
-        #expect(interceptor.retries == [.retryWithDelay(0.1), .doNotRetry], "RetryResults should be .retryWithDelay(0.1), .doNotRetry")
+        #expect(interceptor.retryResults == [.retryWithDelay(0.1), .doNotRetry], "RetryResults should be .retryWithDelay(0.1), .doNotRetry")
     }
 }
 
@@ -632,7 +632,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
         let onRetry: ((_ retryResult: RetryResult) -> Void)?
 
         var adaptations: [Adaptation] = []
-        var retries: [RetryResult] = []
+        var retries: [Retry] = []
     }
 
     private let state: Protected<State>
@@ -641,14 +641,22 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
         var urlRequest: URLRequest
         var state: RequestAdapterState
         var result: Result<URLRequest, any Error>
+        var date: Date
+    }
+
+    struct Retry {
+        var result: RetryResult
+        var date: Date
     }
 
     /// Underlying interceptor.
     let interceptor: Interceptor
     /// Result of performed adaptations.
     var adaptations: [Adaptation] { state.read(\.adaptations) }
+    /// Retry events.
+    var retries: [Retry] { state.read(\.retries) }
     /// Result of performed retries.
-    var retries: [RetryResult] { state.read(\.retries) }
+    var retryResults: [RetryResult] { retries.map(\.result) }
     /// Number of times `retry` was called.
     var retryCalledCount: Int { state.read(\.retries.count) }
 
@@ -662,7 +670,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         interceptor.adapt(urlRequest, for: session) { result in
             let onAdaptation = self.state.write { state in
-                state.adaptations.append(.init(urlRequest: urlRequest, state: .init(requestID: .zero, session: session), result: result))
+                state.adaptations.append(.init(urlRequest: urlRequest, state: .init(requestID: .zero, session: session), result: result, date: .now))
                 return state.onAdaptation
             }
 
@@ -674,7 +682,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
     func adapt(_ urlRequest: URLRequest, using adapterState: RequestAdapterState, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
         interceptor.adapt(urlRequest, using: adapterState) { result in
             let onAdaptation = self.state.write { state in
-                state.adaptations.append(.init(urlRequest: urlRequest, state: adapterState, result: result))
+                state.adaptations.append(.init(urlRequest: urlRequest, state: adapterState, result: result, date: .now))
                 return state.onAdaptation
             }
 
@@ -686,7 +694,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
     func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
         interceptor.retry(request, for: session, dueTo: error) { result in
             let onRetry = self.state.write { state in
-                state.retries.append(result)
+                state.retries.append(.init(result: result, date: .now))
                 return state.onRetry
             }
 
