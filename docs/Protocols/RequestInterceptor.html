@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.10.2 Docs
+          Alamofire 5.11.0 Docs
         </a>
          (96% documented)
       </p>
@@ -143,6 +143,9 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/OfflineRetrier.html">OfflineRetrier</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -174,6 +177,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Session.html">Session</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Session/RequestSetup.html">– RequestSetup</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/SessionDelegate.html">SessionDelegate</a>
@@ -303,9 +309,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -643,6 +646,257 @@
                   <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60OfflineRetrier%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `OfflineRetrier`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60OfflineRetrier%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18RequestInterceptorPA2A14OfflineRetrierCRszrlE07offlineE07monitor11maximumWait02isD5ErrorAE7Network13NWPathMonitorCyXA_8Dispatch0O12TimeIntervalOSbs0K0_pYbctFZ"></a>
+                    <a name="//apple_ref/swift/Method/offlineRetrier(monitor:maximumWait:isOfflineError:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18RequestInterceptorPA2A14OfflineRetrierCRszrlE07offlineE07monitor11maximumWait02isD5ErrorAE7Network13NWPathMonitorCyXA_8Dispatch0O12TimeIntervalOSbs0K0_pYbctFZ">offlineRetrier(monitor:<wbr>maximumWait:<wbr>isOfflineError:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an instance from the provided <code>NWPathMonitor</code>, maximum wait for connectivity, and offline error predicate.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">offlineRetrier</span><span class="p">(</span>
+    <span class="nv">monitor</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">NWPathMonitor</span> <span class="o">=</span> <span class="kt">NWPathMonitor</span><span class="p">(),</span>
+    <span class="nv">maximumWait</span><span class="p">:</span> <span class="kt">DispatchTimeInterval</span> <span class="o">=</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span><span class="o">.</span><span class="n">defaultWait</span><span class="p">,</span>
+    <span class="nv">isOfflineError</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kd">any</span> <span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span><span class="o">.</span><span class="n">defaultIsOfflineError</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>monitor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>NWPathMonitor()</code> to use to detect connectivity. A new instance is created each time a
+            request fails and retry may be needed.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>maximumWait</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchTimeInterval</code> to wait for connectivity before timeout.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isOfflineError</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Predicate closure used to determine whether a paricular <code>any Error</code> indicates connectivity
+            is offline. Returning <code>false</code> moves to the next retrier, if any.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18RequestInterceptorPA2A14OfflineRetrierCRszrlE07offlineE021requiredInterfaceType11maximumWait02isD5ErrorAE7Network11NWInterfaceV0hI0O_8Dispatch0P12TimeIntervalOSbs0M0_pYbctFZ"></a>
+                    <a name="//apple_ref/swift/Method/offlineRetrier(requiredInterfaceType:maximumWait:isOfflineError:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18RequestInterceptorPA2A14OfflineRetrierCRszrlE07offlineE021requiredInterfaceType11maximumWait02isD5ErrorAE7Network11NWInterfaceV0hI0O_8Dispatch0P12TimeIntervalOSbs0M0_pYbctFZ">offlineRetrier(requiredInterfaceType:<wbr>maximumWait:<wbr>isOfflineError:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an instance using an <code>NWPathMonitor</code> configured with the provided <code>InterfaceType</code>, maximum wait for
+connectivity, and offline error predicate.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">offlineRetrier</span><span class="p">(</span>
+    <span class="nv">requiredInterfaceType</span><span class="p">:</span> <span class="kt">NWInterface</span><span class="o">.</span><span class="kt">InterfaceType</span><span class="p">,</span>
+    <span class="nv">maximumWait</span><span class="p">:</span> <span class="kt">DispatchTimeInterval</span> <span class="o">=</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span><span class="o">.</span><span class="n">defaultWait</span><span class="p">,</span>
+    <span class="nv">isOfflineError</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kd">any</span> <span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span><span class="o">.</span><span class="n">defaultIsOfflineError</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>monitor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>NWInterface.InterfaceType</code> used to configured the <code>NWPathMonitor</code> each time one is needed.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>maximumWait</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchTimeInterval</code> to wait for connectivity before timeout.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isOfflineError</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Predicate closure used to determine whether a paricular <code>any Error</code> indicates connectivity
+            is offline. Returning <code>false</code> moves to the next retrier, if any.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18RequestInterceptorPA2A14OfflineRetrierCRszrlE07offlineE024prohibitedInterfaceTypes11maximumWait02isD5ErrorAESay7Network11NWInterfaceV0H4TypeOG_8Dispatch0Q12TimeIntervalOSbs0M0_pYbctFZ"></a>
+                    <a name="//apple_ref/swift/Method/offlineRetrier(prohibitedInterfaceTypes:maximumWait:isOfflineError:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18RequestInterceptorPA2A14OfflineRetrierCRszrlE07offlineE024prohibitedInterfaceTypes11maximumWait02isD5ErrorAESay7Network11NWInterfaceV0H4TypeOG_8Dispatch0Q12TimeIntervalOSbs0M0_pYbctFZ">offlineRetrier(prohibitedInterfaceTypes:<wbr>maximumWait:<wbr>isOfflineError:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an instance using an <code>NWPathMonitor</code> configured with the provided <code>InterfaceType</code>s, maximum wait for
+connectivity, and offline error predicate.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available</span><span class="p">(</span><span class="n">macOS</span> <span class="mi">11</span><span class="p">,</span> <span class="n">iOS</span> <span class="mi">14</span><span class="p">,</span> <span class="n">tvOS</span> <span class="mi">14</span><span class="p">,</span> <span class="n">watchOS</span> <span class="mi">7</span><span class="p">,</span> <span class="n">visionOS</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">offlineRetrier</span><span class="p">(</span>
+    <span class="nv">prohibitedInterfaceTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt">NWInterface</span><span class="o">.</span><span class="kt">InterfaceType</span><span class="p">],</span>
+    <span class="nv">maximumWait</span><span class="p">:</span> <span class="kt">DispatchTimeInterval</span> <span class="o">=</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span><span class="o">.</span><span class="n">defaultWait</span><span class="p">,</span>
+    <span class="nv">isOfflineError</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kd">@Sendable</span> <span class="p">(</span><span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kd">any</span> <span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span><span class="o">.</span><span class="n">defaultIsOfflineError</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/OfflineRetrier.html">OfflineRetrier</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>monitor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>[NWInterface.InterfaceType]</code> used to configured the <code>NWPathMonitor</code> each time one is needed.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>maximumWait</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchTimeInterval</code> to wait for connectivity before timeout.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isOfflineError</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Predicate closure used to determine whether a paricular <code>any Error</code> indicates connectivity
+            is offline. Returning <code>false</code> moves to the next retrier, if any.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -1295,8 +1549,8 @@ closure.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-11-24)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2025 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2025-12-20)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

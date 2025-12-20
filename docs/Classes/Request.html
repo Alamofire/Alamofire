@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.10.2 Docs
+          Alamofire 5.11.0 Docs
         </a>
          (96% documented)
       </p>
@@ -143,6 +143,9 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/OfflineRetrier.html">OfflineRetrier</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -174,6 +177,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Session.html">Session</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Session/RequestSetup.html">– RequestSetup</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/SessionDelegate.html">SessionDelegate</a>
@@ -303,9 +309,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -731,7 +734,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">eventMonitor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/EventMonitor.html">EventMonitor</a></span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">eventMonitor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/EventMonitor.html">EventMonitor</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -758,7 +761,35 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7RequestC25shouldAutomaticallyResumeSbSgvp"></a>
+                    <a name="//apple_ref/swift/Property/shouldAutomaticallyResume" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC25shouldAutomaticallyResumeSbSgvp">shouldAutomaticallyResume</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Whether the instance should call <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC6resumeACXDyF">resume()</a></code> automatically once the first response handler has been added.
+Overrides the same setting from <code><a href="../Classes/Session.html">Session</a></code>, if set. <code>nil</code> by default (defers to the <code><a href="../Classes/Session.html">Session</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -2556,6 +2587,219 @@ last <code>URLSessionTask</code>.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire7RequestC11interceptoryACXDAA0B11Interceptor_pF"></a>
+                    <a name="//apple_ref/swift/Method/interceptor(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC11interceptoryACXDAA0B11Interceptor_pF">interceptor(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> for this instance, called after the interceptors of the parent <code><a href="../Classes/Session.html">Session</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@preconcurrency</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">interceptor</span><span class="p">(</span><span class="n">_</span> <span class="nv">interceptor</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> to add.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7RequestC5adapt5usingACXDAA0B7Adapter_p_tF"></a>
+                    <a name="//apple_ref/swift/Method/adapt(using:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC5adapt5usingACXDAA0B7Adapter_p_tF">adapt(using:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a <code><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></code> for this instance, called after the adapters of the parent <code><a href="../Classes/Session.html">Session</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@preconcurrency</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">adapt</span><span class="p">(</span><span class="n">using</span> <span class="nv">adapter</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>adapter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></code> to be called.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7RequestC5retry5usingACXDAA0B7Retrier_p_tF"></a>
+                    <a name="//apple_ref/swift/Method/retry(using:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC5retry5usingACXDAA0B7Retrier_p_tF">retry(using:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a <code><a href="../Protocols/RequestRetrier.html">RequestRetrier</a></code> for this instance, called after the retriers of the parent <code><a href="../Classes/Session.html">Session</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@preconcurrency</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">retry</span><span class="p">(</span><span class="n">using</span> <span class="nv">retrier</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestRetrier.html">RequestRetrier</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>retrier</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestRetrier.html">RequestRetrier</a></code> to add.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7RequestC12eventMonitoryACXDAA05EventD0_pF"></a>
+                    <a name="//apple_ref/swift/Method/eventMonitor(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC12eventMonitoryACXDAA05EventD0_pF">eventMonitor(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds an <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code> for this instance, called after the <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s of the parent <code><a href="../Classes/Session.html">Session</a></code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p><code>Request</code> <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s only receive <code>Request</code> events (see the &ldquo;Request Events&rdquo; section of the <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code> protocol). <code>URLSession</code> events are only sent at the <code><a href="../Classes/Session.html">Session</a></code> level.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">@preconcurrency</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">eventMonitor</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventMonitor</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/EventMonitor.html">EventMonitor</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventMonitor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code> to add.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire7RequestC21didResumeNotificationSo18NSNotificationNameavpZ"></a>
                     <a name="//apple_ref/swift/Variable/didResumeNotification" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire7RequestC21didResumeNotificationSo18NSNotificationNameavpZ">didResumeNotification</a>
@@ -3232,8 +3476,8 @@ created, as well as the response status code, if a response has been received.</
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-11-24)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2025 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2025-12-20)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

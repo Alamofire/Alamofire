@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Alamofire 5.10.2 Docs
+          Alamofire 5.11.0 Docs
         </a>
          (96% documented)
       </p>
@@ -141,6 +141,9 @@
                 <a class="nav-group-task-link" href="Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/OfflineRetrier.html">OfflineRetrier</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -172,6 +175,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/Session.html">Session</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/Session/RequestSetup.html">– RequestSetup</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/SessionDelegate.html">SessionDelegate</a>
@@ -301,9 +307,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -1002,34 +1005,6 @@ which will then require a refresh of the credential using the refresh token to g
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15RedirectHandlerP"></a>
-                    <a name="//apple_ref/swift/Protocol/RedirectHandler" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15RedirectHandlerP">RedirectHandler</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A type that handles how an HTTP redirect response from a remote server should be redirected to the new request.</p>
-
-                        <a href="Protocols/RedirectHandler.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">RedirectHandler</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:9Alamofire18RequestInterceptorP"></a>
                     <a name="//apple_ref/swift/Protocol/RequestInterceptor" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire18RequestInterceptorP">RequestInterceptor</a>
@@ -1049,6 +1024,34 @@ which will then require a refresh of the credential using the refresh token to g
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">RequestInterceptor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/RequestAdapter.html">RequestAdapter</a></span><span class="p">,</span> <span class="kt"><a href="Protocols/RequestRetrier.html">RequestRetrier</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire15RedirectHandlerP"></a>
+                    <a name="//apple_ref/swift/Protocol/RedirectHandler" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15RedirectHandlerP">RedirectHandler</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A type that handles how an HTTP redirect response from a remote server should be redirected to the new request.</p>
+
+                        <a href="Protocols/RedirectHandler.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">RedirectHandler</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -1342,8 +1345,8 @@ and encountering an error.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-11-24)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2025 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2025-12-20)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

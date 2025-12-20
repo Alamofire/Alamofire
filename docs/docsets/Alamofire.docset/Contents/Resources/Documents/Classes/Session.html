@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Alamofire 5.10.2 Docs
+          Alamofire 5.11.0 Docs
         </a>
          (96% documented)
       </p>
@@ -143,6 +143,9 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/OfflineRetrier.html">OfflineRetrier</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -174,6 +177,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/Session.html">Session</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Session/RequestSetup.html">– RequestSetup</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/SessionDelegate.html">SessionDelegate</a>
@@ -303,9 +309,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions.html#/Protected">Protected</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
@@ -617,6 +620,34 @@ cache handling.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire7SessionC12RequestSetupO"></a>
+                    <a name="//apple_ref/swift/Enum/RequestSetup" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC12RequestSetupO">RequestSetup</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Type describing the timing of <code><a href="../Classes/Request.html">Request</a></code> setup after creation.</p>
+
+                        <a href="../Classes/Session/RequestSetup.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">RequestSetup</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp"></a>
                     <a name="//apple_ref/swift/Property/session" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp">session</a>
@@ -732,6 +763,39 @@ cache handling.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire7SessionC12requestSetupAC07RequestD0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/requestSetup" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC12requestSetupAC07RequestD0Ovp">requestSetup</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Value determining the timing of <code><a href="../Classes/Request.html">Request</a></code> setup after creation. <code>.lazy</code> by default.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Prior to Alamofire 5.11, <code>Session</code> acted as if this was set to <code>.eager</code>, so if any behavior changes are
+    noted, <code>.eager</code> can be used for backward compatibility.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">requestSetup</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session/RequestSetup.html">RequestSetup</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire7SessionC12requestQueueSo17OS_dispatch_queueCvp"></a>
                     <a name="//apple_ref/swift/Property/requestQueue" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire7SessionC12requestQueueSo17OS_dispatch_queueCvp">requestQueue</a>
@@ -800,8 +864,8 @@ to be a bottleneck. Always profile and test before introducing an additional que
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> used for all <code><a href="../Classes/Request.html">Request</a></code> created by the instance. <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>s can also be set on a
-per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which case the <code><a href="../Classes/Request.html">Request</a></code>&lsquo;s interceptor takes precedence over this value.</p>
+                        <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> used for all <code><a href="../Classes/Request.html">Request</a></code> created by the instance. <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>s can also be added on a
+per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which case interceptors from the <code>Session</code> are executed first. <code>nil</code> by default.</p>
 
                       </div>
                       <div class="declaration">
@@ -909,7 +973,8 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p><code><a href="../Classes/CompositeEventMonitor.html">CompositeEventMonitor</a></code> used to compose any passed <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s.</p>
+                        <p><code><a href="../Classes/CompositeEventMonitor.html">CompositeEventMonitor</a></code> used to compose any passed <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s. <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s can also be added on a
+per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which case monitors from the <code>Session</code> are executed first.</p>
 
                       </div>
                       <div class="declaration">
@@ -954,9 +1019,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC7session8delegate9rootQueue24startRequestsImmediately07requestF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseQ013eventMonitorsACSo12NSURLSessionC_AA0B8DelegateCSo17OS_dispatch_queueCSbATSgAuA18RequestInterceptor_pSgAA06ServernO0CSgAA08RedirectQ0_pSgAA06CachedsQ0_pSgSayAA12EventMonitor_pGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(session:delegate:rootQueue:startRequestsImmediately:requestQueue:serializationQueue:interceptor:serverTrustManager:redirectHandler:cachedResponseHandler:eventMonitors:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7session8delegate9rootQueue24startRequestsImmediately07requestF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseQ013eventMonitorsACSo12NSURLSessionC_AA0B8DelegateCSo17OS_dispatch_queueCSbATSgAuA18RequestInterceptor_pSgAA06ServernO0CSgAA08RedirectQ0_pSgAA06CachedsQ0_pSgSayAA12EventMonitor_pGtcfc">init(session:<wbr>delegate:<wbr>rootQueue:<wbr>startRequestsImmediately:<wbr>requestQueue:<wbr>serializationQueue:<wbr>interceptor:<wbr>serverTrustManager:<wbr>redirectHandler:<wbr>cachedResponseHandler:<wbr>eventMonitors:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC7session8delegate9rootQueue24startRequestsImmediately12requestSetup0jF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseR013eventMonitorsACSo12NSURLSessionC_AA0B8DelegateCSo17OS_dispatch_queueCSbAC07RequestK0OAUSgAxA18RequestInterceptor_pSgAA06ServeroP0CSgAA08RedirectR0_pSgAA06CachedtR0_pSgSayAA12EventMonitor_pGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(session:delegate:rootQueue:startRequestsImmediately:requestSetup:requestQueue:serializationQueue:interceptor:serverTrustManager:redirectHandler:cachedResponseHandler:eventMonitors:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC7session8delegate9rootQueue24startRequestsImmediately12requestSetup0jF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseR013eventMonitorsACSo12NSURLSessionC_AA0B8DelegateCSo17OS_dispatch_queueCSbAC07RequestK0OAUSgAxA18RequestInterceptor_pSgAA06ServeroP0CSgAA08RedirectR0_pSgAA06CachedtR0_pSgSayAA12EventMonitor_pGtcfc">init(session:<wbr>delegate:<wbr>rootQueue:<wbr>startRequestsImmediately:<wbr>requestSetup:<wbr>requestQueue:<wbr>serializationQueue:<wbr>interceptor:<wbr>serverTrustManager:<wbr>redirectHandler:<wbr>cachedResponseHandler:<wbr>eventMonitors:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -981,6 +1046,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
             <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Classes/SessionDelegate.html">SessionDelegate</a></span><span class="p">,</span>
             <span class="nv">rootQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">,</span>
             <span class="nv">startRequestsImmediately</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">requestSetup</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session/RequestSetup.html">RequestSetup</a></span> <span class="o">=</span> <span class="o">.</span><span class="kd">lazy</span><span class="p">,</span>
             <span class="nv">requestQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">serializationQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1041,9 +1107,22 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p>Determines whether this instance will automatically start all <code><a href="../Classes/Request.html">Request</a></code>s. <code>true</code>
-                      by default. If set to <code>false</code>, all <code><a href="../Classes/Request.html">Request</a></code>s created must have <code>.resume()</code> called.
-                      on them for them to start.</p>
+                                  <p>Determines whether this instance will automatically start all <code><a href="../Classes/Request.html">Request</a></code>s once a
+                      response handler is added. <code>true</code> by default. If set to <code>false</code>, all <code><a href="../Classes/Request.html">Request</a></code>s
+                      created must have <code>.resume()</code> called to start.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>requestSetup</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines when the <code>Session</code> will perform the internal setup for created
+                      <code><a href="../Classes/Request.html">Request</a></code>s. <code>.lazy</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1150,9 +1229,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC13configuration8delegate9rootQueue24startRequestsImmediately07requestF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseQ013eventMonitorsACSo25NSURLSessionConfigurationC_AA0B8DelegateCSo17OS_dispatch_queueCSbATSgAuA18RequestInterceptor_pSgAA06ServernO0CSgAA08RedirectQ0_pSgAA06CachedsQ0_pSgSayAA12EventMonitor_pGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(configuration:delegate:rootQueue:startRequestsImmediately:requestQueue:serializationQueue:interceptor:serverTrustManager:redirectHandler:cachedResponseHandler:eventMonitors:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC13configuration8delegate9rootQueue24startRequestsImmediately07requestF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseQ013eventMonitorsACSo25NSURLSessionConfigurationC_AA0B8DelegateCSo17OS_dispatch_queueCSbATSgAuA18RequestInterceptor_pSgAA06ServernO0CSgAA08RedirectQ0_pSgAA06CachedsQ0_pSgSayAA12EventMonitor_pGtcfc">init(configuration:<wbr>delegate:<wbr>rootQueue:<wbr>startRequestsImmediately:<wbr>requestQueue:<wbr>serializationQueue:<wbr>interceptor:<wbr>serverTrustManager:<wbr>redirectHandler:<wbr>cachedResponseHandler:<wbr>eventMonitors:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC13configuration8delegate9rootQueue24startRequestsImmediately12requestSetup0jF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseR013eventMonitorsACSo25NSURLSessionConfigurationC_AA0B8DelegateCSo17OS_dispatch_queueCSbAC07RequestK0OAUSgAxA18RequestInterceptor_pSgAA06ServeroP0CSgAA08RedirectR0_pSgAA06CachedtR0_pSgSayAA12EventMonitor_pGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(configuration:delegate:rootQueue:startRequestsImmediately:requestSetup:requestQueue:serializationQueue:interceptor:serverTrustManager:redirectHandler:cachedResponseHandler:eventMonitors:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC13configuration8delegate9rootQueue24startRequestsImmediately12requestSetup0jF0013serializationF011interceptor18serverTrustManager15redirectHandler014cachedResponseR013eventMonitorsACSo25NSURLSessionConfigurationC_AA0B8DelegateCSo17OS_dispatch_queueCSbAC07RequestK0OAUSgAxA18RequestInterceptor_pSgAA06ServeroP0CSgAA08RedirectR0_pSgAA06CachedtR0_pSgSayAA12EventMonitor_pGtcfc">init(configuration:<wbr>delegate:<wbr>rootQueue:<wbr>startRequestsImmediately:<wbr>requestSetup:<wbr>requestQueue:<wbr>serializationQueue:<wbr>interceptor:<wbr>serverTrustManager:<wbr>redirectHandler:<wbr>cachedResponseHandler:<wbr>eventMonitors:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1177,6 +1256,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                         <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Classes/SessionDelegate.html">SessionDelegate</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/SessionDelegate.html">SessionDelegate</a></span><span class="p">(),</span>
                         <span class="nv">rootQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"org.alamofire.session.rootQueue"</span><span class="p">),</span>
                         <span class="nv">startRequestsImmediately</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nv">requestSetup</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session/RequestSetup.html">RequestSetup</a></span> <span class="o">=</span> <span class="o">.</span><span class="kd">lazy</span><span class="p">,</span>
                         <span class="nv">requestQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                         <span class="nv">serializationQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                         <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1239,9 +1319,22 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p>Determines whether this instance will automatically start all <code><a href="../Classes/Request.html">Request</a></code>s. <code>true</code>
-                      by default. If set to <code>false</code>, all <code><a href="../Classes/Request.html">Request</a></code>s created must have <code>.resume()</code> called.
-                      on them for them to start.</p>
+                                  <p>Determines whether this instance will automatically start all <code><a href="../Classes/Request.html">Request</a></code>s once a
+                      response handler is added. <code>true</code> by default. If set to <code>false</code>, all <code><a href="../Classes/Request.html">Request</a></code>s
+                      created must have <code>.resume()</code> called to start.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>requestSetup</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines when the <code>Session</code> will perform the internal setup for created
+                      <code><a href="../Classes/Request.html">Request</a></code>s. <code>.lazy</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1520,9 +1613,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptor0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0K11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/request(_:method:parameters:encoding:headers:interceptor:requestModifier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptor0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0K11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtF">request(_:<wbr>method:<wbr>parameters:<wbr>encoding:<wbr>headers:<wbr>interceptor:<wbr>requestModifier:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptor25shouldAutomaticallyResume0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0N11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:method:parameters:encoding:headers:interceptor:shouldAutomaticallyResume:requestModifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptor25shouldAutomaticallyResume0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0N11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtF">request(_:<wbr>method:<wbr>parameters:<wbr>encoding:<wbr>headers:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>requestModifier:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1543,6 +1636,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                   <span class="nv">encoding</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/URLEncoding.html">URLEncoding</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                   <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                   <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                  <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                   <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span></code></pre>
 
                         </div>
@@ -1583,8 +1677,8 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></code> (a.k.a. <code>[String: Any]</code>) value to be encoded into the <code>URLRequest</code>. <code>nil</code> by
-             default.</p>
+                                  <p><code><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></code> (a.k.a. <code>[String: Any]</code>) value to be encoded into the <code>URLRequest</code>.
+                       <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1596,8 +1690,8 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>.
-             <code><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV7defaultACvpZ">URLEncoding.default</a></code> by default.</p>
+                                  <p><code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code> to be used to encode the <code>parameters</code> value into the
+                       <code>URLRequest</code>. <code><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV7defaultACvpZ">URLEncoding.default</a></code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1628,13 +1722,25 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DataRequest.html">DataRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>requestModifier</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided
-             parameters. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the
+                       provided parameters. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1651,9 +1757,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptor0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0K11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF"></a>
-                    <a name="//apple_ref/swift/Method/request(_:method:parameters:encoder:headers:interceptor:requestModifier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptor0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0K11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF">request(_:<wbr>method:<wbr>parameters:<wbr>encoder:<wbr>headers:<wbr>interceptor:<wbr>requestModifier:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptor25shouldAutomaticallyResume0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0N11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:method:parameters:encoder:headers:interceptor:shouldAutomaticallyResume:requestModifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptor25shouldAutomaticallyResume0C8ModifierAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0N11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF">request(_:<wbr>method:<wbr>parameters:<wbr>encoder:<wbr>headers:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>requestModifier:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1675,6 +1781,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                                                     <span class="nv">encoder</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/URLEncodedFormParameterEncoder.html">URLEncodedFormParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                                                     <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                                     <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                                                    <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                                     <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span></code></pre>
 
                         </div>
@@ -1728,7 +1835,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>.
-             <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code> by default.</p>
+                       <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1759,13 +1866,24 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DataRequest.html">DataRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>requestModifier</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from
-             the provided parameters. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided parameters. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1782,9 +1900,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC7request_11interceptorAA11DataRequestCAA21URLRequestConvertible_p_AA0F11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/request(_:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7request_11interceptorAA11DataRequestCAA21URLRequestConvertible_p_AA0F11Interceptor_pSgtF">request(_:<wbr>interceptor:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC7request_11interceptor25shouldAutomaticallyResumeAA11DataRequestCAA21URLRequestConvertible_p_AA0I11Interceptor_pSgSbSgtF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:interceptor:shouldAutomaticallyResume:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC7request_11interceptor25shouldAutomaticallyResumeAA11DataRequestCAA21URLRequestConvertible_p_AA0I11Interceptor_pSgSbSgtF">request(_:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1799,7 +1917,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span> <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
+                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                  <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1831,6 +1951,18 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DataRequest.html">DataRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -1857,9 +1989,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC13streamRequest_6method10parameters7encoder7headers32automaticallyCancelOnStreamError11interceptor15requestModifierAA04DatalD0CAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF"></a>
-                    <a name="//apple_ref/swift/Method/streamRequest(_:method:parameters:encoder:headers:automaticallyCancelOnStreamError:interceptor:requestModifier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC13streamRequest_6method10parameters7encoder7headers32automaticallyCancelOnStreamError11interceptor15requestModifierAA04DatalD0CAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF">streamRequest(_:<wbr>method:<wbr>parameters:<wbr>encoder:<wbr>headers:<wbr>automaticallyCancelOnStreamError:<wbr>interceptor:<wbr>requestModifier:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC13streamRequest_6method10parameters7encoder7headers32automaticallyCancelOnStreamError11interceptor25shouldAutomaticallyResume15requestModifierAA04DatalD0CAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF"></a>
+                    <a name="//apple_ref/swift/Method/streamRequest(_:method:parameters:encoder:headers:automaticallyCancelOnStreamError:interceptor:shouldAutomaticallyResume:requestModifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC13streamRequest_6method10parameters7encoder7headers32automaticallyCancelOnStreamError11interceptor25shouldAutomaticallyResume15requestModifierAA04DatalD0CAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtSERzs8SendableRzlF">streamRequest(_:<wbr>method:<wbr>parameters:<wbr>encoder:<wbr>headers:<wbr>automaticallyCancelOnStreamError:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>requestModifier:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1881,6 +2013,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                                                           <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                                           <span class="nv">automaticallyCancelOnStreamError</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
                                                           <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                                                          <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                                           <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span></code></pre>
 
                         </div>
@@ -1980,6 +2113,19 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></code> should resume after the first response
+                              handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>requestModifier</em>
                                 </code>
                               </td>
@@ -2003,9 +2149,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC13streamRequest_6method7headers32automaticallyCancelOnStreamError11interceptor15requestModifierAA04DatajD0CAA14URLConvertible_p_AA10HTTPMethodVAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/streamRequest(_:method:headers:automaticallyCancelOnStreamError:interceptor:requestModifier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC13streamRequest_6method7headers32automaticallyCancelOnStreamError11interceptor15requestModifierAA04DatajD0CAA14URLConvertible_p_AA10HTTPMethodVAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgtF">streamRequest(_:<wbr>method:<wbr>headers:<wbr>automaticallyCancelOnStreamError:<wbr>interceptor:<wbr>requestModifier:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC13streamRequest_6method7headers32automaticallyCancelOnStreamError11interceptor25shouldAutomaticallyResume15requestModifierAA04DatajD0CAA14URLConvertible_p_AA10HTTPMethodVAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/streamRequest(_:method:headers:automaticallyCancelOnStreamError:interceptor:shouldAutomaticallyResume:requestModifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC13streamRequest_6method7headers32automaticallyCancelOnStreamError11interceptor25shouldAutomaticallyResume15requestModifierAA04DatajD0CAA14URLConvertible_p_AA10HTTPMethodVAA11HTTPHeadersVSgSbAA0D11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgtF">streamRequest(_:<wbr>method:<wbr>headers:<wbr>automaticallyCancelOnStreamError:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>requestModifier:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2025,6 +2171,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                         <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                         <span class="nv">automaticallyCancelOnStreamError</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                        <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                         <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span></code></pre>
 
                         </div>
@@ -2098,6 +2245,19 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></code> should resume after the first response
+                              handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>requestModifier</em>
                                 </code>
                               </td>
@@ -2121,9 +2281,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC13streamRequest_32automaticallyCancelOnStreamError11interceptorAA04DatahD0CAA21URLRequestConvertible_p_SbAA0D11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/streamRequest(_:automaticallyCancelOnStreamError:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC13streamRequest_32automaticallyCancelOnStreamError11interceptorAA04DatahD0CAA21URLRequestConvertible_p_SbAA0D11Interceptor_pSgtF">streamRequest(_:<wbr>automaticallyCancelOnStreamError:<wbr>interceptor:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC13streamRequest_32automaticallyCancelOnStreamError11interceptor25shouldAutomaticallyResumeAA04DatahD0CAA21URLRequestConvertible_p_SbAA0D11Interceptor_pSgSbSgtF"></a>
+                    <a name="//apple_ref/swift/Method/streamRequest(_:automaticallyCancelOnStreamError:interceptor:shouldAutomaticallyResume:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC13streamRequest_32automaticallyCancelOnStreamError11interceptor25shouldAutomaticallyResumeAA04DatahD0CAA21URLRequestConvertible_p_SbAA0D11Interceptor_pSgSbSgtF">streamRequest(_:<wbr>automaticallyCancelOnStreamError:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2140,7 +2300,8 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">streamRequest</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
                         <span class="nv">automaticallyCancelOnStreamError</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
-                        <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span></code></pre>
+                        <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                        <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -2186,6 +2347,19 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></code> should resume after the first response
+                              handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -2212,9 +2386,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0M11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgAZ3URLV011destinationW0_AM7OptionsV7optionstA3__So17NSHTTPURLResponseCtYbcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/download(_:method:parameters:encoding:headers:interceptor:requestModifier:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0M11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgAZ3URLV011destinationW0_AM7OptionsV7optionstA3__So17NSHTTPURLResponseCtYbcSgtF">download(_:<wbr>method:<wbr>parameters:<wbr>encoding:<wbr>headers:<wbr>interceptor:<wbr>requestModifier:<wbr>to:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor25shouldAutomaticallyResume15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgA0_3URLV011destinationZ0_AN7OptionsV7optionstA5__So17NSHTTPURLResponseCtYbcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/download(_:method:parameters:encoding:headers:interceptor:shouldAutomaticallyResume:requestModifier:to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor25shouldAutomaticallyResume15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSs8Sendable_pGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgA0_3URLV011destinationZ0_AN7OptionsV7optionstA5__So17NSHTTPURLResponseCtYbcSgtF">download(_:<wbr>method:<wbr>parameters:<wbr>encoding:<wbr>headers:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>requestModifier:<wbr>to:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2236,6 +2410,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                    <span class="nv">encoding</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/URLEncoding.html">URLEncoding</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                    <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                    <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                   <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                    <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                    <span class="n">to</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="o">.</span><span class="kt">Destination</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span></code></pre>
 
@@ -2277,8 +2452,8 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></code> (a.k.a. <code>[String: Any]</code>) value to be encoded into the <code>URLRequest</code>. <code>nil</code> by
-             default.</p>
+                                  <p><code><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></code> (a.k.a. <code>[String: Any]</code>) value to be encoded into the <code>URLRequest</code>.
+                       <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2291,7 +2466,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>.
-             Defaults to <code><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV7defaultACvpZ">URLEncoding.default</a></code>.</p>
+                       Defaults to <code><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV7defaultACvpZ">URLEncoding.default</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2322,13 +2497,25 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>requestModifier</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
                                   <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided
-             parameters. <code>nil</code> by default.</p>
+                       parameters. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2341,7 +2528,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               <td>
                                 <div>
                                   <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
-             should be moved. <code>nil</code> by default.</p>
+                       should be moved. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2358,9 +2545,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0M11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgAX3URLV011destinationV0_AM7OptionsV7optionstA1__So17NSHTTPURLResponseCtYbcSgtSERzs8SendableRzlF"></a>
-                    <a name="//apple_ref/swift/Method/download(_:method:parameters:encoder:headers:interceptor:requestModifier:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0M11Interceptor_pSgy10Foundation10URLRequestVzYbKcSgAX3URLV011destinationV0_AM7OptionsV7optionstA1__So17NSHTTPURLResponseCtYbcSgtSERzs8SendableRzlF">download(_:<wbr>method:<wbr>parameters:<wbr>encoder:<wbr>headers:<wbr>interceptor:<wbr>requestModifier:<wbr>to:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor25shouldAutomaticallyResume15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgAZ3URLV011destinationY0_AN7OptionsV7optionstA3__So17NSHTTPURLResponseCtYbcSgtSERzs8SendableRzlF"></a>
+                    <a name="//apple_ref/swift/Method/download(_:method:parameters:encoder:headers:interceptor:shouldAutomaticallyResume:requestModifier:to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor25shouldAutomaticallyResume15requestModifier2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgy10Foundation10URLRequestVzYbKcSgAZ3URLV011destinationY0_AN7OptionsV7optionstA3__So17NSHTTPURLResponseCtYbcSgtSERzs8SendableRzlF">download(_:<wbr>method:<wbr>parameters:<wbr>encoder:<wbr>headers:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>requestModifier:<wbr>to:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2382,6 +2569,7 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                                                      <span class="nv">encoder</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/URLEncodedFormParameterEncoder.html">URLEncodedFormParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                                                      <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                                      <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                                                     <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                                      <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                                      <span class="n">to</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="o">.</span><span class="kt">Destination</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span></code></pre>
 
@@ -2436,7 +2624,7 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>.
-             Defaults to <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code>.</p>
+                       Defaults to <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2467,13 +2655,25 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>requestModifier</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided
-             parameters. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the
+                       provided parameters. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2485,8 +2685,8 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
-             should be moved. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the
+                       downloaded file should be moved. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2503,9 +2703,9 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC8download_11interceptor2toAA15DownloadRequestCAA21URLRequestConvertible_p_AA0G11Interceptor_pSg10Foundation3URLV011destinationL0_AH7OptionsV7optionstAN_So17NSHTTPURLResponseCtYbcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/download(_:interceptor:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC8download_11interceptor2toAA15DownloadRequestCAA21URLRequestConvertible_p_AA0G11Interceptor_pSg10Foundation3URLV011destinationL0_AH7OptionsV7optionstAN_So17NSHTTPURLResponseCtYbcSgtF">download(_:<wbr>interceptor:<wbr>to:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC8download_11interceptor25shouldAutomaticallyResume2toAA15DownloadRequestCAA21URLRequestConvertible_p_AA0J11Interceptor_pSgSbSg10Foundation3URLV011destinationO0_AI7OptionsV7optionstAP_So17NSHTTPURLResponseCtYbcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/download(_:interceptor:shouldAutomaticallyResume:to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC8download_11interceptor25shouldAutomaticallyResume2toAA15DownloadRequestCAA21URLRequestConvertible_p_AA0J11Interceptor_pSgSbSg10Foundation3URLV011destinationO0_AI7OptionsV7optionstAP_So17NSHTTPURLResponseCtYbcSgtF">download(_:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>to:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2522,6 +2722,7 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">download</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
                    <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                   <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                    <span class="n">to</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="o">.</span><span class="kt">Destination</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span></code></pre>
 
                         </div>
@@ -2557,13 +2758,25 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>destination</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
-         should be moved. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the
+                       downloaded file should be moved. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2580,9 +2793,9 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC8download12resumingWith11interceptor2toAA15DownloadRequestC10Foundation4DataV_AA0I11Interceptor_pSgAJ3URLV011destinationM0_AI7OptionsV7optionstAP_So17NSHTTPURLResponseCtYbcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/download(resumingWith:interceptor:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC8download12resumingWith11interceptor2toAA15DownloadRequestC10Foundation4DataV_AA0I11Interceptor_pSgAJ3URLV011destinationM0_AI7OptionsV7optionstAP_So17NSHTTPURLResponseCtYbcSgtF">download(resumingWith:<wbr>interceptor:<wbr>to:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC8download12resumingWith11interceptor25shouldAutomaticallyResume2toAA15DownloadRequestC10Foundation4DataV_AA0L11Interceptor_pSgSbSgAK3URLV011destinationP0_AJ7OptionsV7optionstAR_So17NSHTTPURLResponseCtYbcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/download(resumingWith:interceptor:shouldAutomaticallyResume:to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC8download12resumingWith11interceptor25shouldAutomaticallyResume2toAA15DownloadRequestC10Foundation4DataV_AA0L11Interceptor_pSgSbSgAK3URLV011destinationP0_AJ7OptionsV7optionstAR_So17NSHTTPURLResponseCtYbcSgtF">download(resumingWith:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>to:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2613,6 +2826,7 @@ information about the bug and possible workarounds, please refer to the <a href=
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">download</span><span class="p">(</span><span class="n">resumingWith</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
                    <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                   <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                    <span class="n">to</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="o">.</span><span class="kt">Destination</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span></code></pre>
 
                         </div>
@@ -2648,13 +2862,25 @@ information about the bug and possible workarounds, please refer to the <a href=
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>destination</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
-         should be moved. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the
+                       downloaded file should be moved. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2684,9 +2910,9 @@ information about the bug and possible workarounds, please refer to the <a href=
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManager15requestModifierAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0M11Interceptor_pSgSo06NSFileI0CyAM10URLRequestVzYbKcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:fileManager:requestModifier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManager15requestModifierAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0M11Interceptor_pSgSo06NSFileI0CyAM10URLRequestVzYbKcSgtF">upload(_:<wbr>to:<wbr>method:<wbr>headers:<wbr>interceptor:<wbr>fileManager:<wbr>requestModifier:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor25shouldAutomaticallyResume11fileManager15requestModifierAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgSo06NSFileL0CyAN10URLRequestVzYbKcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:shouldAutomaticallyResume:fileManager:requestModifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor25shouldAutomaticallyResume11fileManager15requestModifierAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgSo06NSFileL0CyAN10URLRequestVzYbKcSgtF">upload(_:<wbr>to:<wbr>method:<wbr>headers:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>fileManager:<wbr>requestModifier:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2706,6 +2932,7 @@ information about the bug and possible workarounds, please refer to the <a href=
                  <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                  <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
                  <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
@@ -2778,13 +3005,25 @@ information about the bug and possible workarounds, please refer to the <a href=
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>fileManager</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
-             default.</p>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code>
+                       instance by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2796,8 +3035,8 @@ information about the bug and possible workarounds, please refer to the <a href=
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided
-             parameters. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the
+                       provided parameters. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2814,9 +3053,9 @@ information about the bug and possible workarounds, please refer to the <a href=
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:fileManager:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF">upload(_:<wbr>with:<wbr>interceptor:<wbr>fileManager:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0L11Interceptor_pSgSbSgSo06NSFileJ0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:shouldAutomaticallyResume:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0L11Interceptor_pSgSbSgSo06NSFileJ0CtF">upload(_:<wbr>with:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>fileManager:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2834,6 +3073,7 @@ information about the bug and possible workarounds, please refer to the <a href=
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
                  <span class="n">with</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
@@ -2881,13 +3121,24 @@ information about the bug and possible workarounds, please refer to the <a href=
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>fileManager</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
-         default.</p>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2917,9 +3168,9 @@ information about the bug and possible workarounds, please refer to the <a href=
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManager15requestModifierAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0M11Interceptor_pSgSo06NSFileI0CyAM10URLRequestVzYbKcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:fileManager:requestModifier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManager15requestModifierAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0M11Interceptor_pSgSo06NSFileI0CyAM10URLRequestVzYbKcSgtF">upload(_:<wbr>to:<wbr>method:<wbr>headers:<wbr>interceptor:<wbr>fileManager:<wbr>requestModifier:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor25shouldAutomaticallyResume11fileManager15requestModifierAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgSo06NSFileL0CyAN10URLRequestVzYbKcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:shouldAutomaticallyResume:fileManager:requestModifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor25shouldAutomaticallyResume11fileManager15requestModifierAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSbSgSo06NSFileL0CyAN10URLRequestVzYbKcSgtF">upload(_:<wbr>to:<wbr>method:<wbr>headers:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>fileManager:<wbr>requestModifier:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2940,6 +3191,7 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                  <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                  <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
                  <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
@@ -3012,13 +3264,24 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>fileManager</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
-             default.</p>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3030,8 +3293,7 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided
-             parameters. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided parameters. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3048,9 +3310,9 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:fileManager:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF">upload(_:<wbr>with:<wbr>interceptor:<wbr>fileManager:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0L11Interceptor_pSgSbSgSo06NSFileJ0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:shouldAutomaticallyResume:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0L11Interceptor_pSgSbSgSo06NSFileJ0CtF">upload(_:<wbr>with:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>fileManager:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3069,6 +3331,7 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
                  <span class="n">with</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
@@ -3116,13 +3379,25 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>fileManager</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
-         default.</p>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code>
+                       instance by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3247,13 +3522,25 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>fileManager</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
-             default.</p>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code>
+                       instance by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3265,8 +3552,8 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the provided
-             parameters. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></code> which will be applied to the <code>URLRequest</code> created from the
+                       provided parameters. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3283,9 +3570,9 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:fileManager:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF">upload(_:<wbr>with:<wbr>interceptor:<wbr>fileManager:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0L11Interceptor_pSgSbSgSo06NSFileJ0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:shouldAutomaticallyResume:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0L11Interceptor_pSgSbSgSo06NSFileJ0CtF">upload(_:<wbr>with:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>fileManager:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3304,6 +3591,7 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">stream</span><span class="p">:</span> <span class="kt">InputStream</span><span class="p">,</span>
                  <span class="n">with</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
@@ -3351,13 +3639,24 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                             <tr>
                               <td>
                                 <code>
+                                <em>shouldAutomaticallyResume</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> should resume after the first response handler is added.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>fileManager</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
-         default.</p>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3665,9 +3964,9 @@ technique was used.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor11fileManager15requestModifierAA13UploadRequestCAA09MultiparteF0C_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0R11Interceptor_pSgSo06NSFileN0Cy10Foundation10URLRequestVzYbKcSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(multipartFormData:to:usingThreshold:method:headers:interceptor:fileManager:requestModifier:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor11fileManager15requestModifierAA13UploadRequestCAA09MultiparteF0C_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0R11Interceptor_pSgSo06NSFileN0Cy10Foundation10URLRequestVzYbKcSgtF">upload(multipartFormData:<wbr>to:<wbr>usingThreshold:<wbr>method:<wbr>headers:<wbr>interceptor:<wbr>fileManager:<wbr>requestModifier:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor25shouldAutomaticallyResume11fileManager15requestModifierAA13UploadRequestCAA09MultiparteF0C_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0U11Interceptor_pSgSbSgSo06NSFileQ0Cy10Foundation10URLRequestVzYbKcSgtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:to:usingThreshold:method:headers:interceptor:shouldAutomaticallyResume:fileManager:requestModifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor25shouldAutomaticallyResume11fileManager15requestModifierAA13UploadRequestCAA09MultiparteF0C_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0U11Interceptor_pSgSbSgSo06NSFileQ0Cy10Foundation10URLRequestVzYbKcSgtF">upload(multipartFormData:<wbr>to:<wbr>usingThreshold:<wbr>method:<wbr>headers:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>fileManager:<wbr>requestModifier:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3702,6 +4001,7 @@ technique was used.</p>
                  <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                  <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
                  <span class="nv">requestModifier</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html#/s:9Alamofire7SessionC15RequestModifiera">RequestModifier</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
@@ -3824,9 +4124,9 @@ technique was used.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA21URLRequestConvertible_ps6UInt64VAA0N11Interceptor_pSgSo06NSFileL0CtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(multipartFormData:with:usingThreshold:interceptor:fileManager:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA21URLRequestConvertible_ps6UInt64VAA0N11Interceptor_pSgSo06NSFileL0CtF">upload(multipartFormData:<wbr>with:<wbr>usingThreshold:<wbr>interceptor:<wbr>fileManager:<wbr>)</a>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA21URLRequestConvertible_ps6UInt64VAA0Q11Interceptor_pSgSbSgSo06NSFileO0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:with:usingThreshold:interceptor:shouldAutomaticallyResume:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor25shouldAutomaticallyResume11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA21URLRequestConvertible_ps6UInt64VAA0Q11Interceptor_pSgSbSgSo06NSFileO0CtF">upload(multipartFormData:<wbr>with:<wbr>usingThreshold:<wbr>interceptor:<wbr>shouldAutomaticallyResume:<wbr>fileManager:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3859,6 +4159,7 @@ technique was used.</p>
                  <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kd">any</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
                  <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="p">(</span><span class="kd">any</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">shouldAutomaticallyResume</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
@@ -4008,6 +4309,33 @@ technique was used.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire7SessionC14readyToPerform7requestyAA7RequestC_tF"></a>
+                    <a name="//apple_ref/swift/Method/readyToPerform(request:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC14readyToPerform7requestyAA7RequestC_tF">readyToPerform(request:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">readyToPerform</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire15RequestDelegateP7cleanup5afteryAA0B0C_tF"></a>
                     <a name="//apple_ref/swift/Method/cleanup(after:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire15RequestDelegateP7cleanup5afteryAA0B0C_tF">cleanup(after:<wbr>)</a>
@@ -4091,8 +4419,8 @@ technique was used.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2024-11-24)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2025 <a class="link" href="http://alamofire.org/" target="_blank" rel="external noopener">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2025-12-20)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>
