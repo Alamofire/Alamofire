@@ -24,7 +24,6 @@
 
 import Foundation
 import Testing
-import XCTest
 
 @testable import Alamofire
 
@@ -252,8 +251,8 @@ struct InterceptorTests {
         let interceptor = Interceptor(adaptHandler: adaptHandler, retryHandler: retryHandler)
 
         // Then
-        XCTAssertEqual(interceptor.adapters.count, 1)
-        XCTAssertEqual(interceptor.retriers.count, 1)
+        #expect(interceptor.adapters.count == 1)
+        #expect(interceptor.retriers.count == 1)
     }
 
     @Test
@@ -266,8 +265,8 @@ struct InterceptorTests {
         let interceptor = Interceptor(adapter: adapter, retrier: retrier)
 
         // Then
-        XCTAssertEqual(interceptor.adapters.count, 1)
-        XCTAssertEqual(interceptor.retriers.count, 1)
+        #expect(interceptor.adapters.count == 1)
+        #expect(interceptor.retriers.count == 1)
     }
 
     @Test
@@ -280,8 +279,8 @@ struct InterceptorTests {
         let interceptor = Interceptor(adapters: [adapter, adapter], retriers: [retrier, retrier])
 
         // Then
-        XCTAssertEqual(interceptor.adapters.count, 2)
-        XCTAssertEqual(interceptor.retriers.count, 2)
+        #expect(interceptor.adapters.count == 2)
+        #expect(interceptor.retriers.count == 2)
     }
 
     @Test
@@ -295,8 +294,8 @@ struct InterceptorTests {
         let interceptor = Interceptor(interceptors: [inner])
 
         // Then
-        XCTAssertEqual(interceptor.adapters.count, 1)
-        XCTAssertEqual(interceptor.retriers.count, 1)
+        #expect(interceptor.adapters.count == 1)
+        #expect(interceptor.retriers.count == 1)
     }
 
     @Test
