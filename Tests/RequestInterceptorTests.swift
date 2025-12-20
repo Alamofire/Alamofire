@@ -128,7 +128,7 @@ struct AdapterTests {
         #expect(adaptation?.result.isSuccess == true)
         #expect(adaptation?.urlRequest == urlRequest)
         #expect(adaptation?.state.requestID == requestID)
-        #expect(adaptation.map { ObjectIdentifier($0.state.session) } == ObjectIdentifier(session))
+        #expect(adaptation.map(\.state.sessionID) == ObjectIdentifier(session))
     }
 
     @Test
@@ -638,9 +638,14 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
 
     struct Adaptation {
         var urlRequest: URLRequest
-        var state: RequestAdapterState
+        var state: State
         var result: Result<URLRequest, any Error>
         var date: Date
+
+        struct State {
+            var requestID: UUID
+            var sessionID: ObjectIdentifier
+        }
     }
 
     struct Retry {
@@ -667,9 +672,10 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
     }
 
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+        let sessionID = ObjectIdentifier(session)
         interceptor.adapt(urlRequest, for: session) { result in
             let onAdaptation = self.state.write { state in
-                state.adaptations.append(.init(urlRequest: urlRequest, state: .init(requestID: .zero, session: session), result: result, date: .now))
+                state.adaptations.append(.init(urlRequest: urlRequest, state: .init(requestID: .zero, sessionID: sessionID), result: result, date: .now))
                 return state.onAdaptation
             }
 
@@ -679,9 +685,11 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
     }
 
     func adapt(_ urlRequest: URLRequest, using adapterState: RequestAdapterState, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
+        let requestID = adapterState.requestID
+        let sessionID = ObjectIdentifier(adapterState.session)
         interceptor.adapt(urlRequest, using: adapterState) { result in
             let onAdaptation = self.state.write { state in
-                state.adaptations.append(.init(urlRequest: urlRequest, state: adapterState, result: result, date: .now))
+                state.adaptations.append(.init(urlRequest: urlRequest, state: .init(requestID: requestID, sessionID: sessionID), result: result, date: .now))
                 return state.onAdaptation
             }
 
