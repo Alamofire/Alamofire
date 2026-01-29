@@ -42,6 +42,36 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         XCTAssertNotNil(value)
     }
 
+    func testThatDataTaskCanBeCancelledConcurrently() async {
+        // Tests fix for https://github.com/Alamofire/Alamofire/issues/3978
+        // Given
+        let session = Session()
+
+        // When: a single request has multiple DataTasks attached.
+        for _ in 0..<100 {
+            let request = session.request(.get)
+            let first = Task {
+                await request
+                    .serializingDecodable(TestResponse.self)
+                    .response
+            }
+            let second = Task {
+                await request
+                    .serializingDecodable(TestResponse.self)
+                    .response
+            }
+
+            async let firstResponse = first.value
+            async let secondResponse = second.value
+            // When: both tasks are cancelled concurrently.
+            async let firstCancel: Void = Task { @Sendable in first.cancel() }.value
+            async let secondCancel: Void = Task { @Sendable in second.cancel() }.value
+
+            // Then: all awaits parts should complete without continuation misuse.
+            _ = await (firstResponse, secondResponse, firstCancel, secondCancel)
+        }
+    }
+
     func testThat500ResponseCanBeRetried() async throws {
         // Given
         let session = stored(Session())

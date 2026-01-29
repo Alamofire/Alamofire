@@ -109,6 +109,9 @@ public class Request: @unchecked Sendable {
         var urlSessionTaskHandler: (queue: DispatchQueue, handler: @Sendable (URLSessionTask) -> Void)?
         /// Response serialization closures that handle response parsing.
         var responseSerializers: [@Sendable () -> Void] = []
+        /// Whether a serializer has been enqueued for execution. Ensure only one can be enqueued at a time.
+        /// Should be set back to false only when the serializer has completed successfully.
+        var isResponseSerializerEnqueued = false
         /// Response serialization completion closures for successful serializers, executed once all response serializers are complete.
         var responseSerializerCompletions: [@Sendable () -> Void] = []
         /// Whether response serializer processing is finished.
@@ -580,12 +583,15 @@ public class Request: @unchecked Sendable {
 
     /// Processes the next response serializer and calls all completions if response serialization is complete.
     func processNextResponseSerializer() {
-        let executeOutside: () -> Void = mutableState.write { mutableState in
+        let executeOutside: (() -> Void)? = mutableState.write { mutableState in
+            guard !mutableState.isResponseSerializerEnqueued else { return nil }
+
             let responseSerializerIndex = mutableState.responseSerializerCompletions.count
             let isAvailableSerializer = responseSerializerIndex < mutableState.responseSerializers.count
             let responseSerializer = isAvailableSerializer ? mutableState.responseSerializers[responseSerializerIndex] : nil
 
             if let responseSerializer {
+                mutableState.isResponseSerializerEnqueued = true
                 return { self.serializationQueue.async { responseSerializer() } }
             } else {
                 let completions = mutableState.responseSerializerCompletions
@@ -612,7 +618,7 @@ public class Request: @unchecked Sendable {
             }
         }
 
-        executeOutside()
+        executeOutside?()
     }
 
     /// Notifies the `Request` that the response serializer is complete.
@@ -620,7 +626,10 @@ public class Request: @unchecked Sendable {
     /// - Parameter completion: The completion handler provided with the response serializer, called when all serializers
     ///                         are complete.
     func responseSerializerDidComplete(completion: @escaping @Sendable () -> Void) {
-        mutableState.write { $0.responseSerializerCompletions.append(completion) }
+        mutableState.write { mutableState in
+            mutableState.isResponseSerializerEnqueued = false
+            mutableState.responseSerializerCompletions.append(completion)
+        }
         processNextResponseSerializer()
     }
 
@@ -635,6 +644,7 @@ public class Request: @unchecked Sendable {
             mutableState.error = nil
             mutableState.isFinishing = false
             mutableState.responseSerializerCompletions = []
+            mutableState.isResponseSerializerEnqueued = false
         }
     }
 
