@@ -1,13 +1,12 @@
 #if canImport(Network)
+@testable import Alamofire
 import Dispatch
 import Testing
-
-@testable import Alamofire
 
 @Suite("OfflineRetrierTests")
 struct OfflineRetrierTests {
     @Test
-    func requestIsRetriedWhenConnectivityIsRestored() async throws {
+    func requestIsRetriedWhenConnectivityIsRestored() async {
         // Given
         let didStop = Protected(false)
         let monitor = PathMonitor { queue, onResult in
@@ -33,7 +32,7 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    func requestIsNotRetriedWhenTheErrorIsNotOfflineError() async throws {
+    func requestIsNotRetriedWhenTheErrorIsNotOfflineError() async {
         // Given
         let didStop = Protected(false)
         let monitor = PathMonitor { queue, onResult in
@@ -59,7 +58,7 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    func requestIsNotRetriedWhenPathTimesOut() async throws {
+    func requestIsNotRetriedWhenPathTimesOut() async {
         // Given
         let didStop = Protected(false)
         let pathAvailable: Protected<DispatchWorkItem?> = .init(nil)
@@ -88,7 +87,7 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    func sessionWideRetrierCanRetryMultipleRequests() async throws {
+    func sessionWideRetrierCanRetryMultipleRequests() async {
         // Given
         let didStop = Protected(false)
         let pathAvailable: Protected<DispatchWorkItem?> = .init(nil)
@@ -121,7 +120,7 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    func sessionWideRetrierCanRetryMultipleRequestsTwice() async throws {
+    func sessionWideRetrierCanRetryMultipleRequestsTwice() async {
         // Given
         let didStop = Protected(false)
         let pathAvailable: Protected<DispatchWorkItem?> = .init(nil)
@@ -166,7 +165,7 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    func sessionWideRetrierCanTimeOutMultipleRequests() async throws {
+    func sessionWideRetrierCanTimeOutMultipleRequests() async {
         // Given
         let didStop = Protected(false)
         let pathAvailable: Protected<DispatchWorkItem?> = .init(nil)
@@ -199,7 +198,7 @@ struct OfflineRetrierTests {
     }
 
     @Test
-    func offlineRetrierNeverStartsOrStopsWhenImmediatelyDeinited() async throws {
+    func offlineRetrierNeverStartsOrStopsWhenImmediatelyDeinited() {
         // Given
         let didStart = Protected(false)
         let didStop = Protected(false)

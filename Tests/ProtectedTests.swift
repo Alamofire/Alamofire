@@ -24,7 +24,6 @@
 
 @testable
 import Alamofire
-
 import XCTest
 
 final class ProtectedTests: BaseTestCase {

@@ -361,9 +361,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
             attempts += 1
         }
 
-        let isRefreshExcessive = refreshAttemptsWithinWindow >= refreshWindow.maximumAttempts
-
-        return isRefreshExcessive
+        return refreshAttemptsWithinWindow >= refreshWindow.maximumAttempts
     }
 
     private func handleRefreshSuccess(_ credential: Credential, insideLock mutableState: inout MutableState) {

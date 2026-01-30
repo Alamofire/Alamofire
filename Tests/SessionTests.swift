@@ -131,7 +131,7 @@ final class SessionTestCase: BaseTestCase {
             let result = mutableState.write { mutableState in
                 mutableState.adaptCalledCount += 1
 
-                let result: Result<URLRequest, any Error> = Result {
+                return Result {
                     if mutableState.throwsErrorOnFirstAdapt {
                         mutableState.throwsErrorOnFirstAdapt = false
                         throw AFError.invalidURL(url: "/adapt/error/1")
@@ -152,8 +152,6 @@ final class SessionTestCase: BaseTestCase {
 
                     return urlRequest
                 }
-
-                return result
             }
 
             completion(result)
@@ -1286,7 +1284,7 @@ final class SessionTestCase: BaseTestCase {
     }
 
     @MainActor
-    func testThatSessionCallsRequestRetrierForAllResponseSerializersThatThrowError() throws {
+    func testThatSessionCallsRequestRetrierForAllResponseSerializersThatThrowError() {
         // Given
         let handler = RequestHandler(throwsErrorOnRetry: true)
 
@@ -1341,7 +1339,7 @@ final class SessionTestCase: BaseTestCase {
     }
 
     @MainActor
-    func testThatSessionRetriesRequestImmediatelyWhenResponseSerializerRequestsRetry() throws {
+    func testThatSessionRetriesRequestImmediatelyWhenResponseSerializerRequestsRetry() {
         // Given
         let handler = RequestHandler()
         let session = Session()

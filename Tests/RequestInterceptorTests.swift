@@ -22,10 +22,9 @@
 //  THE SOFTWARE.
 //
 
+@testable import Alamofire
 import Foundation
 import Testing
-
-@testable import Alamofire
 
 private struct MockError: Error {}
 private struct RetryError: Error {}
@@ -35,7 +34,7 @@ private struct RetryError: Error {}
 @Suite
 struct RetryResultTests {
     @Test
-    func retryRequiredProperty() async throws {
+    func retryRequiredProperty() {
         // Given, When
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
@@ -50,7 +49,7 @@ struct RetryResultTests {
     }
 
     @Test
-    func delayProperty() async throws {
+    func delayProperty() {
         // Given, When
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
@@ -85,7 +84,7 @@ struct RetryResultTests {
 @Suite
 struct AdapterTests {
     @Test
-    func thatAdapterCallsAdaptHandler() async throws {
+    func thatAdapterCallsAdaptHandler() {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -107,7 +106,7 @@ struct AdapterTests {
     }
 
     @Test
-    func thatAdapterCallsAdaptHandlerWithStateAPI() async throws {
+    func thatAdapterCallsAdaptHandlerWithStateAPI() {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -132,7 +131,7 @@ struct AdapterTests {
     }
 
     @Test
-    func thatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() async throws {
+    func thatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -149,7 +148,7 @@ struct AdapterTests {
     }
 
     @Test
-    func thatAdapterCanBeImplementedAsynchronously() async throws {
+    func thatAdapterCanBeImplementedAsynchronously() async {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -178,7 +177,7 @@ struct AdapterTests {
 @Suite
 struct RetrierTests {
     @Test
-    func thatRetrierCallsRetryHandler() async throws {
+    func thatRetrierCallsRetryHandler() {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -196,7 +195,7 @@ struct RetrierTests {
     }
 
     @Test
-    func thatRetrierCallsRequestAdapterDefaultImplementationInProtocolExtension() async throws {
+    func thatRetrierCallsRequestAdapterDefaultImplementationInProtocolExtension() {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -213,7 +212,7 @@ struct RetrierTests {
     }
 
     @Test
-    func thatRetrierCanBeImplementedAsynchronously() async throws {
+    func thatRetrierCanBeImplementedAsynchronously() async {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -376,7 +375,7 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorCanAdaptRequestAsynchronously() async throws {
+    func thatInterceptorCanAdaptRequestAsynchronously() async {
         // Given
         let urlRequest = Endpoint().urlRequest
         let session = Session()
@@ -455,7 +454,7 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorCanRetryRequestAsynchronously() async throws {
+    func thatInterceptorCanRetryRequestAsynchronously() async {
         // Given
         let session = Session(startRequestsImmediately: false)
         let request = session.request(.default)
@@ -551,7 +550,7 @@ struct InterceptorTests {
 @Suite
 struct InterceptorRequestTests {
     @Test
-    func thatRetryPolicyRetriesRequestTimeout() async throws {
+    func thatRetryPolicyRetriesRequestTimeout() async {
         // Given
         let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
         let urlRequest = Endpoint.delay(1).modifying(\.timeout, to: 0.01)

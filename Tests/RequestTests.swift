@@ -1005,9 +1005,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        let session = Session(configuration: configuration, requestSetup: .eager)
-
-        return session
+        return Session(configuration: configuration, requestSetup: .eager)
     }()
 
     let sessionWithContentTypeHeader: Session = {
@@ -1017,9 +1015,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        let session = Session(configuration: configuration, requestSetup: .eager)
-
-        return session
+        return Session(configuration: configuration, requestSetup: .eager)
     }()
 
     func sessionWithCookie(_ cookie: HTTPCookie) -> Session {
@@ -1033,9 +1029,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpShouldSetCookies = false
 
-        let session = Session(configuration: configuration, requestSetup: .eager)
-
-        return session
+        return Session(configuration: configuration, requestSetup: .eager)
     }()
 
     // MARK: Tests

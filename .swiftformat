@@ -13,7 +13,7 @@
 --exponentgrouping disabled
 --extensionacl on-declarations
 --fractiongrouping disabled
---ifdef no-indent
+--ifdef preserve
 --importgrouping testable-top
 --operatorfunc no-space
 --nospaceoperators ..<, ...
@@ -29,5 +29,11 @@
 
 --enable isEmpty
 --disable andOperator
+--disable docComments
+--disable noForceTryInTests
+--disable noForceUnwrapInTests
 --disable opaqueGenericParameters
+--disable simplifyGenericConstraints
+--disable wrapFunctionBodies
 --disable wrapMultilineStatementBraces
+--disable wrapPropertyBodies

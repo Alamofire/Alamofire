@@ -38,9 +38,7 @@ private enum TestCertificates {
     static func certificate(filename: String) -> SecCertificate {
         let filePath = Bundle.test.path(forResource: filename, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
-        let certificate = SecCertificateCreateWithData(nil, data as CFData)!
-
-        return certificate
+        return SecCertificateCreateWithData(nil, data as CFData)!
     }
 }
 

@@ -53,9 +53,7 @@ private enum TestCertificates {
     static func certificate(filename: String) -> SecCertificate {
         let filePath = Bundle.test.path(forResource: filename, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
-        let certificate = SecCertificateCreateWithData(nil, data as CFData)!
-
-        return certificate
+        return SecCertificateCreateWithData(nil, data as CFData)!
     }
 }
 
@@ -80,7 +78,7 @@ private enum TestTrusts {
     case leafValidDNSNameWithIncorrectIntermediate
 
     var trust: SecTrust {
-        let trust: SecTrust = switch self {
+        switch self {
         case .leafWildcard:
             TestTrusts.trustWithCertificates([TestCertificates.leafWildcard,
                                               TestCertificates.intermediateCA1,
@@ -125,8 +123,6 @@ private enum TestTrusts {
                                               TestCertificates.intermediateCA1,
                                               TestCertificates.rootCA])
         }
-
-        return trust
     }
 
     static func trustWithCertificates(_ certificates: [SecCertificate]) -> SecTrust {
@@ -1304,7 +1300,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 // MARK: -
 
 class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
-    func testThatCertificateChainMissingIntermediateCertificatePassesEvaluation() throws {
+    func testThatCertificateChainMissingIntermediateCertificatePassesEvaluation() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
@@ -1317,7 +1313,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
     }
 
-    func testThatExpiredLeafCertificatePassesEvaluation() throws {
+    func testThatExpiredLeafCertificatePassesEvaluation() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1350,7 +1346,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
 //        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
 //    }
 
-    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() throws {
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.trustWithCertificates([TestCertificates.leafValidDNSName,
@@ -1366,7 +1362,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
     }
 
-    func testThatExpiredLeafCertificateFailsDefaultAndRevocationComposite() throws {
+    func testThatExpiredLeafCertificateFailsDefaultAndRevocationComposite() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust

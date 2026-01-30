@@ -357,7 +357,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
     }
 
     @MainActor
-    func testThatCustomBoundaryCanBeSetWhenUploadingMultipartFormData() throws {
+    func testThatCustomBoundaryCanBeSetWhenUploadingMultipartFormData() {
         // Given
         let uploadData = Data("upload_data".utf8)
 

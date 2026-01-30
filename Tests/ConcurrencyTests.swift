@@ -794,7 +794,7 @@ final class UploadConcurrencyTests: BaseTestCase {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class WebSocketConcurrencyTests: BaseTestCase {
-    func testThatMessageEventsCanBeStreamed() async throws {
+    func testThatMessageEventsCanBeStreamed() async {
         // Given
         let session = stored(Session())
         let receivedEvent = expectation(description: "receivedEvent")
@@ -810,7 +810,7 @@ final class WebSocketConcurrencyTests: BaseTestCase {
         // Then
     }
 
-    func testThatMessagesCanBeStreamed() async throws {
+    func testThatMessagesCanBeStreamed() async {
         // Given
         let session = stored(Session())
 

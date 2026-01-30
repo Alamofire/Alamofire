@@ -22,9 +22,8 @@
 //  THE SOFTWARE.
 //
 
-import Foundation
-
 @testable import Alamofire
+import Foundation
 
 final class InspectorEventMonitor: EventMonitor {
     let label: String

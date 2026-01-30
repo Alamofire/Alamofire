@@ -41,9 +41,7 @@ class ProxyURLProtocol: URLProtocol {
             return configuration
         }()
 
-        let session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
-
-        return session
+        return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }()
 
     weak var activeTask: URLSessionTask?

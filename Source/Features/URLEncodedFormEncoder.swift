@@ -279,11 +279,9 @@ public final class URLEncodedFormEncoder {
                 searchRange = lowerCaseRange.upperBound..<searchRange.upperBound
             }
             words.append(wordStart..<searchRange.upperBound)
-            let result = words.map { range in
+            return words.map { range in
                 key[range].lowercased()
             }.joined(separator: separator)
-
-            return result
         }
     }
 
@@ -462,9 +460,7 @@ public final class URLEncodedFormEncoder {
                                                   keyPathEncoding: keyPathEncoding,
                                                   spaceEncoding: spaceEncoding,
                                                   allowedCharacters: allowedCharacters)
-        let query = serializer.serialize(object)
-
-        return query
+        return serializer.serialize(object)
     }
 
     /// Encodes the value as `Data`. This is performed by first creating an encoded `String` and then returning the
@@ -769,25 +765,21 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
     }
 
     func nestedSingleValueEncoder(for key: Key) -> any SingleValueEncodingContainer {
-        let container = _URLEncodedFormEncoder.SingleValueContainer(context: context,
-                                                                    codingPath: nestedCodingPath(for: key),
-                                                                    boolEncoding: boolEncoding,
-                                                                    dataEncoding: dataEncoding,
-                                                                    dateEncoding: dateEncoding,
-                                                                    nilEncoding: nilEncoding)
-
-        return container
+        _URLEncodedFormEncoder.SingleValueContainer(context: context,
+                                                    codingPath: nestedCodingPath(for: key),
+                                                    boolEncoding: boolEncoding,
+                                                    dataEncoding: dataEncoding,
+                                                    dateEncoding: dateEncoding,
+                                                    nilEncoding: nilEncoding)
     }
 
     func nestedUnkeyedContainer(forKey key: Key) -> any UnkeyedEncodingContainer {
-        let container = _URLEncodedFormEncoder.UnkeyedContainer(context: context,
-                                                                codingPath: nestedCodingPath(for: key),
-                                                                boolEncoding: boolEncoding,
-                                                                dataEncoding: dataEncoding,
-                                                                dateEncoding: dateEncoding,
-                                                                nilEncoding: nilEncoding)
-
-        return container
+        _URLEncodedFormEncoder.UnkeyedContainer(context: context,
+                                                codingPath: nestedCodingPath(for: key),
+                                                boolEncoding: boolEncoding,
+                                                dataEncoding: dataEncoding,
+                                                dateEncoding: dateEncoding,
+                                                nilEncoding: nilEncoding)
     }
 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
@@ -1118,9 +1110,7 @@ final class URLEncodedFormSerializer {
         var allowedCharactersWithSpace = allowedCharacters
         allowedCharactersWithSpace.insert(charactersIn: " ")
         let escapedQuery = query.addingPercentEncoding(withAllowedCharacters: allowedCharactersWithSpace) ?? query
-        let spaceEncodedQuery = spaceEncoding.encode(escapedQuery)
-
-        return spaceEncodedQuery
+        return spaceEncoding.encode(escapedQuery)
     }
 }
 

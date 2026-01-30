@@ -86,9 +86,7 @@ final class CacheTestCase: BaseTestCase {
                 return configuration
             }()
 
-            let manager = Session(configuration: configuration)
-
-            return manager
+            return Session(configuration: configuration)
         }()
 
         primeCachedResponses()
