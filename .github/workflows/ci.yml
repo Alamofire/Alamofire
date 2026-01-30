@@ -265,7 +265,7 @@ jobs:
             name: "watchOS 11.5"
             testPlan: "watchOS"
             xcode: "Xcode_16.4"
-            runsOn: macOS-15
+            runsOn: self-xcode164
           - destination: "OS=11.4,name=Apple Watch Series 10 (46mm)"
             name: "watchOS 11.4"
             testPlan: "watchOS"
