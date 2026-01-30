@@ -110,7 +110,7 @@ public class Request: @unchecked Sendable {
         /// Response serialization closures that handle response parsing.
         var responseSerializers: [@Sendable () -> Void] = []
         /// Whether a serializer has been enqueued for execution. Ensure only one can be enqueued at a time.
-        /// Should be set back to false only when the serializer has completed successfully.
+        /// Should be set back to false only when the serializer has completed successfully or will be retried.
         var isResponseSerializerEnqueued = false
         /// Response serialization completion closures for successful serializers, executed once all response serializers are complete.
         var responseSerializerCompletions: [@Sendable () -> Void] = []
