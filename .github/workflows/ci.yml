@@ -220,31 +220,31 @@ jobs:
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
             xcode: "Xcode_16.4"
-            runsOn: macOS-15
+            runsOn: self-xcode164
           - destination: "OS=2.4,name=Apple Vision Pro"
             name: "visionOS 2.4"
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
             xcode: "Xcode_16.4"
-            runsOn: macOS-15
+            runsOn: self-xcode164
           - destination: "OS=2.3,name=Apple Vision Pro"
             name: "visionOS 2.3"
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
             xcode: "Xcode_16.3"
-            runsOn: macOS-15
+            runsOn: self-xcode163
           - destination: "OS=2.1,name=Apple Vision Pro"
             name: "visionOS 2.1"
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
             xcode: "Xcode_16.1"
-            runsOn: firebreak
+            runsOn: self-xcode161
           - destination: "OS=2.0,name=Apple Vision Pro"
             name: "visionOS 2.0"
             testPlan: "visionOS"
             scheme: "Alamofire visionOS"
             xcode: "Xcode_16.0"
-            runsOn: firebreak
+            runsOn: self-xcode160
     steps:
       - uses: actions/checkout@v6
       - name: Install Firewalk
