@@ -69,13 +69,13 @@ GEM
     ethon (0.18.0)
       ffi (>= 1.15.0)
       logger
-    ffi (1.17.2)
+    ffi (1.17.3)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
     gh_inspector (1.1.3)
     httpclient (2.9.0)
       mutex_m
-    i18n (1.14.7)
+    i18n (1.14.8)
       concurrent-ruby (~> 1.0)
     jazzy (0.15.4)
       activesupport (>= 5.0, < 8)
@@ -93,7 +93,7 @@ GEM
     liferaft (0.0.6)
     logger (1.7.0)
     mini_portile2 (2.8.9)
-    minitest (6.0.0)
+    minitest (6.0.1)
       prism (~> 1.5)
     molinillo (0.8.0)
     mustache (1.1.1)
@@ -102,11 +102,11 @@ GEM
     nap (1.1.0)
     netrc (0.11.0)
     open4 (1.3.4)
-    prism (1.7.0)
+    prism (1.9.0)
     public_suffix (4.0.7)
     redcarpet (3.6.1)
     rexml (3.4.4)
-    rouge (4.6.1)
+    rouge (4.7.0)
     ruby-macho (2.5.1)
     sassc (2.4.0)
       ffi (~> 1.9)
@@ -135,4 +135,4 @@ DEPENDENCIES
   jazzy
 
 BUNDLED WITH
-   2.6.9
+  4.0.3

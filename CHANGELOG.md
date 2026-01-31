@@ -6,7 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
-- `5.11.x` Releases - [5.11.0](#5110)
+- `5.11.x` Releases - [5.11.0](#5110) | [5.11.1](#5111)
 - `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101) | [5.10.2](#5102)
 - `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
 - `5.8.x`  Releases - [5.8.0](#580) | [5.8.1](#581)
@@ -58,6 +58,14 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.11.1](https://github.com/Alamofire/Alamofire/releases/tag/5.11.1]
+
+Released on 2026-01-31. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/95?closed=1).
+
+### Fixed
+- Fixes [#3978](https://github.com/Alamofire/Alamofire/pull/3978), a rare logical race that allowed the same response serializer to execute multiple times simultaneously, which would call the completion handler multiple times, leading to crashes when wrapping continuations.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3999](https://github.com/Alamofire/Alamofire/pull/3999).
 
 ## [5.11.0](https://github.com/Alamofire/Alamofire/releases/tag/5.11.0]
 
