@@ -133,7 +133,7 @@ jobs:
             name: "iOS 26.1"
             xcode: "Xcode_26.1"
             runsOn: macos-26
-          - destination: "OS=26.0,name=iPhone 17 Pro"
+          - destination: "OS=26.0.1,name=iPhone 17 Pro"
             name: "iOS 26.0"
             xcode: "Xcode_26.0"
             runsOn: self-xcode260
@@ -232,7 +232,7 @@ jobs:
           - destination: "OS=26.1,name=Apple Vision Pro"
             name: "visionOS 26.1"
             xcode: "Xcode_26.1"
-            runsOn: macos-26
+            runsOn: self-xcode261
           - destination: "OS=26.0,name=Apple Vision Pro"
             name: "visionOS 26.0"
             xcode: "Xcode_26.0"
