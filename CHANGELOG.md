@@ -61,7 +61,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 ## [5.11.1](https://github.com/Alamofire/Alamofire/releases/tag/5.11.1]
 
-Released on 2026-01-31. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/95?closed=1).
+Released on 2026-02-01. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/95?closed=1).
 
 ### Fixed
 - Fixes [#3978](https://github.com/Alamofire/Alamofire/pull/3978), a rare logical race that allowed the same response serializer to execute multiple times simultaneously, which would call the completion handler multiple times, leading to crashes when wrapping continuations.
