@@ -126,7 +126,7 @@ jobs:
             runsOn: macos-26
           - destination: "OS=26.0.1,name=iPhone 17 Pro"
             name: "iOS 26.0"
-            xcode: "Xcode_26.0"
+            xcode: "Xcode_26.1"
             runsOn: self-xcode260
           - destination: "OS=18.6,name=iPhone 16 Pro"
             name: "iOS 18.6"
@@ -274,7 +274,7 @@ jobs:
             runsOn: macos-26
           - destination: "OS=26.0,name=Apple Watch Series 11 (46mm)"
             name: "watchOS 26.0"
-            xcode: "Xcode_26.0"
+            xcode: "Xcode_26.1"
             runsOn: self-xcode260
           - destination: "OS=11.5,name=Apple Watch Series 10 (46mm)"
             name: "watchOS 11.5"
