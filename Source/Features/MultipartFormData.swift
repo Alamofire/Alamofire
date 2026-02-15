@@ -512,13 +512,25 @@ open class MultipartFormData {
     // MARK: - Private - Content Headers
 
     private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
-        var disposition = "form-data; name=\"\(name)\""
-        if let fileName { disposition += "; filename=\"\(fileName)\"" }
+        let sanitizedName = sanitizeHeaderValue(name)
+        var disposition = "form-data; name=\"\(sanitizedName)\""
+        if let fileName {
+            let sanitizedFileName = sanitizeHeaderValue(fileName)
+            disposition += "; filename=\"\(sanitizedFileName)\""
+        }
 
         var headers: HTTPHeaders = [.contentDisposition(disposition)]
-        if let mimeType { headers.add(.contentType(mimeType)) }
+        if let mimeType {
+            let sanitizedMimeType = sanitizeHeaderValue(mimeType)
+            headers.add(.contentType(sanitizedMimeType))
+        }
 
         return headers
+    }
+
+    private func sanitizeHeaderValue(_ value: String) -> String {
+        value.replacingOccurrences(of: "\r", with: "")
+            .replacingOccurrences(of: "\n", with: "")
     }
 
     // MARK: - Private - Boundary Encoding
