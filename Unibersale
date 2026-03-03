@@ -1,0 +1,13 @@
+powershell://Processes-EX1]
+    script = Get-Process | Select-Object Handles, NPM, PM, WS, VM, Id, ProcessName, @{n="SplunkHost";e={$Env:SPLUNK_SERVER_NAME}}
+    schedule = */5 * * * *
+    sourcetype = Windows:Process
+ [powershell://Processes-EX2]
+    script = . "$SplunkHome\etc\apps\My-App\bin\getprocesses.ps1"
+    schedule = */20 * 9-16 * 1-5
+    sourcetype = Windows:Process
+Get-LocalStoragePath
+Export-LocalStorage
+Import-LocalStorage
+powershell://MSExchange_Health]
+    script=. $SplunkHome/etc/apps/TA-Exchange-2010/powershell/health.ps1
