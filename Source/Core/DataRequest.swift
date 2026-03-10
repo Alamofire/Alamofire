@@ -291,7 +291,7 @@ public class DataRequest: Request, @unchecked Sendable {
                         didComplete = { completionHandler(response) }
 
                     case let .doNotRetryWithError(retryError):
-                        let result: AFResult<Serializer.SerializedObject> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
+                        let result: AFResult<Serializer.SerializedObject> = .failure(retryError.asAFError(or: .requestRetryFailed(retryError: retryError, originalError: serializerError)))
 
                         let response = DataResponse(request: self.request,
                                                     response: self.response,
