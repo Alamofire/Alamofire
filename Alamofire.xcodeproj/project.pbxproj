@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1498,7 +1498,6 @@
 				};
 			};
 			buildConfigurationList = F8111E2D19A95C8B0040E7D1 /* Build configuration list for PBXProject "Alamofire" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1506,6 +1505,7 @@
 				Base,
 			);
 			mainGroup = F8111E2919A95C8B0040E7D1;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = F8111E3419A95C8B0040E7D1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
