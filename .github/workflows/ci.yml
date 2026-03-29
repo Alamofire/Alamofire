@@ -31,6 +31,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_26.4"
+            runsOn: self-xcode264
+            name: "macOS 26, Xcode 26.4, Swift 6.3.0"
+          - xcode: "Xcode_26.3"
+            runsOn: macos-26
+            name: "macOS 26, Xcode 26.3, Swift 6.2.3"
           - xcode: "Xcode_26.2"
             runsOn: macos-26
             name: "macOS 26, Xcode 26.2, Swift 6.2.3"
@@ -76,6 +82,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_26.4"
+            name: "Catalyst 26.4"
+            runsOn: self-xcode264
+          - xcode: "Xcode_26.3"
+            name: "Catalyst 26.3"
+            runsOn: macOS-26
           - xcode: "Xcode_26.2"
             name: "Catalyst 26.2"
             runsOn: macOS-26
@@ -116,14 +128,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=26.4,name=iPhone 17 Pro"
+            name: "iOS 26.4"
+            xcode: "Xcode_26.4"
+            runsOn: self-xcode263
+          - destination: "OS=26.3.1,name=iPhone 17 Pro"
+            name: "iOS 26.3.1"
+            xcode: "Xcode_26.3"
+            runsOn: self-xcode263
           - destination: "OS=26.2,name=iPhone 17 Pro"
             name: "iOS 26.2"
             xcode: "Xcode_26.2"
-            runsOn: macos-26
+            runsOn: self-xcode262
           - destination: "OS=26.1,name=iPhone 17 Pro"
             name: "iOS 26.1"
             xcode: "Xcode_26.1"
-            runsOn: macos-26
+            runsOn: self-xcode261
           # - destination: "OS=26.0.1,name=iPhone 17 Pro"
           #   name: "iOS 26.0"
           #   xcode: "Xcode_26.1"
@@ -172,6 +192,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=26.4,name=Apple TV"
+            name: "tvOS 26.4"
+            xcode: "Xcode_26.4"
+            runsOn: self-xcode264
+          - destination: "OS=26.3,name=Apple TV"
+            name: "tvOS 26.3"
+            xcode: "Xcode_26.3"
+            runsOn: macos-26
           - destination: "OS=26.2,name=Apple TV"
             name: "tvOS 26.2"
             xcode: "Xcode_26.2"
@@ -216,6 +244,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=26.4,name=Apple Vision Pro"
+            name: "visionOS 26.4"
+            xcode: "Xcode_26.4"
+            runsOn: self-xcode26.4
+          - destination: "OS=26.3,name=Apple Vision Pro"
+            name: "visionOS 26.3"
+            xcode: "Xcode_26.3"
+            runsOn: macos-26
           - destination: "OS=26.2,name=Apple Vision Pro"
             name: "visionOS 26.2"
             xcode: "Xcode_26.2"
@@ -264,6 +300,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - destination: "OS=26.4,name=Apple Watch Series 11 (46mm)"
+            name: "watchOS 26.4"
+            xcode: "Xcode_26.4"
+            runsOn: self-xcode264
+          - destination: "OS=26.3,name=Apple Watch Series 11 (46mm)"
+            name: "watchOS 26.3"
+            xcode: "Xcode_26.3"
+            runsOn: macos-26
           - destination: "OS=26.2,name=Apple Watch Series 11 (46mm)"
             name: "watchOS 26.2"
             xcode: "Xcode_26.2"
@@ -312,9 +356,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_26.4"
+            runsOn: self-xcode264
+            name: "macOS 26, SPM 6.3.0 Test"
+          - xcode: "Xcode_26.3"
+            runsOn: macOS-26
+            name: "macOS 26, SPM 6.2.3 Test"
           - xcode: "Xcode_26.2"
             runsOn: macOS-26
-            name: "macOS 15, SPM 6.2.3 Test"
+            name: "macOS 26, SPM 6.2.3 Test"
           - xcode: "Xcode_26.1"
             runsOn: macOS-26
             name: "macOS 26, SPM 6.2.1 Test"
@@ -359,6 +409,10 @@ jobs:
           - image: swift:6.2-jammy
           - image: swift:6.2-noble
           - image: swift:6.2-rhel-ubi9
+          - image: swift:6.3-bookworm
+          - image: swift:6.3-jammy
+          - image: swift:6.3-noble
+          - image: swift:6.3-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
     container:
@@ -395,6 +449,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - branch: swift-6.3-release
+            tag: 6.3-RELEASE
+            name: Windows Swift 6.3
           - branch: swift-6.2-release
             tag: 6.2-RELEASE
             name: Windows Swift 6.2
@@ -417,9 +474,9 @@ jobs:
           swift build --build-tests -c debug -Xlinker /INCREMENTAL:NO -v
   CodeQL:
     name: Analyze with CodeQL
-    runs-on: macOS-15
+    runs-on: macOS-26
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_16.4.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_26.3.app/Contents/Developer"
     timeout-minutes: 20
     steps:
       - name: Clone
