@@ -3,7 +3,7 @@
 import Dispatch
 import Testing
 
-@Suite("OfflineRetrierTests")
+@Suite
 struct OfflineRetrierTests {
     @Test
     func requestIsRetriedWhenConnectivityIsRestored() async {
