@@ -901,6 +901,10 @@ extension DispatchQueue {
 }
 
 /// An asynchronous sequence generated from an underlying `AsyncStream`. Only produced by Alamofire.
+///
+/// - Note: Like `AsyncStream`, `StreamOf` does not support multiple iteration. Multiple iteration may lead to lost
+///         values or other misbehavior.
+///
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public struct StreamOf<Element>: AsyncSequence {
     public typealias AsyncIterator = Iterator
@@ -909,25 +913,23 @@ public struct StreamOf<Element>: AsyncSequence {
 
     private let bufferingPolicy: BufferingPolicy
     private let onTermination: (() -> Void)?
-    private let builder: (Continuation) -> Void
+    private let stream: AsyncStream<Element>
+    private let continuation: Continuation
 
     fileprivate init(bufferingPolicy: BufferingPolicy = .unbounded,
                      onTermination: (() -> Void)? = nil,
                      builder: @escaping (Continuation) -> Void) {
         self.bufferingPolicy = bufferingPolicy
         self.onTermination = onTermination
-        self.builder = builder
+        let (stream, continuation) = AsyncStream<Element>.makeStream(of: Element.self, bufferingPolicy: bufferingPolicy)
+        self.stream = stream
+        self.continuation = continuation
+        builder(continuation)
     }
 
     public func makeAsyncIterator() -> Iterator {
-        var continuation: AsyncStream<Element>.Continuation?
-        let stream = AsyncStream<Element>(bufferingPolicy: bufferingPolicy) { innerContinuation in
-            continuation = innerContinuation
-            builder(innerContinuation)
-        }
-
-        return Iterator(iterator: stream.makeAsyncIterator()) {
-            continuation?.finish()
+        Iterator(iterator: stream.makeAsyncIterator()) {
+            continuation.finish()
             onTermination?()
         }
     }
