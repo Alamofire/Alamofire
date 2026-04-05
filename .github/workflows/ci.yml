@@ -36,7 +36,7 @@ jobs:
             name: "macOS 26, Xcode 26.4, Swift 6.3.0"
           - xcode: "Xcode_26.3"
             runsOn: macos-26
-            name: "macOS 26, Xcode 26.3, Swift 6.2.3"
+            name: "macOS 26, Xcode 26.3, Swift 6.2.4"
           - xcode: "Xcode_26.2"
             runsOn: macos-26
             name: "macOS 26, Xcode 26.2, Swift 6.2.3"
@@ -144,10 +144,10 @@ jobs:
             name: "iOS 26.1"
             xcode: "Xcode_26.1"
             runsOn: self-xcode261
-          # - destination: "OS=26.0.1,name=iPhone 17 Pro"
-          #   name: "iOS 26.0"
-          #   xcode: "Xcode_26.1"
-          #   runsOn: self-xcode260
+          - destination: "OS=26.0.1,name=iPhone 17 Pro"
+            name: "iOS 26.0"
+            xcode: "Xcode_26.1"
+            runsOn: self-xcode260
           - destination: "OS=18.6,name=iPhone 16 Pro"
             name: "iOS 18.6"
             xcode: "Xcode_16.4"
@@ -304,10 +304,6 @@ jobs:
             name: "watchOS 26.4"
             xcode: "Xcode_26.4"
             runsOn: self-xcode264
-          - destination: "OS=26.3,name=Apple Watch Series 11 (46mm)"
-            name: "watchOS 26.3"
-            xcode: "Xcode_26.3"
-            runsOn: self-xcode263
           - destination: "OS=26.2,name=Apple Watch Series 11 (46mm)"
             name: "watchOS 26.2"
             xcode: "Xcode_26.2"
@@ -361,7 +357,7 @@ jobs:
             name: "macOS 26, SPM 6.3.0 Test"
           - xcode: "Xcode_26.3"
             runsOn: macOS-26
-            name: "macOS 26, SPM 6.2.3 Test"
+            name: "macOS 26, SPM 6.2.4 Test"
           - xcode: "Xcode_26.2"
             runsOn: macOS-26
             name: "macOS 26, SPM 6.2.3 Test"
