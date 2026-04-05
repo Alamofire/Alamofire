@@ -9,7 +9,7 @@
     },
     {
       "file": "/Users/jshier/Code/Alamofire/Source/Core/Request.swift",
-      "line": 1217,
+      "line": 1227,
       "symbol": "RequestDelegate.readyToPerform(request:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
