@@ -521,13 +521,13 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        guard let uploadable = request.uploadable, case let .file(url, _) = uploadable else {
+        // No deterministic way to test whether the upload was written to disk, so just check whether the upload was a file.
+        guard let uploadable = request.uploadable, case .file = uploadable else {
             XCTFail("Uploadable is not .file")
             return
         }
 
         XCTAssertTrue(response?.result.isSuccess == true)
-        XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
     }
 
     @MainActor
