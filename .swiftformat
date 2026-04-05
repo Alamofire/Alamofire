@@ -24,7 +24,6 @@
 --wrapcollections preserve
 --wrapparameters preserve
 
-
 # rules
 
 --enable isEmpty

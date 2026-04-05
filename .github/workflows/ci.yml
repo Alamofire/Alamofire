@@ -199,7 +199,7 @@ jobs:
           - destination: "OS=26.3,name=Apple TV"
             name: "tvOS 26.3"
             xcode: "Xcode_26.3"
-            runsOn: macos-26
+            runsOn: self-xcode263
           - destination: "OS=26.2,name=Apple TV"
             name: "tvOS 26.2"
             xcode: "Xcode_26.2"
@@ -247,11 +247,11 @@ jobs:
           - destination: "OS=26.4,name=Apple Vision Pro"
             name: "visionOS 26.4"
             xcode: "Xcode_26.4"
-            runsOn: self-xcode26.4
+            runsOn: self-xcode264
           - destination: "OS=26.3,name=Apple Vision Pro"
             name: "visionOS 26.3"
             xcode: "Xcode_26.3"
-            runsOn: macos-26
+            runsOn: self-xcode26.3
           - destination: "OS=26.2,name=Apple Vision Pro"
             name: "visionOS 26.2"
             xcode: "Xcode_26.2"
@@ -307,7 +307,7 @@ jobs:
           - destination: "OS=26.3,name=Apple Watch Series 11 (46mm)"
             name: "watchOS 26.3"
             xcode: "Xcode_26.3"
-            runsOn: macos-26
+            runsOn: self-xcode263
           - destination: "OS=26.2,name=Apple Watch Series 11 (46mm)"
             name: "watchOS 26.2"
             xcode: "Xcode_26.2"
@@ -316,10 +316,10 @@ jobs:
             name: "watchOS 26.1"
             xcode: "Xcode_26.1"
             runsOn: macos-26
-          # - destination: "OS=26.0,name=Apple Watch Series 11 (46mm)"
-          #   name: "watchOS 26.0"
-          #   xcode: "Xcode_26.1"
-          #   runsOn: self-xcode260
+          - destination: "OS=26.0,name=Apple Watch Series 11 (46mm)"
+            name: "watchOS 26.0"
+            xcode: "Xcode_26.0"
+            runsOn: self-xcode260
           - destination: "OS=11.5,name=Apple Watch Series 10 (46mm)"
             name: "watchOS 11.5"
             xcode: "Xcode_16.4"
