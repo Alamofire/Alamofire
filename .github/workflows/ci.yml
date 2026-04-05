@@ -196,10 +196,6 @@ jobs:
             name: "tvOS 26.4"
             xcode: "Xcode_26.4"
             runsOn: self-xcode264
-          - destination: "OS=26.3,name=Apple TV"
-            name: "tvOS 26.3"
-            xcode: "Xcode_26.3"
-            runsOn: self-xcode263
           - destination: "OS=26.2,name=Apple TV"
             name: "tvOS 26.2"
             xcode: "Xcode_26.2"
@@ -248,10 +244,6 @@ jobs:
             name: "visionOS 26.4"
             xcode: "Xcode_26.4"
             runsOn: self-xcode264
-          - destination: "OS=26.3,name=Apple Vision Pro"
-            name: "visionOS 26.3"
-            xcode: "Xcode_26.3"
-            runsOn: self-xcode26.3
           - destination: "OS=26.2,name=Apple Vision Pro"
             name: "visionOS 26.2"
             xcode: "Xcode_26.2"
