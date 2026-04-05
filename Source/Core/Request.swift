@@ -457,7 +457,13 @@ public class Request: @unchecked Sendable {
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        mutableState.write { $0.metrics.append(metrics) }
+        mutableState.write { mutableState in
+            // Newer Network.framework-based URLSession (usesClassicLoadingMode == false) can issue duplicate metrics
+            // delegate callbacks, so only append the same metrics once.
+            guard mutableState.metrics.last != metrics else { return }
+
+            mutableState.metrics.append(metrics)
+        }
 
         eventMonitor?.request(self, didGatherMetrics: metrics)
     }

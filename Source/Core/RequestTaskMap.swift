@@ -121,7 +121,7 @@ struct RequestTaskMap {
         case (_, true):
             // Newer Network.framework-based URLSession (usesClassicLoadingMode == false) can issue duplicate metrics
             // delegate callbacks, so only assert in DEBUG and ignore the duplicate metrics.
-            assert(true, "RequestTaskMap consistency error: duplicate metricsGatheredForTask call.")
+            assertionFailure("RequestTaskMap consistency error: duplicate metricsGatheredForTask call.")
             return false
         case (false, false): taskEvents[task] = (completed: false, metricsGathered: true); return false
         case (true, false): self[task] = nil; return true
