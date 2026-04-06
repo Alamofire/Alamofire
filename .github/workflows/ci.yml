@@ -131,7 +131,7 @@ jobs:
           - destination: "OS=26.4,name=iPhone 17 Pro"
             name: "iOS 26.4"
             xcode: "Xcode_26.4"
-            runsOn: self-xcode263
+            runsOn: self-xcode264
           - destination: "OS=26.3.1,name=iPhone 17 Pro"
             name: "iOS 26.3.1"
             xcode: "Xcode_26.3"
