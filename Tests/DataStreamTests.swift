@@ -1317,3 +1317,96 @@ final class DataStreamLifetimeEvents: BaseTestCase {
         XCTAssertEqual(request.state, .finished)
     }
 }
+
+// MARK: - Streamlined Tuple-Based API Tests
+
+final class DataStreamTupleAPITests: BaseTestCase {
+    @MainActor
+    func testThatStreamDataAndResponseYieldsTuples() {
+        // Given
+        let expectedSize = 5
+        var accumulatedData = Data()
+        var responses: [HTTPURLResponse?] = []
+        let didReceive = expectation(description: "stream should receive data")
+        let didComplete = expectation(description: "stream should complete")
+        didReceive.expectedFulfillmentCount = expectedSize
+        
+        // When
+        let task = Task {
+            for try await (chunk, response) in AF.streamRequest(.bytes(expectedSize)).streamDataAndResponse() {
+                accumulatedData.append(chunk)
+                responses.append(response)
+                didReceive.fulfill()
+            }
+            didComplete.fulfill()
+        }
+        
+        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        
+        // Then
+        XCTAssertEqual(accumulatedData.count, expectedSize)
+        XCTAssertTrue(responses.allSatisfy { $0?.statusCode == 200 })
+        
+        task.cancel()
+    }
+    
+    @MainActor
+    func testThatSessionStreamMethodYieldsTuples() {
+        // Given
+        let expectedSize = 10
+        var accumulatedData = Data()
+        var responseCount = 0
+        let didReceive = expectation(description: "stream should receive data")
+        let didComplete = expectation(description: "stream should complete")
+        didReceive.expectedFulfillmentCount = expectedSize
+        
+        // When
+        let task = Task {
+            for try await (chunk, response) in AF.stream(.bytes(expectedSize)) {
+                accumulatedData.append(chunk)
+                if response != nil {
+                    responseCount += 1
+                }
+                didReceive.fulfill()
+            }
+            didComplete.fulfill()
+        }
+        
+        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        
+        // Then
+        XCTAssertEqual(accumulatedData.count, expectedSize)
+        XCTAssertGreaterThan(responseCount, 0)
+        
+        task.cancel()
+    }
+    
+    @MainActor
+    func testThatStreamDataAndResponseCancelsWhenIterationStops() {
+        // Given
+        let expectedSize = 100 // Large size to ensure cancellation stops streaming
+        var accumulatedData = Data()
+        var didComplete = false
+        let didReceive = expectation(description: "stream should receive initial data")
+        
+        // When
+        let task = Task {
+            do {
+                for try await (chunk, _) in AF.streamRequest(.bytes(expectedSize)).streamDataAndResponse() {
+                    accumulatedData.append(chunk)
+                    didReceive.fulfill()
+                    break // Exit early to test cancellation
+                }
+                didComplete = true
+            } catch {
+                // Cancellation may cause an error, which is fine
+            }
+        }
+        
+        wait(for: [didReceive], timeout: timeout)
+        task.cancel()
+        
+        // Then - streaming should have stopped partway through
+        XCTAssertLessThan(accumulatedData.count, expectedSize)
+    }
+}
