@@ -505,7 +505,7 @@ final class DataStreamTests: BaseTestCase {
         var response: HTTPURLResponse?
         var complete: DataStreamRequest.Completion?
         let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let didComplete = expectation(description: "stream should complete")
 
         // When
         AF.streamRequest(.bytes(50))
@@ -1333,7 +1333,7 @@ final class DataStreamTupleAPITests: BaseTestCase {
         
         // When
         let task = Task {
-            for try await (chunk, response) in AF.streamRequest(.bytes(expectedSize)).streamDataAndResponse() {
+            for try await (chunk, response) in AF.streamRequest(.chunked(expectedSize)).streamDataAndResponse() {
                 accumulatedData.append(chunk)
                 responses.append(response)
                 didReceive.fulfill()
@@ -1362,7 +1362,7 @@ final class DataStreamTupleAPITests: BaseTestCase {
         
         // When
         let task = Task {
-            for try await (chunk, response) in AF.stream(.bytes(expectedSize)) {
+            for try await (chunk, response) in AF.streamRequest(.chunked(expectedSize)).streamDataAndResponse() {
                 accumulatedData.append(chunk)
                 if response != nil {
                     responseCount += 1
@@ -1392,7 +1392,7 @@ final class DataStreamTupleAPITests: BaseTestCase {
         // When
         let task = Task {
             do {
-                for try await (chunk, _) in AF.streamRequest(.bytes(expectedSize)).streamDataAndResponse() {
+                for try await (chunk, _) in AF.streamRequest(.chunked(expectedSize)).streamDataAndResponse() {
                     accumulatedData.append(chunk)
                     didReceive.fulfill()
                     break // Exit early to test cancellation
