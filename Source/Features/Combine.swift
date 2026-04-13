@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if !((os(iOS) && (arch(i386) || arch(arm))) || os(Windows) || os(Linux) || os(Android))
+#if !((os(iOS) && (arch(i386) || arch(arm))) || os(Windows) || os(Linux) || os(Android) || os(FreeBSD))
 
 import Combine
 import Dispatch
