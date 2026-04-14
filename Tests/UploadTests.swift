@@ -701,9 +701,9 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
     private func executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: Bool) {
         // Given
         let loremData1 = Data(String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                                     count: 4).utf8)
+                                     count: 1000).utf8)
         let loremData2 = Data(String(repeating: "Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.",
-                                     count: 4).utf8)
+                                     count: 1000).utf8)
 
         let expectation = expectation(description: "multipart form data upload should succeed")
 
