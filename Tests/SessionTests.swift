@@ -496,7 +496,7 @@ final class SessionTestCase: BaseTestCase {
         // Given
         let session = Session(startRequestsImmediately: false)
 
-        let url = Endpoint().url
+        let url = Endpoint.delay(10).url
         let urlRequest = URLRequest(url: url)
 
         let expectation = expectation(description: "\(url)")
