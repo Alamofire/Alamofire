@@ -374,6 +374,8 @@ final class SessionTestCase: BaseTestCase {
                 return "Android"
                 #elseif os(WASI)
                 return "WASI"
+                #elseif os(FreeBSD)
+                return "FreeBSD"
                 #else
                 return "Unknown"
                 #endif
