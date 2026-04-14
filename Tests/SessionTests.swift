@@ -556,10 +556,8 @@ final class SessionTestCase: BaseTestCase {
     @MainActor
     func testReleasingManagerWithPendingRequestDeinitializesSuccessfully() {
         // Given
-        let monitor = ClosureEventMonitor()
-        let didCreateRequest = expectation(description: "Request created")
-        monitor.requestDidCreateTask = { _, _ in didCreateRequest.fulfill() }
-        var session: Session? = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [monitor])
+        let requestDidFinish = expectation(description: "Request created")
+        var session: Session? = Session(startRequestsImmediately: false, requestSetup: .eager /* , eventMonitors: [monitor] */ )
         #if compiler(>=6.2.3) // Started emitting a diagnostic in 6.2.2, so lets conditionally use it.
         weak let weakSession = session
         #else
@@ -568,6 +566,7 @@ final class SessionTestCase: BaseTestCase {
 
         // When
         let request = session?.request(.default)
+        request?.response { _ in requestDidFinish.fulfill() }
         session = nil
 
         waitForExpectations(timeout: timeout)
