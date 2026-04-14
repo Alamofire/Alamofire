@@ -147,18 +147,18 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testRequestResponseWithProgress() {
         // Given
-        let byteCount = 512
+        let byteCount = 1024
         let url = Endpoint.bytes(byteCount).url
 
         let expectation = expectation(description: "Bytes download progress should be reported: \(url)")
 
-        var progressValues: [Double] = []
+        var progressValues: [(fraction: Double, total: Int64)] = []
         var response: DataResponse<Data?, AFError>?
 
         // When
         AF.request(url)
             .downloadProgress { progress in
-                progressValues.append(progress.fractionCompleted)
+                progressValues.append((fraction: progress.fractionCompleted, total: progress.totalUnitCount))
             }
             .response { resp in
                 response = resp
@@ -173,15 +173,17 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        var previousProgress: Double = progressValues.first ?? 0.0
+        var previousProgress: (fraction: Double, total: Int64) = progressValues.first ?? (fraction: 0, total: 0)
 
         for progress in progressValues {
-            XCTAssertGreaterThanOrEqual(progress, previousProgress)
+            XCTAssertGreaterThanOrEqual(progress.fraction, previousProgress.fraction, """
+            previous fraction \(progress.fraction) is not >= \(previousProgress.fraction)
+            """)
             previousProgress = progress
         }
 
         if let lastProgressValue = progressValues.last {
-            XCTAssertEqual(lastProgressValue, 1.0)
+            XCTAssertEqual(lastProgressValue.fraction, 1.0)
         } else {
             XCTFail("last item in progressValues should not be nil")
         }

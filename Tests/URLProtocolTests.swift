@@ -47,6 +47,7 @@ class ProxyURLProtocol: URLProtocol {
     weak var activeTask: URLSessionTask?
 
     // MARK: Class Request Methods
+
     override class func canInit(with task: URLSessionTask) -> Bool {
         if let request = task.currentRequest,
            URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
@@ -55,7 +56,7 @@ class ProxyURLProtocol: URLProtocol {
 
         return true
     }
-    
+
     override class func canInit(with request: URLRequest) -> Bool {
         if URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
             return false
