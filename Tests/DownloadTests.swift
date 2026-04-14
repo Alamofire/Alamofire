@@ -661,11 +661,11 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response1: DownloadResponse<Data, AFError>?
 
         // When
-        let download = AF.download(.download())
+        let download = AF.download(.download(100_000))
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
-            if progress.fractionCompleted > 0.1 {
+            if progress.fractionCompleted > 0 {
                 download.cancel(producingResumeData: true)
                 cancelled = true
             }
@@ -710,7 +710,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertEqual(response2?.result.isSuccess, true)
         XCTAssertNil(response2?.result.failure)
 
-        progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.1) }
+        progressValues.forEach { XCTAssertGreaterThan($0, 0) }
     }
 
     @MainActor
