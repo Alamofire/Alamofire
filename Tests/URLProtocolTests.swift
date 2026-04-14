@@ -47,7 +47,15 @@ class ProxyURLProtocol: URLProtocol {
     weak var activeTask: URLSessionTask?
 
     // MARK: Class Request Methods
+    override class func canInit(with task: URLSessionTask) -> Bool {
+        if let request = task.currentRequest,
+           URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
+            return false
+        }
 
+        return true
+    }
+    
     override class func canInit(with request: URLRequest) -> Bool {
         if URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
             return false
@@ -92,15 +100,19 @@ class ProxyURLProtocol: URLProtocol {
 extension ProxyURLProtocol: URLSessionDataDelegate {
     // MARK: NSURLSessionDelegate
 
+    func urlSession(_ session: URLSession,
+                    dataTask: URLSessionDataTask,
+                    didReceive response: URLResponse) async -> URLSession.ResponseDisposition {
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+
+        return .allow
+    }
+
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         client?.urlProtocol(self, didLoad: data)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
-        if let response = task.response {
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        }
-
         client?.urlProtocolDidFinishLoading(self)
     }
 }
