@@ -718,7 +718,7 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                       multipartFormData.append(loremData2, withName: "lorem2")
                   },
                   to: Endpoint.method(.post),
-                  usingThreshold: streamFromDisk ? 0 : 100_000_000)
+                  usingThreshold: streamFromDisk ? 0 : .max)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
