@@ -47,20 +47,20 @@ jobs:
             runsOn: macos-26
             name: "macOS 26, Xcode 26.0, Swift 6.2.0"
           - xcode: "Xcode_26.0"
-            runsOn: [self-macos15, self-xcode260]
+            runsOn: self-xcode260
             name: "macOS 15, Xcode 26.0, Swift 6.2.0"
           - xcode: "Xcode_16.4"
             runsOn: macos-15
             name: "macOS 15, Xcode 16.4, Swift 6.1.2"
           - xcode: "Xcode_16.3"
             runsOn: macos-15
-            name: "macOS 15, Xcode 16.1, Swift 6.1.0"
+            name: "macOS 15, Xcode 16.3, Swift 6.1.0"
           - xcode: "Xcode_16.2"
             runsOn: macos-15
             name: "macOS 15, Xcode 16.2, Swift 6.0.3"
           - xcode: "Xcode_16.1"
             runsOn: macos-15
-            name: "macOS 14, Xcode 16.1, Swift 6.0.2"
+            name: "macOS 15, Xcode 16.1, Swift 6.0.2"
           - xcode: "Xcode_16.0"
             runsOn: macos-15
             name: "macOS 15, Xcode 16.0, Swift 6.0"
@@ -203,7 +203,7 @@ jobs:
           - destination: "OS=26.1,name=Apple TV"
             name: "tvOS 26.1"
             xcode: "Xcode_26.1"
-            runsOn: macos-26
+            runsOn: self-xcode261
           - destination: "OS=26.0,name=Apple TV"
             name: "tvOS 26.0"
             xcode: "Xcode_26.0"
