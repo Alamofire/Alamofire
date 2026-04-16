@@ -204,6 +204,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
 
     private struct MutableState {
         var credential: Credential?
+        var credentialVersion = 0
 
         var isRefreshing = false
         var refreshTimestamps: [TimeInterval] = []
@@ -211,6 +212,11 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
 
         var adaptOperations: [AdaptOperation] = []
         var requestsToRetry: [@Sendable (RetryResult) -> Void] = []
+
+        mutating func updateCredential(_ credential: Credential?) {
+            self.credential = credential
+            credentialVersion += 1
+        }
     }
 
     // MARK: Properties
@@ -218,7 +224,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
     /// The `Credential` used to authenticate requests.
     public var credential: Credential? {
         get { mutableState.read(\.credential) }
-        set { mutableState.write { $0.credential = newValue } }
+        set { mutableState.write { $0.updateCredential(newValue) } }
     }
 
     let authenticator: AuthenticatorType
@@ -303,7 +309,13 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
         }
 
         // Do not attempt retry if there is no credential.
-        guard let credential else {
+        guard let (credential, credentialVersion): (Credential, Int) = mutableState.read({ mutableState in
+            if let credential = mutableState.credential {
+                (credential, mutableState.credentialVersion)
+            } else {
+                nil
+            }
+        }) else {
             let error = AuthenticationError.missingCredential
             completion(.doNotRetryWithError(error))
             return
@@ -315,13 +327,22 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
             return
         }
 
-        mutableState.write { mutableState in
+        // Otherwise, enqueue the completion for the end of refresh.
+        let immediatelyRetry = mutableState.write { mutableState in
+            guard credentialVersion == mutableState.credentialVersion else {
+                // Credential was updated during the prechecks, so immediately retry the request with the new credential.
+                return true
+            }
+            // Credential hasn't been updated, so prepare for an inflight or new refresh.
             mutableState.requestsToRetry.append(completion)
 
-            guard !mutableState.isRefreshing else { return }
+            guard !mutableState.isRefreshing else { return false }
 
             refresh(credential, for: session, insideLock: &mutableState)
+            return false
         }
+
+        if immediatelyRetry { completion(.retry) }
     }
 
     // MARK: Refresh
@@ -365,7 +386,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
     }
 
     private func handleRefreshSuccess(_ credential: Credential, insideLock mutableState: inout MutableState) {
-        mutableState.credential = credential
+        mutableState.updateCredential(credential)
 
         let adaptOperations = mutableState.adaptOperations
         let requestsToRetry = mutableState.requestsToRetry
