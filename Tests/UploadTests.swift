@@ -444,8 +444,8 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
         // Given
         let session = stored(Session())
-        let frenchData = Data(String(repeating: "français", count: 10_000).utf8)
-        let japaneseData = Data(String(repeating: "日本語", count: 10_000).utf8)
+        let frenchData = Data(String(repeating: "français", count: 100_000).utf8)
+        let japaneseData = Data(String(repeating: "日本語", count: 100_000).utf8)
 
         let expectation = expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?, AFError>?
