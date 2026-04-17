@@ -254,21 +254,30 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
 
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
         let adaptResult: AdaptResult = mutableState.write { mutableState in
-            // Queue the adapt operation if a refresh is already in place.
-            guard !mutableState.isRefreshing else {
+            // Defer only when a proactive (requiresRefresh-driven) refresh is in progress. The triggering request
+            // always appends itself to adaptOperations before isRefreshing is set, so any concurrent adapt that
+            // observes isRefreshing == true also observes a non-empty queue.
+            //
+            // When adaptOperations is empty and isRefreshing is true, the refresh was triggered by the retry path. In
+            // that case, do not defer the adaptation and perform the request using the credential so the full adapter
+            // chain, including any non-idempotent adapters earlier in the chain, reruns from scratch on retry rather
+            // than replaying stale intermediate state.
+            if mutableState.isRefreshing, !mutableState.adaptOperations.isEmpty {
+                // Refresh from requiresRefresh is running, adaptation has been deferred.
                 let operation = AdaptOperation(urlRequest: urlRequest, session: session, completion: completion)
                 mutableState.adaptOperations.append(operation)
                 return .adaptDeferred
             }
 
-            // Throw missing credential error is the credential is missing.
+            // Produce a missing credential error if the credential is missing.
             guard let credential = mutableState.credential else {
                 let error = AuthenticationError.missingCredential
                 return .doNotAdapt(error)
             }
 
-            // Queue the adapt operation and trigger refresh operation if credential requires refresh.
-            guard !credential.requiresRefresh else {
+            // Queue the adapt operation and trigger a proactive refresh if the credential requires it and no refresh
+            // is already in progress.
+            if credential.requiresRefresh, !mutableState.isRefreshing {
                 let operation = AdaptOperation(urlRequest: urlRequest, session: session, completion: completion)
                 mutableState.adaptOperations.append(operation)
                 refresh(credential, for: session, insideLock: &mutableState)
