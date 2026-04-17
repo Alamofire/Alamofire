@@ -30,6 +30,7 @@ final class StatusCodeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.status(200)
 
         let expectation1 = expectation(description: "request should return 200 status code")
@@ -39,14 +40,14 @@ final class StatusCodeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(statusCode: 200..<300)
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(statusCode: 200..<300)
             .response { resp in
                 downloadError = resp.error
@@ -63,6 +64,7 @@ final class StatusCodeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.status(404)
 
         let expectation1 = expectation(description: "request should return 404 status code")
@@ -72,14 +74,14 @@ final class StatusCodeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(statusCode: [200])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(statusCode: [200])
             .response { resp in
                 downloadError = resp.error
@@ -101,6 +103,7 @@ final class StatusCodeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.status(201)
 
         let expectation1 = expectation(description: "request should return 201 status code")
@@ -110,14 +113,14 @@ final class StatusCodeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(statusCode: [])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(statusCode: [])
             .response { resp in
                 downloadError = resp.error
@@ -143,6 +146,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.ip
 
         let expectation1 = expectation(description: "request should succeed and return ip")
@@ -152,7 +156,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(contentType: ["application/json"])
             .validate(contentType: ["application/json; charset=utf-8"])
             .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
@@ -161,7 +165,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(contentType: ["application/json"])
             .validate(contentType: ["application/json; charset=utf-8"])
             .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
@@ -180,6 +184,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.ip
 
         let expectation1 = expectation(description: "request should succeed and return ip")
@@ -189,7 +194,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
@@ -198,7 +203,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
@@ -217,6 +222,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.xml
 
         let expectation1 = expectation(description: "request should succeed and return xml")
@@ -226,14 +232,14 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
                 downloadError = resp.error
@@ -256,6 +262,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatContentTypeValidationFailureSortsPossibleContentTypes() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.xml
 
         let requestDidCompleteExpectation = expectation(description: "request should succeed and return xml")
@@ -282,14 +289,14 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         ]
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(contentType: acceptableContentTypes)
             .response { resp in
                 requestError = resp.error
                 requestDidCompleteExpectation.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(contentType: acceptableContentTypes)
             .response { resp in
                 downloadError = resp.error
@@ -329,6 +336,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.xml
 
         let expectation1 = expectation(description: "request should succeed and return xml")
@@ -338,14 +346,14 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(contentType: [])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(contentType: [])
             .response { resp in
                 downloadError = resp.error
@@ -368,6 +376,7 @@ final class ContentTypeValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseSucceedsWhenNoDataIsReturned() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.status(204)
 
         let expectation1 = expectation(description: "request should succeed and return no data")
@@ -377,14 +386,14 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(contentType: [])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(contentType: [])
             .response { resp in
                 downloadError = resp.error
@@ -405,6 +414,7 @@ final class MultipleValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.ip
 
         let expectation1 = expectation(description: "request should succeed and return ip")
@@ -414,7 +424,7 @@ final class MultipleValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { resp in
@@ -422,7 +432,7 @@ final class MultipleValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { resp in
@@ -440,6 +450,7 @@ final class MultipleValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.xml
 
         let expectation1 = expectation(description: "request should succeed and return xml")
@@ -449,7 +460,7 @@ final class MultipleValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
@@ -457,7 +468,7 @@ final class MultipleValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
@@ -480,6 +491,7 @@ final class MultipleValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithContentTypeError() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.xml
 
         let expectation1 = expectation(description: "request should succeed and return xml")
@@ -489,7 +501,7 @@ final class MultipleValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
             .response { resp in
@@ -497,7 +509,7 @@ final class MultipleValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
             .response { resp in
@@ -525,6 +537,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
+        let session = stored(Session())
         let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/json")])
 
         let expectation1 = expectation(description: "request should succeed and return ip")
@@ -534,12 +547,12 @@ final class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(urlRequest).validate().response { resp in
+        session.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        AF.download(urlRequest).validate().response { resp in
+        session.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -554,6 +567,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
+        let session = stored(Session())
         let request = Endpoint.status(404)
 
         let expectation1 = expectation(description: "request should return 404 status code")
@@ -563,14 +577,14 @@ final class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(request)
+        session.request(request)
             .validate()
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(request)
+        session.download(request)
             .validate()
             .response { resp in
                 downloadError = resp.error
@@ -592,6 +606,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
+        let session = stored(Session())
         let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/*")])
 
         let expectation1 = expectation(description: "request should succeed and return ip")
@@ -601,12 +616,12 @@ final class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(urlRequest).validate().response { resp in
+        session.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        AF.download(urlRequest).validate().response { resp in
+        session.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -621,6 +636,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
         // Given
+        let session = stored(Session())
         var urlRequest = Endpoint.xml.urlRequest
 
         let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
@@ -633,12 +649,12 @@ final class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(urlRequest).validate().response { resp in
+        session.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        AF.download(urlRequest).validate().response { resp in
+        session.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -653,6 +669,7 @@ final class AutomaticValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
+        let session = stored(Session())
         let urlRequest = Endpoint.xml.modifying(\.headers, to: [.accept("application/json")])
 
         let expectation1 = expectation(description: "request should succeed and return xml")
@@ -662,12 +679,12 @@ final class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(urlRequest).validate().response { resp in
+        session.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        AF.download(urlRequest).validate().response { resp in
+        session.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -730,6 +747,7 @@ final class CustomValidationTestCase: BaseTestCase {
     @MainActor
     func testThatCustomValidationClosureHasAccessToServerResponseData() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint()
 
         let expectation1 = expectation(description: "request should return 200 status code")
@@ -739,7 +757,7 @@ final class CustomValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate { _, _, data in
                 guard data != nil else { return .failure(ValidationError.missingData) }
                 return .success(())
@@ -749,7 +767,7 @@ final class CustomValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate { _, _, fileURL in
                 guard let fileURL else { return .failure(ValidationError.missingFile) }
 
@@ -775,6 +793,7 @@ final class CustomValidationTestCase: BaseTestCase {
     @MainActor
     func testThatCustomValidationCanThrowCustomError() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint()
 
         let expectation1 = expectation(description: "request should return 200 status code")
@@ -784,7 +803,7 @@ final class CustomValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate { _, _, _ in .failure(ValidationError.missingData) }
             .validate { _, _, _ in .failure(ValidationError.missingFile) } // should be ignored
             .response { resp in
@@ -792,7 +811,7 @@ final class CustomValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate { _, _, _ in .failure(ValidationError.missingFile) }
             .validate { _, _, _ in .failure(ValidationError.fileReadFailed) } // should be ignored
             .response { resp in
@@ -810,6 +829,7 @@ final class CustomValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationExtensionHasAccessToServerResponseData() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint()
 
         let expectation1 = expectation(description: "request should return 200 status code")
@@ -819,14 +839,14 @@ final class CustomValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validateDataExists()
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validateDataExists()
             .response { resp in
                 downloadError = resp.error
@@ -843,6 +863,7 @@ final class CustomValidationTestCase: BaseTestCase {
     @MainActor
     func testThatValidationExtensionCanThrowCustomError() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint()
 
         let expectation1 = expectation(description: "request should return 200 status code")
@@ -852,7 +873,7 @@ final class CustomValidationTestCase: BaseTestCase {
         var downloadError: AFError?
 
         // When
-        AF.request(endpoint)
+        session.request(endpoint)
             .validate(with: ValidationError.missingData)
             .validate(with: ValidationError.missingFile) // should be ignored
             .response { resp in
@@ -860,7 +881,7 @@ final class CustomValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        AF.download(endpoint)
+        session.download(endpoint)
             .validate(with: ValidationError.missingFile)
             .validate(with: ValidationError.fileReadFailed) // should be ignored
             .response { resp in

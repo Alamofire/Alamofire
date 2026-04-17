@@ -34,13 +34,14 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestCanBePublished() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: DataResponse<TestResponse, AFError>?
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -125,13 +126,14 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestCanBePublishedUnserialized() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: DataResponse<Data?, AFError>?
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishUnserialized()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -147,6 +149,7 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestCanBePublishedWithMultipleHandlers() {
         // Given
+        let session = stored(Session())
         let handlerResponseReceived = expectation(description: "handler response should be received")
         let publishedResponseReceived = expectation(description: "published response should be received")
         let completionReceived = expectation(description: "stream should complete")
@@ -155,7 +158,7 @@ final class DataRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .responseDecodable(of: TestResponse.self) { handlerResponse = $0; handlerResponseReceived.fulfill() }
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -173,13 +176,14 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestCanPublishResult() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var result: Result<TestResponse, AFError>?
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -196,13 +200,14 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestCanPublishValue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var value: TestResponse?
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -219,12 +224,13 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestCanPublishValueWithFailure() {
         // Given
+        let session = stored(Session())
         let completionReceived = expectation(description: "stream should complete")
         var error: AFError?
 
         // When
         store {
-            AF.request(Endpoint(path: .delay(interval: 1), timeout: 0.01))
+            session.request(Endpoint(path: .delay(interval: 1), timeout: 0.01))
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { completion in
@@ -249,12 +255,13 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatPublishedDataRequestIsNotResumedUnlessSubscribed() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.request(.default)
+        let request = session.request(.default)
         let publisher = request.publishDecodable(type: TestResponse.self)
 
         let stateAfterPublisher = request.state
@@ -278,6 +285,7 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -286,7 +294,7 @@ final class DataRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -308,6 +316,7 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -315,7 +324,7 @@ final class DataRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
@@ -338,6 +347,7 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDataRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -346,7 +356,7 @@ final class DataRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -372,12 +382,13 @@ final class DataRequestCombineTests: CombineTestCase {
         }
 
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.request(.default)
+        let request = session.request(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
             .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -398,12 +409,13 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatPublishedDataRequestCanBeCancelledManually() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.request(.delay(1))
+        let request = session.request(.delay(1))
         store {
             request
                 .publishDecodable(type: TestResponse.self)
@@ -425,15 +437,16 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatMultipleDataRequestPublishersCanBeCombined() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
         var firstResponse: DataResponse<TestResponse, AFError>?
         var secondResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        let first = AF.request(.default)
+        let first = session.request(.default)
             .publishDecodable(type: TestResponse.self)
-        let second = AF.request(.default)
+        let second = session.request(.default)
             .publishDecodable(type: TestResponse.self)
 
         store {
@@ -456,6 +469,7 @@ final class DataRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatMultipleDataRequestPublishersCanBeChained() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
         let customValue = "CustomValue"
@@ -464,12 +478,12 @@ final class DataRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.request(.default)
+            session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .flatMap { response -> DataResponsePublisher<TestResponse> in
                     firstResponse = response
                     let request = Endpoint(headers: ["X-Custom": customValue])
-                    return AF.request(request)
+                    return session.request(request)
                         .publishDecodable(type: TestResponse.self)
                 }
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() }) { response in
@@ -495,13 +509,14 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanBePublished() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var result: Result<TestResponse, AFError>?
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { stream in
@@ -552,13 +567,14 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanPublishData() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var result: Result<Data, AFError>?
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishData()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { stream in
@@ -580,13 +596,14 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanPublishString() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var result: Result<String, AFError>?
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishString()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { stream in
@@ -608,6 +625,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanBePublishedWithMultipleHandlers() {
         // Given
+        let session = stored(Session())
         let handlerResponseReceived = expectation(description: "handler response should be received")
         let publishedResponseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
@@ -616,7 +634,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .responseStreamDecodable(of: TestResponse.self) { stream in
                     switch stream.event {
                     case let .stream(value):
@@ -647,13 +665,14 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanPublishResult() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var result: Result<TestResponse, AFError>?
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -672,13 +691,14 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanPublishResultWithResponseFailure() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var result: Result<TestResponse, AFError>?
 
         // When
         store {
-            AF.streamRequest(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
+            session.streamRequest(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
                 .publishDecodable(type: TestResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -698,13 +718,14 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanPublishValue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: TestResponse?
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -723,12 +744,13 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanPublishValueWithFailure() {
         // Given
+        let session = stored(Session())
         let completionReceived = expectation(description: "stream should complete")
         var error: AFError?
 
         // When
         store {
-            AF.streamRequest(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
+            session.streamRequest(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { completion in
@@ -752,12 +774,13 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatPublishedDataStreamRequestIsNotResumedUnlessSubscribed() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var result: Result<TestResponse, AFError>?
 
         // When
-        let request = AF.streamRequest(.default)
+        let request = session.streamRequest(.default)
         let publisher = request.publishDecodable(type: TestResponse.self)
 
         let stateAfterPublisher = request.state
@@ -787,6 +810,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -795,7 +819,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -820,6 +844,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -827,7 +852,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
@@ -853,6 +878,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataStreamRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -861,7 +887,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -890,12 +916,13 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         }
 
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var error: AFError?
 
         // When
-        let request = AF.streamRequest(.default)
+        let request = session.streamRequest(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
             .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -915,12 +942,13 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatPublishedDataStreamRequestCanBeCancelledManually() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var error: AFError?
 
         // When
-        let request = AF.streamRequest(.default)
+        let request = session.streamRequest(.default)
         store {
             request
                 .publishDecodable(type: TestResponse.self)
@@ -941,15 +969,16 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatMultipleDataStreamPublishersCanBeCombined() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
         var firstCompletion: DataStreamRequest.Completion?
         var secondCompletion: DataStreamRequest.Completion?
 
         // When
-        let first = AF.streamRequest(.default)
+        let first = session.streamRequest(.default)
             .publishDecodable(type: TestResponse.self)
-        let second = AF.streamRequest(.default)
+        let second = session.streamRequest(.default)
             .publishDecodable(type: TestResponse.self)
 
         store {
@@ -972,6 +1001,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatMultipleDataStreamRequestPublishersCanBeChained() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
         var firstCompletion: DataStreamRequest.Completion?
@@ -979,12 +1009,12 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.streamRequest(.default)
+            session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .compactMap(\.completion)
                 .flatMap { completion -> DataStreamPublisher<TestResponse> in
                     firstCompletion = completion
-                    return AF.streamRequest(.default)
+                    return session.streamRequest(.default)
                         .publishDecodable(type: TestResponse.self)
                 }
                 .compactMap(\.completion)
@@ -1006,13 +1036,14 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanBePublished() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "publisher should complete")
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1051,13 +1082,14 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanPublishData() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "publisher should complete")
         var response: DownloadResponse<Data, AFError>?
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishData()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1073,13 +1105,14 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanPublishString() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "publisher should complete")
         var response: DownloadResponse<String, AFError>?
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishString()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1095,13 +1128,14 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanPublishUnserialized() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "publisher should complete")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishUnserialized()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1117,13 +1151,14 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanPublishURL() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "publisher should complete")
         var response: DownloadResponse<URL, AFError>?
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishURL()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
@@ -1139,6 +1174,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanPublishWithMultipleHandlers() {
         // Given
+        let session = stored(Session())
         let handlerResponseReceived = expectation(description: "handler response should be received")
         let publishedResponseReceived = expectation(description: "published response should be received")
         let completionReceived = expectation(description: "stream should complete")
@@ -1147,7 +1183,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .responseDecodable(of: TestResponse.self) { handlerResponse = $0; handlerResponseReceived.fulfill() }
                 .publishDecodable(type: TestResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1165,13 +1201,14 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanPublishResult() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "publisher should complete")
         var result: Result<TestResponse, AFError>?
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1188,12 +1225,13 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanPublishValueWithFailure() {
         // Given
+        let session = stored(Session())
         let completionReceived = expectation(description: "stream should complete")
         var error: AFError?
 
         // When
         store {
-            AF.download(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
+            session.download(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
                 .publishDecodable(type: TestResponse.self)
                 .value()
                 .sink(receiveCompletion: { completion in
@@ -1248,6 +1286,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -1256,7 +1295,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1278,6 +1317,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -1285,7 +1325,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
@@ -1308,6 +1348,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatDownloadRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
@@ -1316,7 +1357,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1342,12 +1383,13 @@ final class DownloadRequestCombineTests: CombineTestCase {
         }
 
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.download(.default)
+        let request = session.download(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
             .sink(receiveCompletion: { _ in completionReceived.fulfill() },
@@ -1368,12 +1410,13 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatPublishedDownloadRequestCanBeCancelledManually() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.download(.default)
+        let request = session.download(.default)
         store {
             request
                 .publishDecodable(type: TestResponse.self)
@@ -1395,15 +1438,16 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatMultipleDownloadRequestPublishersCanBeCombined() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
         var firstResponse: DownloadResponse<TestResponse, AFError>?
         var secondResponse: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let first = AF.download(.default)
+        let first = session.download(.default)
             .publishDecodable(type: TestResponse.self)
-        let second = AF.download(.default)
+        let second = session.download(.default)
             .publishDecodable(type: TestResponse.self)
 
         store {
@@ -1426,6 +1470,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
     @MainActor
     func testThatMultipleDownloadRequestPublishersCanBeChained() {
         // Given
+        let session = stored(Session())
         let responseReceived = expectation(description: "combined response should be received")
         let completionReceived = expectation(description: "combined stream should complete")
         let customValue = "CustomValue"
@@ -1434,12 +1479,12 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         // When
         store {
-            AF.download(.default)
+            session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .flatMap { response -> DownloadResponsePublisher<TestResponse> in
                     firstResponse = response
                     let request = Endpoint(headers: ["X-Custom": customValue])
-                    return AF.download(request)
+                    return session.download(request)
                         .publishDecodable(type: TestResponse.self)
                 }
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() }) { response in

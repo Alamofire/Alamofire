@@ -30,11 +30,12 @@ final class DownloadInitializationTests: BaseTestCase {
     @MainActor
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.get
         let expectation = expectation(description: "download should complete")
 
         // When
-        let request = AF.download(endpoint).response { _ in
+        let request = session.download(endpoint).response { _ in
             expectation.fulfill()
         }
 
@@ -50,12 +51,13 @@ final class DownloadInitializationTests: BaseTestCase {
     @MainActor
     func testDownloadClassMethodWithMethodURLHeadersAndDestination() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.get
         let headers: HTTPHeaders = ["Authorization": "123456"]
         let expectation = expectation(description: "download should complete")
 
         // When
-        let request = AF.download(endpoint, headers: headers).response { _ in
+        let request = session.download(endpoint, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -80,6 +82,7 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testDownloadRequest() {
         // Given
+        let session = stored(Session())
         let fileURL = randomCachesFileURL
         let numberOfLines = 10
         let endpoint = Endpoint.stream(numberOfLines)
@@ -89,7 +92,7 @@ final class DownloadResponseTests: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(endpoint, to: destination)
+        session.download(endpoint, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -118,11 +121,12 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testDownloadRequestResponseURLProducesURL() throws {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "Download request should download data")
         var response: DownloadResponse<URL, AFError>?
 
         // When
-        AF.download(.get)
+        session.download(.get)
             .responseURL { resp in
                 response = resp
                 expectation.fulfill()
@@ -144,6 +148,7 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testCancelledDownloadRequest() {
         // Given
+        let session = stored(Session())
         let fileURL = randomCachesFileURL
         let numberOfLines = 10
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
@@ -152,7 +157,7 @@ final class DownloadResponseTests: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(.stream(numberOfLines), to: destination)
+        session.download(.stream(numberOfLines), to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -171,6 +176,7 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testDownloadRequestWithProgress() {
         // Given
+        let session = stored(Session())
         let randomBytes = 256
         let endpoint = Endpoint.bytes(randomBytes)
 
@@ -180,7 +186,7 @@ final class DownloadResponseTests: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(endpoint)
+        session.download(endpoint)
             .downloadProgress { progress in
                 progressValues.append(progress.fractionCompleted)
             }
@@ -215,6 +221,7 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testDownloadRequestWithParameters() {
         // Given
+        let session = stored(Session())
         let fileURL = randomCachesFileURL
         let parameters = ["foo": "bar"]
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
@@ -223,7 +230,7 @@ final class DownloadResponseTests: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(Endpoint.get, parameters: parameters, to: destination)
+        session.download(Endpoint.get, parameters: parameters, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -252,6 +259,7 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testDownloadRequestWithHeaders() {
         // Given
+        let session = stored(Session())
         let fileURL = randomCachesFileURL
         let endpoint = Endpoint.get
         let headers: HTTPHeaders = ["Authorization": "123456"]
@@ -261,7 +269,7 @@ final class DownloadResponseTests: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(endpoint, headers: headers, to: destination)
+        session.download(endpoint, headers: headers, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -288,13 +296,14 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testThatDownloadingFileAndMovingToDirectoryThatDoesNotExistThrowsError() {
         // Given
+        let session = stored(Session())
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = expectation(description: "Download request should download data but fail to move file")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(.get, to: { _, _ in (fileURL, []) })
+        session.download(.get, to: { _, _ in (fileURL, []) })
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -314,13 +323,14 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testThatDownloadOptionsCanCreateIntermediateDirectoriesPriorToMovingFile() {
         // Given
+        let session = stored(Session())
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = expectation(description: "Download request should download data to file: \(fileURL)")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(.get, to: { _, _ in (fileURL, [.createIntermediateDirectories]) })
+        session.download(.get, to: { _, _ in (fileURL, [.createIntermediateDirectories]) })
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -339,6 +349,7 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testThatDownloadingFileAndMovingToDestinationThatIsOccupiedThrowsError() throws {
         // Given
+        let session = stored(Session())
         let directoryURL = testDirectoryURL.appendingPathComponent("some/random/folder")
         let directoryCreated = FileManager.createDirectory(at: directoryURL)
 
@@ -349,7 +360,7 @@ final class DownloadResponseTests: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(.get, to: { _, _ in (fileURL, []) })
+        session.download(.get, to: { _, _ in (fileURL, []) })
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -371,6 +382,7 @@ final class DownloadResponseTests: BaseTestCase {
     @MainActor
     func testThatDownloadOptionsCanRemovePreviousFilePriorToMovingFile() {
         // Given
+        let session = stored(Session())
         let directoryURL = testDirectoryURL.appendingPathComponent("some/random/folder")
         let directoryCreated = FileManager.createDirectory(at: directoryURL)
 
@@ -380,8 +392,8 @@ final class DownloadResponseTests: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(.get,
-                    to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories]) })
+        session.download(.get,
+                         to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories]) })
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -515,13 +527,14 @@ final class DownloadResumeDataTestCase: BaseTestCase {
     @MainActor
     func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = AF.download(.download())
+        let download = session.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -549,12 +562,13 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatDownloadRequestProducesResumeDataOnError() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "download complete")
 
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = AF.download(.download(produceError: true))
+        let download = session.download(.download(produceError: true))
         download.response { resp in
             response = resp
             expectation.fulfill()
@@ -580,13 +594,14 @@ final class DownloadResumeDataTestCase: BaseTestCase {
     @MainActor
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = AF.download(.download())
+        let download = session.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -617,13 +632,14 @@ final class DownloadResumeDataTestCase: BaseTestCase {
     @MainActor
     func testThatCancelledDownloadResumeDataIsAvailableWithDecodableResponseSerializer() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let download = AF.download(.download())
+        let download = session.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -655,13 +671,14 @@ final class DownloadResumeDataTestCase: BaseTestCase {
     @MainActor
     func testThatCancelledDownloadCanBeResumedWithResumeData() {
         // Given
+        let session = stored(Session())
         let expectation1 = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response1: DownloadResponse<Data, AFError>?
 
         // When
-        let download = AF.download(.download(1_000_000))
+        let download = session.download(.download(1_000_000))
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -687,7 +704,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var progressValues: [Double] = []
         var response2: DownloadResponse<Data, AFError>?
 
-        AF.download(resumingWith: resumeData)
+        session.download(resumingWith: resumeData)
             .downloadProgress { progress in
                 progressValues.append(progress.fractionCompleted)
             }
@@ -716,13 +733,14 @@ final class DownloadResumeDataTestCase: BaseTestCase {
     @MainActor
     func testThatCancelledDownloadProducesMatchingResumeData() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "Download should be cancelled")
         var cancelled = false
         var receivedResumeData: Data?
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = AF.download(.download())
+        let download = session.download(.download())
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
@@ -759,12 +777,13 @@ final class DownloadResponseMapTestCase: BaseTestCase {
     @MainActor
     func testThatMapTransformsSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<String, AFError>?
 
         // When
-        AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+        session.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.map { response in
                 response.args["foo"] ?? "invalid"
             }
@@ -787,13 +806,14 @@ final class DownloadResponseMapTestCase: BaseTestCase {
     @MainActor
     func testThatMapPreservesFailureError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL")
 
         var response: DownloadResponse<String, AFError>?
 
         // When
-        AF.download(urlString, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+        session.download(urlString, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.map { _ in "ignored" }
             expectation.fulfill()
         }
@@ -817,12 +837,13 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapTransformsSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<String, any Error>?
 
         // When
-        AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+        session.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { response in
                 response.args["foo"] ?? "invalid"
             }
@@ -845,6 +866,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapCatchesTransformationError() {
         // Given
+        let session = stored(Session())
         struct TransformError: Error {}
 
         let expectation = expectation(description: "request should succeed")
@@ -852,7 +874,7 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         var response: DownloadResponse<String, any Error>?
 
         // When
-        AF.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+        session.download(.get, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { _ in
                 throw TransformError()
             }
@@ -879,13 +901,14 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapPreservesFailureError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with 404")
 
         var response: DownloadResponse<String, any Error>?
 
         // When
-        AF.download(urlString, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+        session.download(urlString, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { _ in "ignored" }
             expectation.fulfill()
         }
@@ -907,13 +930,14 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatMapErrorTransformsFailureValue() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should not succeed")
 
         var response: DownloadResponse<TestResponse, TestError>?
 
         // When
-        AF.download(urlString).responseDecodable(of: TestResponse.self) { resp in
+        session.download(urlString).responseDecodable(of: TestResponse.self) { resp in
             response = resp.mapError { error in
                 TestError.error(error: error)
             }
@@ -939,12 +963,13 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatMapErrorPreservesSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<Data, TestError>?
 
         // When
-        AF.download(.get).responseData { resp in
+        session.download(.get).responseData { resp in
             response = resp.mapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -967,12 +992,13 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DownloadResponse<Data, any Error>?
 
         // When
-        AF.download(.get).responseData { resp in
+        session.download(.get).responseData { resp in
             response = resp.tryMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -992,13 +1018,14 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapErrorCatchesTransformationError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
         var response: DownloadResponse<Data, any Error>?
 
         // When
-        AF.download(urlString).responseData { resp in
+        session.download(urlString).responseData { resp in
             response = resp.tryMapError { _ in try TransformationError.error.alwaysFails() }
             expectation.fulfill()
         }
@@ -1025,13 +1052,14 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapErrorTransformsError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
         var response: DownloadResponse<Data, any Error>?
 
         // When
-        AF.download(urlString).responseData { resp in
+        session.download(urlString).responseData { resp in
             response = resp.tryMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }

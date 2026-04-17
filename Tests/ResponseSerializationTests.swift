@@ -1184,6 +1184,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
     @MainActor
     func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
         // Given
+        let session = stored(Session())
         final class UselessResponseSerializer: ResponseSerializer {
             func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Data? {
                 data
@@ -1194,7 +1195,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
         var data: Data?
 
         // When
-        AF.request(.default).response(responseSerializer: serializer) { response in
+        session.request(.default).response(responseSerializer: serializer) { response in
             data = response.data
             expectation.fulfill()
         }

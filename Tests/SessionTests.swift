@@ -397,6 +397,7 @@ final class SessionTestCase: BaseTestCase {
     @MainActor
     func disabled_testDefaultAcceptEncodingSupportsAppropriateEncodingsOnAppropriateSystems() {
         // Given
+        let session = stored(Session())
         let brotliExpectation = expectation(description: "brotli request should complete")
         let gzipExpectation = expectation(description: "gzip request should complete")
         let deflateExpectation = expectation(description: "deflate request should complete")
@@ -405,17 +406,17 @@ final class SessionTestCase: BaseTestCase {
         var deflateResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(.compression(.brotli)).responseDecodable(of: TestResponse.self) { response in
+        session.request(.compression(.brotli)).responseDecodable(of: TestResponse.self) { response in
             brotliResponse = response
             brotliExpectation.fulfill()
         }
 
-        AF.request(.compression(.gzip)).responseDecodable(of: TestResponse.self) { response in
+        session.request(.compression(.gzip)).responseDecodable(of: TestResponse.self) { response in
             gzipResponse = response
             gzipExpectation.fulfill()
         }
 
-        AF.request(.compression(.deflate)).responseDecodable(of: TestResponse.self) { response in
+        session.request(.compression(.deflate)).responseDecodable(of: TestResponse.self) { response in
             deflateResponse = response
             deflateExpectation.fulfill()
         }

@@ -29,6 +29,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatDataCanBeStreamedOnMainQueue() {
         // Given
+        let session = stored(Session())
         let expectedSize = 5
         var accumulatedData = Data()
         var initialResponse: HTTPURLResponse?
@@ -40,7 +41,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.bytes(expectedSize))
+        session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -74,6 +75,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatDataCanBeStreamedOnArbitraryQueue() {
         // Given
+        let session = stored(Session())
         let expectedSize = 5
         var accumulatedData = Data()
         var initialResponse: HTTPURLResponse?
@@ -84,7 +86,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.bytes(expectedSize))
+        session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -119,6 +121,7 @@ final class DataStreamTests: BaseTestCase {
         }
 
         // Given
+        let session = stored(Session())
         let expectedSize = 5
         var accumulatedData = Data()
         var initialResponse: HTTPURLResponse?
@@ -132,7 +135,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.chunked(expectedSize))
+        session.streamRequest(.chunked(expectedSize))
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -172,6 +175,7 @@ final class DataStreamTests: BaseTestCase {
         }
 
         // Given
+        let session = stored(Session())
         let expectedSize = 5
         var responses: [TestResponse] = []
         var initialResponse: HTTPURLResponse?
@@ -185,7 +189,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.payloads(expectedSize))
+        session.streamRequest(.payloads(expectedSize))
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -223,6 +227,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatDataCanBeStreamedFromURL() {
         // Given
+        let session = stored(Session())
         let expectedSize = 1
         var accumulatedData = Data()
         var initialResponse: HTTPURLResponse?
@@ -234,7 +239,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.bytes(expectedSize))
+        session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -268,6 +273,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatDataCanBeStreamedManyTimes() {
         // Given
+        let session = stored(Session())
         let expectedSize = 1
         var initialResponse: HTTPURLResponse?
         let onHTTPResponse = expectation(description: "onHTTPResponse should be called")
@@ -285,7 +291,7 @@ final class DataStreamTests: BaseTestCase {
         let secondCompletion = expectation(description: "second stream should complete")
 
         // When
-        AF.streamRequest(.bytes(expectedSize))
+        session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
                 initialResponse = response
                 onHTTPResponse.fulfill()
@@ -340,6 +346,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatDataCanBeStreamedAndDecodedAtTheSameTime() {
         // Given
+        let session = stored(Session())
         var initialResponse: HTTPURLResponse?
         let onHTTPResponse = expectation(description: "onHTTPResponse should be called")
         var firstAccumulatedData = Data()
@@ -357,7 +364,7 @@ final class DataStreamTests: BaseTestCase {
         let secondCompletion = expectation(description: "second stream should complete")
 
         // When
-        AF.streamRequest(.stream(1))
+        session.streamRequest(.stream(1))
             .onHTTPResponse { response in
                 initialResponse = response
                 onHTTPResponse.fulfill()
@@ -416,10 +423,11 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatDataStreamRequestProducesWorkingInputStream() {
         // Given
+        let session = stored(Session())
         let expect = expectation(description: "stream complete")
 
         // When
-        let stream = AF.streamRequest(.xml)
+        let stream = session.streamRequest(.xml)
             .responseStream { stream in
                 switch stream.event {
                 case .complete:
@@ -473,12 +481,13 @@ final class DataStreamTests: BaseTestCase {
 
     @MainActor
     func testThatDataStreamIsAutomaticallyCanceledOnStreamErrorWhenEnabled() {
+        let session = stored(Session())
         var response: HTTPURLResponse?
         var complete: DataStreamRequest.Completion?
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.bytes(50), automaticallyCancelOnStreamError: true)
+        session.streamRequest(.bytes(50), automaticallyCancelOnStreamError: true)
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .complete(completion):
@@ -500,6 +509,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatDataStreamIsAutomaticallyCanceledOnStreamClosureError() {
         // Given
+        let session = stored(Session())
         enum LocalError: Error { case failed }
 
         var response: HTTPURLResponse?
@@ -508,7 +518,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.bytes(50))
+        session.streamRequest(.bytes(50))
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
@@ -593,6 +603,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatOnHTTPResponseCanContinueStream() {
         // Given
+        let session = stored(Session())
         let expectedSize = 5
         var accumulatedData = Data()
         var initialResponse: HTTPURLResponse?
@@ -604,7 +615,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.bytes(expectedSize))
+        session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response, completionHandler in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -639,6 +650,7 @@ final class DataStreamTests: BaseTestCase {
     @MainActor
     func testThatOnHTTPResponseCanCancelStream() {
         // Given
+        let session = stored(Session())
         let expectedSize = 5
         var initialResponse: HTTPURLResponse?
         var response: HTTPURLResponse?
@@ -648,7 +660,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.bytes(expectedSize))
+        session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response, completionHandler in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -682,6 +694,7 @@ final class DataStreamSerializationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamsCanBeAString() {
         // Given
+        let session = stored(Session())
         var responseString: String?
         var streamOnMain = false
         var completeOnMain = false
@@ -690,7 +703,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.stream(1))
+        session.streamRequest(.stream(1))
             .responseStreamString { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -719,6 +732,7 @@ final class DataStreamSerializationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamsCanBeAStringOnAnArbitraryQueue() {
         // Given
+        let session = stored(Session())
         var responseString: String?
         var response: HTTPURLResponse?
         let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
@@ -726,7 +740,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.stream(1))
+        session.streamRequest(.stream(1))
             .responseStreamString(on: streamQueue) { stream in
                 dispatchPrecondition(condition: .onQueue(streamQueue))
                 switch stream.event {
@@ -752,6 +766,7 @@ final class DataStreamSerializationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamsCanBeDecoded() {
         // Given
+        let session = stored(Session())
         var response: TestResponse?
         var httpResponse: HTTPURLResponse?
         var decodingError: AFError?
@@ -761,7 +776,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.stream(1))
+        session.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -793,6 +808,7 @@ final class DataStreamSerializationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamsCanBeDecodedOnAnArbitraryQueue() {
         // Given
+        let session = stored(Session())
         var response: TestResponse?
         var httpResponse: HTTPURLResponse?
         var decodingError: AFError?
@@ -801,7 +817,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.stream(1))
+        session.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self, on: streamQueue) { stream in
                 dispatchPrecondition(condition: .onQueue(streamQueue))
                 switch stream.event {
@@ -830,6 +846,7 @@ final class DataStreamSerializationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamSerializerCanBeUsedDirectly() {
         // Given
+        let session = stored(Session())
         var response: HTTPURLResponse?
         var decodedResponse: TestResponse?
         var decodingError: AFError?
@@ -840,7 +857,7 @@ final class DataStreamSerializationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.stream(1))
+        session.streamRequest(.stream(1))
             .responseStream(using: serializer) { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -876,12 +893,13 @@ final class DataStreamIntegrationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamCanFailValidation() {
         // Given
+        let session = stored(Session())
         var dataSeen = false
         var error: AFError?
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.status(401))
+        session.streamRequest(.status(401))
             .validate()
             .responseStream { stream in
                 switch stream.event {
@@ -960,6 +978,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamCanBeRedirected() {
         // Given
+        let session = stored(Session())
         var response: HTTPURLResponse?
         var decodedResponse: TestResponse?
         var decodingError: AFError?
@@ -974,7 +993,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        AF.streamRequest(.status(301))
+        session.streamRequest(.status(301))
             .redirect(using: redirector)
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
@@ -1007,6 +1026,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamCallsCachedResponseHandler() {
         // Given
+        let session = stored(Session())
         var response: HTTPURLResponse?
         var decodedResponse: TestResponse?
         var decodingError: AFError?
@@ -1021,7 +1041,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.stream(1))
+        session.streamRequest(.stream(1))
             .cacheResponse(using: cacher)
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
@@ -1211,6 +1231,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
     @MainActor
     func testThatDataStreamCanAuthenticate() {
         // Given
+        let session = stored(Session())
         let user = "userstream", password = "password"
         var response: HTTPURLResponse?
         var streamOnMain = false
@@ -1219,7 +1240,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
         let didComplete = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(.basicAuth(forUser: user, password: password))
+        session.streamRequest(.basicAuth(forUser: user, password: password))
             .authenticate(username: user, password: password)
             .responseStream { stream in
                 switch stream.event {

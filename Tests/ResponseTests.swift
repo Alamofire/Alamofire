@@ -30,12 +30,13 @@ final class ResponseTestCase: BaseTestCase {
     @MainActor
     func testThatResponseReturnsSuccessResultWithValidData() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).response { resp in
+        session.request(.default, parameters: ["foo": "bar"]).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -53,13 +54,14 @@ final class ResponseTestCase: BaseTestCase {
     @MainActor
     func testThatResponseReturnsFailureResultWithOptionalDataAndError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).response { resp in
+        session.request(urlString, parameters: ["foo": "bar"]).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -82,12 +84,13 @@ final class ResponseDataTestCase: BaseTestCase {
     @MainActor
     func testThatResponseDataReturnsSuccessResultWithValidData() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data, AFError>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseData { resp in
+        session.request(.default, parameters: ["foo": "bar"]).responseData { resp in
             response = resp
             expectation.fulfill()
         }
@@ -106,13 +109,14 @@ final class ResponseDataTestCase: BaseTestCase {
     @MainActor
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<Data, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        session.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp
             expectation.fulfill()
         }
@@ -135,12 +139,13 @@ final class ResponseStringTestCase: BaseTestCase {
     @MainActor
     func testThatResponseStringReturnsSuccessResultWithValidString() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<String, AFError>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseString { resp in
+        session.request(.default, parameters: ["foo": "bar"]).responseString { resp in
             response = resp
             expectation.fulfill()
         }
@@ -159,13 +164,14 @@ final class ResponseStringTestCase: BaseTestCase {
     @MainActor
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<String, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
+        session.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
             response = resp
             expectation.fulfill()
         }
@@ -189,12 +195,13 @@ final class ResponseJSONTestCase: BaseTestCase {
     @MainActor
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
+        session.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -213,13 +220,14 @@ final class ResponseJSONTestCase: BaseTestCase {
     @MainActor
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        session.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -238,12 +246,13 @@ final class ResponseJSONTestCase: BaseTestCase {
     @MainActor
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
+        session.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -270,12 +279,13 @@ final class ResponseJSONTestCase: BaseTestCase {
     @MainActor
     func testThatResponseJSONReturnsSuccessResultForPOSTRequest() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Any, AFError>?
 
         // When
-        AF.request(.method(.post), parameters: ["foo": "bar"]).responseJSON { resp in
+        session.request(.method(.post), parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -304,13 +314,14 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
     @MainActor
     func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {
         // Given
+        let session = stored(Session())
         let url = Endpoint().url
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
+        session.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
             response = resp
             expectation.fulfill()
         }
@@ -329,13 +340,14 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
     @MainActor
     func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
         // Given
+        let session = stored(Session())
         let url = Endpoint().url
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) {
+        session.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) {
             response = $0
             expectation.fulfill()
         }
@@ -354,13 +366,14 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
     @MainActor
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(urlString, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
+        session.request(urlString, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
             response = resp
             expectation.fulfill()
         }
@@ -383,12 +396,13 @@ final class ResponseMapTestCase: BaseTestCase {
     @MainActor
     func testThatMapTransformsSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<String, AFError>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+        session.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.map { response in
                 response.args["foo"] ?? "invalid"
             }
@@ -410,13 +424,14 @@ final class ResponseMapTestCase: BaseTestCase {
     @MainActor
     func testThatMapPreservesFailureError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<String, AFError>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        session.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp.map { _ in "ignored" }
             expectation.fulfill()
         }
@@ -439,12 +454,13 @@ final class ResponseTryMapTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapTransformsSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<String, any Error>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
+        session.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
             response = resp.tryMap { response in
                 response.args["foo"] ?? "invalid"
             }
@@ -466,6 +482,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapCatchesTransformationError() {
         // Given
+        let session = stored(Session())
         struct TransformError: Error {}
 
         let expectation = expectation(description: "request should succeed")
@@ -473,7 +490,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
         var response: DataResponse<String, any Error>?
 
         // When
-        AF.request(.default, parameters: ["foo": "bar"]).responseData { resp in
+        session.request(.default, parameters: ["foo": "bar"]).responseData { resp in
             response = resp.tryMap { _ in
                 throw TransformError()
             }
@@ -501,13 +518,14 @@ final class ResponseTryMapTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapPreservesFailureError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail with invalid URL error")
 
         var response: DataResponse<String, any Error>?
 
         // When
-        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        session.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp.tryMap { _ in "ignored" }
             expectation.fulfill()
         }
@@ -542,13 +560,14 @@ final class ResponseMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatMapErrorTransformsFailureValue() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should not succeed")
 
         var response: DataResponse<TestResponse, TestError>?
 
         // When
-        AF.request(urlString).responseDecodable(of: TestResponse.self) { resp in
+        session.request(urlString).responseDecodable(of: TestResponse.self) { resp in
             response = resp.mapError { error in
                 TestError.error(error: error)
             }
@@ -571,12 +590,13 @@ final class ResponseMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatMapErrorPreservesSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data, TestError>?
 
         // When
-        AF.request(.default).responseData { resp in
+        session.request(.default).responseData { resp in
             response = resp.mapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -598,12 +618,13 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
+        let session = stored(Session())
         let expectation = expectation(description: "request should succeed")
 
         var response: DataResponse<Data, any Error>?
 
         // When
-        AF.request(.default).responseData { resp in
+        session.request(.default).responseData { resp in
             response = resp.tryMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -621,13 +642,14 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapErrorCatchesTransformationError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<Data, any Error>?
 
         // When
-        AF.request(urlString).responseData { resp in
+        session.request(urlString).responseData { resp in
             response = resp.tryMapError { _ in try TransformationError.error.alwaysFails() }
             expectation.fulfill()
         }
@@ -652,13 +674,14 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
     @MainActor
     func testThatTryMapErrorTransformsError() {
         // Given
+        let session = stored(Session())
         let urlString = String.invalidURL
         let expectation = expectation(description: "request should fail")
 
         var response: DataResponse<Data, any Error>?
 
         // When
-        AF.request(urlString).responseData { resp in
+        session.request(urlString).responseData { resp in
             response = resp.tryMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }

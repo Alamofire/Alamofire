@@ -552,11 +552,12 @@ struct InterceptorRequestTests {
     @Test
     func thatRetryPolicyRetriesRequestTimeout() async {
         // Given
+        let session = Session()
         let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
         let urlRequest = Endpoint.delay(1).modifying(\.timeout, to: 0.01)
 
         // When
-        let request = AF.request(urlRequest, interceptor: interceptor)
+        let request = session.request(urlRequest, interceptor: interceptor)
         await request.finished()
 
         // Then

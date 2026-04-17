@@ -31,12 +31,13 @@ final class RequestModifierTests: BaseTestCase {
     @MainActor
     func testThatDataRequestsCanHaveCustomTimeoutValueSet() {
         // Given
+        let session = stored(Session())
         let completed = expectation(description: "request completed")
         let modified = expectation(description: "request should be modified")
         var response: AFDataResponse<Data?>?
 
         // When
-        AF.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
+        session.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -71,6 +72,7 @@ final class RequestModifierTests: BaseTestCase {
     @MainActor
     func testThatUploadRequestsCanHaveCustomTimeoutValueSet() {
         // Given
+        let session = stored(Session())
         let endpoint = Endpoint.delay(1).modifying(\.method, to: .post)
         let data = Data("data".utf8)
         let completed = expectation(description: "request completed")
@@ -78,7 +80,7 @@ final class RequestModifierTests: BaseTestCase {
         var response: AFDataResponse<Data?>?
 
         // When
-        AF.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.fulfill() }
+        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -116,13 +118,14 @@ final class RequestModifierTests: BaseTestCase {
     @MainActor
     func testThatDownloadRequestsCanHaveCustomTimeoutValueSet() {
         // Given
+        let session = stored(Session())
         let url = Endpoint.delay(1).url
         let completed = expectation(description: "request completed")
         let modified = expectation(description: "request should be modified")
         var response: AFDownloadResponse<URL?>?
 
         // When
-        AF.download(url, requestModifier: { $0.timeoutInterval = 0.001; modified.fulfill() })
+        session.download(url, requestModifier: { $0.timeoutInterval = 0.001; modified.fulfill() })
             .response { response = $0; completed.fulfill() }
 
         waitForExpectations(timeout: timeout)
@@ -157,12 +160,13 @@ final class RequestModifierTests: BaseTestCase {
     @MainActor
     func testThatDataStreamRequestsCanHaveCustomTimeoutValueSet() {
         // Given
+        let session = stored(Session())
         let completed = expectation(description: "request completed")
         let modified = expectation(description: "request should be modified")
         var response: DataStreamRequest.Completion?
 
         // When
-        AF.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
+        session.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
 

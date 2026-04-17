@@ -31,12 +31,13 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testRequestResponse() {
         // Given
+        let session = stored(Session())
         let url = Endpoint.get.url
         let expectation = expectation(description: "GET request should succeed: \(url)")
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(url, parameters: ["foo": "bar"])
+        session.request(url, parameters: ["foo": "bar"])
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -54,6 +55,7 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testThatDataRequestReceivesInitialResponse() {
         // Given
+        let session = stored(Session())
         let url = Endpoint.get.url
         var initialResponse: HTTPURLResponse?
         let didReceiveResponse = expectation(description: "didReceiveResponse")
@@ -61,7 +63,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(url, parameters: ["foo": "bar"])
+        session.request(url, parameters: ["foo": "bar"])
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -84,6 +86,7 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testThatDataRequestOnHTTPResponseCanAllow() {
         // Given
+        let session = stored(Session())
         let url = Endpoint.get.url
         var initialResponse: HTTPURLResponse?
         let didReceiveResponse = expectation(description: "didReceiveResponse")
@@ -91,7 +94,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(url, parameters: ["foo": "bar"])
+        session.request(url, parameters: ["foo": "bar"])
             .onHTTPResponse { response, completionHandler in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -115,6 +118,7 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testThatDataRequestOnHTTPResponseCanCancel() {
         // Given
+        let session = stored(Session())
         let url = Endpoint.get.url
         var initialResponse: HTTPURLResponse?
         let didReceiveResponse = expectation(description: "didReceiveResponse")
@@ -122,7 +126,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        let request = AF.request(url, parameters: ["foo": "bar"])
+        let request = session.request(url, parameters: ["foo": "bar"])
             .onHTTPResponse { response, completionHandler in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -147,6 +151,7 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testRequestResponseWithProgress() {
         // Given
+        let session = stored(Session())
         let byteCount = 1024
         let url = Endpoint.bytes(byteCount).url
 
@@ -156,7 +161,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(url)
+        session.request(url)
             .downloadProgress { progress in
                 progressValues.append((fraction: progress.fractionCompleted, total: progress.totalUnitCount))
             }
@@ -192,6 +197,7 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testPOSTRequestWithUnicodeParameters() {
         // Given
+        let session = stored(Session())
         let parameters = ["french": "français",
                           "japanese": "日本語",
                           "arabic": "العربية",
@@ -202,7 +208,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(.method(.post), parameters: parameters)
+        session.request(.method(.post), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -228,6 +234,7 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testPOSTRequestWithBase64EncodedImages() {
         // Given
+        let session = stored(Session())
         let pngBase64EncodedString: String = {
             let fileURL = url(forResource: "unicorn", withExtension: "png")
             let data = try! Data(contentsOf: fileURL)
@@ -251,7 +258,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(Endpoint.method(.post), method: .post, parameters: parameters)
+        session.request(Endpoint.method(.post), method: .post, parameters: parameters)
             .responseDecodable(of: TestResponse.self) { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -348,12 +355,13 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testThatRequestsCanPassEncodableParametersAsJSONBodyData() {
         // Given
+        let session = stored(Session())
         let parameters = TestParameters(property: "one")
         let expect = expectation(description: "request should complete")
         var receivedResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(.method(.post), parameters: parameters, encoder: JSONParameterEncoder.default)
+        session.request(.method(.post), parameters: parameters, encoder: JSONParameterEncoder.default)
             .responseDecodable(of: TestResponse.self) { response in
                 receivedResponse = response
                 expect.fulfill()
@@ -368,12 +376,13 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testThatRequestsCanPassEncodableParametersAsAURLQuery() {
         // Given
+        let session = stored(Session())
         let parameters = TestParameters(property: "one")
         let expect = expectation(description: "request should complete")
         var receivedResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(.method(.get), parameters: parameters)
+        session.request(.method(.get), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { response in
                 receivedResponse = response
                 expect.fulfill()
@@ -388,12 +397,13 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testThatRequestsCanPassEncodableParametersAsURLEncodedBodyData() {
         // Given
+        let session = stored(Session())
         let parameters = TestParameters(property: "one")
         let expect = expectation(description: "request should complete")
         var receivedResponse: DataResponse<TestResponse, AFError>?
 
         // When
-        AF.request(.method(.post), parameters: parameters)
+        session.request(.method(.post), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { response in
                 receivedResponse = response
                 expect.fulfill()
@@ -1354,12 +1364,13 @@ final class RequestLifetimeTests: BaseTestCase {
     @MainActor
     func testThatRequestProvidesURLRequestWhenCreated() {
         // Given
+        let session = stored(Session())
         let didReceiveRequest = expectation(description: "did receive task")
         let didComplete = expectation(description: "request did complete")
         var request: URLRequest?
 
         // When
-        AF.request(.default)
+        session.request(.default)
             .onURLRequestCreation { request = $0; didReceiveRequest.fulfill() }
             .responseDecodable(of: TestResponse.self) { _ in didComplete.fulfill() }
 
@@ -1372,12 +1383,13 @@ final class RequestLifetimeTests: BaseTestCase {
     @MainActor
     func testThatRequestProvidesTaskWhenCreated() {
         // Given
+        let session = stored(Session())
         let didReceiveTask = expectation(description: "did receive task")
         let didComplete = expectation(description: "request did complete")
         var task: URLSessionTask?
 
         // When
-        AF.request(.default)
+        session.request(.default)
             .onURLSessionTaskCreation { task = $0; didReceiveTask.fulfill() }
             .responseDecodable(of: TestResponse.self) { _ in didComplete.fulfill() }
 
@@ -1394,12 +1406,13 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     @MainActor
     func testThatDataRequestWithFileURLThrowsError() {
         // Given
+        let session = stored(Session())
         let fileURL = url(forResource: "valid_data", withExtension: "json")
         let expectation = expectation(description: "Request should succeed.")
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.request(fileURL)
+        session.request(fileURL)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -1414,12 +1427,13 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     @MainActor
     func testThatDownloadRequestWithFileURLThrowsError() {
         // Given
+        let session = stored(Session())
         let fileURL = url(forResource: "valid_data", withExtension: "json")
         let expectation = expectation(description: "Request should succeed.")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download(fileURL)
+        session.download(fileURL)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -1434,12 +1448,13 @@ final class RequestInvalidURLTestCase: BaseTestCase {
     @MainActor
     func testThatDataStreamRequestWithFileURLThrowsError() {
         // Given
+        let session = stored(Session())
         let fileURL = url(forResource: "valid_data", withExtension: "json")
         let expectation = expectation(description: "Request should succeed.")
         var response: DataStreamRequest.Completion?
 
         // When
-        AF.streamRequest(fileURL)
+        session.streamRequest(fileURL)
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
 
@@ -1761,15 +1776,16 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatRequestsCanBeCompressed() async {
         // Given
+        let session = Session()
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
         // When
-        let result = await AF.request(url,
-                                      method: .post,
-                                      parameters: parameters,
-                                      encoder: .json,
-                                      interceptor: .deflateCompressor)
+        let result = await session.request(url,
+                                           method: .post,
+                                           parameters: parameters,
+                                           encoder: .json,
+                                           interceptor: .deflateCompressor)
             .serializingDecodable(TestResponse.self)
             .result
 
@@ -1781,16 +1797,17 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorThrowsErrorByDefaultWhenRequestAlreadyHasHeader() async {
         // Given
+        let session = Session()
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
         // When
-        let result = await AF.request(url,
-                                      method: .post,
-                                      parameters: parameters,
-                                      encoder: .json,
-                                      headers: [.contentEncoding("value")],
-                                      interceptor: .deflateCompressor)
+        let result = await session.request(url,
+                                           method: .post,
+                                           parameters: parameters,
+                                           encoder: .json,
+                                           headers: [.contentEncoding("value")],
+                                           interceptor: .deflateCompressor)
             .serializingDecodable(TestResponse.self)
             .result
 
@@ -1803,16 +1820,17 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorThrowsErrorWhenConfigured() async {
         // Given
+        let session = Session()
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
         // When
-        let result = await AF.request(url,
-                                      method: .post,
-                                      parameters: parameters,
-                                      encoder: .json,
-                                      headers: [.contentEncoding("value")],
-                                      interceptor: .deflateCompressor(duplicateHeaderBehavior: .error))
+        let result = await session.request(url,
+                                           method: .post,
+                                           parameters: parameters,
+                                           encoder: .json,
+                                           headers: [.contentEncoding("value")],
+                                           interceptor: .deflateCompressor(duplicateHeaderBehavior: .error))
             .serializingDecodable(TestResponse.self)
             .result
 
@@ -1825,16 +1843,17 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorReplacesHeaderWhenConfigured() async {
         // Given
+        let session = Session()
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
         // When
-        let result = await AF.request(url,
-                                      method: .post,
-                                      parameters: parameters,
-                                      encoder: .json,
-                                      headers: [.contentEncoding("value")],
-                                      interceptor: .deflateCompressor(duplicateHeaderBehavior: .replace))
+        let result = await session.request(url,
+                                           method: .post,
+                                           parameters: parameters,
+                                           encoder: .json,
+                                           headers: [.contentEncoding("value")],
+                                           interceptor: .deflateCompressor(duplicateHeaderBehavior: .replace))
             .serializingDecodable(TestResponse.self)
             .result
 
@@ -1846,16 +1865,17 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorSkipsCompressionWhenConfigured() async {
         // Given
+        let session = Session()
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
         // When
-        let result = await AF.request(url,
-                                      method: .post,
-                                      parameters: parameters,
-                                      encoder: .json,
-                                      headers: [.contentEncoding("gzip")],
-                                      interceptor: .deflateCompressor(duplicateHeaderBehavior: .skip))
+        let result = await session.request(url,
+                                           method: .post,
+                                           parameters: parameters,
+                                           encoder: .json,
+                                           headers: [.contentEncoding("gzip")],
+                                           interceptor: .deflateCompressor(duplicateHeaderBehavior: .skip))
             .serializingDecodable(TestResponse.self)
             .result
 
@@ -1868,15 +1888,16 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorDoesNotCompressDataWhenClosureReturnsFalse() async {
         // Given
+        let session = Session()
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
         // When
-        let result = await AF.request(url,
-                                      method: .post,
-                                      parameters: parameters,
-                                      encoder: .json,
-                                      interceptor: .deflateCompressor { _ in false })
+        let result = await session.request(url,
+                                           method: .post,
+                                           parameters: parameters,
+                                           encoder: .json,
+                                           interceptor: .deflateCompressor { _ in false })
             .serializingDecodable(TestResponse.self)
             .result
 

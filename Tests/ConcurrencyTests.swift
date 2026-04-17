@@ -704,6 +704,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 final class UploadConcurrencyTests: BaseTestCase {
     func testThatDelayedUploadStreamResultsInMultipleProgressValues() async throws {
         // Given
+        let session = stored(Session())
         let count = 75
         let baseString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         let baseData = Data(baseString.utf8)
@@ -723,7 +724,7 @@ final class UploadConcurrencyTests: BaseTestCase {
         outputStream.open()
 
         // When
-        AF.upload(inputStream, with: request)
+        session.upload(inputStream, with: request)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }

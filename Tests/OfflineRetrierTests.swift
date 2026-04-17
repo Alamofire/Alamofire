@@ -8,6 +8,7 @@ struct OfflineRetrierTests {
     @Test
     func requestIsRetriedWhenConnectivityIsRestored() async {
         // Given
+        let session = Session()
         let didStop = Protected(false)
         let monitor = PathMonitor { queue, onResult in
             queue.async {
@@ -20,7 +21,7 @@ struct OfflineRetrierTests {
         // When: retrier considers error to be offline error.
         let retrier = OfflineRetrier(monitor: monitor, maximumWait: .milliseconds(100)) { _ in true }
         // When: request fails due to error (type doesn't matter).
-        let request = AF.request(.endpoints(.status(404), .get), interceptor: retrier).validate()
+        let request = session.request(.endpoints(.status(404), .get), interceptor: retrier).validate()
         let result = await request.serializingData().result
 
         // Then: request is retried successfully.
@@ -34,6 +35,7 @@ struct OfflineRetrierTests {
     @Test
     func requestIsNotRetriedWhenTheErrorIsNotOfflineError() async {
         // Given
+        let session = Session()
         let didStop = Protected(false)
         let monitor = PathMonitor { queue, onResult in
             queue.async {
@@ -46,7 +48,7 @@ struct OfflineRetrierTests {
         // When
         let retrier = OfflineRetrier(monitor: monitor, maximumWait: .milliseconds(100))
         // When: request fails due to validation.
-        let request = AF.request(.endpoints(.status(404), .get), interceptor: retrier).validate()
+        let request = session.request(.endpoints(.status(404), .get), interceptor: retrier).validate()
         let result = await request.serializingData().result
 
         // Then: request fails since validation failures aren't retried.
@@ -60,6 +62,7 @@ struct OfflineRetrierTests {
     @Test
     func requestIsNotRetriedWhenPathTimesOut() async {
         // Given
+        let session = Session()
         let didStop = Protected(false)
         let pathAvailable: Protected<DispatchWorkItem?> = .init(nil)
         let monitor = PathMonitor { queue, onResult in
@@ -75,7 +78,7 @@ struct OfflineRetrierTests {
         // When: retrier times out after one millisecond.
         let retrier = OfflineRetrier(monitor: monitor, maximumWait: .milliseconds(1)) { _ in true }
         // When: request fails due to validation but would succeed on retry.
-        let request = AF.request(.endpoints(.status(404), .get), interceptor: retrier).validate()
+        let request = session.request(.endpoints(.status(404), .get), interceptor: retrier).validate()
         let result = await request.serializingData().result
 
         // Then: request fails since it's not retried.
