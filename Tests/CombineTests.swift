@@ -948,7 +948,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         var error: AFError?
 
         // When
-        let request = session.streamRequest(.default)
+        let request = session.streamRequest(.delay(1))
         store {
             request
                 .publishDecodable(type: TestResponse.self)
@@ -1416,7 +1416,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let request = session.download(.default)
+        let request = session.download(.delay(1))
         store {
             request
                 .publishDecodable(type: TestResponse.self)
