@@ -403,7 +403,7 @@ final class DataRequestCombineTests: CombineTestCase {
         var response: DataResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.request(.default)
+        let request = AF.request(.delay(1))
         store {
             request
                 .publishDecodable(type: TestResponse.self)
