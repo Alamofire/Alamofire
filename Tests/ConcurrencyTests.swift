@@ -832,12 +832,21 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
 
         // When
         let request = session.request(.get)
-        async let httpResponses = request.httpResponses().collect()
-        async let uploadProgress = request.uploadProgress().collect()
-        async let downloadProgress = request.downloadProgress().collect()
-        async let requests = request.urlRequests().collect()
-        async let tasks = request.urlSessionTasks().collect()
-        async let descriptions = request.cURLDescriptions().collect()
+        // Start streams outside async let so the asynchrony starts later.
+        let _httpResponses = request.httpResponses()
+        let _uploadProgress = request.uploadProgress()
+        let _downloadProgress = request.downloadProgress()
+        let _requests = request.urlRequests()
+        let _tasks = request.urlSessionTasks()
+        let _descriptions = request.cURLDescriptions()
+        // Start collecting in parallel.
+        async let httpResponses = _httpResponses.collect()
+        async let uploadProgress = _uploadProgress.collect()
+        async let downloadProgress = _downloadProgress.collect()
+        async let requests = _requests.collect()
+        async let tasks = _tasks.collect()
+        async let descriptions = _descriptions.collect()
+        // Start request in parallel as well.
         async let response = request.serializingDecodable(TestResponse.self).response
 
         let values: (httpResponses: [HTTPURLResponse],
