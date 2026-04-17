@@ -1223,7 +1223,8 @@ final class DownloadRequestCombineTests: CombineTestCase {
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let request = AF.download(.default)
+        let session = stored(Session())
+        let request = session.download(.default)
         let publisher = request.publishDecodable(type: TestResponse.self)
 
         let stateAfterPublisher = request.state
