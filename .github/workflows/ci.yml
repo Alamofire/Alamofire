@@ -32,7 +32,7 @@ jobs:
       matrix:
         include:
           - xcode: "Xcode_26.4"
-            runsOn: self-xcode264
+            runsOn: macos-26
             name: "macOS 26, Xcode 26.4, Swift 6.3.0"
           - xcode: "Xcode_26.3"
             runsOn: macos-26
@@ -47,8 +47,8 @@ jobs:
             runsOn: macos-26
             name: "macOS 26, Xcode 26.0, Swift 6.2.0"
           - xcode: "Xcode_26.0"
-            runsOn: self-xcode260
-            name: "macOS 15, Xcode 26.0, Swift 6.2.0"
+            runsOn: macos-26
+            name: "macOS 26, Xcode 26.0, Swift 6.2.0"
           - xcode: "Xcode_16.4"
             runsOn: macos-15
             name: "macOS 15, Xcode 16.4, Swift 6.1.2"
@@ -345,7 +345,7 @@ jobs:
       matrix:
         include:
           - xcode: "Xcode_26.4"
-            runsOn: self-xcode264
+            runsOn: macos-26
             name: "macOS 26, SPM 6.3.0 Test"
           - xcode: "Xcode_26.3"
             runsOn: macOS-26
