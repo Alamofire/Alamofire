@@ -1079,7 +1079,10 @@ final class DataStreamIntegrationTests: BaseTestCase {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
-        let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
+        // Require manual start so both serializers can be added before the stream starts.
+        let session = Session(startRequestsImmediately: false,
+                              requestQueue: requestQueue,
+                              serializationQueue: serializationQueue)
         var firstResponse: HTTPURLResponse?
         var firstDecodedResponse: TestResponse?
         var firstDecodingError: AFError?
@@ -1135,6 +1138,7 @@ final class DataStreamIntegrationTests: BaseTestCase {
                     secondDidComplete.fulfill()
                 }
             }
+            .resume()
 
         wait(for: [firstStream, secondStream], timeout: timeout, enforceOrder: true)
         // Cannot test order of completion events, as one may have been enqueued while the other executed directly.
