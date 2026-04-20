@@ -202,20 +202,32 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
         case adaptDeferred
     }
 
+    private enum RefreshState {
+        case idle
+        case refreshing
+        case failed(any Error)
+    }
+
     private struct MutableState {
         var credential: Credential?
         var credentialVersion = 0
 
-        var isRefreshing = false
+        var refreshState: RefreshState = .idle
         var refreshTimestamps: [TimeInterval] = []
         var refreshWindow: RefreshWindow?
 
         var adaptOperations: [AdaptOperation] = []
         var requestsToRetry: [@Sendable (RetryResult) -> Void] = []
 
+        var isRefreshing: Bool {
+            if case .refreshing = refreshState { return true }
+            return false
+        }
+
         mutating func updateCredential(_ credential: Credential?) {
             self.credential = credential
             credentialVersion += 1
+            refreshState = .idle
         }
     }
 
@@ -336,22 +348,29 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
             return
         }
 
-        // Otherwise, enqueue the completion for the end of refresh.
-        let immediatelyRetry = mutableState.write { mutableState in
+        // Otherwise, enqueue the completion for the end of refresh, or immediately resolve if a prior attempt already
+        // determined the outcome for this credential version.
+        let retryResult: RetryResult? = mutableState.write { mutableState in
             guard credentialVersion == mutableState.credentialVersion else {
                 // Credential was updated during the prechecks, so immediately retry the request with the new credential.
-                return true
+                return .retry
             }
-            // Credential hasn't been updated, so prepare for an inflight or new refresh.
-            mutableState.requestsToRetry.append(completion)
-
-            guard !mutableState.isRefreshing else { return false }
-
-            refresh(credential, for: session, insideLock: &mutableState)
-            return false
+            switch mutableState.refreshState {
+            case let .failed(refreshError):
+                // A refresh was already attempted and failed for this credential version.
+                // Do not queue and do not trigger another refresh.
+                return .doNotRetryWithError(refreshError)
+            case .refreshing:
+                mutableState.requestsToRetry.append(completion)
+                return nil
+            case .idle:
+                mutableState.requestsToRetry.append(completion)
+                refresh(credential, for: session, insideLock: &mutableState)
+                return nil
+            }
         }
 
-        if immediatelyRetry { completion(.retry) }
+        if let result = retryResult { completion(result) }
     }
 
     // MARK: Refresh
@@ -364,7 +383,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
         }
 
         mutableState.refreshTimestamps.append(ProcessInfo.processInfo.systemUptime)
-        mutableState.isRefreshing = true
+        mutableState.refreshState = .refreshing
 
         // Dispatch to queue to hop out of the lock in case authenticator.refresh is implemented synchronously.
         queue.async {
@@ -403,8 +422,6 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
         mutableState.adaptOperations.removeAll()
         mutableState.requestsToRetry.removeAll()
 
-        mutableState.isRefreshing = false
-
         // Dispatch to queue to hop out of the mutable state lock
         queue.async {
             adaptOperations.forEach { self.adapt($0.urlRequest, for: $0.session, completion: $0.completion) }
@@ -419,7 +436,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
         mutableState.adaptOperations.removeAll()
         mutableState.requestsToRetry.removeAll()
 
-        mutableState.isRefreshing = false
+        mutableState.refreshState = .failed(error)
 
         // Dispatch to queue to hop out of the mutable state lock
         queue.async {
