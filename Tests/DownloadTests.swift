@@ -678,7 +678,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response1: DownloadResponse<Data, AFError>?
 
         // When
-        let download = session.download(.download(1_000_000))
+        let download = session.download(.download(10_000_000))
         download.downloadProgress { [unowned download] progress in
             guard !cancelled else { return }
 
