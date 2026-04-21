@@ -139,7 +139,7 @@ jobs:
           - destination: "OS=26.2,name=iPhone 17 Pro"
             name: "iOS 26.2"
             xcode: "Xcode_26.2"
-            runsOn: self-xcode262
+            runsOn: macos-26 # Run on GH since hosted runners can't find it.
           - destination: "OS=26.1,name=iPhone 17 Pro"
             name: "iOS 26.1"
             xcode: "Xcode_26.1"
