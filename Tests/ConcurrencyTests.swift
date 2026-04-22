@@ -476,6 +476,38 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertEqual(datas.count, 2)
     }
 
+    func testThatDataStreamTaskCanStreamDataValues() async throws {
+        // Given
+        let session = stored(Session())
+        let task = session.streamRequest(.payloads(2)).streamTask()
+        var datas: [Data] = []
+
+        // When
+        for try await data in task.streamingDataValues() {
+            datas.append(data)
+        }
+
+        // Then
+        XCTAssertEqual(datas.count, 2)
+    }
+
+    func testThatDataStreamTaskCanStreamDataValuesWithResponses() async throws {
+        // Given
+        let session = stored(Session())
+        let task = session.streamRequest(.payloads(2)).streamTask()
+        var payloads: [(Data, HTTPURLResponse)] = []
+
+        // When
+        for try await payload in task.streamingDataValuesWithResponses() {
+            payloads.append(payload)
+        }
+
+        // Then
+        XCTAssertEqual(payloads.count, 2)
+        XCTAssertTrue(payloads.allSatisfy { !$0.0.isEmpty })
+        XCTAssertTrue(payloads.allSatisfy { $0.1.statusCode == 200 })
+    }
+
     #if canImport(Darwin)
     func testThatDataStreamHasAsyncOnHTTPResponse() async {
         // Given
