@@ -255,7 +255,7 @@ extension DataRequest {
     /// Creates a `DataTask` to `await` serialization of a `Decodable` value.
     ///
     /// - Parameters:
-    ///   - type:                      `Decodable` type to decode from response data.
+    ///   - type:                      `Decodable & Sendable` type to decode from response data.
     ///   - shouldAutomaticallyCancel: `Bool` determining whether or not the request should be cancelled when the
     ///                                enclosing async context is cancelled. Only applies to `DataTask`'s async
     ///                                properties. `true` by default.
@@ -266,12 +266,12 @@ extension DataRequest {
     ///   - emptyRequestMethods:       `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///
     /// - Returns: The `DataTask`.
-    public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
-                                                       automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                                       dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
-                                                       decoder: any DataDecoder = JSONDecoder(),
-                                                       emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
-                                                       emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DataTask<Value> {
+    public func serializingDecodable<Value: Decodable & Sendable>(_ type: Value.Type = Value.self,
+                                                                  automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                                                                  dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
+                                                                  decoder: any DataDecoder = JSONDecoder(),
+                                                                  emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
+                                                                  emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DataTask<Value> {
         serializingResponse(using: DecodableResponseSerializer<Value>(dataPreprocessor: dataPreprocessor,
                                                                       decoder: decoder,
                                                                       emptyResponseCodes: emptyResponseCodes,
@@ -450,7 +450,7 @@ extension DownloadRequest {
     /// - Note: This serializer reads the entire response into memory before parsing.
     ///
     /// - Parameters:
-    ///   - type:                      `Decodable` type to decode from response data.
+    ///   - type:                      `Decodable & Sendable` type to decode from response data.
     ///   - shouldAutomaticallyCancel: `Bool` determining whether or not the request should be cancelled when the
     ///                                enclosing async context is cancelled. Only applies to `DownloadTask`'s async
     ///                                properties. `true` by default.
@@ -461,12 +461,12 @@ extension DownloadRequest {
     ///   - emptyRequestMethods:       `HTTPMethod`s for which empty responses are always valid. `[.head]` by default.
     ///
     /// - Returns:                   The `DownloadTask`.
-    public func serializingDecodable<Value: Decodable>(_ type: Value.Type = Value.self,
-                                                       automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
-                                                       dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
-                                                       decoder: any DataDecoder = JSONDecoder(),
-                                                       emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
-                                                       emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DownloadTask<Value> {
+    public func serializingDecodable<Value: Decodable & Sendable>(_ type: Value.Type = Value.self,
+                                                                  automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                                                                  dataPreprocessor: any DataPreprocessor = DecodableResponseSerializer<Value>.defaultDataPreprocessor,
+                                                                  decoder: any DataDecoder = JSONDecoder(),
+                                                                  emptyResponseCodes: Set<Int> = DecodableResponseSerializer<Value>.defaultEmptyResponseCodes,
+                                                                  emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer<Value>.defaultEmptyRequestMethods) -> DownloadTask<Value> {
         serializingDownload(using: DecodableResponseSerializer<Value>(dataPreprocessor: dataPreprocessor,
                                                                       decoder: decoder,
                                                                       emptyResponseCodes: emptyResponseCodes,
