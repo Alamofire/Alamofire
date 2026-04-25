@@ -1072,10 +1072,10 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorAdaptsNewRequestWithoutDeferringWhileRetryPathRefreshIsInProgress() {
         // Given
-        // When a refresh is triggered by the retry path, adaptOperations is empty. Any new adapt
-        // call must NOT be deferred — it should proceed immediately with the current credential.
-        // This is the documented invariant: defer only when adaptOperations is non-empty
-        // (i.e., a proactive requiresRefresh-driven refresh is running).
+        // When a refresh is triggered by the retry path, adaptOperations is empty. Any new adapt call must NOT be
+        // deferred, it should proceed immediately with the current credential.
+        // This is the documented invariant: defer only when adaptOperations is non-empty (i.e., a proactive
+        // requiresRefresh-driven refresh is running).
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
@@ -1084,8 +1084,8 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let expect = expectation(description: "both requests should complete")
         expect.expectedFulfillmentCount = 2
 
-        var requestAResponse: AFDataResponse<Data?>?
-        var requestBResponse: AFDataResponse<Data?>?
+        var firstResponse: AFDataResponse<Data?>?
+        var secondResponse: AFDataResponse<Data?>?
 
         // When
         // Request A: gets 401, triggering an async retry-path refresh.
@@ -1093,23 +1093,23 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
         let requestA = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            requestAResponse = $0
+            firstResponse = $0
             expect.fulfill()
         }
 
         // Request B: adapts while A's refresh may be running. Since adaptOperations is empty,
         // B must not be deferred regardless of the current refreshState.
         let requestB = session.request(.status(200), interceptor: interceptor).validate().response {
-            requestBResponse = $0
+            secondResponse = $0
             expect.fulfill()
         }
 
         waitForExpectations(timeout: timeout)
 
         // Then: both succeed, only one refresh occurred, and B was applied (not deferred).
-        XCTAssertEqual(requestAResponse?.result.isSuccess, true)
-        XCTAssertEqual(requestBResponse?.result.isSuccess, true)
-        XCTAssertNotNil(requestBResponse?.request?.headers["Authorization"])
+        XCTAssertEqual(firstResponse?.result.isSuccess, true)
+        XCTAssertEqual(secondResponse?.result.isSuccess, true)
+        XCTAssertNotNil(secondResponse?.request?.headers["Authorization"])
 
         XCTAssertEqual(requestA.retryCount, 1)
         XCTAssertEqual(requestB.retryCount, 0)
@@ -1123,16 +1123,15 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorAllowsNewRefreshAfterExternalCredentialUpdateFollowingRetryPathFailure() {
         // Given
-        // After a retry-path refresh fails the interceptor enters .failed state, which blocks
-        // subsequent retries from triggering another refresh. Setting interceptor.credential
-        // externally calls updateCredential(_:), which increments credentialVersion and resets
-        // refreshState to .idle, restoring the ability to refresh.
+        // After a retry-path refresh fails the interceptor enters .failed state, which blocks subsequent retries from
+        // triggering another refresh. Setting interceptor.credential externally calls updateCredential(_:), which
+        // increments credentialVersion and resets refreshState to .idle, restoring the ability to refresh.
         let credential = TestCredential()
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
         let session = stored(Session())
 
-        // Phase 1 — trigger a retry-path refresh that fails, putting interceptor into .failed state.
+        // First, trigger a retry-path refresh that fails, putting interceptor into .failed state.
         let firstExpect = expectation(description: "first request should complete")
         var firstResponse: AFDataResponse<Data?>?
 
@@ -1146,11 +1145,11 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(authenticator.refreshCount, 1)
         XCTAssertEqual(firstResponse?.result.isFailure, true)
 
-        // When — externally replace the credential. updateCredential(_:) resets refreshState to .idle.
+        // When: credential is externally replaced. updateCredential(_:) resets refreshState to .idle.
         interceptor.credential = TestCredential(accessToken: "ext")
 
-        // Phase 2 — a new 401 should now trigger a fresh refresh rather than immediately failing
-        // with the error cached in .failed state.
+        // Second, a new 401 should now trigger a fresh refresh rather than immediately failing with the error cached in
+        // .failed state.
         let secondExpect = expectation(description: "second request should complete")
         var secondResponse: AFDataResponse<Data?>?
 
@@ -1177,17 +1176,16 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorAdaptsDirectlyAfterExternalCredentialUpdateFollowingProactiveRefreshFailure() {
         // Given
-        // After a proactive (requiresRefresh-triggered) refresh failure the interceptor is in
-        // .failed state with the original requiresRefresh: true credential still in place.
-        // Setting interceptor.credential to a valid, non-stale credential via updateCredential(_:)
-        // resets refreshState to .idle and installs the new credential so the next request can
-        // adapt immediately without triggering any further refresh.
+        // After a proactive (requiresRefresh-triggered) refresh failure the interceptor is in .failed state with the
+        // original requiresRefresh: true credential still in place. Setting interceptor.credential to a valid, non-stale
+        // credential via updateCredential(_:) resets refreshState to .idle and installs the new credential so the next
+        // request can adapt immediately without triggering any further refresh.
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
         let session = stored(Session())
 
-        // Phase 1 — proactive refresh fails; the deferred request gets an adaptation error.
+        // First, proactive refresh fails and the deferred request gets an adaptation error.
         let firstExpect = expectation(description: "first request should complete")
         var firstResponse: AFDataResponse<Data?>?
 
@@ -1202,7 +1200,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(firstResponse?.result.isFailure, true)
         XCTAssertEqual(firstResponse?.result.failure?.asAFError?.isRequestAdaptationError, true)
 
-        // When — install a working, non-stale credential externally.
+        // When: a working, non-stale credential is set externally.
         interceptor.credential = TestCredential(accessToken: "ext", requiresRefresh: false)
 
         // Phase 2 — new request should adapt immediately with the new credential; no refresh needed.
@@ -1230,10 +1228,10 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnRetryPath() {
         // Given
-        // The refresh(_:for:insideLock:) helper dispatches to a serial queue via queue.async before
-        // calling authenticator.refresh(_:for:completion:), ensuring the mutableState write lock is
-        // not held when the completion fires. This test verifies that invariant holds on the retry
-        // path (a 401 response), complementing the existing proactive-path (requiresRefresh) test.
+        // The refresh(_:for:insideLock:) helper dispatches to a serial queue via queue.async before calling
+        // authenticator.refresh(_:for:completion:), ensuring the mutableState write lock is not held when the completion
+        // fires. This test verifies that invariant holds on the retry path (a 401 response), complementing the existing
+        // proactive-path (requiresRefresh) test.
         let credential = TestCredential()
         let authenticator = TestAuthenticator(shouldRefreshAsynchronously: false)
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
@@ -1268,9 +1266,9 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatExcessiveRefreshTimestampsArePreservedAfterFailedStateIsClearedByAdapt() {
         // Given
-        // The adapt path clears .failed → .idle to allow new requests to trigger a fresh refresh.
-        // The refreshTimestamps array must survive this reset because it is the RefreshWindow's
-        // authoritative history; clearing it would silently bypass the excessive-refresh guard.
+        // The adapt path clears .failed to .idle to allow new requests to trigger a fresh refresh. The refreshTimestamps
+        // array must survive this reset because it is the RefreshWindow's authoritative history; clearing it would
+        // silently bypass the excessive-refresh guard.
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
@@ -1278,7 +1276,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 1))
         let session = stored(Session())
 
-        // Phase 1 — one successful refresh consumes the entire budget (maximumAttempts: 1).
+        // First, one successful refresh consumes the entire budget (maximumAttempts: 1).
         let firstExpect = expectation(description: "first request should complete")
         var firstResponse: AFDataResponse<Data?>?
 
@@ -1295,7 +1293,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(firstResponse?.result.isSuccess, true)
         XCTAssertEqual(authenticator.refreshCount, 1)
 
-        // Phase 2 — second 401 hits the exhausted window, producing .failed(excessiveRefresh) state.
+        // Second, a 401 hits the exhausted window, producing .failed(excessiveRefresh) state.
         let secondExpect = expectation(description: "second request should complete")
         var secondResponse: AFDataResponse<Data?>?
 
@@ -1309,9 +1307,9 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(secondResponse?.result.failure?.asAFError?.isRequestRetryError, true)
         XCTAssertEqual(secondResponse?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
 
-        // Phase 3 — a new request adapts, firing the adapt-clear (.failed → .idle). The request
-        // then gets a 401 and attempts another refresh. Despite the state reset, refreshTimestamps
-        // is unchanged, so the excessive-refresh guard fires again immediately.
+        // Third, a new request adapts, firing the adapt-clear (.failed to .idle). The request then gets a 401 and attempts
+        // another refresh. Despite the state reset, refreshTimestamps is unchanged, so the excessive-refresh guard
+        // fires again immediately.
         let thirdExpect = expectation(description: "third request should complete")
         var thirdResponse: AFDataResponse<Data?>?
 
@@ -1322,22 +1320,21 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         waitForExpectations(timeout: timeout)
 
-        // Then: Phase 3 also fails with excessiveRefresh, proving the timestamp survived the adapt-clear.
+        // Then: It also fails with excessiveRefresh, proving the timestamp survived the adapt-clear.
         XCTAssertEqual(thirdResponse?.result.failure?.asAFError?.isRequestRetryError, true)
         XCTAssertEqual(thirdResponse?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
 
-        // Only one actual authenticator.refresh call ever occurred (Phase 1).
-        // Phases 2 and 3 were both blocked before reaching authenticator.refresh.
+        // Only one actual authenticator.refresh call ever occurred.
+        // Second and third were both blocked before reaching authenticator.refresh.
         XCTAssertEqual(authenticator.refreshCount, 1)
     }
 
     @MainActor
     func testThatInterceptorThrowsMissingCredentialErrorWhenCredentialIsSetToNilAfterBeingValid() {
         // Given
-        // Setting interceptor.credential = nil calls updateCredential(nil), which stores nil,
-        // increments credentialVersion, and resets refreshState. Subsequent requests must fail
-        // immediately with .missingCredential at the adapt stage. This is distinct from the
-        // existing test that starts with no credential — here the transition is valid → nil.
+        // Setting interceptor.credential = nil calls updateCredential(nil), which stores nil, increments credentialVersion,
+        // and resets refreshState. Subsequent requests must fail immediately with .missingCredential at the adapt stage.
+        // This is distinct from the existing test that starts with no credential. Here the transition is valid to nil.
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
@@ -1373,10 +1370,9 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorThrowsExcessiveRefreshErrorImmediatelyWhenMaximumAttemptsIsZero() {
         // Given
-        // A RefreshWindow with maximumAttempts: 0 makes every refresh attempt immediately excessive:
-        // isRefreshExcessive checks refreshAttemptsWithinWindow >= maximumAttempts, and 0 >= 0 is
-        // unconditionally true regardless of how many (zero) refreshes have actually occurred.
-        // authenticator.refresh is therefore never reached.
+        // A RefreshWindow with maximumAttempts: 0 makes every refresh attempt immediately excessive: isRefreshExcessive
+        // checks refreshAttemptsWithinWindow >= maximumAttempts, and 0 >= 0 is unconditionally true regardless of how
+        // many (zero) refreshes have actually occurred. authenticator.refresh is therefore never reached.
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
@@ -1412,11 +1408,10 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorThrowsExcessiveRefreshErrorToAllParallelRequestsAfterExceedingRefreshWindow() {
         // Given
-        // Three parallel requests all get 401, triggering one refresh (a0 → a1). All three retry
-        // with a1 and all get 401 again. The second refresh attempt is blocked by the refresh
-        // window (maximumAttempts: 1 already exhausted). All three requests fail with .excessiveRefresh.
-        // This exercises the path where isRefreshExcessive fires after requestsToRetry has been
-        // built up by a prior successful refresh cycle.
+        // Three parallel requests all get 401, triggering one refresh (a0 → a1). All three retry with a1 and all get
+        // 401 again. The second refresh attempt is blocked by the refresh window (maximumAttempts: 1 already exhausted).
+        // All three requests fail with .excessiveRefresh. This exercises the path where isRefreshExcessive fires after
+        // requestsToRetry has been built up by a prior successful refresh cycle.
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
@@ -1432,8 +1427,8 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         var requests: [Int: Request] = [:]
         var responses: [Int: AFDataResponse<Data?>] = [:]
 
-        // When — each request hits /status/401 twice: once on the initial attempt (triggering the
-        // one allowed refresh), and once after retrying with a1 (triggering the excessive check).
+        // When: Each request hits /status/401 twice: once on the initial attempt (triggering the one allowed refresh),
+        // and once after retrying with a1 (triggering the excessive check).
         for index in 0..<requestCount {
             let pathAdapter = PathAdapter(paths: ["/status/401", "/status/401"])
             let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
@@ -1452,8 +1447,8 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
             XCTAssertEqual(responses[index]?.result.isFailure, true)
             XCTAssertEqual(responses[index]?.result.failure?.asAFError?.isRequestRetryError, true)
             XCTAssertEqual(responses[index]?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
-            // retryCount is 1: each request was retried once after the first successful refresh,
-            // then rejected by the excessive check without a second actual retry.
+            // retryCount is 1, each request was retried once after the first successful refresh, then rejected by the
+            // excessive check without a second actual retry.
             XCTAssertEqual(requests[index]?.retryCount, 1)
         }
 
@@ -1467,11 +1462,11 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorAllowsProactiveRefreshFromFailedStateUnlikeRetryPath() {
         // Given
-        // After a proactive refresh failure, refreshState is .failed. The retry path has an explicit
-        // .failed case that returns .doNotRetryWithError immediately. The proactive adapt path has
-        // no such gate — it only checks isRefreshing (which is false for .failed), so a new request
-        // with requiresRefresh: true triggers another proactive refresh, overwriting .failed with
-        // .refreshing. This test verifies that asymmetry is intentional and preserved.
+        // After a proactive refresh failure, refreshState is .failed. The retry path has an explicit .failed case that
+        // returns .doNotRetryWithError immediately. The proactive adapt path has no such gate. It only checks
+        // isRefreshing (which is false for .failed), so a new request with requiresRefresh: true triggers another
+        // proactive refresh, overwriting .failed with .refreshing. This test verifies that asymmetry is intentional
+        // and preserved.
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
@@ -1492,10 +1487,9 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         XCTAssertEqual(firstResponse?.result.failure?.asAFError?.isRequestAdaptationError, true)
         XCTAssertEqual(authenticator.refreshCount, 1)
 
-        // Phase 2 — a new request with the same requiresRefresh: true credential adapts.
-        // Line 292: (requiresRefresh: true) && (!isRefreshing: true, since .failed → isRefreshing == false)
-        // → enters the proactive path, appends to adaptOperations, calls refresh(), overwriting
-        // .failed with .refreshing. The retry path's .failed gate is never reached.
+        // Second, a new request with the same requiresRefresh: true credential adapts. It enters the proactive path,
+        // appends to adaptOperations, calls refresh(), overwriting .failed with .refreshing. The retry path's .failed
+        // gate is never reached.
         let secondExpect = expectation(description: "second request should complete")
         var secondResponse: AFDataResponse<Data?>?
 
@@ -1506,8 +1500,8 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         waitForExpectations(timeout: timeout)
 
-        // Then: a second refresh was triggered (refreshCount == 2), proving .failed did not block
-        // the proactive adapt path the way it blocks the retry path.
+        // Then: a second refresh was triggered (refreshCount == 2), proving .failed did not block the proactive adapt
+        // path the way it blocks the retry path.
         XCTAssertEqual(secondResponse?.result.isFailure, true)
         XCTAssertEqual(secondResponse?.result.failure?.asAFError?.isRequestAdaptationError, true)
         XCTAssertEqual(secondResponse?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
