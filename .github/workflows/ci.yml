@@ -46,9 +46,6 @@ jobs:
           - xcode: "Xcode_26.0"
             runsOn: macos-26
             name: "macOS 26, Xcode 26.0, Swift 6.2.0"
-          - xcode: "Xcode_26.0"
-            runsOn: macos-26
-            name: "macOS 26, Xcode 26.0, Swift 6.2.0"
           - xcode: "Xcode_16.4"
             runsOn: macos-15
             name: "macOS 15, Xcode 16.4, Swift 6.1.2"
