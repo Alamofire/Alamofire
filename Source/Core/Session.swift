@@ -1345,8 +1345,8 @@ open class Session: @unchecked Sendable {
     // MARK: - Invalidation
 
     func finishRequestsForDeinit() {
-        for request in requestTaskMap.requests {
-            rootQueue.async {
+        rootQueue.async { [requestTaskMap] in
+            for request in requestTaskMap.requests {
                 request.finish(error: AFError.sessionDeinitialized)
             }
         }

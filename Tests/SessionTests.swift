@@ -557,8 +557,10 @@ final class SessionTestCase: BaseTestCase {
     @MainActor
     func testReleasingManagerWithPendingRequestDeinitializesSuccessfully() {
         // Given
+        let requestCount = 100
         let requestDidFinish = expectation(description: "Request created")
-        var session: Session? = Session(startRequestsImmediately: false, requestSetup: .eager /* , eventMonitors: [monitor] */ )
+        requestDidFinish.expectedFulfillmentCount = requestCount
+        var session: Session? = Session(startRequestsImmediately: false, requestSetup: .eager)
         #if compiler(>=6.2.3) // Started emitting a diagnostic in 6.2.2, so lets conditionally use it.
         weak let weakSession = session
         #else
@@ -566,18 +568,23 @@ final class SessionTestCase: BaseTestCase {
         #endif
 
         // When
-        let request = session?.request(.default)
-        request?.response { _ in requestDidFinish.fulfill() }
+        let requests = (0..<requestCount).map { _ in
+            session?.request(.default).response { _ in requestDidFinish.fulfill() }
+        }
         session = nil
 
         waitForExpectations(timeout: timeout)
 
         // Then
-        if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *) {
-            // On 2022 OS versions and later, URLSessionTasks are completed even if not resumed before invalidating a session.
-            XCTAssertTrue([.canceling, .completed].contains(request?.task?.state))
-        } else {
-            XCTAssertEqual(request?.task?.state, .suspended)
+        for request in requests {
+            if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *) {
+                // On 2022 OS versions and later, URLSessionTasks are completed even if not resumed before invalidating a session.
+                let state = request?.task?.state
+                XCTAssertTrue([.canceling, .completed].contains(state),
+                              "task state isn't canceling or completed, it's \(state, default: "nil")")
+            } else {
+                XCTAssertEqual(request?.task?.state, .suspended)
+            }
         }
         XCTAssertNil(session, "session should be nil")
         XCTAssertNil(weakSession, "weak session should be nil")
