@@ -680,17 +680,19 @@ final class RequestResponseTestCase: BaseTestCase {
     @MainActor
     func testThatRequestManuallyCancelledManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
         // Given
-        let eventMonitor = ClosureEventMonitor()
-        let session = Session(requestSetup: .eager, eventMonitors: [eventMonitor])
+        let queue = DispatchQueue(label: "org.alamofire.testQueue")
+        let eventMonitor = ClosureEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, eventMonitors: [eventMonitor])
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 2
+        let didFinish = expectation(description: "request should finish")
+        let events = expectation(description: "request should receive appropriate lifetime events")
+        events.expectedFulfillmentCount = 2
 
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in events.fulfill() }
+        eventMonitor.requestDidCancel = { _ in events.fulfill() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in events.fulfill() }
+        eventMonitor.requestDidSuspendTask = { _, _ in events.fulfill() }
 
         // When
         let request = session.request(.default)
@@ -699,6 +701,9 @@ final class RequestResponseTestCase: BaseTestCase {
             for _ in 0..<100 {
                 request.cancel()
             }
+        }
+        request.response { _ in
+            didFinish.fulfill()
         }
 
         waitForExpectations(timeout: timeout)
