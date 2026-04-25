@@ -165,10 +165,11 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         let didFinish = expectation(description: "didFinish request")
 
         // When
-        let request = session.request(.default).responseDecodable(of: TestResponse.self) { _ in
+        let request = session.request(.default)
+        request.cancel()
+        request.responseDecodable(of: TestResponse.self) { _ in
             didFinish.fulfill()
         }
-        request.cancel()
 
         waitForExpectations(timeout: timeout)
 
