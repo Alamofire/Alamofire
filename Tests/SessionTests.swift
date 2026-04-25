@@ -581,7 +581,7 @@ final class SessionTestCase: BaseTestCase {
                 // On 2022 OS versions and later, URLSessionTasks are completed even if not resumed before invalidating a session.
                 let state = request?.task?.state
                 XCTAssertTrue([.canceling, .completed].contains(state),
-                              "task state isn't canceling or completed, it's \(state, default: "nil")")
+                              "task state isn't canceling or completed, it's \(String(describing: state))")
             } else {
                 XCTAssertEqual(request?.task?.state, .suspended)
             }
