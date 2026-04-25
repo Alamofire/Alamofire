@@ -86,12 +86,16 @@ open class Session: @unchecked Sendable {
     @available(*, deprecated, message: "Use [AlamofireNotifications()] directly.")
     public let defaultEventMonitors: [any EventMonitor] = [AlamofireNotifications()]
 
-    /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
-    var requestTaskMap = RequestTaskMap()
-    /// `Set` of currently active `Request`s.
-    var activeRequests: Set<Request> = []
-    /// Completion events awaiting `URLSessionTaskMetrics`.
-    var waitingCompletions: [URLSessionTask: () -> Void] = [:]
+    struct MutableState {
+        /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
+        var requestTaskMap = RequestTaskMap()
+        /// `Set` of currently active `Request`s.
+        var activeRequests: Set<Request> = []
+        /// Completion events awaiting `URLSessionTaskMetrics`.
+        var waitingCompletions: [URLSessionTask: () -> Void] = [:]
+    }
+
+    let mutableState = Protected(MutableState())
 
     /// Creates a `Session` from a `URLSession` and other parameters.
     ///
@@ -229,7 +233,13 @@ open class Session: @unchecked Sendable {
     }
 
     deinit {
-        finishRequestsForDeinit()
+        let requests = mutableState.read(\.requestTaskMap.requests)
+        delegate.sessionInvalidationCleanup.write {
+            for request in requests {
+                request.finish(error: .sessionDeinitialized)
+            }
+        }
+
         session.invalidateAndCancel()
     }
 
@@ -246,7 +256,7 @@ open class Session: @unchecked Sendable {
     ///   - action:     Closure to perform with all `Request`s.
     public func withAllRequests(perform action: @escaping @Sendable (Set<Request>) -> Void) {
         rootQueue.async {
-            action(self.activeRequests)
+            action(self.mutableState.read(\.activeRequests))
         }
     }
 
@@ -1157,7 +1167,7 @@ open class Session: @unchecked Sendable {
         rootQueue.async {
             guard !request.isCancelled else { return }
 
-            self.activeRequests.insert(request)
+            self.mutableState.write { $0.activeRequests.insert(request) }
 
             self.requestQueue.async {
                 // Leaf types must come first, otherwise they will cast as their superclass.
@@ -1283,7 +1293,7 @@ open class Session: @unchecked Sendable {
         guard !request.isCancelled else { return }
 
         let task = request.task(for: urlRequest, using: session)
-        requestTaskMap[request] = task
+        mutableState.write { $0.requestTaskMap[request] = task }
         request.didCreateTask(task)
 
         updateStatesForTask(task, request: request)
@@ -1295,7 +1305,7 @@ open class Session: @unchecked Sendable {
         guard !request.isCancelled else { return }
 
         let task = request.task(forResumeData: data, using: session)
-        requestTaskMap[request] = task
+        mutableState.write { $0.requestTaskMap[request] = task }
         request.didCreateTask(task)
 
         updateStatesForTask(task, request: request)
@@ -1341,16 +1351,6 @@ open class Session: @unchecked Sendable {
             request.interceptor ?? interceptor
         }
     }
-
-    // MARK: - Invalidation
-
-    func finishRequestsForDeinit() {
-        rootQueue.async { [requestTaskMap] in
-            for request in requestTaskMap.requests {
-                request.finish(error: AFError.sessionDeinitialized)
-            }
-        }
-    }
 }
 
 // MARK: - RequestDelegate
@@ -1363,17 +1363,16 @@ extension Session: RequestDelegate {
     public var startImmediately: Bool { startRequestsImmediately }
 
     public func readyToPerform(request: Request) {
-        rootQueue.async { [self] in
-            // TODO: Find a better condition to check.
-            // Called either when the Request is manually or automatically resumed.
-            if requestTaskMap[request] == nil {
+        mutableState.read {
+            if $0.requestTaskMap[request] == nil {
+                // Safe inside the lock since perform immediately calls async to the rootQueue.
                 perform(request)
             }
         }
     }
 
     public func cleanup(after request: Request) {
-        activeRequests.remove(request)
+        mutableState.write { $0.activeRequests.remove(request) }
     }
 
     public func retryResult(for request: Request, dueTo error: AFError, completion: @escaping @Sendable (RetryResult) -> Void) {
@@ -1416,42 +1415,55 @@ extension Session: SessionStateProvider {
     func request(for task: URLSessionTask) -> Request? {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        return requestTaskMap[task]
+        return mutableState.read { $0.requestTaskMap[task] }
     }
 
     func didGatherMetricsForTask(_ task: URLSessionTask) {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        let didDisassociate = requestTaskMap.disassociateIfNecessaryAfterGatheringMetricsForTask(task)
+        let completion: (() -> Void)? = mutableState.write { mutableState in
+            let didDisassociate = mutableState.requestTaskMap.disassociateIfNecessaryAfterGatheringMetricsForTask(task)
 
-        if didDisassociate {
-            waitingCompletions[task]?()
-            waitingCompletions[task] = nil
+            if didDisassociate {
+                let completion = mutableState.waitingCompletions[task]
+                mutableState.waitingCompletions[task] = nil
+                return completion
+            } else {
+                return nil
+            }
         }
+        completion?()
     }
 
     func didCompleteTask(_ task: URLSessionTask, completion: @escaping () -> Void) {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        let didDisassociate = requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
+        let immediatelyPerformCompletion = mutableState.write { mutableState in
+            let didDisassociate = mutableState.requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
 
-        if didDisassociate {
-            completion()
-        } else {
-            waitingCompletions[task] = completion
+            if didDisassociate {
+                return true
+            } else {
+                mutableState.waitingCompletions[task] = completion
+                return false
+            }
         }
+
+        if immediatelyPerformCompletion { completion() }
     }
 
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        return requestTaskMap[task]?.credential ??
+        return mutableState.read { $0.requestTaskMap[task]?.credential } ??
             session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
 
     func cancelRequestsForSessionInvalidation(with error: (any Error)?) {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
+        mutableState.read(\.requestTaskMap)
+            .requests
+            .forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
     }
 }

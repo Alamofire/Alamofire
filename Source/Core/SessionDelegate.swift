@@ -30,6 +30,7 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
 
     weak var stateProvider: (any SessionStateProvider)?
     var eventMonitor: (any EventMonitor)?
+    var sessionInvalidationCleanup = Protected<(() -> Void)?>(nil)
 
     /// Creates an instance from the given `FileManager`.
     ///
@@ -73,7 +74,15 @@ extension SessionDelegate: URLSessionDelegate {
     open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
         eventMonitor?.urlSession(session, didBecomeInvalidWithError: error)
 
+        // When invalidated due to Session.deinit, stateProvider will already have dropped to nil.
         stateProvider?.cancelRequestsForSessionInvalidation(with: error)
+
+        let sessionInvalidationCleanup = sessionInvalidationCleanup.write {
+            let cleanup = $0
+            $0 = nil
+            return cleanup
+        }
+        sessionInvalidationCleanup?()
     }
 }
 
