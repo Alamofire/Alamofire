@@ -296,6 +296,12 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
                 return .adaptDeferred
             }
 
+            // A new request reaching this point represents a fresh request lifecycle. Any prior refresh failure is
+            // stale with respect to this request. Clear it so a subsequent failure can trigger a new refresh.
+            if case .failed = mutableState.refreshState {
+                mutableState.refreshState = .idle
+            }
+
             return .adapt(credential)
         }
 
