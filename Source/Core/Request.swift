@@ -388,15 +388,37 @@ public class Request: @unchecked Sendable {
     func didCreateTask(_ task: URLSessionTask) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        mutableState.write { state in
-            state.tasks.append(task)
+        mutableState.write { mutableState in
+            mutableState.tasks.append(task)
 
-            guard let urlSessionTaskHandler = state.urlSessionTaskHandler else { return }
+            if let urlSessionTaskHandler = mutableState.urlSessionTaskHandler {
+                urlSessionTaskHandler.queue.async { urlSessionTaskHandler.handler(task) }
+            }
 
-            urlSessionTaskHandler.queue.async { urlSessionTaskHandler.handler(task) }
+            // Only safe because eventMonitor immediately enqueues.
+            // TODO: When switching to sync EventMonitor, restructure event order.
+            mutableState.eventMonitor?.request(self, didCreateTask: task)
+
+            // Should only have an effect if state was updated before the task was created and wasn't able update it.
+            // If this runs before a state update method (e.g. cancel()), it will still be in the initialized state and
+            // do nothing.
+            switch mutableState.state {
+            case .initialized, .finished:
+                // Do nothing.
+                break
+            case .resumed:
+                task.resume()
+                underlyingQueue.async { self.didResumeTask(task) }
+            case .suspended:
+                task.suspend()
+                underlyingQueue.async { self.didSuspendTask(task) }
+            case .cancelled:
+                // Resume to ensure metrics are gathered.
+                task.resume()
+                task.cancel()
+                underlyingQueue.async { self.didCancelTask(task) }
+            }
         }
-
-        eventMonitor?.request(self, didCreateTask: task)
     }
 
     /// Called when resumption is completed.
@@ -664,13 +686,6 @@ public class Request: @unchecked Sendable {
         uploadProgress.completedUnitCount = totalBytesSent
 
         uploadProgressHandler?.queue.async { self.uploadProgressHandler?.handler(self.uploadProgress) }
-    }
-
-    /// Perform a closure on the current `state` while locked.
-    ///
-    /// - Parameter perform: The closure to perform.
-    func withState(perform: (State) -> Void) {
-        mutableState.withState(perform: perform)
     }
 
     // MARK: Task Creation
