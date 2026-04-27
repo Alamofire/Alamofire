@@ -228,10 +228,10 @@ final class UploadDataTestCase: BaseTestCase {
 
         // When
         session.upload(data, to: url)
-            .uploadProgress { progress in
+            .uploadProgress(queue: session.rootQueue) { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
-            .downloadProgress { progress in
+            .downloadProgress(queue: session.rootQueue) { progress in
                 downloadProgressValues.append(progress.fractionCompleted)
             }
             .response { resp in
@@ -739,10 +739,10 @@ final class UploadMultipartFormDataTestCase: BaseTestCase {
                        },
                        to: Endpoint.method(.post),
                        usingThreshold: streamFromDisk ? 0 : .max)
-            .uploadProgress { progress in
+            .uploadProgress(queue: session.rootQueue) { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
-            .downloadProgress { progress in
+            .downloadProgress(queue: session.rootQueue) { progress in
                 downloadProgressValues.append(progress.fractionCompleted)
             }
             .response { resp in

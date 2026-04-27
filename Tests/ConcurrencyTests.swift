@@ -725,10 +725,10 @@ final class UploadConcurrencyTests: BaseTestCase {
 
         // When
         session.upload(inputStream, with: request)
-            .uploadProgress { progress in
+            .uploadProgress(queue: session.rootQueue) { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
-            .downloadProgress { progress in
+            .downloadProgress(queue: session.rootQueue) { progress in
                 downloadProgressValues.append(progress.fractionCompleted)
             }
             .responseDecodable(of: UploadResponse.self) { resp in

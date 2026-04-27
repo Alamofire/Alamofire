@@ -162,7 +162,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
         // When
         session.request(url)
-            .downloadProgress { progress in
+            .downloadProgress(queue: session.rootQueue) { progress in
                 progressValues.append((fraction: progress.fractionCompleted, total: progress.totalUnitCount))
             }
             .response { resp in

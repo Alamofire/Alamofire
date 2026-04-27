@@ -187,7 +187,7 @@ final class DownloadResponseTests: BaseTestCase {
 
         // When
         session.download(endpoint)
-            .downloadProgress { progress in
+            .downloadProgress(queue: session.rootQueue) { progress in
                 progressValues.append(progress.fractionCompleted)
             }
             .response { resp in
@@ -534,11 +534,11 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = session.download(.download())
-        download.downloadProgress { [unowned download] progress in
+        let download = session.download(.download(10_000_000))
+        download.downloadProgress(queue: session.rootQueue) { [unowned download] progress in
             guard !cancelled else { return }
 
-            if progress.fractionCompleted > 0.1 {
+            if progress.fractionCompleted > 0 {
                 download.cancel()
                 cancelled = true
             }
@@ -601,11 +601,11 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = session.download(.download())
-        download.downloadProgress { [unowned download] progress in
+        let download = session.download(.download(10_000_000))
+        download.downloadProgress(queue: session.rootQueue) { [unowned download] progress in
             guard !cancelled else { return }
 
-            if progress.fractionCompleted > 0.1 {
+            if progress.fractionCompleted > 0 {
                 download.cancel(producingResumeData: true)
                 cancelled = true
             }
@@ -639,11 +639,11 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<TestResponse, AFError>?
 
         // When
-        let download = session.download(.download())
-        download.downloadProgress { [unowned download] progress in
+        let download = session.download(.download(10_000_000))
+        download.downloadProgress(queue: session.rootQueue) { [unowned download] progress in
             guard !cancelled else { return }
 
-            if progress.fractionCompleted > 0.1 {
+            if progress.fractionCompleted > 0 {
                 download.cancel(producingResumeData: true)
                 cancelled = true
             }
@@ -679,7 +679,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = session.download(.download(10_000_000))
-        download.downloadProgress { [unowned download] progress in
+        download.downloadProgress(queue: session.rootQueue) { [unowned download] progress in
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0 {
@@ -705,7 +705,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response2: DownloadResponse<Data, AFError>?
 
         session.download(resumingWith: resumeData)
-            .downloadProgress { progress in
+            .downloadProgress(queue: session.rootQueue) { progress in
                 progressValues.append(progress.fractionCompleted)
             }
             .responseData { resp in
@@ -740,11 +740,11 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        let download = session.download(.download())
-        download.downloadProgress { [unowned download] progress in
+        let download = session.download(.download(10_000_000))
+        download.downloadProgress(queue: session.rootQueue) { [unowned download] progress in
             guard !cancelled else { return }
 
-            if progress.fractionCompleted > 0.1 {
+            if progress.fractionCompleted > 0 {
                 download.cancel { receivedResumeData = $0 }
                 cancelled = true
             }
