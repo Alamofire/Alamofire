@@ -135,7 +135,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        session.streamRequest(.chunked(expectedSize))
+        session.streamRequest(.chunked(expectedSize, delay: 30))
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
@@ -189,7 +189,7 @@ final class DataStreamTests: BaseTestCase {
         let didComplete = expectation(description: "stream should complete")
 
         // When
-        session.streamRequest(.payloads(expectedSize))
+        session.streamRequest(.payloads(expectedSize, delay: 30))
             .onHTTPResponse { response in
                 initialResponse = response
                 didReceiveResponse.fulfill()
