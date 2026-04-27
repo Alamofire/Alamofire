@@ -891,7 +891,7 @@ final class RequestResponseTestCase: BaseTestCase {
         expect.expectedFulfillmentCount = 2
 
         // When
-        let request = session.request(.default)
+        let request = session.request(.delay(1))
 
         request.responseDecodable(of: TestResponse.self) { resp in
             response1 = resp
