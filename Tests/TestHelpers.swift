@@ -62,7 +62,7 @@ struct Endpoint {
         case basicAuth(username: String, password: String)
         case bytes(count: Int)
         case cache
-        case chunked(count: Int, delay: Int = 20)
+        case chunked(count: Int, delay: Int = 40)
         case compression(Compression)
         case delay(interval: Int)
         case digestAuth(qop: String = "auth", username: String, password: String)
@@ -71,7 +71,7 @@ struct Endpoint {
         case image(Image)
         case ip
         case method(HTTPMethod)
-        case payloads(count: Int, delay: Int = 20)
+        case payloads(count: Int, delay: Int = 40)
         case redirect(count: Int)
         case redirectTo
         case responseHeaders

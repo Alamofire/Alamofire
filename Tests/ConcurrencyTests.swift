@@ -465,7 +465,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let session = stored(Session())
 
         // When
-        let task = session.streamRequest(.payloads(2, delay: 30)).streamTask()
+        let task = session.streamRequest(.payloads(2)).streamTask()
         var datas: [Data] = []
 
         for await data in task.streamingData().compactMap(\.value) {
@@ -486,7 +486,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // When
-        let task = session.streamRequest(.payloads(2, delay: 30))
+        let task = session.streamRequest(.payloads(2))
             .onHTTPResponse { _ in
                 await fulfill()
             }
@@ -512,7 +512,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // When
-        let task = session.streamRequest(.payloads(2, delay: 30))
+        let task = session.streamRequest(.payloads(2))
             .onHTTPResponse { _ in
                 await fulfill()
                 return .allow
@@ -540,7 +540,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // When
-        let request = session.streamRequest(.payloads(2, delay: 30))
+        let request = session.streamRequest(.payloads(2))
             .onHTTPResponse { _ in
                 await fulfill()
                 return .cancel
@@ -570,7 +570,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let session = stored(Session())
 
         // When
-        let task = session.streamRequest(.payloads(2, delay: 30)).streamTask()
+        let task = session.streamRequest(.payloads(2)).streamTask()
         var strings: [String] = []
 
         for await string in task.streamingStrings().compactMap(\.value) {
@@ -586,7 +586,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let session = stored(Session())
 
         // When
-        let task = session.streamRequest(.payloads(2, delay: 30)).streamTask()
+        let task = session.streamRequest(.payloads(2)).streamTask()
         let stream = task.streamingResponses(serializedUsing: DecodableStreamSerializer<TestResponse>())
         var responses: [TestResponse] = []
 
@@ -604,7 +604,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 
         // When
         let expectedPayloads = 10
-        let request = session.streamRequest(.payloads(expectedPayloads, delay: 30))
+        let request = session.streamRequest(.payloads(expectedPayloads))
         let task = request.streamTask()
         var datas: [Data] = []
 
@@ -626,7 +626,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 
         // When
         let expectedPayloads = 10
-        let request = session.streamRequest(.payloads(expectedPayloads, delay: 30))
+        let request = session.streamRequest(.payloads(expectedPayloads))
         let task = request.streamTask()
         var datas: [Data] = []
 
@@ -648,7 +648,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 
         // When
         let expectedPayloads = 10
-        let request = session.streamRequest(.payloads(expectedPayloads, delay: 30))
+        let request = session.streamRequest(.payloads(expectedPayloads))
         let task = Task<[Data], Never> {
             var datas: [Data] = []
 
@@ -672,7 +672,7 @@ final class DataStreamConcurrencyTests: BaseTestCase {
 
         // When
         let expectedPayloads = 10
-        let request = session.streamRequest(.payloads(expectedPayloads, delay: 30))
+        let request = session.streamRequest(.payloads(expectedPayloads))
         let task = Task<[Data], Never> {
             var datas: [Data] = []
             let streamTask = request.streamTask()
