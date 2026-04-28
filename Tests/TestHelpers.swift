@@ -158,8 +158,8 @@ struct Endpoint {
 
     static let cache: Endpoint = .init(path: .cache)
 
-    static func chunked(_ count: Int, delay: Int = 20) -> Endpoint {
-        Endpoint(path: .chunked(count: count, delay: 20))
+    static func chunked(_ count: Int, delay: Int = 40) -> Endpoint {
+        Endpoint(path: .chunked(count: count, delay: delay))
     }
 
     static func compression(_ compression: Compression) -> Endpoint {
@@ -198,7 +198,7 @@ struct Endpoint {
         Endpoint(path: .method(method), method: method)
     }
 
-    static func payloads(_ count: Int, delay: Int = 20) -> Endpoint {
+    static func payloads(_ count: Int, delay: Int = 40) -> Endpoint {
         Endpoint(path: .payloads(count: count, delay: delay))
     }
 
