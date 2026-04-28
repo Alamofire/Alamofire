@@ -360,6 +360,8 @@ extension DataRequest {
             }
         }
 
+        defer { if shouldAutomaticallyCancel && Task.isCancelled { task.cancel() } }
+
         return DataTask<Value>(request: self, task: task, shouldAutomaticallyCancel: shouldAutomaticallyCancel)
     }
 }
@@ -568,6 +570,8 @@ extension DownloadRequest {
                 self.cancel()
             }
         }
+
+        defer { if shouldAutomaticallyCancel && Task.isCancelled { task.cancel() } }
 
         return DownloadTask<Value>(request: self, task: task, shouldAutomaticallyCancel: shouldAutomaticallyCancel)
     }
