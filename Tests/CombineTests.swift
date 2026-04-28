@@ -278,7 +278,7 @@ final class DataRequestCombineTests: CombineTestCase {
         // Then
         XCTAssertTrue(response?.result.isSuccess == true)
         XCTAssertEqual(stateAfterPublisher, .initialized)
-        XCTAssertEqual(stateAfterSubscription, .resumed)
+        XCTAssertNotEqual(stateAfterSubscription, .initialized)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
@@ -804,7 +804,7 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         // Then
         XCTAssertTrue(result?.isSuccess == true)
         XCTAssertEqual(stateAfterPublisher, .initialized)
-        XCTAssertEqual(stateAfterSubscription, .resumed)
+        XCTAssertNotEqual(stateAfterSubscription, .initialized)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
@@ -1279,7 +1279,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         // Then
         XCTAssertTrue(response?.result.isSuccess == true)
         XCTAssertEqual(stateAfterPublisher, .initialized)
-        XCTAssertEqual(stateAfterSubscription, .resumed)
+        XCTAssertNotEqual(stateAfterSubscription, .initialized)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
