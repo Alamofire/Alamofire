@@ -194,7 +194,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     @MainActor
     func testThatExpiredCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = RevocationTrustEvaluator()
+        let policy = RevocationTrustEvaluator(options: [.requirePositiveResponse, .any])
 
         let evaluators = [expiredHost: policy]
 
