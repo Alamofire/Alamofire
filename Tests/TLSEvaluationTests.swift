@@ -229,12 +229,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     }
 
     // watchOS doesn't perform revocation checking at all.
-    // Test disabled since revocation checking isn't stable on CI.
     #if !os(watchOS)
     @MainActor
-    func disable_testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
+    func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = RevocationTrustEvaluator()
+        let policy = RevocationTrustEvaluator(options: [.requirePositiveResponse, .any])
 
         let evaluators = [revokedHost: policy]
 
