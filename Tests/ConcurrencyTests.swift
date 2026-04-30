@@ -806,7 +806,7 @@ final class WebSocketConcurrencyTests: BaseTestCase {
             receivedEvent.fulfill()
         }
 
-        await fulfillment(of: [receivedEvent])
+        await fulfillment(of: [receivedEvent], timeout: timeout)
 
         // Then
     }

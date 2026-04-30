@@ -676,7 +676,7 @@ final class WebSocketIntegrationTests: BaseTestCase {
             }
 
         wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: 100,
+             timeout: timeout,
              enforceOrder: true)
 
         // Then
