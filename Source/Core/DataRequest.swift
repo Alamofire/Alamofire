@@ -104,12 +104,12 @@ public class DataRequest: Request, @unchecked Sendable {
 
             httpResponseHandler.queue.async {
                 httpResponseHandler.handler(response) { disposition in
-                    self.underlyingQueue.async {
-                        completionHandler(disposition.sessionDisposition)
-                    }
-
                     if disposition == .cancel {
                         self.cancel()
+                    }
+
+                    self.underlyingQueue.async {
+                        completionHandler(disposition.sessionDisposition)
                     }
                 }
             }
