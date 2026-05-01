@@ -1433,7 +1433,9 @@ extension Session: SessionStateProvider {
     func cancelRequestsForSessionInvalidation(with error: (any Error)?) {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        mutableState.read(\.activeRequests)
-            .forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
+        let requests = mutableState.read(\.activeRequests)
+        for request in requests where !request.isFinished {
+            request.finish(error: .sessionInvalidated(error: error))
+        }
     }
 }
