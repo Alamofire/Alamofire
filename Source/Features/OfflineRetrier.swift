@@ -129,7 +129,9 @@ public final class OfflineRetrier: RequestAdapter, RequestRetrier, RequestInterc
 
             guard state.currentMonitor == nil else { return }
 
-            state.startListening { [unowned self] result in
+            state.startListening { [weak self] result in
+                guard let self else { return }
+
                 let retryResult: RetryResult = switch result {
                 case .pathAvailable:
                     .retry
