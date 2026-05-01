@@ -67,7 +67,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
                                                    options: Options = []) -> Destination {
         { temporaryURL, response in
             let directoryURLs = FileManager.default.urls(for: directory, in: domain)
-            let url = directoryURLs.first?.appendingPathComponent(response.suggestedFilename!) ?? temporaryURL
+            let url = response.suggestedFilename.flatMap { directoryURLs.first?.appendingPathComponent($0) } ?? temporaryURL
 
             return (url, options)
         }
