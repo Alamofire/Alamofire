@@ -161,6 +161,8 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
             #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
             if let stream = state.outputStream {
                 underlyingQueue.async {
+                    // Ensure we can write, as the stream may have been closed while this was enqueued.
+                    guard stream.hasSpaceAvailable else { return }
                     var bytes = Array(data)
                     stream.write(&bytes, maxLength: bytes.count)
                 }
@@ -344,7 +346,9 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     @preconcurrency
     @discardableResult
     public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Handler<Data, Never>) -> Self {
-        let parser = { @Sendable [unowned self] (data: Data) in
+        let parser = { @Sendable [weak self] (data: Data) in
+            guard let self else { return }
+
             queue.async {
                 self.capturingError {
                     try stream(.init(event: .stream(.success(data)), token: .init(self)))
@@ -373,7 +377,9 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     public func responseStream<Serializer: DataStreamSerializer>(using serializer: Serializer,
                                                                  on queue: DispatchQueue = .main,
                                                                  stream: @escaping Handler<Serializer.SerializedObject, AFError>) -> Self {
-        let parser = { @Sendable [unowned self] (data: Data) in
+        let parser = { @Sendable [weak self] (data: Data) in
+            guard let self else { return }
+
             serializationQueue.async {
                 // Start work on serialization queue.
                 let result = Result { try serializer.serialize(data) }
@@ -414,7 +420,9 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
     @discardableResult
     public func responseStreamString(on queue: DispatchQueue = .main,
                                      stream: @escaping Handler<String, Never>) -> Self {
-        let parser = { @Sendable [unowned self] (data: Data) in
+        let parser = { @Sendable [weak self] (data: Data) in
+            guard let self else { return }
+
             serializationQueue.async {
                 // Start work on serialization queue.
                 let string = String(decoding: data, as: UTF8.self)
