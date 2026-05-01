@@ -235,7 +235,7 @@ open class Session: @unchecked Sendable {
     deinit {
         let requests = mutableState.read(\.activeRequests)
         delegate.sessionInvalidationCleanup.write {
-            for request in requests {
+            for request in requests where !request.isFinished {
                 request.finish(error: .sessionDeinitialized)
             }
         }
