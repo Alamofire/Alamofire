@@ -233,7 +233,7 @@ open class Session: @unchecked Sendable {
     }
 
     deinit {
-        let requests = mutableState.read(\.requestTaskMap.requests)
+        let requests = mutableState.read(\.activeRequests)
         delegate.sessionInvalidationCleanup.write {
             for request in requests {
                 request.finish(error: .sessionDeinitialized)
@@ -1433,8 +1433,7 @@ extension Session: SessionStateProvider {
     func cancelRequestsForSessionInvalidation(with error: (any Error)?) {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        mutableState.read(\.requestTaskMap)
-            .requests
+        mutableState.read(\.activeRequests)
             .forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
     }
 }
