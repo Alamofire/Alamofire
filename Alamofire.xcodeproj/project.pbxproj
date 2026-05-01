@@ -197,6 +197,11 @@
 		312930AF263E187800473CEA /* empty_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F21D7D2FA20056F249 /* empty_string.txt */; };
 		312930B0263E187800473CEA /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
 		312930B1263E187800473CEA /* utf32_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F31D7D2FA20056F249 /* utf32_string.txt */; };
+		312EDCED2FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312EDCEC2FA4FF8000EEB257 /* MIMETypeTests.swift */; };
+		312EDCEE2FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312EDCEC2FA4FF8000EEB257 /* MIMETypeTests.swift */; };
+		312EDCEF2FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312EDCEC2FA4FF8000EEB257 /* MIMETypeTests.swift */; };
+		312EDCF02FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312EDCEC2FA4FF8000EEB257 /* MIMETypeTests.swift */; };
+		312EDCF12FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312EDCEC2FA4FF8000EEB257 /* MIMETypeTests.swift */; };
 		312FC4FF2CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
 		312FC5002CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
 		312FC5012CB079E800E48EAB /* InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */; };
@@ -676,6 +681,7 @@
 		31293065263E17D600473CEA /* Alamofire watchOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire watchOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
 		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
+		312EDCEC2FA4FF8000EEB257 /* MIMETypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIMETypeTests.swift; sourceTree = "<group>"; };
 		312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalHelpers.swift; sourceTree = "<group>"; };
 		31303CC22EF64B2A00EEB257 /* DispatchQueue+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+AlamofireTests.swift"; sourceTree = "<group>"; };
 		31425AC0241F098000EE3CCC /* InternalRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestTests.swift; sourceTree = "<group>"; };
@@ -1248,6 +1254,7 @@
 				31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */,
 				312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */,
 				31762DC9247738FA0025C704 /* LeaksTests.swift */,
+				312EDCEC2FA4FF8000EEB257 /* MIMETypeTests.swift */,
 				31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */,
 				31727421218BB9A50039FFCC /* TestHelpers.swift */,
 				4C256A4E1B09656A0065714F /* Core */,
@@ -1765,6 +1772,7 @@
 				312FC5012CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31293080263E184000473CEA /* AFError+AlamofireTests.swift in Sources */,
 				31293077263E183C00473CEA /* ResponseTests.swift in Sources */,
+				312EDCEF2FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */,
 				31293081263E184000473CEA /* FileManager+AlamofireTests.swift in Sources */,
 				3145E0EA2797DA4200949557 /* ConcurrencyTests.swift in Sources */,
 				31293076263E183C00473CEA /* DownloadTests.swift in Sources */,
@@ -1865,6 +1873,7 @@
 				312FC5022CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				317338FE2A43BE9000D4EA0A /* BaseTestCase.swift in Sources */,
 				317338FF2A43BE9000D4EA0A /* LeaksTests.swift in Sources */,
+				312EDCF12FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */,
 				317339002A43BE9000D4EA0A /* NSLoggingEventMonitor.swift in Sources */,
 				317339012A43BE9000D4EA0A /* TestHelpers.swift in Sources */,
 				317339022A43BE9000D4EA0A /* AuthenticationTests.swift in Sources */,
@@ -1965,6 +1974,7 @@
 				312FC5002CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31B51E8E2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				4CF627181BA7CC240011A099 /* RequestTests.swift in Sources */,
+				312EDCED2FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */,
 				3111CE9720A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9420A7EC32008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8E20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,
@@ -2165,6 +2175,7 @@
 				312FC5032CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31B51E8C2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */,
+				312EDCF02FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */,
 				3111CE9520A7EC39008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9220A7EC30008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8C20A7EBE6008315E2 /* MultipartFormDataTests.swift in Sources */,
@@ -2215,6 +2226,7 @@
 				312FC4FF2CB079E800E48EAB /* InternalHelpers.swift in Sources */,
 				31B51E8D2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
+				312EDCEE2FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */,
 				3111CE9620A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9320A7EC31008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8D20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,

@@ -46,7 +46,7 @@ extension Request {
                 return split.components(separatedBy: "/")
             }()
 
-            if let type = components.first, let subtype = components.last {
+            if components.count == 2, let type = components.first, let subtype = components.last {
                 self.type = type
                 self.subtype = subtype
             } else {
@@ -66,9 +66,9 @@ extension Request {
 
     // MARK: Properties
 
-    var acceptableStatusCodes: Range<Int> { 200..<300 }
+    fileprivate var acceptableStatusCodes: Range<Int> { 200..<300 }
 
-    var acceptableContentTypes: [String] {
+    fileprivate var acceptableContentTypes: [String] {
         if let accept = request?.value(forHTTPHeaderField: "Accept") {
             return accept.components(separatedBy: ",")
         }
@@ -78,7 +78,7 @@ extension Request {
 
     // MARK: Status Code
 
-    func validate<S: Sequence>(statusCode acceptableStatusCodes: S,
+    fileprivate func validate<S: Sequence>(statusCode acceptableStatusCodes: S,
                                            response: HTTPURLResponse)
         -> ValidationResult
         where S.Iterator.Element == Int {
@@ -92,7 +92,7 @@ extension Request {
 
     // MARK: Content Type
 
-    func validate<S: Sequence>(contentType acceptableContentTypes: S,
+    fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
                                            response: HTTPURLResponse,
                                            isEmpty: Bool)
         -> ValidationResult
@@ -102,7 +102,7 @@ extension Request {
         return validate(contentType: acceptableContentTypes, response: response)
     }
 
-    func validate<S: Sequence>(contentType acceptableContentTypes: S,
+    fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
                                            response: HTTPURLResponse)
         -> ValidationResult
         where S.Iterator.Element == String {
