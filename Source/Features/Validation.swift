@@ -27,12 +27,12 @@ import Foundation
 extension Request {
     // MARK: Helper Types
 
-    fileprivate typealias ErrorReason = AFError.ResponseValidationFailureReason
+    typealias ErrorReason = AFError.ResponseValidationFailureReason
 
     /// Used to represent whether a validation succeeded or failed.
     public typealias ValidationResult = Result<Void, any(Error & Sendable)>
 
-    fileprivate struct MIMEType {
+    struct MIMEType {
         let type: String
         let subtype: String
 
@@ -66,9 +66,9 @@ extension Request {
 
     // MARK: Properties
 
-    fileprivate var acceptableStatusCodes: Range<Int> { 200..<300 }
+    var acceptableStatusCodes: Range<Int> { 200..<300 }
 
-    fileprivate var acceptableContentTypes: [String] {
+    var acceptableContentTypes: [String] {
         if let accept = request?.value(forHTTPHeaderField: "Accept") {
             return accept.components(separatedBy: ",")
         }
@@ -78,7 +78,7 @@ extension Request {
 
     // MARK: Status Code
 
-    fileprivate func validate<S: Sequence>(statusCode acceptableStatusCodes: S,
+    func validate<S: Sequence>(statusCode acceptableStatusCodes: S,
                                            response: HTTPURLResponse)
         -> ValidationResult
         where S.Iterator.Element == Int {
@@ -92,7 +92,7 @@ extension Request {
 
     // MARK: Content Type
 
-    fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
+    func validate<S: Sequence>(contentType acceptableContentTypes: S,
                                            response: HTTPURLResponse,
                                            isEmpty: Bool)
         -> ValidationResult
@@ -102,7 +102,7 @@ extension Request {
         return validate(contentType: acceptableContentTypes, response: response)
     }
 
-    fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
+    func validate<S: Sequence>(contentType acceptableContentTypes: S,
                                            response: HTTPURLResponse)
         -> ValidationResult
         where S.Iterator.Element == String {
