@@ -180,15 +180,12 @@ public final class DataStreamRequest: Request, @unchecked Sendable {
 
             httpResponseHandler.queue.async {
                 httpResponseHandler.handler(response) { disposition in
-                    if disposition == .cancel {
-                        self.mutableState.write { mutableState in
-                            mutableState.state = .cancelled
-                            mutableState.error = mutableState.error ?? AFError.explicitlyCancelled
-                        }
-                    }
-
                     self.underlyingQueue.async {
                         completionHandler(disposition.sessionDisposition)
+                    }
+
+                    if disposition == .cancel {
+                        self.cancel()
                     }
                 }
             }
