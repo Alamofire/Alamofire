@@ -773,11 +773,14 @@ public class Request: @unchecked Sendable {
 
             underlyingQueue.async { self.didResume() }
 
-            guard let task = mutableState.tasks.last, task.state != .completed else { return true }
+            // Ensure we have a task, otherwise Session hasn't called perform yet.
+            guard let task = mutableState.tasks.last else { return true }
+            // We have a task, so we shouldn't need to trigger perform again.
+            guard task.state != .completed else { return false }
 
             task.resume()
             underlyingQueue.async { self.didResumeTask(task) }
-            return true
+            return false
         }
 
         if needsToPerform {

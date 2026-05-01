@@ -1163,31 +1163,34 @@ open class Session: @unchecked Sendable {
     /// Starts performing the provided `Request`.
     ///
     /// - Parameter request: The `Request` to perform.
-    func perform(_ request: Request) {
+    func perform(_ request: Request, forRetry isRetrying: Bool = false) {
         rootQueue.async {
-            guard !request.isCancelled else { return }
+            self.mutableState.write { mutableState in
+                guard !request.isCancelled else { return }
+                // Try to insert, only proceeding if this is the first time or we're retrying.
+                // Protects against rapid resume -> suspend -> resume calls which may enqueue multiple performs.
+                guard mutableState.activeRequests.insert(request).inserted || isRetrying else { return }
 
-            self.mutableState.write { $0.activeRequests.insert(request) }
-
-            self.requestQueue.async {
-                // Leaf types must come first, otherwise they will cast as their superclass.
-                switch request {
-                // UploadRequest must come before DataRequest due to subtype relationship.
-                case let r as UploadRequest: self.performUploadRequest(r)
-                case let r as DataRequest: self.performDataRequest(r)
-                case let r as DownloadRequest: self.performDownloadRequest(r)
-                case let r as DataStreamRequest: self.performDataStreamRequest(r)
-                default:
-                    #if canImport(Darwin) && !canImport(FoundationNetworking)
-                    if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *),
-                       let request = request as? WebSocketRequest {
-                        self.performWebSocketRequest(request)
-                    } else {
+                self.requestQueue.async {
+                    // Leaf types must come first, otherwise they will cast as their superclass.
+                    switch request {
+                    // UploadRequest must come before DataRequest due to subtype relationship.
+                    case let r as UploadRequest: self.performUploadRequest(r)
+                    case let r as DataRequest: self.performDataRequest(r)
+                    case let r as DownloadRequest: self.performDownloadRequest(r)
+                    case let r as DataStreamRequest: self.performDataStreamRequest(r)
+                    default:
+                        #if canImport(Darwin) && !canImport(FoundationNetworking)
+                        if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *),
+                           let request = request as? WebSocketRequest {
+                            self.performWebSocketRequest(request)
+                        } else {
+                            fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
+                        }
+                        #else
                         fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
+                        #endif
                     }
-                    #else
-                    fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
-                    #endif
                 }
             }
         }
@@ -1336,12 +1339,7 @@ extension Session: RequestDelegate {
     public var startImmediately: Bool { startRequestsImmediately }
 
     public func readyToPerform(request: Request) {
-        mutableState.read {
-            if $0.requestTaskMap[request] == nil {
-                // Safe inside the lock since perform immediately calls async to the rootQueue.
-                perform(request)
-            }
-        }
+        perform(request)
     }
 
     public func cleanup(after request: Request) {
@@ -1370,7 +1368,7 @@ extension Session: RequestDelegate {
                 guard !request.isCancelled else { return }
 
                 request.prepareForRetry()
-                self.perform(request)
+                self.perform(request, forRetry: true)
             }
 
             if let retryDelay = timeDelay {
