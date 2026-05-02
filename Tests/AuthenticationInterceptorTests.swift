@@ -60,12 +60,13 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         private(set) var didRequestFailDueToAuthErrorCount = 0
         private(set) var isRequestAuthenticatedWithCredentialCount = 0
 
-        let shouldRefreshAsynchronously: Bool
         let refreshResult: Result<TestCredential, any Error>?
         let lock = NSLock()
+        let refreshQueue: DispatchQueue?
 
-        init(shouldRefreshAsynchronously: Bool = true, refreshResult: Result<TestCredential, any Error>? = nil) {
-            self.shouldRefreshAsynchronously = shouldRefreshAsynchronously
+        init(refreshQueue: DispatchQueue? = DispatchQueue(label: "org.alamofire.TestAuthenticator"),
+             refreshResult: Result<TestCredential, any Error>? = nil) {
+            self.refreshQueue = refreshQueue
             self.refreshResult = refreshResult
         }
 
@@ -91,9 +92,9 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                expiration: Date())
             )
 
-            if shouldRefreshAsynchronously {
+            if let refreshQueue {
                 // The 10 ms delay here is important to allow multiple requests to queue up while refreshing.
-                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.01) { completion(result) }
+                refreshQueue.asyncAfter(deadline: .now() + 0.01) { completion(result) }
                 lock.unlock()
             } else {
                 lock.unlock()
@@ -177,12 +178,13 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     @MainActor
     func testThatInterceptorRethrowsRefreshErrorToAllDeferredAdaptOperations() {
         // Given
+        let queue = DispatchQueue(label: "org.alamofire.\(#function)")
         let credential = TestCredential(requiresRefresh: true)
-        let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
+        let authenticator = TestAuthenticator(refreshQueue: queue, refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let requestCount = 3
-        let session = stored(Session())
+        let session = stored(Session(rootQueue: queue))
 
         let expect = expectation(description: "all requests should complete")
         expect.expectedFulfillmentCount = requestCount
@@ -540,7 +542,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     func testThatInterceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnCallingQueue() {
         // Given
         let credential = TestCredential(requiresRefresh: true)
-        let authenticator = TestAuthenticator(shouldRefreshAsynchronously: false)
+        let authenticator = TestAuthenticator(refreshQueue: nil)
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let eventMonitor = ClosureEventMonitor()
@@ -1233,7 +1235,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         // fires. This test verifies that invariant holds on the retry path (a 401 response), complementing the existing
         // proactive-path (requiresRefresh) test.
         let credential = TestCredential()
-        let authenticator = TestAuthenticator(shouldRefreshAsynchronously: false)
+        let authenticator = TestAuthenticator(refreshQueue: nil)
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let pathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
