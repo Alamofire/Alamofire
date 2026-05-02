@@ -69,6 +69,7 @@ struct Endpoint {
         case download(count: Int)
         case hiddenBasicAuth(username: String, password: String)
         case image(Image)
+        case infinite
         case ip
         case method(HTTPMethod)
         case payloads(count: Int, delay: Int = 40)
@@ -106,6 +107,8 @@ struct Endpoint {
                 "/hidden-basic-auth/\(username)/\(password)"
             case let .image(type):
                 "/image/\(type.rawValue)"
+            case .infinite:
+                "/infinite"
             case .ip:
                 "/ip"
             case let .method(method):
@@ -188,6 +191,10 @@ struct Endpoint {
 
     static func image(_ type: Image) -> Endpoint {
         Endpoint(path: .image(type))
+    }
+
+    static var infinite: Endpoint {
+        Endpoint(path: .infinite)
     }
 
     static var ip: Endpoint {

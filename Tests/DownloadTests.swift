@@ -151,14 +151,13 @@ final class DownloadResponseTests: BaseTestCase {
         // Given
         let session = stored(Session())
         let fileURL = randomCachesFileURL
-        let numberOfLines = 100
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = expectation(description: "Cancelled download request should not download data to file")
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        session.download(.stream(numberOfLines), to: destination)
+        session.download(.infinite, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
