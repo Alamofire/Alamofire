@@ -84,16 +84,17 @@ final class DownloadResponseTests: BaseTestCase {
         // Given
         let session = stored(Session())
         let fileURL = randomCachesFileURL
-        let numberOfLines = 10
+        let numberOfLines = 100
         let endpoint = Endpoint.stream(numberOfLines)
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = expectation(description: "Download request should download data to file: \(endpoint.url.absoluteString)")
-        var response: DownloadResponse<URL?, AFError>?
+        var response: DownloadResponse<URL, AFError>?
 
         // When
         session.download(endpoint, to: destination)
-            .response { resp in
+            .validate()
+            .responseURL { resp in
                 response = resp
                 expectation.fulfill()
             }
@@ -150,7 +151,7 @@ final class DownloadResponseTests: BaseTestCase {
         // Given
         let session = stored(Session())
         let fileURL = randomCachesFileURL
-        let numberOfLines = 10
+        let numberOfLines = 100
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = expectation(description: "Cancelled download request should not download data to file")
@@ -177,7 +178,7 @@ final class DownloadResponseTests: BaseTestCase {
     func testDownloadRequestWithProgress() {
         // Given
         let session = stored(Session())
-        let randomBytes = 256
+        let randomBytes = 1024
         let endpoint = Endpoint.bytes(randomBytes)
 
         let expectation = expectation(description: "Bytes download progress should be reported: \(endpoint.url)")
