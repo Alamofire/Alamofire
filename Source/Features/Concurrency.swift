@@ -604,6 +604,55 @@ public struct DataStreamTask: Sendable {
         }
     }
 
+    /// Creates a flattened `AsyncThrowingStream` of `Data` values from the underlying `DataStreamRequest`.
+    ///
+    /// - Parameters:
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                when observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior.
+    ///                                `.unbounded` by default.
+    ///
+    /// - Returns: The `AsyncThrowingStream`.
+    public func streamingDataValues(
+        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+        bufferingPolicy: AsyncThrowingStream<Data, any Error>.Continuation.BufferingPolicy = .unbounded
+    ) -> AsyncThrowingStream<Data, any Error> {
+        createThrowingStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
+            request.responseStream(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
+        } transform: { stream in
+            switch stream.event {
+            case let .stream(.success(data)):
+                return data
+            case .stream(.failure):
+                return nil
+            case .complete:
+                return nil
+            }
+        }
+    }
+
+    /// Creates a flattened `AsyncThrowingStream` of `(Data, HTTPURLResponse)` tuples from the underlying
+    /// `DataStreamRequest`.
+    ///
+    /// - Parameters:
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                when observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior.
+    ///                                `.unbounded` by default.
+    ///
+    /// - Returns: The `AsyncThrowingStream`.
+    public func streamingDataValuesWithResponses(
+        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+        bufferingPolicy: AsyncThrowingStream<(Data, HTTPURLResponse), any Error>.Continuation.BufferingPolicy = .unbounded
+    ) -> AsyncThrowingStream<(Data, HTTPURLResponse), any Error> {
+        createThrowingStream(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy) { onStream in
+            request.responseStream(on: .streamCompletionQueue(forRequestID: request.id), stream: onStream)
+        } transform: { [request] stream in
+            guard case let .stream(.success(data)) = stream.event, let response = request.response else { return nil }
+            return (data, response)
+        }
+    }
+
     /// Creates a `Stream` of `UTF-8` `String`s from the underlying `DataStreamRequest`.
     ///
     /// - Parameters:
@@ -669,6 +718,34 @@ public struct DataStreamTask: Sendable {
                 continuation.yield(stream)
                 if case .complete = stream.event {
                     continuation.finish()
+                }
+            }
+        }
+    }
+
+    private func createThrowingStream<Success>(
+        automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+        bufferingPolicy: AsyncThrowingStream<Success, any Error>.Continuation.BufferingPolicy = .unbounded,
+        forResponse onResponse: @Sendable @escaping (@escaping @Sendable (DataStreamRequest.Stream<Data, AFError>) -> Void) -> Void,
+        transform: @Sendable @escaping (DataStreamRequest.Stream<Data, AFError>) -> Success?
+    ) -> AsyncThrowingStream<Success, any Error> {
+        AsyncThrowingStream(bufferingPolicy: bufferingPolicy) { continuation in
+            if shouldAutomaticallyCancel, request.isInitialized || request.isResumed || request.isSuspended {
+                continuation.onTermination = { _ in
+                    cancel()
+                }
+            }
+
+            onResponse { stream in
+                if let value = transform(stream) {
+                    continuation.yield(value)
+                }
+
+                switch stream.event {
+                case .stream:
+                    break
+                case let .complete(completion):
+                    continuation.finish(throwing: completion.error)
                 }
             }
         }
