@@ -44,6 +44,7 @@
     - [Upload Progress](#upload-progress)
   + [Streaming Data from a Server](#streaming-data-from-a-server)
     - [Streaming `Data`](#streaming-data)
+    - [Streamlined Async Sequence API for Data Streaming](#streamlined-async-sequence-api-for-data-streaming)
     - [Streaming `String`s](#streaming-strings)
     - [Streaming `Decodable` Values](#streaming-decodable-values)
     - [Producing an `InputStream`](#producing-an-inputstream)
@@ -938,6 +939,32 @@ AF.streamRequest(...).responseStream { stream in
 ```
 
 > Handling the `.failure` case of the `Result` in the example above is unnecessary, as receiving `Data` can never fail.
+
+#### Streamlined Async Sequence API for Data Streaming
+
+For a more ergonomic and modern Swift Concurrency approach, Alamofire provides streamlined `AsyncSequence` APIs that yield `(Data, HTTPURLResponse?)` tuples directly, eliminating the need for manual event unwrapping.
+
+Both `DataStreamRequest` and `Session` provide convenient methods to stream data chunks with their corresponding HTTP responses:
+
+```swift
+// Using DataStreamRequest extension
+for try await (chunk, response) in AF.streamRequest(url).streamDataAndResponse() {
+    print("Received \(chunk.count) bytes from \(response?.statusCode ?? 0)")
+}
+```
+
+```swift
+// Using Session convenience method
+for try await (chunk, response) in AF.stream(url) {
+    print("Received \(chunk.count) bytes from \(response?.statusCode ?? 0)")
+}
+```
+
+Both methods accept optional parameters:
+- `automaticallyCancelling`: Whether the stream automatically cancels when iteration stops (default: `true`)
+- `bufferingPolicy`: How the stream buffers values (default: `.unbounded`)
+
+This API aligns with modern Swift patterns like `URLSession.bytes(from:)` and provides a cleaner entry point for streaming use cases such as LLM responses, Server-Sent Events (SSE), or real-time binary data.
 
 #### Streaming `String`s
 
