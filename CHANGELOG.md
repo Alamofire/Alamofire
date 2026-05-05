@@ -6,6 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
+- `5.12.x` Releases - [5.12.0](#5120)
 - `5.11.x` Releases - [5.11.0](#5110) | [5.11.1](#5111) | [5.11.2](#5112)
 - `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101) | [5.10.2](#5102)
 - `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
@@ -59,7 +60,54 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 ---
 
-## [5.11.2](https://github.com/Alamofire/Alamofire/releases/tag/5.11.2]
+## [5.12.0](https://github.com/Alamofire/Alamofire/releases/tag/5.12.0)
+
+Released on 2026-05-04. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/97?closed=1).
+
+### Added
+- FreeBSD compilation support.
+  - Added by [Al Hoang](https://github.com/hoanga) in Pull Request [#4029](https://github.com/Alamofire/Alamofire/pull/4029).
+
+### Updated
+- Various CI configurations.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+
+### Fixed
+- Rare race in `Request.suspend()` and `Request.cancel()` where the state update would be lost if it occurred before the task was created.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- `Request.cancel()` incorrect called `Request.finish()` when the underlying task was already `.completed`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- Rare race in `Request.resume()` that could lead to multiple `URLSessionTask`s created.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- Repeated calls to `Request.suspend()` and `Request.resume()` could lead to multiple pipeline executions.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- Thread-safety issue in `Session.deinit` when accessing internal state.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- Rare `Request.finish()` race in `Session.deinit`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- `Session.deinit` called `Request.finish()` on `Request`s that were already finished.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- `Request.onHTTPRequest` didn't call the full `Request.cancel()` when the `.cancel` disposition was returned.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- Multiple unlikely force unwrap or `unowned self` crashes.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- Write to `DataStreamRequest`'s `outputStream` after it was closed.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- MIME type parsing, where a single element (`text`) or empty strings would be accepted.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- Cancelled `DownloadRequest`s could still trigger retry.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- `DataRequest.DataTask` and `DownloadRequest.DownloadTask` could miss early cancellation events if they happened before the underlying `Task` was created.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+- 🔥 Multiple issues in `AuthenticationInterceptor`. These fixes slightly change the interceptor's behavior.
+    1. `adapt()` enqueued adaptations, leading to requests restarted with a new credential to not execute the whole adapt pipeline again. `AuthenticationInterceptor` will now let those requests fail with the old credential and retry their whole pipeline with the new credential.
+    2. Concurrent adaptations for the same stale credential could trigger multiple refreshes.
+    3. `retry()` now lazily checks for new credentials rather than capturing eagerly.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
+
+---
+
+## [5.11.2](https://github.com/Alamofire/Alamofire/releases/tag/5.11.2)
 
 Released on 2026-04-05. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/96?closed=1).
 
@@ -75,7 +123,7 @@ Released on 2026-04-05. All issues associated with this milestone can be found u
 - Handling of duplicate `URLSessionTaskMetrics` callbacks, likely caused by using the new loading system (`usesClassicLoadingMode = false`).
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4017](https://github.com/Alamofire/Alamofire/pull/4017).
 
-## [5.11.1](https://github.com/Alamofire/Alamofire/releases/tag/5.11.1]
+## [5.11.1](https://github.com/Alamofire/Alamofire/releases/tag/5.11.1)
 
 Released on 2026-02-01. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/95?closed=1).
 
@@ -83,7 +131,7 @@ Released on 2026-02-01. All issues associated with this milestone can be found u
 - Fixes [#3978](https://github.com/Alamofire/Alamofire/pull/3978), a rare logical race that allowed the same response serializer to execute multiple times simultaneously, which would call the completion handler multiple times, leading to crashes when wrapping continuations.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3999](https://github.com/Alamofire/Alamofire/pull/3999).
 
-## [5.11.0](https://github.com/Alamofire/Alamofire/releases/tag/5.11.0]
+## [5.11.0](https://github.com/Alamofire/Alamofire/releases/tag/5.11.0)
 
 Released on 2025-12-20. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/94?closed=1).
 
@@ -121,7 +169,7 @@ Released on 2025-12-20. All issues associated with this milestone can be found u
 
 ---
 
-## [5.10.2](https://github.com/Alamofire/Alamofire/releases/tag/5.10.2]
+## [5.10.2](https://github.com/Alamofire/Alamofire/releases/tag/5.10.2)
 
 Released on 2024-11-24. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/93?closed=1).
 
