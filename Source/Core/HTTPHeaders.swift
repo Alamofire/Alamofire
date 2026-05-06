@@ -198,8 +198,8 @@ public struct HTTPHeader: Equatable, Hashable, Sendable {
     ///   - name:  The name of the header.
     ///   - value: The value of the header.
     public init(name: String, value: String) {
-        self.name = name
-        self.value = value
+        self.name = name.filter { $0 != "\r" && $0 != "\n" }
+        self.value = value.filter { $0 != "\r" && $0 != "\n" }
     }
 }
 
