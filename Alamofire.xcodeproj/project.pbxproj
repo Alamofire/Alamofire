@@ -445,6 +445,16 @@
 		31C2B0F020B271370089BA7C /* TLSEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */; };
 		31C2B0F120B271370089BA7C /* TLSEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */; };
 		31C2B0F220B271380089BA7C /* TLSEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */; };
+		31CB22C62FB96FAA00EEB257 /* Instant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22C52FB96FA000EEB257 /* Instant.swift */; };
+		31CB22C72FB96FAA00EEB257 /* Instant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22C52FB96FA000EEB257 /* Instant.swift */; };
+		31CB22C82FB96FAA00EEB257 /* Instant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22C52FB96FA000EEB257 /* Instant.swift */; };
+		31CB22C92FB96FAA00EEB257 /* Instant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22C52FB96FA000EEB257 /* Instant.swift */; };
+		31CB22CA2FB96FAA00EEB257 /* Instant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22C52FB96FA000EEB257 /* Instant.swift */; };
+		31CB22CC2FB973BD00EEB257 /* InstantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22CB2FB973B900EEB257 /* InstantTests.swift */; };
+		31CB22CD2FB973BD00EEB257 /* InstantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22CB2FB973B900EEB257 /* InstantTests.swift */; };
+		31CB22CE2FB973BD00EEB257 /* InstantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22CB2FB973B900EEB257 /* InstantTests.swift */; };
+		31CB22CF2FB973BD00EEB257 /* InstantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22CB2FB973B900EEB257 /* InstantTests.swift */; };
+		31CB22D02FB973BD00EEB257 /* InstantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB22CB2FB973B900EEB257 /* InstantTests.swift */; };
 		31D83FCE20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */; };
 		31D83FCF20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */; };
 		31D83FD020D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */; };
@@ -726,6 +736,8 @@
 		31B51E8B2434FECB005356DB /* RequestModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModifierTests.swift; sourceTree = "<group>"; };
 		31BADE4D2439A8D1007D2AB9 /* CombineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineTests.swift; sourceTree = "<group>"; };
 		31BC5E792B7E75770069BDEF /* Package@swift-5.9.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Package@swift-5.9.swift"; sourceTree = "<group>"; };
+		31CB22C52FB96FA000EEB257 /* Instant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instant.swift; sourceTree = "<group>"; };
+		31CB22CB2FB973B900EEB257 /* InstantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstantTests.swift; sourceTree = "<group>"; };
 		31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLConvertible+URLRequestConvertible.swift"; sourceTree = "<group>"; };
 		31DADDFA224811ED0051390F /* AlamofireExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireExtended.swift; sourceTree = "<group>"; };
 		31E021522E5BCF1900EEB257 /* OfflineRetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRetrierTests.swift; sourceTree = "<group>"; };
@@ -960,6 +972,7 @@
 		31B6FE482B65812D003673E3 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				31CB22C52FB96FA000EEB257 /* Instant.swift */,
 				4C1DC8531B68908E00476DE3 /* AFError.swift */,
 				318702F12B0AEE3700C10A8C /* DataRequest.swift */,
 				318702FD2B0AEF1D00C10A8C /* DataStreamRequest.swift */,
@@ -1043,6 +1056,7 @@
 		4C256A4E1B09656A0065714F /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				31CB22CB2FB973B900EEB257 /* InstantTests.swift */,
 				F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */,
 				3106FB6423F8D9E0007FAB43 /* DataStreamTests.swift */,
 				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
@@ -1800,6 +1814,7 @@
 				31293083263E184500473CEA /* NetworkReachabilityManagerTests.swift in Sources */,
 				3129308E263E184500473CEA /* CachedResponseHandlerTests.swift in Sources */,
 				31293087263E184500473CEA /* RedirectHandlerTests.swift in Sources */,
+				31CB22CE2FB973BD00EEB257 /* InstantTests.swift in Sources */,
 				31293089263E184500473CEA /* ServerTrustEvaluatorTests.swift in Sources */,
 				31E382E126477307004533B3 /* WebSocketTests.swift in Sources */,
 				3129307D263E183C00473CEA /* DataStreamTests.swift in Sources */,
@@ -1829,6 +1844,7 @@
 				317338CF2A43A51100D4EA0A /* Notifications.swift in Sources */,
 				317338D02A43A51100D4EA0A /* ParameterEncoder.swift in Sources */,
 				318703082B0AEF4B00C10A8C /* DownloadRequest.swift in Sources */,
+				31CB22CA2FB96FAA00EEB257 /* Instant.swift in Sources */,
 				317338D12A43A51100D4EA0A /* ParameterEncoding.swift in Sources */,
 				317338D22A43A51100D4EA0A /* Protected.swift in Sources */,
 				317338D32A43A51100D4EA0A /* Request.swift in Sources */,
@@ -1901,6 +1917,7 @@
 				317339142A43BE9000D4EA0A /* CachedResponseHandlerTests.swift in Sources */,
 				317339152A43BE9000D4EA0A /* CacheTests.swift in Sources */,
 				317339162A43BE9000D4EA0A /* CombineTests.swift in Sources */,
+				31CB22CC2FB973BD00EEB257 /* InstantTests.swift in Sources */,
 				317339172A43BE9000D4EA0A /* ConcurrencyTests.swift in Sources */,
 				317339182A43BE9000D4EA0A /* HTTPHeadersTests.swift in Sources */,
 				317339192A43BE9000D4EA0A /* MultipartFormDataTests.swift in Sources */,
@@ -1930,6 +1947,7 @@
 				31B3DE3D25C11CEA00760641 /* Concurrency.swift in Sources */,
 				319917A7209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				318703062B0AEF4B00C10A8C /* DownloadRequest.swift in Sources */,
+				31CB22C72FB96FAA00EEB257 /* Instant.swift in Sources */,
 				4CF627131BA7CBF60011A099 /* Validation.swift in Sources */,
 				31F5085F20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
 				4196936422FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */,
@@ -2002,6 +2020,7 @@
 				3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2182220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
+				31CB22D02FB973BD00EEB257 /* InstantTests.swift in Sources */,
 				31FEC68E26225A54009D17DB /* WebSocketTests.swift in Sources */,
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
@@ -2031,6 +2050,7 @@
 				31B3DE3C25C11CEA00760641 /* Concurrency.swift in Sources */,
 				31D83FCF20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				318703052B0AEF4B00C10A8C /* DownloadRequest.swift in Sources */,
+				31CB22C82FB96FAA00EEB257 /* Instant.swift in Sources */,
 				319917A6209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */,
 				31F5085E20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
@@ -2081,6 +2101,7 @@
 				31B3DE3E25C11CEA00760641 /* Concurrency.swift in Sources */,
 				31D83FD120D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				318703072B0AEF4B00C10A8C /* DownloadRequest.swift in Sources */,
+				31CB22C92FB96FAA00EEB257 /* Instant.swift in Sources */,
 				319917A8209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */,
 				31F5086020B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
@@ -2131,6 +2152,7 @@
 				31B3DE3B25C11CEA00760641 /* Concurrency.swift in Sources */,
 				31D83FCE20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				318703042B0AEF4B00C10A8C /* DownloadRequest.swift in Sources */,
+				31CB22C62FB96FAA00EEB257 /* Instant.swift in Sources */,
 				319917A5209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */,
 				31F5085D20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
@@ -2203,6 +2225,7 @@
 				3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2180220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
+				31CB22CD2FB973BD00EEB257 /* InstantTests.swift in Sources */,
 				31FEC68C26225A54009D17DB /* WebSocketTests.swift in Sources */,
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
@@ -2254,6 +2277,7 @@
 				3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2181220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,
+				31CB22CF2FB973BD00EEB257 /* InstantTests.swift in Sources */,
 				31FEC68D26225A54009D17DB /* WebSocketTests.swift in Sources */,
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
