@@ -1,18 +1,34 @@
 //
 //  WebSocketTests.swift
-//  Alamofire
 //
-//  Created by Jon Shier on 1/17/21.
-//  Copyright © 2021 Alamofire. All rights reserved.
+//  Copyright (c) 2021-2026 Alamofire Software Foundation (http://alamofire.org/)
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 //
 
 #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
 
-@_spi(WebSocket) import Alamofire
+import Alamofire
 import Foundation
+import Testing
 import XCTest
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class WebSocketTests: BaseTestCase {
     func testThatWebSocketsCanReceiveMessageEvents() {
         // Given
@@ -20,7 +36,7 @@ final class WebSocketTests: BaseTestCase {
         let didReceiveMessage = expectation(description: "didReceiveMessage")
         let didDisconnect = expectation(description: "didDisconnect")
         let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let session = stored(Session(eventMonitors: [NSLoggingEventMonitor()]))
 
         var connectedProtocol: String?
         var message: URLSessionWebSocketTask.Message?
@@ -151,7 +167,7 @@ final class WebSocketTests: BaseTestCase {
             case let .receivedMessage(receivedMessage):
                 message = receivedMessage
                 didReceiveMessage.fulfill()
-            case let .serializerFailed(error):
+            case let .decoderFailed(error):
                 XCTFail("websocket message serialization failed with error: \(error)")
             case let .disconnected(code, reason):
                 closeCode = code
@@ -342,6 +358,62 @@ final class WebSocketTests: BaseTestCase {
         XCTAssertNil(receivedCompletion?.error)
     }
 
+    func testThatWebSocketsCanSendAndReceiveCodableMessages() {
+        // Given
+        let didConnect = expectation(description: "didConnect")
+        let didSend = expectation(description: "didSend")
+        let didReceiveMessage = expectation(description: "didReceiveMessage")
+        let didDisconnect = expectation(description: "didDisconnect")
+        let didComplete = expectation(description: "didComplete")
+        let session = stored(Session())
+        struct CodableMessage: Equatable, Codable {
+            var field = "value"
+        }
+        let sentMessage = CodableMessage()
+
+        var connectedProtocol: String?
+        var receivedMessage: CodableMessage?
+        var closeCode: URLSessionWebSocketTask.CloseCode?
+        var closeReason: Data?
+        var receivedCompletion: WebSocketRequest.Completion?
+
+        // When
+        let request = session.webSocketRequest(.websocketEcho)
+        request.streamDecodableEvents(CodableMessage.self) { [unowned request] event in
+            switch event.kind {
+            case let .connected(`protocol`):
+                connectedProtocol = `protocol`
+                didConnect.fulfill()
+                request.send(sentMessage) { _ in didSend.fulfill() }
+            case let .receivedMessage(message):
+                receivedMessage = message
+                event.close(sending: .normalClosure)
+                didReceiveMessage.fulfill()
+            case let .disconnected(code, reason):
+                closeCode = code
+                closeReason = reason
+                didDisconnect.fulfill()
+            case let .completed(completion):
+                receivedCompletion = completion
+                didComplete.fulfill()
+            case let .decoderFailed(error):
+                XCTFail("Failed to decode message due to error: \(error) ")
+            }
+        }
+
+        wait(for: [didConnect, didSend, didReceiveMessage, didDisconnect, didComplete],
+             timeout: timeout,
+             enforceOrder: true)
+
+        // Then
+        XCTAssertNil(connectedProtocol)
+        XCTAssertNotNil(receivedMessage)
+        XCTAssertEqual(sentMessage, receivedMessage)
+        XCTAssertEqual(closeCode, .normalClosure)
+        XCTAssertNil(closeReason)
+        XCTAssertNil(receivedCompletion?.error)
+    }
+
     func testThatWebSocketsCanBeCancelled() {
         // Given
         let didConnect = expectation(description: "didConnect")
@@ -375,6 +447,40 @@ final class WebSocketTests: BaseTestCase {
         XCTAssertNil(connectedProtocol)
         XCTAssertTrue(receivedCompletion?.error?.isExplicitlyCancelledError == true)
         XCTAssertTrue(request.error?.isExplicitlyCancelledError == true)
+    }
+
+    func testThatWebSocketsWithPendingSendsCompleteTheSendsOnCancellation() {
+        // Given
+        let didComplete = expectation(description: "didComplete")
+        let didSend = expectation(description: "didSend")
+        let session = stored(Session(startRequestsImmediately: false))
+
+        var receivedSendResult: Result<Void, WebSocketRequest.SendError<Never>>?
+        var receivedCompletion: WebSocketRequest.Completion?
+
+        // When
+        let request = session.webSocketRequest(.websocketEcho)
+        request.streamMessageEvents { [unowned request] event in
+            switch event.kind {
+            case let .completed(completion):
+                receivedCompletion = completion
+                didComplete.fulfill()
+            default:
+                break
+            }
+        }
+        request.send("hello") { result in
+            receivedSendResult = result
+            didSend.fulfill()
+        }
+        request.cancel()
+
+        wait(for: [didSend, didComplete], timeout: timeout, enforceOrder: true)
+
+        // Then
+        XCTAssertTrue(receivedCompletion?.error?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(request.error?.isExplicitlyCancelledError == true)
+        XCTAssertEqual(receivedSendResult?.failure?.failedState, .cancelled)
     }
 
     func testOnePingOnly() {
@@ -688,7 +794,34 @@ final class WebSocketIntegrationTests: BaseTestCase {
     }
 }
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@Suite
+struct WebSocketConcurrencyTests {
+    @Test
+    func messageEventsCanBeStreamed() async {
+        // Given
+        let session = Session()
+
+        // When
+        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
+
+        // Then
+        #expect(events.count == 4)
+    }
+
+    @Test
+    func messagesCanBeStreamed() async {
+        // Given
+        let session = Session()
+
+        // When
+        let messages = await session.webSocketRequest(.websocket()).streamingMessages().collect()
+
+        // Then
+        XCTAssertTrue(messages.count == 1)
+    }
+}
+
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension WebSocketRequest {
     @discardableResult
     func onCompletion(queue: DispatchQueue = .main, handler: @escaping @Sendable () -> Void) -> Self {
@@ -700,7 +833,7 @@ extension WebSocketRequest {
     }
 }
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension Foundation.URLSessionWebSocketTask.Message: Swift.Equatable {
     public static func ==(lhs: URLSessionWebSocketTask.Message, rhs: URLSessionWebSocketTask.Message) -> Bool {
         switch (lhs, rhs) {
@@ -727,7 +860,7 @@ extension Foundation.URLSessionWebSocketTask.Message: Swift.Equatable {
 }
 
 extension Session {
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func webSocketRequest(_ endpoint: Endpoint,
                           configuration: WebSocketRequest.Configuration = .default,
                           interceptor: (any RequestInterceptor)? = nil) -> WebSocketRequest {
@@ -736,5 +869,39 @@ extension Session {
                          interceptor: interceptor)
     }
 }
+
+// import Testing
+//
+// @Suite
+// struct WebSocketRequestTesting {
+//    @Test
+//    func echoThroughput() async throws {
+//        let session = Session()
+//
+//        let start = CFAbsoluteTimeGetCurrent()
+//        let socket = session.webSocketRequest(.websocketEcho)
+//        var count = 0
+//        let incoming = Task { [unowned socket] in
+//            for await event in socket.webSocketTask().streamingMessageEvents() {
+//                switch event.kind {
+//                case let .receivedMessage(message):
+//                    count += 1
+//                    socket.send(message) { _ in }
+//                default:
+//                    break
+//                }
+//            }
+//        }
+//
+//        socket.send(.data(Data("hello".utf8))) { _ in }
+//
+//        try await Task.sleep(for: .seconds(5))
+//        socket.close(sending: .goingAway)
+//        await incoming.value
+//        let end = CFAbsoluteTimeGetCurrent()
+//        let duration = end - start
+//        print("\(Double(count) / duration) messages / s")
+//    }
+// }
 
 #endif

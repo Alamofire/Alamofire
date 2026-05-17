@@ -46,6 +46,18 @@ public class Request: @unchecked Sendable {
         /// enqueued on their respective queues.
         case finished
 
+        var isResumed: Bool {
+            self == .resumed
+        }
+
+        var isCancelled: Bool {
+            self == .cancelled
+        }
+
+        var isFinished: Bool {
+            self == .finished
+        }
+
         /// Determines whether `self` can be transitioned to the provided `State`.
         func canTransitionTo(_ state: State) -> Bool {
             switch (self, state) {
