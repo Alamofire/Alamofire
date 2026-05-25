@@ -25,7 +25,7 @@
 #if canImport(Darwin)
 import Darwin
 #elseif canImport(Glibc)
-import LibC
+import Glibc
 #elseif canImport(FoundationEssentials)
 // Platforms that don't have clock_gettime.
 import FoundationEssentials
