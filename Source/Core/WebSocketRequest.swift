@@ -46,7 +46,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             case completed(Completion)
         }
 
-        weak var socket: WebSocketRequest?
+        public weak var socket: WebSocketRequest?
 
         public let kind: Kind
         public var message: Success? {
@@ -58,18 +58,6 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         init(socket: WebSocketRequest, kind: Kind) {
             self.socket = socket
             self.kind = kind
-        }
-
-        public func close(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data? = nil) {
-            socket?.close(sending: closeCode, reason: reason)
-        }
-
-        public func cancel() {
-            socket?.cancel()
-        }
-
-        public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping @Sendable (PingResponse) -> Void) {
-            socket?.sendPing(respondingOn: queue, onResponse: onResponse)
         }
     }
 
@@ -85,10 +73,29 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     }
 
     public struct Configuration {
+        public struct AutomaticPing {
+            public enum FailureAction {
+                /// Continue automatic pings.
+                case `continue`
+                /// Stop automatic ping after `count` failures.
+                case stopAutomaticPing(count: Int)
+                /// Cancel `WebSocketRequest` after `count` failures.
+                case cancelRequest(count: Int)
+            }
+
+            public var interval: Duration
+            public var failureAction: FailureAction
+
+            public init(interval: Duration = .seconds(5), failureAction: FailureAction = .continue) {
+                self.interval = interval
+                self.failureAction = failureAction
+            }
+        }
+
         public static var `default`: Self { Self() }
 
-        public static func `protocol`(_ protocol: String) -> Self {
-            Self(protocol: `protocol`)
+        public static func protocols(_ protocols: [String]) -> Self {
+            Self(protocols: protocols)
         }
 
         public static func maximumMessageSize(_ maximumMessageSize: Int) -> Self {
@@ -96,25 +103,25 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         }
 
         public static func pingInterval(_ pingInterval: TimeInterval) -> Self {
-            Self(pingInterval: pingInterval)
+            Self(automaticPing: .init(interval: .seconds(pingInterval)))
         }
 
-        public let `protocol`: String?
+        public let protocols: [String]
         public let maximumMessageSize: Int
-        public let pingInterval: TimeInterval?
+        public let automaticPing: AutomaticPing?
 
-        public init(protocol: String? = nil, maximumMessageSize: Int = 1_048_576, pingInterval: TimeInterval? = nil) {
-            self.protocol = `protocol`
+        public init(protocols: [String] = [], maximumMessageSize: Int = 1_048_576, automaticPing: AutomaticPing? = nil) {
+            self.protocols = protocols
             self.maximumMessageSize = maximumMessageSize
-            self.pingInterval = pingInterval
+            self.automaticPing = automaticPing
         }
     }
 
-    /// Response to a sent ping.
-    public enum PingResponse: Sendable {
+    /// Result of sending a ping.
+    public enum PingResult: Sendable {
+        /// Pong received from the server.
         public struct Pong: Sendable {
-            public let start: Date
-            public let end: Date
+            /// Interval between ping and pong.
             public let latency: TimeInterval
         }
 
@@ -122,14 +129,17 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         case pong(Pong)
         /// Received an error.
         case error(any Error)
-        /// Did not send the ping, the request is cancelled or suspended.
+        /// Did not send the ping, the request is suspended, cancelled, or finished.
         case unsent
+        /// An inflight ping was lost due to the request being cancelled or the connection closed.
+        case lost
     }
 
     struct SocketMutableState {
-        var enqueuedSends: [() -> Void] = []
-        var handlers: [(_ event: IncomingEvent) -> Void] = []
-        var pingTimerItem: DispatchWorkItem?
+        var enqueuedSends: [@Sendable () -> Void] = []
+        var handlers: [@Sendable (_ event: IncomingEvent) -> Void] = []
+        var automaticPingTimerItem: DispatchWorkItem?
+        var inflightPingHandlers: [UUID: (queue: DispatchQueue, handler: @Sendable (_ result: PingResult) -> Void)] = [:]
     }
 
     let socketMutableState = Protected(SocketMutableState())
@@ -166,22 +176,23 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
 
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
         var copiedRequest = request
-        let task: URLSessionWebSocketTask
-        if let `protocol` = configuration.protocol {
-            copiedRequest.headers.update(.websocketProtocol(`protocol`))
+        if !configuration.protocols.isEmpty {
+            copiedRequest.headers.update(.websocketProtocol(configuration.protocols.joined(separator: ", ")))
         }
-        task = session.webSocketTask(with: copiedRequest)
+        let task = session.webSocketTask(with: copiedRequest)
         task.maximumMessageSize = configuration.maximumMessageSize
 
         return task
     }
 
-//    override func cleanup() {
-//        socketMutableState.write { socketMutableState in
-//            socketMutableState.enqueuedSends = []
-//            socketMutableState.handlers = []
-//        }
-//    }
+    override func cleanup() {
+        socketMutableState.write { socketMutableState in
+            socketMutableState.cancelAutomaticPing()
+            socketMutableState = .init()
+        }
+
+        super.cleanup()
+    }
 
     override func didCreateTask(_ task: URLSessionTask) {
         // Can only close previous socket by canceling, which would close that connection.
@@ -197,11 +208,12 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         startListening()
 
         performEnqueuedSends()
+        // TODO: Enqueue pings?
     }
 
     private func performEnqueuedSends() {
         // Empty pending messages.
-        let enqueuedSends: [() -> Void] = socketMutableState.write { socketMutableState in
+        let enqueuedSends: [@Sendable () -> Void] = socketMutableState.write { socketMutableState in
             guard !socketMutableState.enqueuedSends.isEmpty else { return [] }
 
             let sends = socketMutableState.enqueuedSends
@@ -286,14 +298,14 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             }
         }
 
-        if let pingInterval = configuration.pingInterval {
-            startAutomaticPing(every: pingInterval)
+        if let automaticPing = configuration.automaticPing {
+            startAutomaticPing(every: automaticPing.interval)
         }
     }
 
     func startAutomaticPing(every pingInterval: TimeInterval) {
         withBothStates { mutableState, socketMutableState in
-            guard mutableState.state.isResumed else {
+            guard mutableState.state.is(.resumed) else {
                 socketMutableState.cancelAutomaticPing()
                 return
             }
@@ -302,13 +314,14 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                 guard let self else { return }
 
                 sendPing(respondingOn: underlyingQueue) { response in
+                    // TODO: Use configuration to determine behavior.
                     guard case .pong = response else { return }
 
                     self.startAutomaticPing(every: pingInterval)
                 }
             }
 
-            socketMutableState.pingTimerItem = item
+            socketMutableState.automaticPingTimerItem = item
             underlyingQueue.asyncAfter(deadline: .now() + pingInterval, execute: item)
         }
     }
@@ -358,26 +371,30 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
 
     // MARK: - Ping
 
-    public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping @Sendable (PingResponse) -> Void) {
-        withBothStates { mutableState, _ in
-            guard mutableState.state.isResumed else {
+    public func sendPing(respondingOn queue: DispatchQueue = .main, onResponse: @escaping @Sendable (PingResult) -> Void) {
+        withBothStates { mutableState, socketMutableState in
+            guard mutableState.state.is(.resumed) else {
                 queue.async { onResponse(.unsent) }
                 return
             }
 
-            let start = Date()
+            let sendID = UUID()
+            socketMutableState.inflightPingHandlers[sendID] = (queue: queue, handler: onResponse)
             let startTimestamp = Instant()
-            mutableState.socket?.sendPing { error in
+            mutableState.socket?.sendPing { [weak self] error in
+                guard let self else { return }
+
+                withBothStates { _, socketMutableState in
+                    socketMutableState.inflightPingHandlers.removeValue(forKey: sendID)
+                }
                 // Calls back on delegate queue / rootQueue / underlyingQueue
                 if let error {
                     queue.async {
                         onResponse(.error(error))
                     }
-                    // TODO: What to do with failed ping? Configure for failure, auto retry, or stop pinging?
                 } else {
-                    let end = Date()
                     let endTimestamp = Instant()
-                    let pong = PingResponse.Pong(start: start, end: end, latency: endTimestamp - startTimestamp)
+                    let pong = PingResult.Pong(latency: endTimestamp - startTimestamp)
 
                     queue.async {
                         onResponse(.pong(pong))
@@ -387,9 +404,17 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         }
     }
 
+    public func sendPing() async -> PingResult {
+        await withCheckedContinuation { continuation in
+            sendPing(respondingOn: .streamCompletionQueue(forRequestID: self.id)) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+
     // MARK: - Sending
 
-    public enum SendError<EncoderFailure>: Error {
+    public enum SendError<EncoderFailure>: Error where EncoderFailure: Error {
         /// Attempted to send while the request was in the associated invalid state. Message was dropped.
         case state(Request.State)
         /// Send failed due to the associated encoder error.
@@ -401,6 +426,16 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             guard case let .state(state) = self else { return nil }
 
             return state
+        }
+    }
+
+    // TODO: Need async sends to resume request?
+
+    public func send(_ data: Data) async -> Result<Void, SendError<Never>> {
+        await withCheckedContinuation { continuation in
+            resume().send(.data(data), queue: .streamCompletionQueue(forRequestID: self.id)) { result in
+                continuation.resume(returning: result)
+            }
         }
     }
 
@@ -438,7 +473,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         requestQueue.async { [self] in
             let socketResult: Result<URLSessionWebSocketTask?, SendError<MessageEncoder.Failure>>
             = withBothStates { mutableState, socketMutableState in
-                guard !(mutableState.state.isCancelled || mutableState.state.isFinished) else {
+                guard !(mutableState.state.is(.cancelled) || mutableState.state.is(.finished)) else {
                     return .failure(.state(mutableState.state))
                 }
 
@@ -487,7 +522,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         on queue: DispatchQueue = .main,
         handler: @escaping @Sendable (_ event: Event<Serializer.Output, Serializer.Failure>) -> Void
     ) -> Self where Serializer: WebSocketMessageDecoder {
-        forIncomingEvent { [unowned self] incomingEvent in
+        forIncomingEvent { [self] incomingEvent in
             let event: Event<Serializer.Output, Serializer.Failure>
             switch incomingEvent {
             case let .connected(`protocol`):
@@ -536,7 +571,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         on queue: DispatchQueue = .main,
         handler: @escaping @Sendable (_ event: Event<URLSessionWebSocketTask.Message, Never>) -> Void
     ) -> Self {
-        forIncomingEvent { [unowned self] incomingEvent in
+        forIncomingEvent { [self] incomingEvent in
             let event: Event<URLSessionWebSocketTask.Message, Never> = switch incomingEvent {
             case let .connected(`protocol`):
                 .init(socket: self, kind: .connected(protocol: `protocol`))
@@ -564,9 +599,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
 
     func forIncomingEvent(handler: @escaping @Sendable (IncomingEvent) -> Void) -> Self {
         socketMutableState.write { socketMutableState in
-            socketMutableState.handlers.append { [weak self] incomingEvent in
-                guard let self else { return }
-
+            socketMutableState.handlers.append { [self] incomingEvent in
                 serializationQueue.async {
                     handler(incomingEvent)
                 }
@@ -574,12 +607,24 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         }
 
         appendResponseSerializer {
-            self.responseSerializerDidComplete {
-                self.sendGroup.notify(queue: self.serializationQueue) {
-                    handler(.completed(.init(request: self.request,
-                                             response: self.response,
-                                             metrics: self.metrics,
-                                             error: self.error)))
+            self.responseSerializerDidComplete { [self] in
+                let request = request
+                let response = response
+                let metrics = metrics
+                let error = error
+                sendGroup.notify(queue: serializationQueue) {
+                    handler(.completed(.init(request: request,
+                                             response: response,
+                                             metrics: metrics,
+                                             error: error)))
+                }
+                let handlers = withBothStates { _, socketMutableState in
+                    let handlers = socketMutableState.inflightPingHandlers.values
+                    socketMutableState.inflightPingHandlers.removeAll()
+                    return handlers
+                }
+                for handler in handlers {
+                    handler.queue.async { handler.handler(.lost) }
                 }
             }
         }
@@ -587,8 +632,6 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         return self
     }
 }
-
-#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
 
 // MARK: - Concurrency
 
@@ -602,10 +645,12 @@ extension WebSocketRequest {
     ) -> EventStreamOf<URLSessionWebSocketTask.Message, Never> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy,
-                     transform: { $0 }) { onEvent in
-            self.streamMessageEvents(on: .streamCompletionQueue(forRequestID: self.id), handler: onEvent)
+                     transform: { $0 }) { [self] onEvent in
+            streamMessageEvents(on: .streamCompletionQueue(forRequestID: id), handler: onEvent)
         }
     }
+
+    // TODO: should we throw an error when stream can't be created due to the socket being finished?
 
     public func streamingMessages(
         automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
@@ -613,8 +658,8 @@ extension WebSocketRequest {
     ) -> StreamOf<URLSessionWebSocketTask.Message> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy,
-                     transform: { $0.message }) { onEvent in
-            self.streamMessageEvents(on: .streamCompletionQueue(forRequestID: self.id), handler: onEvent)
+                     transform: { $0.message }) { [self] onEvent in
+            streamMessageEvents(on: .streamCompletionQueue(forRequestID: id), handler: onEvent)
         }
     }
 
@@ -626,11 +671,11 @@ extension WebSocketRequest {
     ) -> EventStreamOf<Value, DecodableWebSocketMessageDecoder<Value>.Error> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy,
-                     transform: \.self) { onEvent in
-            self.streamDecodableEvents(Value.self,
-                                       using: decoder,
-                                       on: .streamCompletionQueue(forRequestID: self.id),
-                                       handler: onEvent)
+                     transform: \.self) { [self] onEvent in
+            streamDecodableEvents(Value.self,
+                                  using: decoder,
+                                  on: .streamCompletionQueue(forRequestID: id),
+                                  handler: onEvent)
         }
     }
 
@@ -642,11 +687,11 @@ extension WebSocketRequest {
     ) -> StreamOf<Value> {
         createStream(automaticallyCancelling: shouldAutomaticallyCancel,
                      bufferingPolicy: bufferingPolicy,
-                     transform: { $0.message }) { onEvent in
-            self.streamDecodableEvents(Value.self,
-                                       using: decoder,
-                                       on: .streamCompletionQueue(forRequestID: self.id),
-                                       handler: onEvent)
+                     transform: { $0.message }) { [self] onEvent in
+            streamDecodableEvents(Value.self,
+                                  using: decoder,
+                                  on: .streamCompletionQueue(forRequestID: id),
+                                  handler: onEvent)
         }
     }
 
@@ -656,9 +701,15 @@ extension WebSocketRequest {
         transform: @escaping @Sendable (_ event: WebSocketRequest.Event<Success, Failure>) -> Value?,
         forResponse onResponse: @Sendable @escaping (@escaping @Sendable (_ event: WebSocketRequest.Event<Success, Failure>) -> Void) -> Void
     ) -> StreamOf<Value> {
-        StreamOf(bufferingPolicy: bufferingPolicy) { [self] in
+        StreamOf(bufferingPolicy: bufferingPolicy) { [weak self] in
+            guard let self else { return }
+
             guard shouldAutomaticallyCancel,
-                  isInitialized || isResumed || isSuspended else { return }
+                  withBothStates({ mutableState, _ in
+                      mutableState.state.is(.initialized)
+                      || mutableState.state.is(.resumed)
+                      || mutableState.state.is(.suspended)
+                  }) else { return }
 
             cancel()
         } builder: { continuation in
@@ -674,8 +725,6 @@ extension WebSocketRequest {
         }
     }
 }
-
-#endif
 
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 public protocol WebSocketMessageDecoder<Output, Failure>: Sendable {
@@ -742,7 +791,7 @@ public struct DecodableWebSocketMessageDecoder<Value: Decodable & Sendable>: Web
 
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 public protocol WebSocketMessageEncoder<Input, Failure>: Sendable {
-    associatedtype Input
+    associatedtype Input: Sendable
     associatedtype Failure: Error
 
     func encode(_ input: Input) throws(Failure) -> URLSessionWebSocketTask.Message
@@ -778,8 +827,8 @@ extension JSONEncoder: DataEncoder {}
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension WebSocketRequest.SocketMutableState {
     mutating func cancelAutomaticPing() {
-        pingTimerItem?.cancel()
-        pingTimerItem = nil
+        automaticPingTimerItem?.cancel()
+        automaticPingTimerItem = nil
     }
 }
 

@@ -231,7 +231,7 @@ final class WebSocketTests: BaseTestCase {
         var receivedCompletion: WebSocketRequest.Completion?
 
         // When
-        session.webSocketRequest(.websocket(), configuration: .protocol(`protocol`)).streamMessageEvents { event in
+        session.webSocketRequest(.websocket(), configuration: .protocols([`protocol`])).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
                 connectedProtocol = `protocol`
@@ -255,6 +255,52 @@ final class WebSocketTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(connectedProtocol, `protocol`)
+        XCTAssertNotNil(message)
+        XCTAssertEqual(closeCode, .normalClosure)
+        XCTAssertNil(closeReason)
+        XCTAssertNil(receivedCompletion?.error)
+    }
+
+    func testThatWebSocketsCanReceiveAMessageGivenMultipleProtocols() {
+        // Given
+        let didConnect = expectation(description: "didConnect")
+        let didReceiveMessage = expectation(description: "didReceiveMessage")
+        let didDisconnect = expectation(description: "didDisconnect")
+        let didComplete = expectation(description: "didComplete")
+        let session = stored(Session())
+
+        let protocols = ["first", "second"]
+        var connectedProtocol: String?
+        var message: URLSessionWebSocketTask.Message?
+        var closeCode: URLSessionWebSocketTask.CloseCode?
+        var closeReason: Data?
+        var receivedCompletion: WebSocketRequest.Completion?
+
+        // When
+        session.webSocketRequest(.websocket(), configuration: .protocols(protocols)).streamMessageEvents { event in
+            switch event.kind {
+            case let .connected(`protocol`):
+                connectedProtocol = `protocol`
+                didConnect.fulfill()
+            case let .receivedMessage(receivedMessage):
+                message = receivedMessage
+                didReceiveMessage.fulfill()
+            case let .disconnected(code, reason):
+                closeCode = code
+                closeReason = reason
+                didDisconnect.fulfill()
+            case let .completed(completion):
+                receivedCompletion = completion
+                didComplete.fulfill()
+            }
+        }
+
+        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
+             timeout: timeout,
+             enforceOrder: true)
+
+        // Then
+        XCTAssertEqual(connectedProtocol, "first")
         XCTAssertNotNil(message)
         XCTAssertEqual(closeCode, .normalClosure)
         XCTAssertNil(closeReason)
@@ -333,7 +379,7 @@ final class WebSocketTests: BaseTestCase {
                 request.send(sentMessage) { _ in didSend.fulfill() }
             case let .receivedMessage(receivedMessage):
                 message = receivedMessage
-                event.close(sending: .normalClosure)
+                event.socket?.close(sending: .normalClosure)
                 didReceiveMessage.fulfill()
             case let .disconnected(code, reason):
                 closeCode = code
@@ -387,7 +433,7 @@ final class WebSocketTests: BaseTestCase {
                 request.send(sentMessage) { _ in didSend.fulfill() }
             case let .receivedMessage(message):
                 receivedMessage = message
-                event.close(sending: .normalClosure)
+                event.socket?.close(sending: .normalClosure)
                 didReceiveMessage.fulfill()
             case let .disconnected(code, reason):
                 closeCode = code
@@ -497,7 +543,7 @@ final class WebSocketTests: BaseTestCase {
 
         var connectedProtocol: String?
         var message: URLSessionWebSocketTask.Message?
-        var receivedPong: WebSocketRequest.PingResponse.Pong?
+        var receivedPong: WebSocketRequest.PingResult.Pong?
         var closeCode: URLSessionWebSocketTask.CloseCode?
         var closeReason: Data?
         var receivedCompletion: WebSocketRequest.Completion?
@@ -817,8 +863,65 @@ struct WebSocketConcurrencyTests {
         let messages = await session.webSocketRequest(.websocket()).streamingMessages().collect()
 
         // Then
-        XCTAssertTrue(messages.count == 1)
+        #expect(messages.count == 1)
     }
+
+    @Test
+    func finishedRequestsGetOnlyCompletionEvent() async {
+        // Given
+        let session = Session()
+
+        // When
+        let socket = session.webSocketRequest(.websocket())
+        let messages = await socket.streamingMessages().collect()
+
+        // Then
+        #expect(messages.count == 1)
+
+        // When: another listener is attached.
+        let moreMessages = await socket.streamingMessageEvents().collect()
+
+        // Then
+        #expect(moreMessages.count == 1)
+    }
+
+//    @Test
+//    func sendingBeforeListening() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let socket = session.webSocketRequest(.websocket())
+//        let send = await socket.send(Data("hello".utf8))
+//        #expect(send.isSuccess)
+//        let events = await socket.streamingMessageEvents().collect()
+//        let otherSend = await socket.send(Data("hello".utf8))
+//
+//        // Then
+//        #expect(events.count == 4)
+//    }
+//
+//    @Test
+//    func multiplePingsWithClose() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let socket = session.webSocketRequest(.websocketPings(count: 2))
+//        let eventStream = socket.streamingMessageEvents(automaticallyCancelling: false)
+////        async let _events = eventStream.collect()
+//        _ = await eventStream.first { if case .connected = $0.kind { true } else { false } }
+//        let firstPing = await socket.sendPing()
+//        let secondPing = await socket.sendPing()
+////        let events = await _events
+//        // Then
+////        #expect(events.count == 4)
+//        let isFirstPong = if case .pong = firstPing { true } else { false }
+//        let isSecondLost = if case .lost = secondPing { true } else { false }
+//        #expect(isFirstPong == true)
+//        #expect(isSecondLost == true)
+//        print(firstPing, secondPing)
+//    }
 }
 
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
@@ -869,39 +972,5 @@ extension Session {
                          interceptor: interceptor)
     }
 }
-
-// import Testing
-//
-// @Suite
-// struct WebSocketRequestTesting {
-//    @Test
-//    func echoThroughput() async throws {
-//        let session = Session()
-//
-//        let start = CFAbsoluteTimeGetCurrent()
-//        let socket = session.webSocketRequest(.websocketEcho)
-//        var count = 0
-//        let incoming = Task { [unowned socket] in
-//            for await event in socket.webSocketTask().streamingMessageEvents() {
-//                switch event.kind {
-//                case let .receivedMessage(message):
-//                    count += 1
-//                    socket.send(message) { _ in }
-//                default:
-//                    break
-//                }
-//            }
-//        }
-//
-//        socket.send(.data(Data("hello".utf8))) { _ in }
-//
-//        try await Task.sleep(for: .seconds(5))
-//        socket.close(sending: .goingAway)
-//        await incoming.value
-//        let end = CFAbsoluteTimeGetCurrent()
-//        let duration = end - start
-//        print("\(Double(count) / duration) messages / s")
-//    }
-// }
 
 #endif
