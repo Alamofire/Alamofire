@@ -62,7 +62,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "318E330D2419AD1C00BDE48F"
             BuildableName = "watchOS Example WatchKit App.app"
-            BlueprintName = "watchOS Example WatchKit App"
             ReferencedContainer = "container:watchOS Example.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -73,6 +72,9 @@
             isEnabled = "YES">
          </AdditionalOption>
       </AdditionalOptions>
+      <MetalAPIValidationSettings
+         isEnabled = "No">
+      </MetalAPIValidationSettings>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -86,7 +88,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "318E330D2419AD1C00BDE48F"
             BuildableName = "watchOS Example WatchKit App.app"
-            BlueprintName = "watchOS Example WatchKit App"
             ReferencedContainer = "container:watchOS Example.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

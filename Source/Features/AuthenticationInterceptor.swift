@@ -388,7 +388,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
             return
         }
 
-        mutableState.refreshTimestamps.append(Instant().value)
+        mutableState.refreshTimestamps.append(Instant().interval)
         mutableState.refreshState = .refreshing
 
         // Dispatch to queue to hop out of the lock in case authenticator.refresh is implemented synchronously.
@@ -409,7 +409,7 @@ public final class AuthenticationInterceptor<AuthenticatorType>: RequestIntercep
     private func isRefreshExcessive(insideLock mutableState: inout MutableState) -> Bool {
         guard let refreshWindow = mutableState.refreshWindow else { return false }
 
-        let refreshWindowMin = Instant().value - refreshWindow.interval
+        let refreshWindowMin = Instant().interval - refreshWindow.interval
 
         let refreshAttemptsWithinWindow = mutableState.refreshTimestamps.reduce(into: 0) { attempts, refreshTimestamp in
             guard refreshWindowMin <= refreshTimestamp else { return }
