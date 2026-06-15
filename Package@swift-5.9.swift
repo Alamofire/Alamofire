@@ -25,16 +25,16 @@
 
 import PackageDescription
 
-let package = Package(name: "Alamofire",
+let package = Package(name: "PfAlamofire",
                       platforms: [.macOS(.v10_13),
                                   .iOS(.v12),
                                   .tvOS(.v12),
                                   .watchOS(.v4)],
                       products: [
-                          .library(name: "Alamofire", targets: ["Alamofire"]),
-                          .library(name: "AlamofireDynamic", type: .dynamic, targets: ["Alamofire"])
+                          .library(name: "PfAlamofire", targets: ["PfAlamofire"]),
+                          .library(name: "PfAlamofireDynamic", type: .dynamic, targets: ["PfAlamofire"])
                       ],
-                      targets: [.target(name: "Alamofire",
+                      targets: [.target(name: "PfAlamofire",
                                         path: "Source",
                                         exclude: ["Info.plist"],
                                         resources: [.process("PrivacyInfo.xcprivacy")],
@@ -43,8 +43,8 @@ let package = Package(name: "Alamofire",
                                                                                             .macOS,
                                                                                             .tvOS,
                                                                                             .watchOS]))]),
-                                .testTarget(name: "AlamofireTests",
-                                            dependencies: ["Alamofire"],
+                                .testTarget(name: "PfAlamofireTests",
+                                            dependencies: ["PfAlamofire"],
                                             path: "Tests",
                                             exclude: ["Info.plist", "Test Plans"],
                                             resources: [.process("Resources")])],
