@@ -116,7 +116,7 @@ Due to these issues, Alamofire is unsupported on Linux, Windows, and Android. Pl
 ## Communication
 
 - If you **need help with making network requests** using Alamofire, use [Stack Overflow](https://stackoverflow.com/questions/tagged/alamofire) and tag `alamofire`.
-- If you need to **find or understand an API**, check [our documentation](http://alamofire.github.io/Alamofire/) or [Apple's documentation for `URLSession`](https://developer.apple.com/documentation/foundation/url_loading_system), on top of which Alamofire is built.
+- If you need to **find or understand an API**, check [our documentation](https://alamofire.github.io/Alamofire/) or [Apple's documentation for `URLSession`](https://developer.apple.com/documentation/foundation/url_loading_system), on top of which Alamofire is built.
 - If you need **help with an Alamofire feature**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
 - If you'd like to **discuss Alamofire best practices**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
 - If you'd like to **discuss a feature request**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
@@ -210,7 +210,7 @@ Before contributing to Alamofire, please read the instructions detailed in our [
 
 The following radars have some effect on the current implementation of Alamofire.
 
-- [`rdar://21349340`](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in the test case
+- [`rdar://21349340`](https://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in the test case
 - `rdar://26870455` - Background URL Session Configurations do not work in the simulator
 - `rdar://26849668` - Some URLProtocol APIs do not properly handle `URLRequest`
 
@@ -218,9 +218,9 @@ The following radars have some effect on the current implementation of Alamofire
 
 The following radars have been resolved over time after being filed against the Alamofire project.
 
-- [`rdar://26761490`](http://www.openradar.me/radar?id=5010235949318144) - Swift string interpolation causing memory leak with common usage.
+- [`rdar://26761490`](https://www.openradar.me/radar?id=5010235949318144) - Swift string interpolation causing memory leak with common usage.
   - (Resolved): 9/1/17 in Xcode 9 beta 6.
-- [`rdar://36082113`](http://openradar.appspot.com/radar?id=4942308441063424) - `URLSessionTaskMetrics` failing to link on watchOS 3.0+
+- [`rdar://36082113`](https://openradar.appspot.com/radar?id=4942308441063424) - `URLSessionTaskMetrics` failing to link on watchOS 3.0+
   - (Resolved): Just add `CFNetwork` to your linked frameworks.
 - `FB7624529` - `urlSession(_:task:didFinishCollecting:)` never called on watchOS
   - (Resolved): Metrics now collected on watchOS 7+.
@@ -233,7 +233,7 @@ Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu
 
 ## Credits
 
-Alamofire is owned and maintained by the [Alamofire Software Foundation](http://alamofire.org). You can follow them on Twitter at [@AlamofireSF](https://twitter.com/AlamofireSF) for project updates and releases.
+Alamofire is owned and maintained by the [Alamofire Software Foundation](https://alamofire.org). You can follow them on Twitter at [@AlamofireSF](https://twitter.com/AlamofireSF) for project updates and releases.
 
 ### Security Disclosure
 
