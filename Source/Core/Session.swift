@@ -1422,7 +1422,9 @@ extension Session: SessionStateProvider {
             }
         }
 
-        if immediatelyPerformCompletion { completion() }
+        if immediatelyPerformCompletion {
+            completion()
+        }
     }
 
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {

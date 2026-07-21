@@ -852,6 +852,7 @@ struct WebSocketConcurrencyTests {
 
         // Then
         #expect(events.count == 4)
+        #expect(events.map(\.case) == [.connected, .receivedMessage, .disconnected, .completed])
     }
 
     @Test
@@ -1431,6 +1432,7 @@ struct WebSocketConcurrencyTests {
     }
 
     @Test
+    @MainActor
     func webSocketsCanHaveMultipleHandlers() async {
         // Given
         let session = Session()
@@ -1570,6 +1572,20 @@ extension Session {
         webSocketRequest(performing: endpoint as (any URLRequestConvertible),
                          configuration: configuration,
                          interceptor: interceptor)
+    }
+}
+
+extension WebSocketRequest.Event {
+    fileprivate enum Case { case connected, receivedMessage, decoderFailed, disconnected, completed }
+
+    fileprivate var `case`: Case {
+        switch kind {
+        case .connected: .connected
+        case .receivedMessage: .receivedMessage
+        case .decoderFailed: .decoderFailed
+        case .disconnected: .disconnected
+        case .completed: .completed
+        }
     }
 }
 

@@ -61,7 +61,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         }
     }
 
-    public struct Completion: Sendable {
+    public struct Completion: Equatable, Sendable {
         /// Last `URLRequest` issued by the instance.
         public let request: URLRequest?
         /// Last `HTTPURLResponse` received by the instance.
@@ -932,5 +932,10 @@ extension WebSocketRequest.MutableState {
         }
     }
 }
+
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+extension WebSocketRequest.Event: Equatable where Success: Equatable, Failure: Equatable {}
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+extension WebSocketRequest.Event.Kind: Equatable where Success: Equatable, Failure: Equatable {}
 
 #endif
