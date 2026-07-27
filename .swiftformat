@@ -35,5 +35,7 @@
 --disable redundantSwiftTestingSuite
 --disable simplifyGenericConstraints
 --disable wrapFunctionBodies
+--disable wrapIfExpressionBodies
+--disable wrapIfStatementBodies
 --disable wrapMultilineStatementBraces
 --disable wrapPropertyBodies

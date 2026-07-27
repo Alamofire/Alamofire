@@ -242,30 +242,15 @@ struct Endpoint {
     static let upload: Endpoint = .init(path: .upload, method: .post, headers: [.contentType("application/octet-stream")])
 
     #if canImport(Darwin) && !canImport(FoundationNetworking)
-    static var defaultCloseDelay: Int64 {
-        if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-            0
-        } else if #available(macOS 11.3, iOS 14.5, tvOS 14.5, watchOS 7.4, *) {
-            // iOS 14.5 to 14.7 have a bug where immediate connection closure will drop messages, so delay close by 60
-            // milliseconds.
-            60
-        } else {
-            0
-        }
-    }
-
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    static func websocket(closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure, closeDelay: Int64 = defaultCloseDelay) -> Endpoint {
-        Endpoint(path: .websocket, queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
-                                                .init(name: "closeDelay", value: "\(closeDelay)")])
+    static func websocket(closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure) -> Endpoint {
+        Endpoint(path: .websocket, queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)")])
     }
 
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     static func websocketCount(_ count: Int = 2,
-                               closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure,
-                               closeDelay: Int64 = defaultCloseDelay) -> Endpoint {
-        Endpoint(path: .websocketCount(count), queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
-                                                            .init(name: "closeDelay", value: "\(closeDelay)")])
+                               closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure) -> Endpoint {
+        Endpoint(path: .websocketCount(count), queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)")])
     }
 
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
