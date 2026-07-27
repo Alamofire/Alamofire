@@ -90,7 +90,7 @@ GEM
       sassc (~> 2.1)
       sqlite3 (~> 1.3)
       xcinvoke (~> 0.3.0)
-    json (2.19.5)
+    json (2.19.9)
     liferaft (0.0.6)
     logger (1.7.0)
     mini_portile2 (2.8.9)
@@ -166,7 +166,7 @@ CHECKSUMS
   httpclient (2.9.0) sha256=4b645958e494b2f86c2f8a2f304c959baa273a310e77a2931ddb986d83e498c8
   i18n (1.14.8) sha256=285778639134865c5e0f6269e0b818256017e8cde89993fdfcbfb64d088824a5
   jazzy (0.15.4) sha256=d7766c62fe722b0b1b868c05e79be1fab3249ab2279435f3a0adcb1d955a3c4a
-  json (2.19.5) sha256=218a18553e4801d579ca7e0f5bc72bafd776d7397238a1fb4e74db5b0a812c59
+  json (2.19.9) sha256=9b9025b7cdddafa38d316eca0b2358488e42d417045c1b90d216a9fefe46b79a
   liferaft (0.0.6) sha256=631ec13c52d2e62851d4e761f5ff5e090ef26437f92dc451effa3f82fa5a5acd
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   mini_portile2 (2.8.9) sha256=0cd7c7f824e010c072e33f68bc02d85a00aeb6fce05bb4819c03dfd3c140c289
