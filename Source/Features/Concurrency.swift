@@ -759,6 +759,48 @@ extension DataStreamRequest {
     public func streamTask() -> DataStreamTask {
         DataStreamTask(request: self)
     }
+
+    /// Creates a streamlined `Stream` of `Data` chunks paired with their corresponding `HTTPURLResponse`.
+    ///
+    /// This provides a more ergonomic API compared to manually unwrapping `Stream` events. Each yielded tuple
+    /// contains the data chunk and the current HTTP response, allowing for cleaner iteration over streamed data.
+    ///
+    /// - Note: The same `HTTPURLResponse` instance will be paired with all data chunks received in the same
+    ///         response phase. Multipart responses will yield different response instances as new parts arrive.
+    ///
+    /// - Parameters:
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                when observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior. `.unbounded` by default.
+    ///
+    /// - Returns: A `StreamOf` yielding tuples of `(Data, HTTPURLResponse?)` where the response may be `nil` if not yet received.
+    public func streamDataAndResponse(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                                      bufferingPolicy: StreamOf<(Data, HTTPURLResponse?)>.BufferingPolicy = .unbounded)
+        -> StreamOf<(Data, HTTPURLResponse?)> {
+        StreamOf(bufferingPolicy: bufferingPolicy, 
+                 onTermination: shouldAutomaticallyCancel ? { [weak self] in self?.cancel() } : nil) { [weak self] continuation in
+            guard let self = self else { return }
+            var lastResponse: HTTPURLResponse?
+            
+            onHTTPResponse(on: .streamCompletionQueue(forRequestID: id)) { response in
+                lastResponse = response
+            }
+            
+            responseStream(on: .streamCompletionQueue(forRequestID: id)) { stream in
+                switch stream.event {
+                case .stream(let result):
+                    switch result {
+                    case .success(let data):
+                        continuation.yield((data, lastResponse))
+                    case .failure(let error):
+                        continuation.finish()
+                    }
+                case .complete:
+                    continuation.finish()
+                }
+            }
+        }
+    }
 }
 
 #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
@@ -893,6 +935,50 @@ extension WebSocketRequest {
         WebSocketTask(request: self)
     }
 }
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Session {
+    /// Creates a streamlined `Stream` of `Data` chunks with their responses for a given `URLConvertible`.
+    ///
+    /// This is a convenience method that creates a `DataStreamRequest` and returns a stream of `(Data, HTTPURLResponse?)`
+    /// tuples, providing a more ergonomic API compared to the traditional event-based streaming pattern.
+    ///
+    /// - Parameters:
+    ///   - convertible:               `URLConvertible` value to be converted into a `URLRequest`.
+    ///   - automaticallyCancelling:   `Bool` indicating whether the stream should automatically cancel when
+    ///                                observation stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior. `.unbounded` by default.
+    ///
+    /// - Returns: A `StreamOf` of `(Data, HTTPURLResponse?)` tuples representing data chunks and their responses.
+    public func stream(_ convertible: any URLConvertible,
+                       automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                       bufferingPolicy: StreamOf<(Data, HTTPURLResponse?)>.BufferingPolicy = .unbounded)
+        -> StreamOf<(Data, HTTPURLResponse?)> {
+        streamRequest(convertible)
+            .streamDataAndResponse(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy)
+    }
+
+    /// Creates a streamlined `Stream` of `Data` chunks with their responses for a given `URLRequestConvertible`.
+    ///
+    /// This is a convenience method that creates a `DataStreamRequest` and returns a stream of `(Data, HTTPURLResponse?)`
+    /// tuples, providing a more ergonomic API compared to the traditional event-based streaming pattern.
+    ///
+    /// - Parameters:
+    ///   - convertible:               `URLRequestConvertible` value to be converted into a `URLRequest`.
+    ///   - automaticallyCancelling:   `Bool` indicating whether the stream should automatically cancel when
+    ///                                observation stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior. `.unbounded` by default.
+    ///
+    /// - Returns: A `StreamOf` of `(Data, HTTPURLResponse?)` tuples representing data chunks and their responses.
+    public func stream(_ convertible: any URLRequestConvertible,
+                       automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                       bufferingPolicy: StreamOf<(Data, HTTPURLResponse?)>.BufferingPolicy = .unbounded)
+        -> StreamOf<(Data, HTTPURLResponse?)> {
+        streamRequest(convertible)
+            .streamDataAndResponse(automaticallyCancelling: shouldAutomaticallyCancel, bufferingPolicy: bufferingPolicy)
+    }
+}
+
 #endif
 
 extension DispatchQueue {
