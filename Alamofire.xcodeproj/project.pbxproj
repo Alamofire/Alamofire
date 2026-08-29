@@ -1461,7 +1461,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 2620;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					31293064263E17D600473CEA = {

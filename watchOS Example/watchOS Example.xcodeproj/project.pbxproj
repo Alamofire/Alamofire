@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,7 +11,7 @@
 		318E330F2419AD1C00BDE48F /* watchOS Example WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 318E330E2419AD1C00BDE48F /* watchOS Example WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		318E33152419AD1C00BDE48F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 318E33132419AD1C00BDE48F /* Interface.storyboard */; };
 		318E33172419AD1C00BDE48F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 318E33162419AD1C00BDE48F /* Assets.xcassets */; };
-		318E331E2419AD1D00BDE48F /* watchOS Example WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 318E331D2419AD1D00BDE48F /* watchOS Example WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		318E331E2419AD1D00BDE48F /* watchOS Example WatchKit Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 318E331D2419AD1D00BDE48F /* watchOS Example WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		318E33232419AD1D00BDE48F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318E33222419AD1D00BDE48F /* ContentView.swift */; };
 		318E33252419AD1D00BDE48F /* HostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318E33242419AD1D00BDE48F /* HostingController.swift */; };
 		318E33272419AD1D00BDE48F /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318E33262419AD1D00BDE48F /* ExtensionDelegate.swift */; };
@@ -39,15 +39,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		318E33332419AD1D00BDE48F /* Embed App Extensions */ = {
+		318E33332419AD1D00BDE48F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				318E331E2419AD1D00BDE48F /* watchOS Example WatchKit Extension.appex in Embed App Extensions */,
+				318E331E2419AD1D00BDE48F /* watchOS Example WatchKit Extension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		318E33372419AD1D00BDE48F /* Embed Watch Content */ = {
@@ -188,7 +188,7 @@
 			buildConfigurationList = 318E33342419AD1D00BDE48F /* Build configuration list for PBXNativeTarget "watchOS Example WatchKit App" */;
 			buildPhases = (
 				318E330C2419AD1C00BDE48F /* Resources */,
-				318E33332419AD1D00BDE48F /* Embed App Extensions */,
+				318E33332419AD1D00BDE48F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -224,8 +224,9 @@
 		318E33042419AD1B00BDE48F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					318E33092419AD1B00BDE48F = {
