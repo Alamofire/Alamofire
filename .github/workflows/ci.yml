@@ -72,7 +72,12 @@ jobs:
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test 2>&1
+        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -resultBundlePath "${{ matrix.name }}.xcresult" clean test
+      - name: Upload Result File
+        if: ${{ failure() }}
+        with:
+          name: "${{ matrix.name }}.xcresult"
+          path: "${{ matrix.name }}.xcresult"
   Catalyst:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
