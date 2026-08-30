@@ -127,7 +127,7 @@ jobs:
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" -testPlan macOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test
+        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" -testPlan iOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
