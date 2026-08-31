@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,6 +18,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		316ED03F3044C22300EEB257 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 31E4765F1C55DD5900968569 /* Alamofire.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 317338C42A43A4FA00D4EA0A;
+			remoteInfo = "Alamofire visionOS";
+		};
+		316ED0413044C22300EEB257 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 31E4765F1C55DD5900968569 /* Alamofire.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 317338F42A43BE5F00D4EA0A;
+			remoteInfo = "Alamofire visionOS Tests";
+		};
 		31AB09122733010700986A70 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 31E4765F1C55DD5900968569 /* Alamofire.xcodeproj */;
@@ -132,6 +146,8 @@
 				31E476741C55DD5900968569 /* Alamofire tvOS Tests.xctest */,
 				31E476761C55DD5900968569 /* Alamofire.framework */,
 				31AB09132733010700986A70 /* Alamofire watchOS Tests.xctest */,
+				316ED0403044C22300EEB257 /* Alamofire.framework */,
+				316ED0423044C22300EEB257 /* Alamofire visionOS Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -215,8 +231,9 @@
 		F8111DFD19A951050040E7D1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					F8111E0419A951050040E7D1 = {
@@ -250,6 +267,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		316ED0403044C22300EEB257 /* Alamofire.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Alamofire.framework;
+			remoteRef = 316ED03F3044C22300EEB257 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		316ED0423044C22300EEB257 /* Alamofire visionOS Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Alamofire visionOS Tests.xctest";
+			remoteRef = 316ED0413044C22300EEB257 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		31AB09132733010700986A70 /* Alamofire watchOS Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -409,7 +440,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
+				IPHONEOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -462,7 +496,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
+				IPHONEOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
