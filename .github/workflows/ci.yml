@@ -353,7 +353,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=27.0,,name=Apple Watch Series 11 (46mm)"
+          - destination: "OS=27.0,name=Apple Watch Series 11 (46mm)"
             name: "watchOS 27.0"
             xcode: "Xcode_27.0"
             runsOn: xcode-27
