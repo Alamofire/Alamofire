@@ -225,7 +225,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=27.0,name=Apple TV"
+          - destination: "OS=27.0,name=Apple TV 4K (3rd generation)"
             name: "tvOS 27.0"
             xcode: "Xcode_27.0"
             runsOn: xcode-27
