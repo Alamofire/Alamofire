@@ -246,7 +246,7 @@ public class DataRequest: Request, @unchecked Sendable {
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let start = ProcessInfo.processInfo.systemUptime
+            let start = Instant()
             let result: AFResult<Serializer.SerializedObject> = Result {
                 try responseSerializer.serialize(request: self.request,
                                                  response: self.response,
@@ -256,7 +256,7 @@ public class DataRequest: Request, @unchecked Sendable {
                 error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
 
-            let end = ProcessInfo.processInfo.systemUptime
+            let end = Instant()
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
