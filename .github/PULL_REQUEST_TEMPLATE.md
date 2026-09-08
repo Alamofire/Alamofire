@@ -11,3 +11,6 @@
 
 ### Testing Details :mag:
 <!-- Describe what tests you've added for your changes. -->
+
+### AI Disclosure :robot:
+<!-- In your own words, describe how AI was used in this PR. If it wasn't used, feel free to delete this section. -->

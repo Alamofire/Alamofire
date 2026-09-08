@@ -333,7 +333,7 @@ public final class CompositeEventMonitor: EventMonitor {
         _monitors = Protected(monitors)
     }
 
-    func performEvent(_ event: sending @escaping (any EventMonitor) -> Void) {
+    func performEvent(_ event: @Sendable @escaping (any EventMonitor) -> Void) {
         _monitors.read { monitors in
             for monitor in monitors {
                 monitor.queue.async { event(monitor) }
