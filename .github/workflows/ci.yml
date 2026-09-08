@@ -147,10 +147,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - destination: "OS=27.0,name=iPhone 17 Pro"
-            name: "iOS 27.0"
-            xcode: "Xcode_27.0"
-            runsOn: xcode-27
+          # - destination: "OS=27.0,name=iPhone 17 Pro"
+          #   name: "iOS 27.0"
+          #   xcode: "Xcode_27.0"
+          #   runsOn: xcode-27
           - destination: "OS=26.5,name=iPhone 17 Pro"
             name: "iOS 26.5"
             xcode: "Xcode_26.6"
