@@ -36,9 +36,11 @@ struct InstantTests {
     }
 
     @Test
-    func canComputeRealtimeDifference() {
+    func canComputeRealtimeDifference() async throws {
         // Given: two incrementing instances.
         let start = Instant()
+        // Ensure interval hits minimum precision.
+        try await Task.sleep(for: .microseconds(1))
         let finish = Instant()
 
         // When: difference is calculated.

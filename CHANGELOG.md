@@ -6,7 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
-- `5.12.x` Releases - [5.12.0](#5120)
+- `5.12.x` Releases - [5.12.0](#5120) | [5.12.1](#5121)
 - `5.11.x` Releases - [5.11.0](#5110) | [5.11.1](#5111) | [5.11.2](#5112)
 - `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101) | [5.10.2](#5102)
 - `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
@@ -60,6 +60,18 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 ---
 
+## [5.12.1](https://github.com/Alamofire/Alamofire/releases/tag/5.12.1
+
+Released on 2026-09-08. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/98?closed=1).
+
+### Added
+- `Instant`, a wrapper for `CLOCK_MONOTONIC_RAW`, to replace usage of `ProcessInfo.processInfo.systemUptime`, removing all privacy-impacting API usage.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#4051](https://github.com/Alamofire/Alamofire/pull/4051).
+
+### Updated
+- `Package.swift` for Swift 6.4. Alamofire (and Apple) now requires macOS 12, iOS 15, tvOS 15, and watchOS 9 (visionOS deployment target is unchanged).
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#4049](https://github.com/Alamofire/Alamofire/pull/4049).
+
 ## [5.12.0](https://github.com/Alamofire/Alamofire/releases/tag/5.12.0)
 
 Released on 2026-05-04. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/97?closed=1).
@@ -75,7 +87,7 @@ Released on 2026-05-04. All issues associated with this milestone can be found u
 ### Fixed
 - Rare race in `Request.suspend()` and `Request.cancel()` where the state update would be lost if it occurred before the task was created.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
-- `Request.cancel()` incorrect called `Request.finish()` when the underlying task was already `.completed`.
+- `Request.cancel()` incorrectly called `Request.finish()` when the underlying task was already `.completed`.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
 - Rare race in `Request.resume()` that could lead to multiple `URLSessionTask`s created.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#4030](https://github.com/Alamofire/Alamofire/pull/4030).
