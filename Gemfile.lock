@@ -88,13 +88,13 @@ GEM
       sassc (~> 2.1)
       sqlite3 (~> 1.3)
       xcinvoke (~> 0.3.0)
-    json (3.0.1)
+    json (2.21.2)
     liferaft (0.0.6)
     logger (1.7.0)
     mini_portile2 (2.8.9)
     minitest (5.27.0)
     molinillo (0.8.0)
-    mustache (1.1.3)
+    mustache (1.1.2)
     mutex_m (0.3.0)
     nanaimo (0.4.0)
     nap (1.1.0)
@@ -134,6 +134,8 @@ PLATFORMS
 DEPENDENCIES
   cocoapods
   jazzy
+  json (< 3.0)
+  mustache (= 1.1.2)
 
 CHECKSUMS
   CFPropertyList (3.0.8) sha256=2c99d0d980536d3d7ab252f7bd59ac8be50fbdd1ff487c98c949bb66bb114261
@@ -166,13 +168,13 @@ CHECKSUMS
   httpclient (2.9.0) sha256=4b645958e494b2f86c2f8a2f304c959baa273a310e77a2931ddb986d83e498c8
   i18n (1.15.2) sha256=00f9eb62412fe593b2a65a97daa75300d37abb8f7202ec748e94b6d46a9dd1b5
   jazzy (0.15.4) sha256=d7766c62fe722b0b1b868c05e79be1fab3249ab2279435f3a0adcb1d955a3c4a
-  json (3.0.1) sha256=c80f74a3570c3a310cd41c526904e7ef8363abdece4432f31fe97d812bc4a39e
+  json (2.21.2) sha256=1f1d3b7cf2b3ba1a69beca0bb6db13d5438b80bff3cd54cdaaa620b9b07c1c6a
   liferaft (0.0.6) sha256=631ec13c52d2e62851d4e761f5ff5e090ef26437f92dc451effa3f82fa5a5acd
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   mini_portile2 (2.8.9) sha256=0cd7c7f824e010c072e33f68bc02d85a00aeb6fce05bb4819c03dfd3c140c289
   minitest (5.27.0) sha256=2d3b17f8a36fe7801c1adcffdbc38233b938eb0b4966e97a6739055a45fa77d5
   molinillo (0.8.0) sha256=efbff2716324e2a30bccd3eba1ff3a735f4d5d53ffddbc6a2f32c0ca9433045d
-  mustache (1.1.3) sha256=75bdfeaa17e4af168fae2c262867b2992087aef39d8580965cb90d37a7d093c2
+  mustache (1.1.2) sha256=d420243400354da78ded2d81541b381ad8d94e8e9b95022d0d71d66f8ef36c00
   mutex_m (0.3.0) sha256=cfcb04ac16b69c4813777022fdceda24e9f798e48092a2b817eb4c0a782b0751
   nanaimo (0.4.0) sha256=faf069551bab17f15169c1f74a1c73c220657e71b6e900919897a10d991d0723
   nap (1.1.0) sha256=949691660f9d041d75be611bb2a8d2fd559c467537deac241f4097d9b5eea576
