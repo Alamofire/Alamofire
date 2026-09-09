@@ -64,6 +64,10 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 Released on 2026-09-08. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/98?closed=1).
 
+### Added
+- `Instant`, a wrapper for `CLOCK_MONOTONIC_RAW`, to replace usage of `ProcessInfo.processInfo.systemUptime`, removing all privacy-impacting API usage.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#4051](https://github.com/Alamofire/Alamofire/pull/4051).
+
 ### Updated
 - `Package.swift` for Swift 6.4. Alamofire (and Apple) now requires macOS 12, iOS 15, tvOS 15, and watchOS 9 (visionOS deployment target is unchanged).
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#4049](https://github.com/Alamofire/Alamofire/pull/4049).
