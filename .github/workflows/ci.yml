@@ -208,7 +208,7 @@ jobs:
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -testPlan iOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan iOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -270,7 +270,7 @@ jobs:
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -testPlan tvOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan tvOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -336,7 +336,7 @@ jobs:
       - name: Install Firewalk
         run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire visionOS" -destination "${{ matrix.destination }}" -testPlan visionOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire visionOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan visionOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -402,7 +402,7 @@ jobs:
       - name: Install Firewalk
         run: brew update && brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -testPlan watchOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan watchOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
