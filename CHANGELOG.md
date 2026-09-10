@@ -6,7 +6,7 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 
 #### 5.x Releases
 
-- `5.12.x` Releases - [5.12.0](#5120) | [5.12.1](#5121)
+- `5.12.x` Releases - [5.12.0](#5120) | [5.12.1](#5121) | [5.12.2](#5122)
 - `5.11.x` Releases - [5.11.0](#5110) | [5.11.1](#5111) | [5.11.2](#5112)
 - `5.10.x` Releases - [5.10.0](#5100) | [5.10.1](#5101) | [5.10.2](#5102)
 - `5.9.x`  Releases - [5.9.0](#590) | [5.9.1](#591)
@@ -59,6 +59,14 @@ Aside from features marked [🔥 Experimental 🔥], `Alamofire` adheres to [Sem
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.12.2](https://github.com/Alamofire/Alamofire/releases/tag/5.12.2
+
+Released on 2026-09-09. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/99?closed=1).
+
+### Added
+- Updated versioning. There are no functional changes in this release.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#4054](https://github.com/Alamofire/Alamofire/pull/4054).
 
 ## [5.12.1](https://github.com/Alamofire/Alamofire/releases/tag/5.12.1
 
