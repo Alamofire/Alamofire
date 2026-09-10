@@ -24,6 +24,7 @@
 
 import Alamofire
 import Foundation
+import XCTest
 
 extension AFError {
     // ParameterEncodingFailureReason
@@ -398,5 +399,175 @@ extension AFError.URLRequestValidationFailureReason {
     var isBodyDataInGETRequest: Bool {
         if case .bodyDataInGETRequest = self { return true }
         return false
+    }
+}
+
+// MARK: -
+
+final class AFErrorURLTests: BaseTestCase {
+    private let url = URL(string: "https://example.com/path")!
+    private let otherURL = URL(string: "https://example.com/other")!
+
+    // MARK: Underlying Network Errors
+
+    func testThatURLIsExtractedFromSessionTaskFailedURLError() {
+        // Given
+        let error = AFError.sessionTaskFailed(error: urlError(failingURL: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatSessionTaskFailedReturnsNilURLWhenUnderlyingErrorHasNoURL() {
+        // Given
+        let error = AFError.sessionTaskFailed(error: URLError(.timedOut))
+
+        // When, Then
+        XCTAssertNil(error.url)
+    }
+
+    func testThatURLIsExtractedFromSessionInvalidatedURLError() {
+        // Given
+        let error = AFError.sessionInvalidated(error: urlError(failingURL: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatSessionInvalidatedWithNilErrorReturnsNilURL() {
+        // Given
+        let error = AFError.sessionInvalidated(error: nil)
+
+        // When, Then
+        XCTAssertNil(error.url)
+    }
+
+    func testThatURLIsExtractedFromRequestAdaptationFailed() {
+        // Given
+        let error = AFError.requestAdaptationFailed(error: urlError(failingURL: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatURLIsExtractedFromCreateUploadableFailed() {
+        // Given
+        let error = AFError.createUploadableFailed(error: urlError(failingURL: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatURLIsExtractedFromCreateURLRequestFailed() {
+        // Given
+        let error = AFError.createURLRequestFailed(error: urlError(failingURL: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    // MARK: Retry Failures
+
+    func testThatRequestRetryFailedReturnsURLFromRetryErrorOnly() {
+        // Given
+        let error = AFError.requestRetryFailed(retryError: urlError(failingURL: url),
+                                               originalError: urlError(failingURL: otherURL))
+
+        // When, Then
+        XCTAssertEqual(error.url, url, "url should come from the retryError, never the originalError")
+    }
+
+    func testThatRequestRetryFailedReturnsNilURLWhenRetryErrorHasNoURL() {
+        // Given
+        let error = AFError.requestRetryFailed(retryError: URLError(.cancelled),
+                                               originalError: urlError(failingURL: otherURL))
+
+        // When, Then
+        XCTAssertNil(error.url, "url should not fall back to the originalError")
+    }
+
+    // MARK: Foundation Error Bridging
+
+    func testThatURLIsExtractedFromNSErrorURLErrorKey() {
+        // Given
+        let underlying = NSError(domain: NSCocoaErrorDomain,
+                                 code: NSFileReadNoSuchFileError,
+                                 userInfo: [NSURLErrorKey: url])
+        let error = AFError.createURLRequestFailed(error: underlying)
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatURLIsExtractedFromNestedAFError() {
+        // Given
+        let nested = AFError.sessionTaskFailed(error: urlError(failingURL: url))
+        let error = AFError.requestRetryFailed(retryError: nested, originalError: URLError(.cancelled))
+
+        // When, Then
+        XCTAssertEqual(error.url, url, "url should resolve through nested AFErrors")
+    }
+
+    // MARK: Response Validation & Serialization
+
+    func testThatURLIsReturnedForResponseValidationDataFileReadFailed() {
+        // Given
+        let error = AFError.responseValidationFailed(reason: .dataFileReadFailed(at: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatURLIsExtractedFromResponseValidationCustomValidationFailed() {
+        // Given
+        let error = AFError.responseValidationFailed(reason: .customValidationFailed(error: urlError(failingURL: url)))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatURLIsReturnedForResponseSerializationInputFileReadFailed() {
+        // Given
+        let error = AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatURLIsExtractedFromResponseSerializationDecodingFailed() {
+        // Given
+        let error = AFError.responseSerializationFailed(reason: .decodingFailed(error: urlError(failingURL: url)))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    // MARK: Preserved & Absent URLs
+
+    func testThatURLIsReturnedForMultipartEncodingFailed() {
+        // Given
+        let error = AFError.multipartEncodingFailed(reason: .bodyPartFileNotReachable(at: url))
+
+        // When, Then
+        XCTAssertEqual(error.url, url)
+    }
+
+    func testThatURLIsNilForErrorsWithoutAssociatedURL() {
+        // Given
+        let errors: [AFError] = [.explicitlyCancelled,
+                                 .invalidURL(url: "https://example.com"),
+                                 .sessionDeinitialized,
+                                 .urlRequestValidationFailed(reason: .bodyDataInGETRequest(Data()))]
+
+        // When, Then
+        for error in errors {
+            XCTAssertNil(error.url, "\(error) should not produce a URL")
+        }
+    }
+
+    // MARK: Helpers
+
+    private func urlError(failingURL: URL) -> URLError {
+        URLError(.timedOut, userInfo: [NSURLErrorFailingURLErrorKey: failingURL])
     }
 }
