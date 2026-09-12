@@ -32,65 +32,32 @@ import FoundationEssentials
 #endif
 
 struct Instant {
-    let seconds: Int
-    let nanoseconds: Int
+    let value: Double
 
-    var interval: Double {
-        Double(seconds) + Double(nanoseconds) / 1_000_000_000
-    }
-
-    /// TESTING ONLY!
-    init(seconds: Int, nanoseconds: Int) {
-        self.seconds = seconds
-        self.nanoseconds = nanoseconds
+    init(_ value: Double) {
+        self.value = value
     }
 
     #if canImport(Darwin) || canImport(Glibc)
     init() {
         var time = timespec()
         clock_gettime(CLOCK_MONOTONIC_RAW, &time)
-        seconds = time.tv_sec
-        nanoseconds = time.tv_nsec
+        value = Double(time.tv_sec) + (Double(time.tv_nsec) / 1_000_000_000)
     } // swiftformat:disable:next blankLinesBetweenScopes
     #elseif canImport(FoundationEssentials)
     init() {
-        let interval = Date.now.timeIntervalSinceReferenceDate
-        seconds = interval.rounded(.towardZero)
-        nanoseconds = modf(interval).1
+        value = Date.now.timeIntervalSinceReferenceDate
     }
     #endif
 
-    static func -(lhs: Self, rhs: Self) -> Self {
-        var seconds = lhs.seconds - rhs.seconds
-        var nanoseconds = lhs.nanoseconds - rhs.nanoseconds
-        if nanoseconds < 0 {
-            seconds -= 1
-            nanoseconds += 1_000_000_000
-        }
-        return Self(seconds: seconds, nanoseconds: nanoseconds)
+    static func -(lhs: Instant, rhs: Instant) -> Double {
+        lhs.value - rhs.value
     }
 }
 
-extension Instant: Equatable {}
-
-extension Instant: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(seconds)
-        hasher.combine(nanoseconds)
-    }
-}
-
+extension Instant: Hashable {}
 extension Instant: CustomStringConvertible {
     var description: String {
-        // String(format:) would be simpler, but this is 10x faster, for fun.
-        var nanos = nanoseconds
-        var trailing = 0
-        while trailing < 8 && nanos % 10 == 0 {
-            nanos /= 10
-            trailing += 1
-        }
-        let digits = String(nanos)
-        let padding = String(repeating: "0", count: 9 - trailing - digits.count)
-        return "\(seconds).\(padding)\(digits)"
+        value.description
     }
 }

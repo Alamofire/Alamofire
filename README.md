@@ -1,6 +1,6 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/master/Resources/AlamofireLogo.png)
 
-[![Swift](https://img.shields.io/badge/Swift-6.0_6.1_6.2-orange?style=flat-square)](https://img.shields.io/badge/Swift-6.0_6.1_6.2-Orange?style=flat-square)
+[![Swift](https://img.shields.io/badge/Swift-6.0_6.1_6.2_6.3_6.4-orange?style=flat-square)](https://img.shields.io/badge/Swift-6.0_6.1_6.2_6.3_6.4-Orange?style=flat-square)
 [![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS_Linux_Windows_Android-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_vision_OS_Linux_Windows_Android-Green?style=flat-square)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square)](https://img.shields.io/cocoapods/v/Alamofire.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square)](https://github.com/Carthage/Carthage)
@@ -132,11 +132,11 @@ Once you have your Swift package set up, adding Alamofire as a dependency is as 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.11.0"))
+    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.12.0")
 ]
 ```
 
-Normally you'll want to depend on the `Alamofire` target:
+Normally you'll want to depend on the `Alamofire` target (or in Xcode, select just the Alamofire target to add):
 
 ```swift
 .product(name: "Alamofire", package: "Alamofire")
