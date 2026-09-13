@@ -465,6 +465,7 @@ extension Session {
                requestModifier: requestModifier)
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func webSocketRequest(_ endpoint: Endpoint,
                           configuration: WebSocketRequest.Configuration = .default,
@@ -473,6 +474,7 @@ extension Session {
                          configuration: configuration,
                          interceptor: interceptor)
     }
+    #endif
 }
 
 extension Data {
