@@ -393,7 +393,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
                                                 fileURL: self.fileURL,
                                                 resumeData: self.resumeData,
                                                 metrics: self.metrics,
-                                                serializationDuration: (end - start).interval,
+                                                serializationDuration: end - start,
                                                 result: result)
 
                 self.eventMonitor?.request(self, didParseResponse: response)
@@ -424,7 +424,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
                                                         fileURL: self.fileURL,
                                                         resumeData: self.resumeData,
                                                         metrics: self.metrics,
-                                                        serializationDuration: (end - start).interval,
+                                                        serializationDuration: end - start,
                                                         result: result)
 
                         didComplete = { completionHandler(response) }

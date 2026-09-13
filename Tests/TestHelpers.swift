@@ -464,6 +464,15 @@ extension Session {
                fileManager: fileManager,
                requestModifier: requestModifier)
     }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func webSocketRequest(_ endpoint: Endpoint,
+                          configuration: WebSocketRequest.Configuration = .default,
+                          interceptor: (any RequestInterceptor)? = nil) -> WebSocketRequest {
+        webSocketRequest(performing: endpoint as (any URLRequestConvertible),
+                         configuration: configuration,
+                         interceptor: interceptor)
+    }
 }
 
 extension Data {
@@ -476,7 +485,7 @@ extension Data {
     }
 }
 
-struct TestResponse: Decodable {
+struct TestResponse: Decodable, Equatable, Sendable {
     let headers: HTTPHeaders
     let origin: String
     let url: String

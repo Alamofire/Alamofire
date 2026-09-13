@@ -264,7 +264,7 @@ public class DataRequest: Request, @unchecked Sendable {
                                             response: self.response,
                                             data: self.data,
                                             metrics: self.metrics,
-                                            serializationDuration: (end - start).interval,
+                                            serializationDuration: end - start,
                                             result: result)
 
                 self.eventMonitor?.request(self, didParseResponse: response)
@@ -294,7 +294,7 @@ public class DataRequest: Request, @unchecked Sendable {
                                                     response: self.response,
                                                     data: self.data,
                                                     metrics: self.metrics,
-                                                    serializationDuration: (end - start).interval,
+                                                    serializationDuration: end - start,
                                                     result: result)
 
                         didComplete = { completionHandler(response) }

@@ -41,7 +41,10 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             case connected(protocol: String?)
             case receivedMessage(Success)
             case decoderFailed(Failure)
-            // Only received if the server disconnects or we cancel with code, not if we do a simple cancel or error.
+            /// Server disconnected or WebSocketRequest was cancelled with a specific code.
+            ///
+            /// - Note: This event is not received when cancelling without a code or when a error is produced.
+            ///
             case disconnected(closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
             case completed(Completion)
         }
@@ -399,7 +402,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                     }
                 } else {
                     let endTimestamp = Instant()
-                    let pong = PingResult.Pong(latency: (endTimestamp - startTimestamp).interval)
+                    let pong = PingResult.Pong(latency: endTimestamp - startTimestamp)
 
                     queue.async {
                         onResponse(.pong(pong))
@@ -865,7 +868,7 @@ public struct EncodableWebSocketMessageEncoder: WebSocketMessageEncoder {
         self.encoder = encoder
     }
 
-    public func encode(_ input: any Encodable) throws -> URLSessionWebSocketTask.Message {
+    public func encode(_ input: any Encodable & Sendable) throws -> URLSessionWebSocketTask.Message {
         try .data(encoder.encode(input))
     }
 }
