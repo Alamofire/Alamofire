@@ -614,20 +614,22 @@ struct WebSocketTests {
     }
 
     @Test
-    func webSocketsRespectBufferingPolicy() async throws {
+    func webSocketsRespectBufferingPolicy() async {
         // Given
         let session = Session()
 
-        // When
+        // When: multiple messages are received.
         let request = session.webSocketRequest(.websocketCount(5))
-        let stream = request.streamingMessageEvents(bufferingPolicy: .bufferingNewest(1))
-        // Give the socket time to receive and buffer every event before consuming any of them, ensuring the
-        // buffering policy actually drops older buffered elements rather than just keeping up in real time.
-        try await Task.sleep(for: .milliseconds(200))
-        let events = await stream.collect()
+        // When: a buffered stream is created.
+        let newestStream = request.streamingMessageEvents(bufferingPolicy: .bufferingNewest(1))
+        // When: another stream allows all events.
+        let allEvents = await request.streamingMessageEvents().collect()
+        // Then: events from the buffered stream are collected.
+        let events = await newestStream.collect()
 
         // Then
         #expect(events == [.completed(error: .nil)])
+        #expect(events.last == allEvents.last)
     }
 
 //    @Test
