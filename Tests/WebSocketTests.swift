@@ -29,7 +29,7 @@ import Foundation
 import Testing
 
 @Suite
-struct WebSocketConcurrencyTests {
+struct WebSocketTests {
     @Test
     func messageEventsCanBeStreamed() async {
         // Given
