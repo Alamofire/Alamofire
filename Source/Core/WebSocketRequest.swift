@@ -368,7 +368,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
 
     private func startListening() {
         withBothStates { mutableState, _ in
-            #if compiler(>=6.2.1)
+            #if compiler(>=6.2.3)
             weak let request = self
             #else
             weak var request = self
@@ -920,7 +920,7 @@ extension WebSocketRequest.MutableState {
                         handler(.receivedMessage(message))
                     }
 
-                    #if compiler(>=6.2.1)
+                    #if compiler(>=6.2.3)
                     weak let request = request
                     #else
                     weak var request = request
