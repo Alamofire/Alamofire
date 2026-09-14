@@ -392,9 +392,14 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             mutableState.socket?.sendPing { [weak self] error in
                 guard let self else { return }
 
-                withBothStates { _, socketMutableState in
-                    socketMutableState.inflightPingHandlers.removeValue(forKey: sendID)
+                let isStillInFlight = withBothStates { _, socketMutableState in
+                    socketMutableState.inflightPingHandlers.removeValue(forKey: sendID) != nil
                 }
+
+                // Only continue if we haven't previously removed the ping handler, otherwise we'll call the completion
+                // handler twice.
+                guard isStillInFlight else { return }
+
                 // Calls back on delegate queue / rootQueue / underlyingQueue
                 if let error {
                     queue.async {
