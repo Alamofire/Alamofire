@@ -170,8 +170,12 @@ struct WebSocketTests {
 
         // When
         let request = session.webSocketRequest(.websocket())
-        request.streamMessages { message in messages.write { $0.append(message) } }
-        _ = await request.streamingMessageEvents().collect()
+        await withCheckedContinuation { continuation in
+            request.streamMessages { message in
+                messages.write { $0.append(message) }
+                continuation.resume()
+            }
+        }
 
         // Then
         let received = messages.read { $0 }
@@ -186,8 +190,12 @@ struct WebSocketTests {
 
         // When
         let request = session.webSocketRequest(.websocketCount(1))
-        request.streamDecodable(TestResponse.self) { value in values.write { $0.append(value) } }
-        _ = await request.streamingMessageEvents().collect()
+        await withCheckedContinuation { continuation in
+            request.streamDecodable(TestResponse.self) { value in
+                values.write { $0.append(value) }
+                continuation.resume()
+            }
+        }
 
         // Then
         #expect(values.read { $0 }.count == 1)
