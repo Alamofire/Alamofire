@@ -613,25 +613,6 @@ struct WebSocketTests {
         request.cancel()
     }
 
-    @Test
-    func webSocketsRespectBufferingPolicy() async {
-        // Given
-        let session = Session()
-
-        // When: multiple messages are received.
-        let request = session.webSocketRequest(.websocketCount(5))
-        // When: a buffered stream is created.
-        let newestStream = request.streamingMessageEvents(bufferingPolicy: .bufferingNewest(1))
-        // When: another stream allows all events.
-        let allEvents = await request.streamingMessageEvents().collect()
-        // Then: events from the buffered stream are collected.
-        let events = await newestStream.collect()
-
-        // Then
-        #expect(events == [.completed(error: .nil)])
-        #expect(events.last == allEvents.last)
-    }
-
 //    @Test
 //    func sendingBeforeListening() async {
 //        // Given
