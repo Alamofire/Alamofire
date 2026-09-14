@@ -352,7 +352,8 @@ struct WebSocketTests {
 
         // When
         let request = session.webSocketRequest(.websocketEcho)
-        async let events = request.streamingMessageEvents().collect()
+        let stream = request.streamingMessageEvents()
+        async let events = stream.collect()
         async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send("hello")
         request.cancel()
         let (collectedEvents, receivedSendResult) = await (events, sendResult)
@@ -382,7 +383,8 @@ struct WebSocketTests {
                 request.close(sending: .normalClosure)
             }
         }
-        async let events = request.streamingMessageEvents().collect()
+        let stream = request.streamingMessageEvents()
+        async let events = stream.collect()
         async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send(sentMessage)
         request.resume()
         let (collectedEvents, receivedSendResult) = await (events, sendResult)
@@ -422,9 +424,9 @@ struct WebSocketTests {
         let session = Session()
 
         // When
-        // Attaching a stream is required to trigger the request's resume, since sending alone won't start it.
         let request = session.webSocketRequest(.websocketEcho)
-        async let events = request.streamingMessageEvents().collect()
+        let stream = request.streamingMessageEvents()
+        async let events = stream.collect()
         let result: Result<Void, WebSocketRequest.SendError<any Error>> = await request.send("hello", using: ThrowingEncoder())
         request.cancel()
         _ = await events
@@ -496,10 +498,6 @@ struct WebSocketTests {
         let session = Session()
 
         // When
-        // `resume()` synchronously flips the request into `.resumed`, but actual task creation happens
-        // asynchronously via the session, so the ping registered immediately afterward is guaranteed to be sent
-        // before any socket exists. It's therefore never actually dispatched to the OS and stays inflight until
-        // `cancel()` finishes the request, at which point it's drained and reported as `.lost`.
         let request = session.webSocketRequest(.websocketEcho)
         request.resume()
         request.streamMessageEvents { _ in }
@@ -565,8 +563,10 @@ struct WebSocketTests {
 
         // When
         let request = session.webSocketRequest(.websocket(closeCode: .goingAway))
-        async let firstEvents = request.streamingMessageEvents().collect()
-        async let secondEvents = request.streamingMessageEvents().collect()
+        let firstStream = request.streamingMessageEvents()
+        let secondStream = request.streamingMessageEvents()
+        async let firstEvents = firstStream.collect()
+        async let secondEvents = secondStream.collect()
         let (first, second) = await (firstEvents, secondEvents)
 
         // Then
