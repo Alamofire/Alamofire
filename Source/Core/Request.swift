@@ -29,7 +29,7 @@ import Foundation
 public class Request: @unchecked Sendable {
     /// State of the `Request`, with managed transitions between states set when calling `resume()`, `suspend()`, or
     /// `cancel()` on the `Request`.
-    public enum State {
+    public enum State: Sendable {
         /// Initial state of the `Request`.
         case initialized
         /// `State` set when `resume()` is called. Any tasks created for the `Request` will have `resume()` called on
@@ -45,6 +45,10 @@ public class Request: @unchecked Sendable {
         /// `State` set when all response serialization completion closures have been cleared on the `Request` and
         /// enqueued on their respective queues.
         case finished
+
+        func `is`(_ state: State) -> Bool {
+            self == state
+        }
 
         /// Determines whether `self` can be transitioned to the provided `State`.
         func canTransitionTo(_ state: State) -> Bool {

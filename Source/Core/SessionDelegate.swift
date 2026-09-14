@@ -288,7 +288,7 @@ extension SessionDelegate: URLSessionDataDelegate {
 
 #if canImport(Darwin) && !canImport(FoundationNetworking)
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension SessionDelegate: URLSessionWebSocketDelegate {
     open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         // TODO: Add event monitor method.

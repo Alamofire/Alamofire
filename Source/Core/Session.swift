@@ -517,8 +517,8 @@ open class Session: @unchecked Sendable {
     }
 
     #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    @_spi(WebSocket) open func webSocketRequest(
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func webSocketRequest(
         to url: any URLConvertible,
         configuration: WebSocketRequest.Configuration = .default,
         headers: HTTPHeaders? = nil,
@@ -537,8 +537,8 @@ open class Session: @unchecked Sendable {
         )
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    @_spi(WebSocket) open func webSocketRequest<Parameters>(
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func webSocketRequest<Parameters>(
         to url: any URLConvertible,
         configuration: WebSocketRequest.Configuration = .default,
         parameters: Parameters? = nil,
@@ -556,6 +556,7 @@ open class Session: @unchecked Sendable {
                                                       requestModifier: requestModifier)
         let request = WebSocketRequest(convertible: convertible,
                                        configuration: configuration,
+                                       requestQueue: requestQueue,
                                        underlyingQueue: rootQueue,
                                        serializationQueue: serializationQueue,
                                        eventMonitor: eventMonitor,
@@ -568,13 +569,14 @@ open class Session: @unchecked Sendable {
         return request
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    @_spi(WebSocket) open func webSocketRequest(performing convertible: any URLRequestConvertible,
-                                                configuration: WebSocketRequest.Configuration = .default,
-                                                interceptor: (any RequestInterceptor)? = nil,
-                                                shouldAutomaticallyResume: Bool? = nil) -> WebSocketRequest {
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func webSocketRequest(performing convertible: any URLRequestConvertible,
+                               configuration: WebSocketRequest.Configuration = .default,
+                               interceptor: (any RequestInterceptor)? = nil,
+                               shouldAutomaticallyResume: Bool? = nil) -> WebSocketRequest {
         let request = WebSocketRequest(convertible: convertible,
                                        configuration: configuration,
+                                       requestQueue: requestQueue,
                                        underlyingQueue: rootQueue,
                                        serializationQueue: serializationQueue,
                                        eventMonitor: eventMonitor,
@@ -1181,7 +1183,7 @@ open class Session: @unchecked Sendable {
                     case let r as DataStreamRequest: self.performDataStreamRequest(r)
                     default:
                         #if canImport(Darwin) && !canImport(FoundationNetworking)
-                        if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *),
+                        if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *),
                            let request = request as? WebSocketRequest {
                             self.performWebSocketRequest(request)
                         } else {
@@ -1209,7 +1211,7 @@ open class Session: @unchecked Sendable {
     }
 
     #if canImport(Darwin) && !canImport(FoundationNetworking)
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func performWebSocketRequest(_ request: WebSocketRequest) {
         dispatchPrecondition(condition: .onQueue(requestQueue))
 
@@ -1420,7 +1422,9 @@ extension Session: SessionStateProvider {
             }
         }
 
-        if immediatelyPerformCompletion { completion() }
+        if immediatelyPerformCompletion {
+            completion()
+        }
     }
 
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {

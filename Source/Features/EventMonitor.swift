@@ -96,6 +96,16 @@ public protocol EventMonitor: Sendable {
     /// Event called during `URLSessionDownloadDelegate`'s `urlSession(_:downloadTask:didFinishDownloadingTo:)` method.
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL)
 
+    // MARK: URLSessionWebSocketDelegate Events
+
+//    /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didOpenWithProtocol:)` method.
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?)
+//
+//    /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didCloseWith:reason:)` method.
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+
     // MARK: - Request Events
 
     /// Event called when a `URLRequest` is first created for a `Request`. If a `RequestAdapter` is active, the
@@ -220,7 +230,74 @@ public protocol EventMonitor: Sendable {
 
     /// Event called when a `DownloadRequest` calls a `DownloadResponseSerializer` and creates a generic `DownloadResponse<Value, AFError>`
     func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
+//
+//    // MARK: WebSocketRequest Events
+//
+//    /// Even called when a `WebSocketRequest` opens a connection with a particular protocol, if any.
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?)
+//
+//    /// Event called when a `WebSocketRequest` has been disconnected with a particular `CloseCode` and reason, if any.
+//    /// Not called if there was an error or if the connection was disconnected due task cancellation.
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+//
+    /// Event called when a `WebSocketRequest` is closed locally with a particular `CloseCode` and reason, if any.
+    /// Not called if there was an error or if the connection was disconnected due task cancellation.
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+//
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message)
+//
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func request<Success, Failure>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>)
+//
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message)
+//
+//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+//    func request<Value, Failure>(_ request: WebSocketRequest,
+//                                 didFailToSendMessage value: Value,
+//                                 dueToError error: WebSocketRequest.SendError<Failure>)
 }
+
+// │ 1 │ urlSession(_:webSocketTask:didOpenW │ URLSes │ SessionDelegate.didOpe │
+// │   │ ithProtocol:)                       │ sion   │ n                      │
+// │   │                                     │ delega │                        │
+// │   │                                     │ te     │                        │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 2 │ urlSession(_:webSocketTask:didClose │ URLSes │ SessionDelegate.didClo │
+// │   │ With:reason:)                       │ sion   │ se                     │
+// │   │                                     │ delega │                        │
+// │   │                                     │ te     │                        │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 3 │ request(_:didConnect:protocol:)     │ Lifecy │ WebSocketRequest.didCo │
+// │   │                                     │ cle    │ nnect                  │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 4 │ request(_:didDisconnect:closeCode:r │ Lifecy │ WebSocketRequest.didDi │
+// │   │ eason:)                             │ cle    │ sconnect               │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 5 │ request(_:willClose:reason:)        │ Lifecy │ WebSocketRequest.close │
+// │   │                                     │ cle    │ (sending:)             │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 6 │ request(_:didReceiveWebSocketMessag │ Messag │ MutableState.listen    │
+// │   │ e:)                                 │ es     │ success                │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 7 │ request(_:didSendWebSocketMessage:) │ Messag │ socket.send success    │
+// │   │                                     │ es     │ callback               │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 8 │ request(_:didFailToSendWebSocketMes │ Messag │ socket.send error      │
+// │   │ sage:withError:)                    │ es     │ callback               │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 9 │ request(_:didSendPingForWebSocket:) │ Ping/P │ sendPing before socket │
+// │   │                                     │ ong    │ ping                   │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 1 │ request(_:webSocket:didReceivePong: │ Ping/P │ sendPing pong callback │
+// │ 0 │ )                                   │ ong    │                        │
+// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
+// │ 1 │ request(_:webSocket:didFailPingWith │ Ping/P │ sendPing error         │
+// │ 1 │ Error:)
 
 extension EventMonitor {
     /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. `.main` by default.
