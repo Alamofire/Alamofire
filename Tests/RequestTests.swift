@@ -1308,6 +1308,52 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     }
 
     @MainActor
+    func testPOSTRequestWithCookiesDisabledHasCookieHeaderInCURLDescription() {
+        // Given
+        let url = Endpoint.method(.post).url
+        let cookieHeaders = HTTPCookie.requestHeaderFields(with: [
+            HTTPCookie(properties: [.domain: url.host as Any,
+                                    .path: url.path,
+                                    .name: "foo",
+                                    .value: "bar"])!,
+        ])
+        let expectation = expectation(description: "request should complete")
+        var cURLDescription: String?
+
+        // When
+        sessionDisallowingCookies.request(url, method: .post, headers: HTTPHeaders(cookieHeaders)).cURLDescription {
+            cURLDescription = $0
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(cURLDescription?.range(of: "-H \"Cookie: foo=bar\""))
+    }
+
+    @MainActor
+    func testRequestWithCredentialInCURLDescription() {
+        // Given
+        let url = Endpoint().url
+        let expectation = expectation(description: "request should complete")
+        var components: [String]?
+
+        // When
+        session.request(url).authenticate(username: "user", password: "password").cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-u") == true)
+        XCTAssertNotNil(components?.first(where: { $0.contains("user:password") }))
+    }
+
+    @MainActor
     func testMultipartFormDataRequestWithDuplicateHeadersCURLDescriptionHasOneContentTypeHeader() {
         // Given
         let url = Endpoint.method(.post).url
