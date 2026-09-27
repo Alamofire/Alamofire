@@ -224,6 +224,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request), didValidateRequestWithResult: \(result)")
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         NSLog("%@", "URLSession: \(session), webSocketTask: \(webSocketTask), didOpenWithProtocol: \(`protocol` ?? "None")")
@@ -273,4 +274,5 @@ public final class NSLoggingEventMonitor: EventMonitor {
                                                          dueToError error: WebSocketRequest.SendError<Failure>) {
         NSLog("%@", "Request: \(request), didFailToSendMessage: \(value), dueToError: \(error)")
     }
+    #endif
 }

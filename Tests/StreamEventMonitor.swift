@@ -109,6 +109,7 @@ struct StreamEventMonitor: EventMonitor {
         continuation.yield("\(#function)")
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         continuation.yield("\(#function)")
@@ -121,6 +122,7 @@ struct StreamEventMonitor: EventMonitor {
                     reason: Data?) {
         continuation.yield("\(#function)")
     }
+    #endif
 
     func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
         continuation.yield("\(#function)")
@@ -253,6 +255,7 @@ struct StreamEventMonitor: EventMonitor {
         continuation.yield("\(#function)")
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
         continuation.yield("\(#function)")
@@ -289,4 +292,5 @@ struct StreamEventMonitor: EventMonitor {
                                                   dueToError error: WebSocketRequest.SendError<Failure>) {
         continuation.yield("\(#function)")
     }
+    #endif
 }

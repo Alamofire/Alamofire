@@ -252,6 +252,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         append("\(#function)")
@@ -301,4 +302,5 @@ final class InspectorEventMonitor: EventMonitor {
                                                   dueToError error: WebSocketRequest.SendError<Failure>) {
         append("\(#function)")
     }
+    #endif
 }

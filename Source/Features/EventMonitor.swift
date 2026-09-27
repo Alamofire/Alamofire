@@ -96,6 +96,8 @@ public protocol EventMonitor: Sendable {
     /// Event called during `URLSessionDownloadDelegate`'s `urlSession(_:downloadTask:didFinishDownloadingTo:)` method.
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL)
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
+
     // MARK: URLSessionWebSocketDelegate Events
 
     /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didOpenWithProtocol:)` method.
@@ -105,6 +107,7 @@ public protocol EventMonitor: Sendable {
     /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didCloseWith:reason:)` method.
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+    #endif
 
     // MARK: - Request Events
 
@@ -231,6 +234,8 @@ public protocol EventMonitor: Sendable {
     /// Event called when a `DownloadRequest` calls a `DownloadResponseSerializer` and creates a generic `DownloadResponse<Value, AFError>`
     func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
+
     // MARK: WebSocketRequest Events
 
     /// Even called when a `WebSocketRequest` opens a connection with a particular protocol, if any.
@@ -240,7 +245,9 @@ public protocol EventMonitor: Sendable {
     /// Event called when a `WebSocketRequest` has been disconnected with a particular `CloseCode` and reason, if any.
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+    #endif
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     /// Event called when a `WebSocketRequest` is closed locally with a particular `CloseCode` and reason, if any.
     /// Not called if there was an error or if the connection was disconnected due task cancellation.
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
@@ -263,6 +270,7 @@ public protocol EventMonitor: Sendable {
     func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
                                                   didFailToSendMessage value: Value,
                                                   dueToError error: WebSocketRequest.SendError<Failure>)
+    #endif
 }
 
 extension EventMonitor {
@@ -307,6 +315,7 @@ extension EventMonitor {
     public func urlSession(_ session: URLSession,
                            downloadTask: URLSessionDownloadTask,
                            didFinishDownloadingTo location: URL) {}
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {}
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
@@ -314,6 +323,7 @@ extension EventMonitor {
                            webSocketTask: URLSessionWebSocketTask,
                            didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
                            reason: Data?) {}
+    #endif
     public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {}
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: AFError) {}
     public func request(_ request: Request,
@@ -359,6 +369,7 @@ extension EventMonitor {
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {}
     public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {}
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
@@ -375,6 +386,7 @@ extension EventMonitor {
     public func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
                                                          didFailToSendMessage value: Value,
                                                          dueToError error: WebSocketRequest.SendError<Failure>) {}
+    #endif
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
@@ -508,6 +520,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location) }
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         performEvent { $0.urlSession(session, webSocketTask: webSocketTask, didOpenWithProtocol: `protocol`) }
@@ -520,6 +533,7 @@ public final class CompositeEventMonitor: EventMonitor {
                            reason: Data?) {
         performEvent { $0.urlSession(session, webSocketTask: webSocketTask, didCloseWith: closeCode, reason: reason) }
     }
+    #endif
 
     public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
         performEvent { $0.request(request, didCreateInitialURLRequest: urlRequest) }
@@ -665,6 +679,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.request(request, didParseResponse: response) }
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
         performEvent { $0.request(request, didConnectWithProtocol: `protocol`) }
@@ -701,6 +716,7 @@ public final class CompositeEventMonitor: EventMonitor {
                                                          dueToError error: WebSocketRequest.SendError<Failure>) {
         performEvent { $0.request(request, didFailToSendMessage: value, dueToError: error) }
     }
+    #endif
 }
 
 /// `EventMonitor` that allows optional closures to be set to receive events.
@@ -946,6 +962,7 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
         downloadTaskDidFinishDownloadingToURL?(session, downloadTask, location)
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
 //        webSocketTaskDidOpenWithProtocol(session, webSocketTask, `protocol`)
@@ -958,6 +975,7 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
                            reason: Data?) {
 //        webSocketTaskDidCloseWithReason(session, webSocketTask, closeCode, reason)
     }
+    #endif
 
     // MARK: Request Events
 
@@ -1081,6 +1099,7 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
         requestDidParseDownloadResponse?(request, response)
     }
 
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     open func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
 //        requestDidConnectWithProtocol(request, `protocol`)
@@ -1105,4 +1124,5 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
     open func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message) {
 //        requestDidSendMessage(request, message)
     }
+    #endif
 }

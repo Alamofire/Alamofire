@@ -688,7 +688,6 @@ struct WebSocketIntegrationTests {
         async let _monitorEvents = monitor.stream.collect(until: "requestDidFinish(_:)")
         let streamEvents = await session.webSocketRequest(.websocket())
             .eventMonitor(monitor)
-            .eventMonitor(NSLoggingEventMonitor())
             .streamingMessageEvents()
             .collect()
         let monitorEvents = await _monitorEvents
