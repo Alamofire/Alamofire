@@ -233,6 +233,11 @@
 		31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
 		31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
 		31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
+		315567E73068B71800EEB257 /* StreamEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315567E63068B71200EEB257 /* StreamEventMonitor.swift */; };
+		315567E83068B71800EEB257 /* StreamEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315567E63068B71200EEB257 /* StreamEventMonitor.swift */; };
+		315567E93068B71800EEB257 /* StreamEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315567E63068B71200EEB257 /* StreamEventMonitor.swift */; };
+		315567EA3068B71800EEB257 /* StreamEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315567E63068B71200EEB257 /* StreamEventMonitor.swift */; };
+		315567EB3068B71800EEB257 /* StreamEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315567E63068B71200EEB257 /* StreamEventMonitor.swift */; };
 		315A4C56241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
 		315A4C57241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
 		315A4C58241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
@@ -712,6 +717,7 @@
 		3146DADF2FFB147C00EEB257 /* AFErrorEquality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AFErrorEquality.swift; sourceTree = "<group>"; };
 		314998E927A6560600ABB856 /* Request+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Request+AlamofireTests.swift"; sourceTree = "<group>"; };
 		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
+		315567E63068B71200EEB257 /* StreamEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamEventMonitor.swift; sourceTree = "<group>"; };
 		31577E0A2676E72D001C7532 /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringEncoding+Alamofire.swift"; sourceTree = "<group>"; };
 		3165407229AEBC0400C9BE08 /* RequestCompression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestCompression.swift; sourceTree = "<group>"; };
@@ -1278,6 +1284,7 @@
 		F8111E3F19A95C8B0040E7D1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				315567E63068B71200EEB257 /* StreamEventMonitor.swift */,
 				4C256A501B096C2C0065714F /* BaseTestCase.swift */,
 				31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */,
 				312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */,
@@ -1826,6 +1833,7 @@
 				3129307B263E183C00473CEA /* AuthenticationTests.swift in Sources */,
 				3146DAD22FFAEC5600EEB257 /* AFErrorTests.swift in Sources */,
 				31E021562E5BCF2000EEB257 /* OfflineRetrierTests.swift in Sources */,
+				315567EA3068B71800EEB257 /* StreamEventMonitor.swift in Sources */,
 				31293083263E184500473CEA /* NetworkReachabilityManagerTests.swift in Sources */,
 				3129308E263E184500473CEA /* CachedResponseHandlerTests.swift in Sources */,
 				31293087263E184500473CEA /* RedirectHandlerTests.swift in Sources */,
@@ -1931,6 +1939,7 @@
 				317339132A43BE9000D4EA0A /* AuthenticationInterceptorTests.swift in Sources */,
 				3146DAD32FFAEC5600EEB257 /* AFErrorTests.swift in Sources */,
 				31E021542E5BCF2000EEB257 /* OfflineRetrierTests.swift in Sources */,
+				315567E73068B71800EEB257 /* StreamEventMonitor.swift in Sources */,
 				317339142A43BE9000D4EA0A /* CachedResponseHandlerTests.swift in Sources */,
 				317339152A43BE9000D4EA0A /* CacheTests.swift in Sources */,
 				317339162A43BE9000D4EA0A /* CombineTests.swift in Sources */,
@@ -2036,6 +2045,7 @@
 				3106FB6723F8D9E0007FAB43 /* DataStreamTests.swift in Sources */,
 				3146DAD52FFAEC5600EEB257 /* AFErrorTests.swift in Sources */,
 				31E021532E5BCF2000EEB257 /* OfflineRetrierTests.swift in Sources */,
+				315567E93068B71800EEB257 /* StreamEventMonitor.swift in Sources */,
 				3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2182220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
@@ -2245,6 +2255,7 @@
 				3106FB6523F8D9E0007FAB43 /* DataStreamTests.swift in Sources */,
 				3146DAD62FFAEC5600EEB257 /* AFErrorTests.swift in Sources */,
 				31E021552E5BCF2000EEB257 /* OfflineRetrierTests.swift in Sources */,
+				315567EB3068B71800EEB257 /* StreamEventMonitor.swift in Sources */,
 				3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2180220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
@@ -2298,6 +2309,7 @@
 				3106FB6623F8D9E0007FAB43 /* DataStreamTests.swift in Sources */,
 				3146DAD42FFAEC5600EEB257 /* AFErrorTests.swift in Sources */,
 				31E021572E5BCF2000EEB257 /* OfflineRetrierTests.swift in Sources */,
+				315567E83068B71800EEB257 /* StreamEventMonitor.swift in Sources */,
 				3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2181220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,

@@ -582,6 +582,14 @@ public class Request: @unchecked Sendable {
         // Start response handlers
         processNextResponseSerializer()
 
+        notifyRequestDidFinish()
+    }
+
+    /// Notifies the instance's `EventMonitor` that the `Request` has finished.
+    ///
+    /// - Note: Allows subclasses to guarantee additional asynchronous work completes, such as delivering a final event,
+    ///         before this event fires.
+    func notifyRequestDidFinish() {
         eventMonitor?.requestDidFinish(self)
     }
 

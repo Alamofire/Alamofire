@@ -679,6 +679,39 @@ struct WebSocketIntegrationTests {
                            .disconnected(closeCode: .normalClosure, reason: nil),
                            .completed(error: .nil)])
     }
+
+    @Test
+    func webSocketRequestFiresAllEventMonitorEvents() async {
+        // Given
+        let session = Session()
+        let monitor = StreamEventMonitor()
+        async let _monitorEvents = monitor.stream.collect(until: "requestDidFinish(_:)")
+        let streamEvents = await session.webSocketRequest(.websocket())
+            .eventMonitor(monitor)
+            .eventMonitor(NSLoggingEventMonitor())
+            .streamingMessageEvents()
+            .collect()
+        let monitorEvents = await _monitorEvents
+
+        #expect(streamEvents == [.connected(protocol: nil),
+                                 .receivedMessage,
+                                 .disconnected(closeCode: .normalClosure, reason: nil),
+                                 .completed(error: .nil)])
+        #expect(monitorEvents == ["requestDidResume(_:)",
+                                  "request(_:didCreateInitialURLRequest:)",
+                                  "request(_:didCreateURLRequest:)",
+                                  "request(_:didCreateTask:)",
+                                  "request(_:didResumeTask:)",
+                                  "request(_:didGatherMetrics:)",
+                                  "request(_:didConnectWithProtocol:)",
+                                  "request(_:didReceiveEvent:)",
+                                  "request(_:didReceiveMessage:)",
+                                  "request(_:didReceiveEvent:)",
+                                  "request(_:didDisconnectWithCloseCode:reason:)",
+                                  "request(_:didReceiveEvent:)",
+                                  "request(_:didReceiveEvent:)",
+                                  "requestDidFinish(_:)"])
+    }
 }
 
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)

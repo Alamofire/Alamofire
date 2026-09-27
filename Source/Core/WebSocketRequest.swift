@@ -76,8 +76,8 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     }
 
     public struct Configuration {
-        public struct AutomaticPing {
-            public enum FailureAction {
+        public struct AutomaticPing: Sendable {
+            public enum FailureAction: Sendable {
                 /// Continue automatic pings.
                 case `continue`
                 /// Stop automatic ping after `count` failures.
@@ -89,6 +89,11 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             public var interval: Duration
             public var failureAction: FailureAction
 
+            /// Creates an instance.
+            ///
+            /// - Parameters:
+            ///   - interval:      `Duration` between each ping. Defaults to `.seconds(5)`.
+            ///   - failureAction: `FailureAction` to take when pings fail. `.continue` by default.
             public init(interval: Duration = .seconds(5), failureAction: FailureAction = .continue) {
                 self.interval = interval
                 self.failureAction = failureAction
@@ -150,6 +155,10 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
 
     // Ensures all sends complete before the final stream event.
     private let sendGroup = DispatchGroup()
+
+    // Ensures the final `.completed` stream event has been delivered to every registered handler before
+    // `requestDidFinish` fires, guaranteeing it's always the last event received for a `WebSocketRequest`.
+    private let streamCompletionGroup = DispatchGroup()
 
     public let convertible: any URLRequestConvertible
     public let configuration: Configuration
@@ -244,7 +253,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             return mutableState.eventMonitor
         }
 
-//        eventMonitor?.request(self, didCloseWithCloseCode: closeCode, reason: reason)
+        eventMonitor?.request(self, didCloseWithCloseCode: closeCode, reason: reason)
     }
 
     @discardableResult
@@ -286,6 +295,14 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         performEnqueuedSends()
     }
 
+    // Delay `requestDidFinish` until every registered stream handler has received the final `.completed` event,
+    // guaranteeing it's the last event fired for a `WebSocketRequest`, unlike the default `Request` behavior.
+    override func notifyRequestDidFinish() {
+        streamCompletionGroup.notify(queue: underlyingQueue) {
+            self.eventMonitor?.requestDidFinish(self)
+        }
+    }
+
     @discardableResult
     override public func cancel() -> Self {
         cancelAutomaticPing()
@@ -296,19 +313,22 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     func didConnect(protocol: String?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        socketMutableState.read { state in
-            for handler in state.handlers {
+        let eventMonitor = withBothStates { mutableState, socketMutableState in
+            for handler in socketMutableState.handlers {
                 // Saved handler calls out to serializationQueue immediately, then to handler's queue.
                 handler(.connected(protocol: `protocol`))
             }
+
+            return mutableState.eventMonitor
         }
+        eventMonitor?.request(self, didConnectWithProtocol: `protocol`)
 
         if let automaticPing = configuration.automaticPing {
-            startAutomaticPing(every: automaticPing.interval)
+            startAutomaticPing(configuration: automaticPing, failureCount: 0)
         }
     }
 
-    func startAutomaticPing(every pingInterval: TimeInterval) {
+    func startAutomaticPing(configuration: Configuration.AutomaticPing, failureCount: Int) {
         withBothStates { mutableState, socketMutableState in
             guard mutableState.state.is(.resumed) else {
                 socketMutableState.cancelAutomaticPing()
@@ -318,33 +338,54 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             let item = DispatchWorkItem { [weak self] in
                 guard let self else { return }
 
-                sendPing(respondingOn: underlyingQueue) { response in
-                    // TODO: Use configuration to determine behavior.
-                    guard case .pong = response else { return }
+                sendPing(respondingOn: underlyingQueue) { [weak self] response in
+                    guard let self else { return }
 
-                    self.startAutomaticPing(every: pingInterval)
+                    switch response {
+                    case .pong:
+                        startAutomaticPing(configuration: configuration, failureCount: 0)
+                    case .error:
+                        switch configuration.failureAction {
+                        case .continue:
+                            startAutomaticPing(configuration: configuration, failureCount: 0)
+                        case let .stopAutomaticPing(count):
+                            if failureCount < count {
+                                startAutomaticPing(configuration: configuration, failureCount: failureCount + 1)
+                            } else {
+                                // Do not continue automatic ping.
+                            }
+                        case let .cancelRequest(count):
+                            if failureCount < count {
+                                startAutomaticPing(configuration: configuration, failureCount: failureCount + 1)
+                            } else {
+                                cancel()
+                            }
+                        }
+                    case .unsent:
+                        break
+                    case .lost:
+                        break
+                    }
                 }
             }
 
             socketMutableState.automaticPingTimerItem = item
-            underlyingQueue.asyncAfter(deadline: .now() + pingInterval, execute: item)
+            underlyingQueue.asyncAfter(deadline: .now() + configuration.interval.timeInterval, execute: item)
         }
     }
 
     /// Ensure all access to both states uses the same lock ordering to prevent deadlocks.
     @inline(__always)
     @discardableResult
-    fileprivate func withBothStates<Out>(_ perform: (_ mutableState: inout WebSocketRequest.MutableState, _ socketMutableState: inout WebSocketRequest.SocketMutableState) -> Out) -> Out {
+    fileprivate func withBothStates<Out>(
+        _ perform: (_ mutableState: inout WebSocketRequest.MutableState,
+                    _ socketMutableState: inout WebSocketRequest.SocketMutableState) -> Out
+    ) -> Out {
         mutableState.write { mutableState in
             socketMutableState.write { socketMutableState in
                 perform(&mutableState, &socketMutableState)
             }
         }
-    }
-
-    func startAutomaticPing(every duration: Duration) {
-        let interval = TimeInterval(duration.components.seconds) + (Double(duration.components.attoseconds) / 1e18)
-        startAutomaticPing(every: interval)
     }
 
     func cancelAutomaticPing() {
@@ -363,7 +404,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             return mutableState.eventMonitor
         }
 
-//        eventMonitor?.request(self, didDisconnectWithCloseCode: closeCode, reason: reason)
+        eventMonitor?.request(self, didDisconnectWithCloseCode: closeCode, reason: reason)
     }
 
     private func startListening() {
@@ -555,7 +596,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                     queue.async {
                         completionHandler(.failure(failure))
                     }
-//                    output.eventMonitor?.request(self, didFailToSendMessage: value, dueToError: failure)
+                    output.eventMonitor?.request(self, didFailToSendMessage: value, dueToError: failure)
                 }
                 sendGroup.leave()
                 // Otherwise the send has been enqueued for later.
@@ -568,7 +609,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                     queue.async {
                         completionHandler(Result(value: (), error: error).mapError { .socket($0) })
                     }
-//                    output.eventMonitor?.request(self, didSendMessage: message)
+                    output.eventMonitor?.request(self, didSendMessage: message)
                     self.sendGroup.leave()
                 }
             } catch {
@@ -576,7 +617,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                 queue.async {
                     completionHandler(.failure(sendError))
                 }
-//                output.eventMonitor?.request(self, didFailToSendMessage: value, dueToError: sendError)
+                output.eventMonitor?.request(self, didFailToSendMessage: value, dueToError: sendError)
                 sendGroup.leave()
             }
         }
@@ -607,6 +648,8 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             case let .completed(completion):
                 event = .init(socket: self, kind: .completed(completion))
             }
+
+            eventMonitor?.request(self, didReceiveEvent: event)
 
             queue.async { handler(event) }
         }
@@ -651,6 +694,8 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                 .init(socket: self, kind: .completed(completion))
             }
 
+            eventMonitor?.request(self, didReceiveEvent: event)
+
             queue.async { handler(event) }
         }
     }
@@ -674,6 +719,10 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             }
         }
 
+        // Entered here and left only once the final `.completed` event below has been delivered to this handler,
+        // so `notifyRequestDidFinish()` can delay `requestDidFinish` until every registered handler has received it.
+        streamCompletionGroup.enter()
+
         appendResponseSerializer {
             self.responseSerializerDidComplete { [self] in
                 let request = request
@@ -685,6 +734,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                                              response: response,
                                              metrics: metrics,
                                              error: error)))
+                    self.streamCompletionGroup.leave()
                 }
                 let handlers = withBothStates { _, socketMutableState in
                     let handlers = socketMutableState.inflightPingHandlers.values
@@ -900,13 +950,6 @@ extension WebSocketRequest.SocketMutableState {
     }
 }
 
-// @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-// extension WebSocketRequest.State {
-//    var canSend: Bool {
-//        is(.resumed)
-//    }
-// }
-
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension WebSocketRequest.MutableState {
     var socket: URLSessionWebSocketTask? {
@@ -919,6 +962,8 @@ extension WebSocketRequest.MutableState {
         socket.receive { result in
             switch result {
             case let .success(message):
+                request.eventMonitor?.request(request, didReceiveMessage: message)
+
                 request.withBothStates { mutableState, socketMutableState in
                     for handler in socketMutableState.handlers {
                         // Saved handler calls out to serializationQueue immediately, then to handler's queue.
@@ -945,5 +990,12 @@ extension WebSocketRequest.MutableState {
 extension WebSocketRequest.Event: Equatable where Success: Equatable, Failure: Equatable {}
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension WebSocketRequest.Event.Kind: Equatable where Success: Equatable, Failure: Equatable {}
+
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+extension Duration {
+    var timeInterval: TimeInterval {
+        TimeInterval(components.seconds) + (TimeInterval(components.attoseconds) / 1e18)
+    }
+}
 
 #endif

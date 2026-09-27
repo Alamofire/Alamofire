@@ -1,7 +1,7 @@
 //
-//  InspectorEventMonitor.swift
+//  StreamEventMonitor.swift
 //
-//  Copyright (c) 2025 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2026 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,45 +25,22 @@
 @testable import Alamofire
 import Foundation
 
-final class InspectorEventMonitor: EventMonitor {
-    let label: String
-    let queue: DispatchQueue
+struct StreamEventMonitor: EventMonitor {
+    let stream: AsyncStream<String>
+    private let continuation: AsyncStream<String>.Continuation
 
-    struct TimelineEvent {
-        var date: Date
-        var event: String
-        var label: String
-    }
-
-    var events: [String] {
-        _timeline.read { $0.map(\.event) }
-    }
-
-    var timeline: [TimelineEvent] {
-        _timeline.read(\.self)
-    }
-
-    private let _timeline = Protected<[TimelineEvent]>([])
-
-    init(label: String = "InspectorEventMonitor", queue: DispatchQueue = DispatchQueue(label: "org.alamofire.inspectorEventMonitor")) {
-        self.label = label
-        self.queue = queue
-    }
-
-    func pendingEvents() async {
-        await queue.pendingWork()
-    }
-
-    private func append(_ event: String) {
-        _timeline.write { $0.append(TimelineEvent(date: .now, event: event, label: label)) }
+    init() {
+        let (stream, continuation) = AsyncStream.makeStream(of: String.self, bufferingPolicy: .unbounded)
+        self.stream = stream
+        self.continuation = continuation
     }
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession,
@@ -71,47 +48,51 @@ final class InspectorEventMonitor: EventMonitor {
                     didSendBodyData bytesSent: Int64,
                     totalBytesSent: Int64,
                     totalBytesExpectedToSend: Int64) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession, taskNeedsNewBodyStream task: URLSessionTask) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession,
                     task: URLSessionTask,
                     willPerformHTTPRedirection response: HTTPURLResponse,
                     newRequest request: URLRequest) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse) {
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession,
                     dataTask: URLSessionDataTask,
                     willCacheResponse proposedResponse: CachedURLResponse) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession,
                     downloadTask: URLSessionDownloadTask,
                     didResumeAtOffset fileOffset: Int64,
                     expectedTotalBytes: Int64) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession,
@@ -119,142 +100,18 @@ final class InspectorEventMonitor: EventMonitor {
                     didWriteData bytesWritten: Int64,
                     totalBytesWritten: Int64,
                     totalBytesExpectedToWrite: Int64) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     func urlSession(_ session: URLSession,
                     downloadTask: URLSessionDownloadTask,
                     didFinishDownloadingTo location: URL) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didFailToCreateURLRequestWithError error: any Error) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: any Error) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didCreateTask task: URLSessionTask) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: any Error) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: (any Error)?) {
-        append("\(#function)")
-    }
-
-    func requestDidFinish(_ request: Request) {
-        append("\(#function)")
-    }
-
-    func requestDidResume(_ request: Request) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didResumeTask task: URLSessionTask) {
-        append("\(#function)")
-    }
-
-    func requestDidSuspend(_ request: Request) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didSuspendTask task: URLSessionTask) {
-        append("\(#function)")
-    }
-
-    func requestDidCancel(_ request: Request) {
-        append("\(#function)")
-    }
-
-    func request(_ request: Request, didCancelTask task: URLSessionTask) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {
-        append("\(#function)")
-    }
-
-    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Data?, AFError>) {
-        append("\(#function)")
-    }
-
-    func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
-        append("\(#function)")
-    }
-
-    func requestIsRetrying(_ request: Request) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DataRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, data: Data?, withResult result: Request.ValidationResult) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DataStreamRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, withResult result: Request.ValidationResult) {
-        append("\(#function)")
-    }
-
-    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
-        append("\(#function)")
-    }
-
-    func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {
-        append("\(#function)")
-    }
-
-    func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: any Error) {
-        append("\(#function)")
-    }
-
-    func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, any Error>) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DownloadRequest, didCreateDestinationURL url: URL) {
-        append("\(#function)")
-    }
-
-    func request(_ request: DownloadRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, temporaryURL: URL?, destinationURL: URL?, withResult result: Request.ValidationResult) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
@@ -262,43 +119,174 @@ final class InspectorEventMonitor: EventMonitor {
                     webSocketTask: URLSessionWebSocketTask,
                     didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
                     reason: Data?) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didFailToCreateURLRequestWithError error: any Error) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: any Error) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didCreateTask task: URLSessionTask) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: any Error) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: (any Error)?) {
+        continuation.yield("\(#function)")
+    }
+
+    func requestIsRetrying(_ request: Request) {
+        continuation.yield("\(#function)")
+    }
+
+    func requestDidFinish(_ request: Request) {
+        continuation.yield("\(#function)")
+    }
+
+    func requestDidResume(_ request: Request) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didResumeTask task: URLSessionTask) {
+        continuation.yield("\(#function)")
+    }
+
+    func requestDidSuspend(_ request: Request) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didSuspendTask task: URLSessionTask) {
+        continuation.yield("\(#function)")
+    }
+
+    func requestDidCancel(_ request: Request) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: Request, didCancelTask task: URLSessionTask) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: DataRequest,
+                 didValidateRequest urlRequest: URLRequest?,
+                 response: HTTPURLResponse,
+                 data: Data?,
+                 withResult result: Request.ValidationResult) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {
+        continuation.yield("\(#function)")
+    }
+
+    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: DataStreamRequest,
+                 didValidateRequest urlRequest: URLRequest?,
+                 response: HTTPURLResponse,
+                 withResult result: Request.ValidationResult) {
+        continuation.yield("\(#function)")
+    }
+
+    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: any Error) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, any Error>) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: DownloadRequest, didCreateDestinationURL url: URL) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: DownloadRequest,
+                 didValidateRequest urlRequest: URLRequest?,
+                 response: HTTPURLResponse,
+                 fileURL: URL?,
+                 withResult result: Request.ValidationResult) {
+        continuation.yield("\(#function)")
+    }
+
+    func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {
+        continuation.yield("\(#function)")
+    }
+
+    func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request<Success: Sendable, Failure: Error>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
                                                   didFailToSendMessage value: Value,
                                                   dueToError error: WebSocketRequest.SendError<Failure>) {
-        append("\(#function)")
+        continuation.yield("\(#function)")
     }
 }

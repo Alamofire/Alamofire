@@ -98,13 +98,13 @@ public protocol EventMonitor: Sendable {
 
     // MARK: URLSessionWebSocketDelegate Events
 
-//    /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didOpenWithProtocol:)` method.
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?)
-//
-//    /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didCloseWith:reason:)` method.
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+    /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didOpenWithProtocol:)` method.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?)
+
+    /// Event called during `URLSessionWebSocketDelegate`'s `urlSession(_:webSocketTask:didCloseWith:reason:)` method.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
 
     // MARK: - Request Events
 
@@ -230,74 +230,40 @@ public protocol EventMonitor: Sendable {
 
     /// Event called when a `DownloadRequest` calls a `DownloadResponseSerializer` and creates a generic `DownloadResponse<Value, AFError>`
     func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>)
-//
-//    // MARK: WebSocketRequest Events
-//
-//    /// Even called when a `WebSocketRequest` opens a connection with a particular protocol, if any.
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?)
-//
-//    /// Event called when a `WebSocketRequest` has been disconnected with a particular `CloseCode` and reason, if any.
-//    /// Not called if there was an error or if the connection was disconnected due task cancellation.
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
-//
+
+    // MARK: WebSocketRequest Events
+
+    /// Even called when a `WebSocketRequest` opens a connection with a particular protocol, if any.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?)
+
+    /// Event called when a `WebSocketRequest` has been disconnected with a particular `CloseCode` and reason, if any.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+
     /// Event called when a `WebSocketRequest` is closed locally with a particular `CloseCode` and reason, if any.
     /// Not called if there was an error or if the connection was disconnected due task cancellation.
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
-//
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message)
-//
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func request<Success, Failure>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>)
-//
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message)
-//
-//    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-//    func request<Value, Failure>(_ request: WebSocketRequest,
-//                                 didFailToSendMessage value: Value,
-//                                 dueToError error: WebSocketRequest.SendError<Failure>)
-}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
 
-// │ 1 │ urlSession(_:webSocketTask:didOpenW │ URLSes │ SessionDelegate.didOpe │
-// │   │ ithProtocol:)                       │ sion   │ n                      │
-// │   │                                     │ delega │                        │
-// │   │                                     │ te     │                        │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 2 │ urlSession(_:webSocketTask:didClose │ URLSes │ SessionDelegate.didClo │
-// │   │ With:reason:)                       │ sion   │ se                     │
-// │   │                                     │ delega │                        │
-// │   │                                     │ te     │                        │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 3 │ request(_:didConnect:protocol:)     │ Lifecy │ WebSocketRequest.didCo │
-// │   │                                     │ cle    │ nnect                  │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 4 │ request(_:didDisconnect:closeCode:r │ Lifecy │ WebSocketRequest.didDi │
-// │   │ eason:)                             │ cle    │ sconnect               │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 5 │ request(_:willClose:reason:)        │ Lifecy │ WebSocketRequest.close │
-// │   │                                     │ cle    │ (sending:)             │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 6 │ request(_:didReceiveWebSocketMessag │ Messag │ MutableState.listen    │
-// │   │ e:)                                 │ es     │ success                │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 7 │ request(_:didSendWebSocketMessage:) │ Messag │ socket.send success    │
-// │   │                                     │ es     │ callback               │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 8 │ request(_:didFailToSendWebSocketMes │ Messag │ socket.send error      │
-// │   │ sage:withError:)                    │ es     │ callback               │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 9 │ request(_:didSendPingForWebSocket:) │ Ping/P │ sendPing before socket │
-// │   │                                     │ ong    │ ping                   │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 1 │ request(_:webSocket:didReceivePong: │ Ping/P │ sendPing pong callback │
-// │ 0 │ )                                   │ ong    │                        │
-// ├───┼─────────────────────────────────────┼────────┼────────────────────────┤
-// │ 1 │ request(_:webSocket:didFailPingWith │ Ping/P │ sendPing error         │
-// │ 1 │ Error:)
+    /// Event called when a `WebSocketRequest` receives a raw `URLSessionWebSocketTask.Message` from the server.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message)
+
+    /// Event called when a `WebSocketRequest` produces an `Event` for one of its registered stream serializers.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request<Success: Sendable, Failure: Error>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>)
+
+    /// Event called when a `WebSocketRequest` successfully sends a `URLSessionWebSocketTask.Message`.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message)
+
+    /// Event called when a `WebSocketRequest` fails to send a value, either due to an encoding or a `URLSessionWebSocketTask` error.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
+                                                  didFailToSendMessage value: Value,
+                                                  dueToError error: WebSocketRequest.SendError<Failure>)
+}
 
 extension EventMonitor {
     /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. `.main` by default.
@@ -341,6 +307,13 @@ extension EventMonitor {
     public func urlSession(_ session: URLSession,
                            downloadTask: URLSessionDownloadTask,
                            didFinishDownloadingTo location: URL) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession,
+                           webSocketTask: URLSessionWebSocketTask,
+                           didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+                           reason: Data?) {}
     public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {}
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: AFError) {}
     public func request(_ request: Request,
@@ -386,6 +359,22 @@ extension EventMonitor {
                         withResult result: Request.ValidationResult) {}
     public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {}
     public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request<Success: Sendable, Failure: Error>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message) {}
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
+                                                         didFailToSendMessage value: Value,
+                                                         dueToError error: WebSocketRequest.SendError<Failure>) {}
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
@@ -517,6 +506,19 @@ public final class CompositeEventMonitor: EventMonitor {
                            downloadTask: URLSessionDownloadTask,
                            didFinishDownloadingTo location: URL) {
         performEvent { $0.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+        performEvent { $0.urlSession(session, webSocketTask: webSocketTask, didOpenWithProtocol: `protocol`) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession,
+                           webSocketTask: URLSessionWebSocketTask,
+                           didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+                           reason: Data?) {
+        performEvent { $0.urlSession(session, webSocketTask: webSocketTask, didCloseWith: closeCode, reason: reason) }
     }
 
     public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
@@ -662,6 +664,43 @@ public final class CompositeEventMonitor: EventMonitor {
     public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
         performEvent { $0.request(request, didParseResponse: response) }
     }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
+        performEvent { $0.request(request, didConnectWithProtocol: `protocol`) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        performEvent { $0.request(request, didDisconnectWithCloseCode: closeCode, reason: reason) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        performEvent { $0.request(request, didCloseWithCloseCode: closeCode, reason: reason) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message) {
+        performEvent { $0.request(request, didReceiveMessage: message) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request<Success: Sendable, Failure: Error>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>) {
+        performEvent { $0.request(request, didReceiveEvent: event) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message) {
+        performEvent { $0.request(request, didSendMessage: message) }
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
+                                                         didFailToSendMessage value: Value,
+                                                         dueToError error: WebSocketRequest.SendError<Failure>) {
+        performEvent { $0.request(request, didFailToSendMessage: value, dueToError: error) }
+    }
 }
 
 /// `EventMonitor` that allows optional closures to be set to receive events.
@@ -708,6 +747,37 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
 
     /// Closure called on the `urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)` event.
     open var downloadTaskDidResumeAtOffset: ((URLSession, URLSessionDownloadTask, Int64, Int64) -> Void)?
+
+    // Unavailable as stored properties, create a separate conformance with higher availability.
+    // @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    // open var webSocketTaskDidOpenWithProtocol: ((_ session: URLSession, _ webSocketTask: URLSessionWebSocketTask, _ protocol: String?) -> Void)?
+
+    // Unavailable as stored properties, create a separate conformance with higher availability.
+    // @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    // open var webSocketTaskDidCloseWithReason: ((_ session: URLSession,
+    //                        _ webSocketTask: URLSessionWebSocketTask,
+    //                        _ closeCode: URLSessionWebSocketTask.CloseCode,
+    //                        _ reason: Data?) -> Void)?
+
+    // Unavailable as stored properties, create a separate conformance with higher availability.
+    // @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    // open var requestDidDisconnectWithCloseCode: ((_ request: WebSocketRequest,
+    //                        _ closeCode: URLSessionWebSocketTask.CloseCode,
+    //                        _ reason: Data?) -> Void)?
+
+    // Unavailable as stored properties, create a separate conformance with higher availability.
+    // @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    // open var requestDidCloseWithCloseCode: ((_ request: WebSocketRequest,
+    //                        _ closeCode: URLSessionWebSocketTask.CloseCode,
+    //                        _ reason: Data?) -> Void)?
+
+    // Unavailable as stored properties, create a separate conformance with higher availability.
+    // @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    // open var requestDidReceiveMessage: ((_ request: WebSocketRequest, _ message: URLSessionWebSocketTask.Message) -> Void)?
+
+    // Unavailable as stored properties, create a separate conformance with higher availability.
+    // @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    // open var requestDidSendMessage: ((_ request: WebSocketRequest, _ message: URLSessionWebSocketTask.Message) -> Void)?
 
     // MARK: - Request Events
 
@@ -792,6 +862,10 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
     /// Closure called on the `request(_:didParseResponse:)` event.
     open var requestDidParseDownloadResponse: ((DownloadRequest, DownloadResponse<URL?, AFError>) -> Void)?
 
+    // Unavailable as stored properties, create a separate conformance with higher availability.
+    // @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    // open var requestDidConnectWithProtocol: ((_ request: WebSocketRequest, _ protocol: String?) -> Void)?
+
     public let queue: DispatchQueue
 
     /// Creates an instance using the provided queue.
@@ -870,6 +944,19 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
 
     open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         downloadTaskDidFinishDownloadingToURL?(session, downloadTask, location)
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+//        webSocketTaskDidOpenWithProtocol(session, webSocketTask, `protocol`)
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession,
+                           webSocketTask: URLSessionWebSocketTask,
+                           didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+                           reason: Data?) {
+//        webSocketTaskDidCloseWithReason(session, webSocketTask, closeCode, reason)
     }
 
     // MARK: Request Events
@@ -992,5 +1079,30 @@ open class ClosureEventMonitor: EventMonitor, @unchecked Sendable {
 
     open func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {
         requestDidParseDownloadResponse?(request, response)
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
+//        requestDidConnectWithProtocol(request, `protocol`)
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+//        requestDidDisconnectWithCloseCode(request, closeCode, reason)
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+//        requestDidCloseWithCloseCode(request, closeCode, reason)
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message) {
+//        requestDidReceiveMessage(request, message)
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    open func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message) {
+//        requestDidSendMessage(request, message)
     }
 }

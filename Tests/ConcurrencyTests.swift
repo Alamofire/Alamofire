@@ -846,6 +846,16 @@ extension AsyncSequence {
 
         return elements
     }
-}
+
+    func collect(until finalElement: Element) async rethrows -> [Element] where Element: Equatable {
+        var elements: [Element] = []
+        for try await element in self {
+            elements.append(element)
+            if element == finalElement { break }
+        }
+
+        return elements
+    }
+ }
 
 #endif
