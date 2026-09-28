@@ -307,6 +307,16 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     override public func cancel() -> Self {
         cancelAutomaticPing()
 
+        let pingHandlers = withBothStates { mutableState, socketMutableState in
+            let handlers = socketMutableState.inflightPingHandlers.values
+            socketMutableState.inflightPingHandlers.removeAll()
+            return handlers
+        }
+
+        for handler in pingHandlers {
+            handler.queue.async { handler.handler(.lost) }
+        }
+
         return super.cancel()
     }
 
