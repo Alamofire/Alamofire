@@ -533,6 +533,7 @@ open class Session: @unchecked Sendable {
             encoder: URLEncodedFormParameterEncoder.default,
             headers: headers,
             interceptor: interceptor,
+            shouldAutomaticallyResume: shouldAutomaticallyResume,
             requestModifier: requestModifier
         )
     }
@@ -903,6 +904,7 @@ open class Session: @unchecked Sendable {
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: (any RequestInterceptor)? = nil,
+                     shouldAutomaticallyResume: Bool? = nil,
                      fileManager: FileManager = .default,
                      requestModifier: RequestModifier? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible,
@@ -910,7 +912,7 @@ open class Session: @unchecked Sendable {
                                                           headers: headers,
                                                           requestModifier: requestModifier)
 
-        return upload(stream, with: convertible, interceptor: interceptor, fileManager: fileManager)
+        return upload(stream, with: convertible, interceptor: interceptor, shouldAutomaticallyResume: shouldAutomaticallyResume, fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` from the provided `InputStream` using the `URLRequestConvertible` value and
@@ -959,6 +961,7 @@ open class Session: @unchecked Sendable {
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - shouldAutomaticallyResume: Whether the `UploadRequest` should resume after the first response handler is added.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
     ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
@@ -971,6 +974,7 @@ open class Session: @unchecked Sendable {
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: (any RequestInterceptor)? = nil,
+                     shouldAutomaticallyResume: Bool? = nil,
                      fileManager: FileManager = .default,
                      requestModifier: RequestModifier? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url,
@@ -985,6 +989,7 @@ open class Session: @unchecked Sendable {
                       with: convertible,
                       usingThreshold: encodingMemoryThreshold,
                       interceptor: interceptor,
+                      shouldAutomaticallyResume: shouldAutomaticallyResume,
                       fileManager: fileManager)
     }
 
@@ -1011,6 +1016,7 @@ open class Session: @unchecked Sendable {
     ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
     ///                              default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - shouldAutomaticallyResume: Whether the `UploadRequest` should resume after the first response handler is added.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
     ///
@@ -1019,6 +1025,7 @@ open class Session: @unchecked Sendable {
                      with request: any URLRequestConvertible,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      interceptor: (any RequestInterceptor)? = nil,
+                     shouldAutomaticallyResume: Bool? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
         let formData = MultipartFormData(fileManager: fileManager)
         multipartFormData(formData)
@@ -1027,6 +1034,7 @@ open class Session: @unchecked Sendable {
                       with: request,
                       usingThreshold: encodingMemoryThreshold,
                       interceptor: interceptor,
+                      shouldAutomaticallyResume: shouldAutomaticallyResume,
                       fileManager: fileManager)
     }
 

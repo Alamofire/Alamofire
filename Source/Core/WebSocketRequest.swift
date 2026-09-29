@@ -307,7 +307,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     override public func cancel() -> Self {
         cancelAutomaticPing()
 
-        let pingHandlers = withBothStates { mutableState, socketMutableState in
+        let pingHandlers = withBothStates { _, socketMutableState in
             let handlers = socketMutableState.inflightPingHandlers.values
             socketMutableState.inflightPingHandlers.removeAll()
             return handlers
@@ -557,7 +557,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                                        using encoder: any DataEncoder = JSONEncoder(),
                                        queue: DispatchQueue = .main,
                                        completionHandler: @escaping @Sendable (_ result: Result<Void, SendError<any Error>>) -> Void) {
-        send(value, using: EncodableWebSocketMessageEncoder(encoder: encoder), completionHandler: completionHandler)
+        send(value, using: EncodableWebSocketMessageEncoder(encoder: encoder), queue: queue, completionHandler: completionHandler)
     }
 
     func send<Value, MessageEncoder>(_ value: Value,
@@ -682,7 +682,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         on queue: DispatchQueue = .main,
         handler: @escaping @Sendable (_ value: Value) -> Void
     ) -> Self where Value: Decodable & Sendable {
-        streamDecodableEvents(Value.self, on: queue) { event in
+        streamDecodableEvents(Value.self, using: decoder, on: queue) { event in
             event.message.map(handler)
         }
     }

@@ -618,7 +618,7 @@ struct WebSocketTests {
         #expect(isPong)
 
         // Cleanup: the request is still alive, so it must be explicitly finished.
-        request.cancel()
+        await request.cancelAndWaitForFinish()
     }
 
 //    @Test
