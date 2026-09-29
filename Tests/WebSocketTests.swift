@@ -180,6 +180,8 @@ struct WebSocketTests {
         // Then
         let received = messages.read { $0 }
         #expect(received.count == 1 && TestMessage.data.matches(received[0]))
+
+        await request.cancelAndWaitForFinish()
     }
 
     @Test
@@ -199,6 +201,8 @@ struct WebSocketTests {
 
         // Then
         #expect(values.read { $0 }.count == 1)
+
+        await request.cancelAndWaitForFinish()
     }
 
     @Test
@@ -517,6 +521,8 @@ struct WebSocketTests {
         // Then
         let isLost = if case .lost = pingResult { true } else { false }
         #expect(isLost)
+
+        await request.cancelAndWaitForFinish()
     }
 
     @Test
