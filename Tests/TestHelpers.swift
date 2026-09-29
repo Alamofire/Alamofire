@@ -480,8 +480,7 @@ extension Session {
 #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension WebSocketRequest {
-    /// Cancels the request and suspends until it has fully finished, so its `Session` can't deinit while URLSession
-    /// callbacks (like `didCloseWith`) are still in flight.
+    /// Cancel the request and await `onFinish`, ensuring the socket closes before continuing.
     func cancelAndWaitForFinish() async {
         cancel()
         await withCheckedContinuation { continuation in
