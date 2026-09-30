@@ -198,6 +198,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     }
 
     override func cleanup() {
+        performEnqueuedSends()
         socketMutableState.write { socketMutableState in
             socketMutableState.cancelAutomaticPing()
             socketMutableState = .init()
