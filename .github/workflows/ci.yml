@@ -343,6 +343,10 @@ jobs:
           - image: swift:6.3-jammy
           - image: swift:6.3-noble
           - image: swift:6.3-rhel-ubi9
+          - image: swift:6.4-bookworm
+          - image: swift:6.4-jammy
+          - image: swift:6.4-noble
+          - image: swift:6.4-rhel-ubi9
           - image: swiftlang/swift:nightly-focal
           - image: swiftlang/swift:nightly-jammy
     container:
@@ -379,6 +383,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - branch: swift-6.4-release
+            tag: 6.4-RELEASE
+            name: Windows Swift 6.4
           - branch: swift-6.3-release
             tag: 6.3-RELEASE
             name: Windows Swift 6.3
