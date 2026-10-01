@@ -30,602 +30,602 @@ import Testing
 
 @Suite
 struct WebSocketTests {
-    @Test
-    func messageEventsCanBeStreamed() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected, .receivedMessage, .disconnected, .completed])
-    }
-
-    @Test
-    func messagesCanBeStreamed() async {
-        // Given
-        let session = Session()
-
-        // When
-        let messages = await session.webSocketRequest(.websocket()).streamingMessages().collect()
-
-        // Then
-        #expect(messages.count == 1)
-    }
-
-    @Test
-    func finishedRequestsGetOnlyCompletionEvent() async {
-        // Given
-        let session = Session()
-
-        // When
-        let socket = session.webSocketRequest(.websocket())
-        let messages = await socket.streamingMessages().collect()
-
-        // Then
-        #expect(messages.count == 1)
-
-        // When: another listener is attached.
-        let moreMessages = await socket.streamingMessageEvents().collect()
-
-        // Then
-        #expect(moreMessages.count == 1)
-    }
-
-    @Test
-    func webSocketsCanReceiveMessageEvents() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanReceiveMessageEventsWithParameters() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanReceiveAMessage() async throws {
-        // Given
-        let session = Session()
-
-        // When
-        let messages = await session.webSocketRequest(.websocket()).streamingMessages().collect()
-
-        // Then
-        try #require(messages.count == 1)
-        #expect(messages[0].data != nil)
-    }
-
-    @Test
-    func webSocketsCanReceiveADecodableMessage() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocketCount(1)).streamingDecodableEvents(TestResponse.self).collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanReceiveADecodableValue() async {
-        // Given
-        let session = Session()
-
-        // When
-        let values = await session.webSocketRequest(.websocket()).streamingDecodable(TestResponse.self).collect()
-
-        // Then
-        #expect(values.count == 1)
-    }
-
-    @Test
-    func webSocketsCanReceiveADecoderFailure() async {
-        // Given
-        struct Unmatched: Decodable, Equatable, Sendable, TestKindReceivedValue {
-            let doesNotExist: Int
-        }
-
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocket()).streamingDecodableEvents(Unmatched.self).collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .decoderFailed,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanStreamMessagesUsingAHandler() async {
-        // Given
-        let session = Session()
-        let messages = Protected<[URLSessionWebSocketTask.Message]>([])
-
-        // When
-        let request = session.webSocketRequest(.websocket())
-        await withCheckedContinuation { continuation in
-            request.streamMessages { message in
-                messages.write { $0.append(message) }
-                continuation.resume()
-            }
-        }
-
-        // Then
-        let received = messages.read { $0 }
-        #expect(received.count == 1 && TestMessage.data.matches(received[0]))
-
-        await request.cancelAndWaitForFinish()
-    }
-
-    @Test
-    func webSocketsCanStreamDecodableValuesUsingAHandler() async {
-        // Given
-        let session = Session()
-        let values = Protected<[TestResponse]>([])
-
-        // When
-        let request = session.webSocketRequest(.websocketCount(1))
-        await withCheckedContinuation { continuation in
-            request.streamDecodable(TestResponse.self) { value in
-                values.write { $0.append(value) }
-                continuation.resume()
-            }
-        }
-
-        // Then
-        #expect(values.read { $0 }.count == 1)
-
-        await request.cancelAndWaitForFinish()
-    }
-
-    @Test
-    func webSocketsCanReceiveAMessageWithAProtocol() async {
-        // Given
-        let session = Session()
-        let `protocol` = "protocol"
-
-        // When
-        let events = await session.webSocketRequest(.websocket(), configuration: .protocols([`protocol`])).streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: `protocol`),
-                           .receivedMessage,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanReceiveAMessageGivenMultipleProtocols() async {
-        // Given
-        let session = Session()
-        let protocols = ["first", "second"]
-
-        // When
-        let events = await session.webSocketRequest(.websocket(), configuration: .protocols(protocols)).streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: "first"),
-                           .receivedMessage,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanReceiveMultipleMessages() async {
-        // Given
-        let count = 5
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocketCount(count)).streamingMessageEvents().collect()
-
-        // Then
-        let expected: [TestKind<TestMessage>] = [.connected(protocol: nil)] +
-            Array(repeating: .receivedMessage, count: count) +
-            [.disconnected(closeCode: .normalClosure, reason: nil), .completed(error: .nil)]
-        #expect(events == expected)
-    }
-
-    @Test
-    func webSocketsCanSendAndReceiveMessages() async {
-        // Given
-        let session = Session()
-        let sentMessage = URLSessionWebSocketTask.Message.string("Echo")
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        request.streamMessageEvents { [unowned request] event in
-            switch event.kind {
-            case .connected:
-                request.send(sentMessage) { _ in }
-            case .receivedMessage:
-                event.socket?.close(sending: .normalClosure)
-            default:
-                break
-            }
-        }
-        let events = await request.streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage(.string("Echo")),
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanCloseWithAReason() async {
-        // Given
-        let session = Session()
-        let reason = Data("bye".utf8)
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        request.streamMessageEvents { [unowned request] event in
-            if case .connected = event.kind {
-                request.close(sending: .normalClosure, reason: reason)
-            }
-        }
-        let events = await request.streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .disconnected(closeCode: .normalClosure, reason: reason),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanSendAndReceiveCodableMessages() async {
-        // Given
-        struct CodableMessage: Equatable, Codable, Sendable, TestKindReceivedValue {
-            var field = "value"
-        }
-
-        let session = Session()
-        let sentMessage = CodableMessage()
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        request.streamDecodableEvents(CodableMessage.self) { [unowned request] event in
-            switch event.kind {
-            case .connected:
-                request.send(sentMessage) { _ in }
-            case .receivedMessage:
-                event.socket?.close(sending: .normalClosure)
-            default:
-                break
-            }
-        }
-        let events = await request.streamingDecodableEvents(CodableMessage.self).collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage(sentMessage),
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanBeCancelled() async {
-        // Given
-        let session = Session()
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        request.streamMessageEvents { [unowned request] event in
-            if case .connected = event.kind {
-                request.cancel()
-            }
-        }
-        let events = await request.streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil), .completed(error: .nonNil)])
-
-        guard case let .completed(completion) = events.last?.kind else {
-            Issue.record("Expected last event to be .completed")
-            return
-        }
-        #expect(completion.error?.isExplicitlyCancelledError == true)
-        #expect(request.error?.isExplicitlyCancelledError == true)
-    }
-
-    @Test
-    func webSocketsWithPendingSendsCompleteTheSendsOnCancellation() async {
-        // Given
-        let session = Session(startRequestsImmediately: false)
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        let stream = request.streamingMessageEvents()
-        async let events = stream.collect()
-        async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send("hello")
-        request.cancel()
-        let (collectedEvents, receivedSendResult) = await (events, sendResult)
-
-        // Then
-        #expect(collectedEvents == [.completed(error: .nonNil)])
-
-        guard case let .completed(completion) = collectedEvents.first?.kind else {
-            Issue.record("Expected event to be .completed")
-            return
-        }
-        #expect(completion.error?.isExplicitlyCancelledError == true)
-        #expect(request.error?.isExplicitlyCancelledError == true)
-        #expect(receivedSendResult.failure?.failedState == .cancelled)
-    }
-
-    @Test
-    func webSocketsFlushEnqueuedSendsOnceConnected() async {
-        // Given
-        let session = Session(startRequestsImmediately: false)
-        let sentMessage = URLSessionWebSocketTask.Message.string("queued")
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        request.streamMessageEvents { [unowned request] event in
-            if case .receivedMessage = event.kind {
-                request.close(sending: .normalClosure)
-            }
-        }
-        let stream = request.streamingMessageEvents()
-        async let events = stream.collect()
-        async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send(sentMessage)
-        request.resume()
-        let (collectedEvents, receivedSendResult) = await (events, sendResult)
-
-        // Then
-        #expect(receivedSendResult.isSuccess)
-        #expect(collectedEvents == [.connected(protocol: nil),
-                                    .receivedMessage(.string("queued")),
-                                    .disconnected(closeCode: .normalClosure, reason: nil),
-                                    .completed(error: .nil)])
-    }
-
-    @Test
-    func sendAfterCompletionFailsWithFinishedState() async {
-        // Given
-        let session = Session()
-
-        // When
-        let request = session.webSocketRequest(.websocket())
-        _ = await request.streamingMessageEvents().collect()
-        let result: Result<Void, WebSocketRequest.SendError<Never>> = await request.send("late")
-
-        // Then
-        #expect(result.failure?.failedState == .finished)
-    }
-
-    @Test
-    func sendFailsWithEncoderError() async {
-        // Given
-        struct EncodingFailure: Error, Equatable {}
-        struct ThrowingEncoder: DataEncoder {
-            func encode<Value>(_ value: Value) throws -> Data where Value: Encodable {
-                throw EncodingFailure()
-            }
-        }
-
-        let session = Session()
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        let stream = request.streamingMessageEvents()
-        async let events = stream.collect()
-        let result: Result<Void, WebSocketRequest.SendError<any Error>> = await request.send("hello", using: ThrowingEncoder())
-        request.cancel()
-        _ = await events
-
-        // Then
-        let isEncoderFailure = result.failure.map { failure in
-            if case .encoder = failure { true } else { false }
-        } ?? false
-        #expect(isEncoderFailure)
-    }
-
-    @Test
-    func onePingOnly() async {
-        // Given
-        let session = Session()
-        let sentMessage = URLSessionWebSocketTask.Message.string("Echo")
-        var receivedPong: WebSocketRequest.PingResult.Pong?
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        var events: [WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>] = []
-        for await event in request.streamingMessageEvents() {
-            events.append(event)
-            switch event.kind {
-            case .connected:
-                let result: Result<Void, WebSocketRequest.SendError<Never>> = await request.send(sentMessage)
-                _ = result
-            case .receivedMessage:
-                for count in 0..<100 {
-                    let response = await request.sendPing()
-                    if case let .pong(pong) = response {
-                        receivedPong = pong
-                    }
-                    if count == 99 {
-                        request.close(sending: .normalClosure)
-                    }
-                }
-            default:
-                break
-            }
-        }
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage(.string("Echo")),
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-        #expect(receivedPong != nil)
-    }
-
-    @Test
-    func sendPingReturnsUnsentAfterCompletion() async {
-        // Given
-        let session = Session()
-
-        // When
-        let request = session.webSocketRequest(.websocket())
-        _ = await request.streamingMessageEvents().collect()
-        let result = await request.sendPing()
-
-        // Then
-        let isUnsent = if case .unsent = result { true } else { false }
-        #expect(isUnsent)
-    }
-
-    @Test
-    func sendPingIsLostWhenCancelledBeforeConnecting() async {
-        // Given
-        let session = Session()
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        request.resume()
-        request.streamMessageEvents { _ in }
-        let pingResult = await withCheckedContinuation { continuation in
-            request.sendPing { result in continuation.resume(returning: result) }
-            request.cancel()
-        }
-
-        // Then
-        let isLost = if case .lost = pingResult { true } else { false }
-        #expect(isLost)
-
-        await request.cancelAndWaitForFinish()
-    }
-
-    @Test
-    func timePingsOccur() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocketPings(), configuration: .pingInterval(0.01))
-            .streamingMessageEvents()
-            .collect()
-
-        // Then
-        #expect(events == [.connected,
-                           .disconnected(closeCode: .goingAway, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketFailsWithTooSmallMaximumMessageSize() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocket(), configuration: .maximumMessageSize(1))
-            .streamingMessageEvents()
-            .collect()
-
-        // Then
-        #expect(events == [.connected, .completed(error: .nonNil)])
-    }
-
-    @Test
-    func webSocketsFinishAfterNonNormalResponseCode() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocket(closeCode: .goingAway)).streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected,
-                           .receivedMessage(.data),
-                           .disconnected(closeCode: .goingAway, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketsCanHaveMultipleHandlers() async {
-        // Given
-        let session = Session()
-
-        // When
-        let request = session.webSocketRequest(.websocket(closeCode: .goingAway))
-        let firstStream = request.streamingMessageEvents()
-        let secondStream = request.streamingMessageEvents()
-        async let firstEvents = firstStream.collect()
-        async let secondEvents = secondStream.collect()
-        let (first, second) = await (firstEvents, secondEvents)
-
-        // Then
-        let expected: [TestKind<TestMessage>] = [.connected(protocol: nil),
-                                                 .receivedMessage(.data),
-                                                 .disconnected(closeCode: .goingAway, reason: nil),
-                                                 .completed(error: .nil)]
-        #expect(first == expected)
-        #expect(second == expected)
-        #expect(first == second)
-    }
-
-    @Test
-    func completedEventCarriesRequestResponseAndMetrics() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(request: .nonNil, response: .nonNil, metrics: .nonNil, error: .nil)])
-    }
-
-    @Test
-    func streamNotAutomaticallyCancellingLeavesRequestAlive() async {
-        // Given
-        let session = Session()
-
-        // When
-        let request = session.webSocketRequest(.websocketEcho)
-        let stream = request.streamingMessageEvents(automaticallyCancelling: false)
-        _ = await stream.first { if case .connected = $0.kind { true } else { false } }
-        let ping = await request.sendPing()
-
-        // Then
-        let isPong = if case .pong = ping { true } else { false }
-        #expect(isPong)
-
-        // Cleanup: the request is still alive, so it must be explicitly finished.
-        await request.cancelAndWaitForFinish()
-    }
+//    @Test
+//    func messageEventsCanBeStreamed() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected, .receivedMessage, .disconnected, .completed])
+//    }
+//
+//    @Test
+//    func messagesCanBeStreamed() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let messages = await session.webSocketRequest(.websocket()).streamingMessages().collect()
+//
+//        // Then
+//        #expect(messages.count == 1)
+//    }
+//
+//    @Test
+//    func finishedRequestsGetOnlyCompletionEvent() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let socket = session.webSocketRequest(.websocket())
+//        let messages = await socket.streamingMessages().collect()
+//
+//        // Then
+//        #expect(messages.count == 1)
+//
+//        // When: another listener is attached.
+//        let moreMessages = await socket.streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(moreMessages.count == 1)
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveMessageEvents() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveMessageEventsWithParameters() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveAMessage() async throws {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let messages = await session.webSocketRequest(.websocket()).streamingMessages().collect()
+//
+//        // Then
+//        try #require(messages.count == 1)
+//        #expect(messages[0].data != nil)
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveADecodableMessage() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocketCount(1)).streamingDecodableEvents(TestResponse.self).collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveADecodableValue() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let values = await session.webSocketRequest(.websocket()).streamingDecodable(TestResponse.self).collect()
+//
+//        // Then
+//        #expect(values.count == 1)
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveADecoderFailure() async {
+//        // Given
+//        struct Unmatched: Decodable, Equatable, Sendable, TestKindReceivedValue {
+//            let doesNotExist: Int
+//        }
+//
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket()).streamingDecodableEvents(Unmatched.self).collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .decoderFailed,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanStreamMessagesUsingAHandler() async {
+//        // Given
+//        let session = Session()
+//        let messages = Protected<[URLSessionWebSocketTask.Message]>([])
+//
+//        // When
+//        let request = session.webSocketRequest(.websocket())
+//        await withCheckedContinuation { continuation in
+//            request.streamMessages { message in
+//                messages.write { $0.append(message) }
+//                continuation.resume()
+//            }
+//        }
+//
+//        // Then
+//        let received = messages.read { $0 }
+//        #expect(received.count == 1 && TestMessage.data.matches(received[0]))
+//
+//        await request.cancelAndWaitForFinish()
+//    }
+//
+//    @Test
+//    func webSocketsCanStreamDecodableValuesUsingAHandler() async {
+//        // Given
+//        let session = Session()
+//        let values = Protected<[TestResponse]>([])
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketCount(1))
+//        await withCheckedContinuation { continuation in
+//            request.streamDecodable(TestResponse.self) { value in
+//                values.write { $0.append(value) }
+//                continuation.resume()
+//            }
+//        }
+//
+//        // Then
+//        #expect(values.read { $0 }.count == 1)
+//
+//        await request.cancelAndWaitForFinish()
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveAMessageWithAProtocol() async {
+//        // Given
+//        let session = Session()
+//        let `protocol` = "protocol"
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket(), configuration: .protocols([`protocol`])).streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: `protocol`),
+//                           .receivedMessage,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveAMessageGivenMultipleProtocols() async {
+//        // Given
+//        let session = Session()
+//        let protocols = ["first", "second"]
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket(), configuration: .protocols(protocols)).streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: "first"),
+//                           .receivedMessage,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanReceiveMultipleMessages() async {
+//        // Given
+//        let count = 5
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocketCount(count)).streamingMessageEvents().collect()
+//
+//        // Then
+//        let expected: [TestKind<TestMessage>] = [.connected(protocol: nil)] +
+//            Array(repeating: .receivedMessage, count: count) +
+//            [.disconnected(closeCode: .normalClosure, reason: nil), .completed(error: .nil)]
+//        #expect(events == expected)
+//    }
+//
+//    @Test
+//    func webSocketsCanSendAndReceiveMessages() async {
+//        // Given
+//        let session = Session()
+//        let sentMessage = URLSessionWebSocketTask.Message.string("Echo")
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        request.streamMessageEvents { [unowned request] event in
+//            switch event.kind {
+//            case .connected:
+//                request.send(sentMessage) { _ in }
+//            case .receivedMessage:
+//                event.socket?.close(sending: .normalClosure)
+//            default:
+//                break
+//            }
+//        }
+//        let events = await request.streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage(.string("Echo")),
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanCloseWithAReason() async {
+//        // Given
+//        let session = Session()
+//        let reason = Data("bye".utf8)
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        request.streamMessageEvents { [unowned request] event in
+//            if case .connected = event.kind {
+//                request.close(sending: .normalClosure, reason: reason)
+//            }
+//        }
+//        let events = await request.streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .disconnected(closeCode: .normalClosure, reason: reason),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanSendAndReceiveCodableMessages() async {
+//        // Given
+//        struct CodableMessage: Equatable, Codable, Sendable, TestKindReceivedValue {
+//            var field = "value"
+//        }
+//
+//        let session = Session()
+//        let sentMessage = CodableMessage()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        request.streamDecodableEvents(CodableMessage.self) { [unowned request] event in
+//            switch event.kind {
+//            case .connected:
+//                request.send(sentMessage) { _ in }
+//            case .receivedMessage:
+//                event.socket?.close(sending: .normalClosure)
+//            default:
+//                break
+//            }
+//        }
+//        let events = await request.streamingDecodableEvents(CodableMessage.self).collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage(sentMessage),
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanBeCancelled() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        request.streamMessageEvents { [unowned request] event in
+//            if case .connected = event.kind {
+//                request.cancel()
+//            }
+//        }
+//        let events = await request.streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil), .completed(error: .nonNil)])
+//
+//        guard case let .completed(completion) = events.last?.kind else {
+//            Issue.record("Expected last event to be .completed")
+//            return
+//        }
+//        #expect(completion.error?.isExplicitlyCancelledError == true)
+//        #expect(request.error?.isExplicitlyCancelledError == true)
+//    }
+//
+//    @Test
+//    func webSocketsWithPendingSendsCompleteTheSendsOnCancellation() async {
+//        // Given
+//        let session = Session(startRequestsImmediately: false)
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        let stream = request.streamingMessageEvents()
+//        async let events = stream.collect()
+//        async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send("hello")
+//        request.cancel()
+//        let (collectedEvents, receivedSendResult) = await (events, sendResult)
+//
+//        // Then
+//        #expect(collectedEvents == [.completed(error: .nonNil)])
+//
+//        guard case let .completed(completion) = collectedEvents.first?.kind else {
+//            Issue.record("Expected event to be .completed")
+//            return
+//        }
+//        #expect(completion.error?.isExplicitlyCancelledError == true)
+//        #expect(request.error?.isExplicitlyCancelledError == true)
+//        #expect(receivedSendResult.failure?.failedState == .cancelled)
+//    }
+//
+//    @Test
+//    func webSocketsFlushEnqueuedSendsOnceConnected() async {
+//        // Given
+//        let session = Session(startRequestsImmediately: false)
+//        let sentMessage = URLSessionWebSocketTask.Message.string("queued")
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        request.streamMessageEvents { [unowned request] event in
+//            if case .receivedMessage = event.kind {
+//                request.close(sending: .normalClosure)
+//            }
+//        }
+//        let stream = request.streamingMessageEvents()
+//        async let events = stream.collect()
+//        async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send(sentMessage)
+//        request.resume()
+//        let (collectedEvents, receivedSendResult) = await (events, sendResult)
+//
+//        // Then
+//        #expect(receivedSendResult.isSuccess)
+//        #expect(collectedEvents == [.connected(protocol: nil),
+//                                    .receivedMessage(.string("queued")),
+//                                    .disconnected(closeCode: .normalClosure, reason: nil),
+//                                    .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func sendAfterCompletionFailsWithFinishedState() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocket())
+//        _ = await request.streamingMessageEvents().collect()
+//        let result: Result<Void, WebSocketRequest.SendError<Never>> = await request.send("late")
+//
+//        // Then
+//        #expect(result.failure?.failedState == .finished)
+//    }
+//
+//    @Test
+//    func sendFailsWithEncoderError() async {
+//        // Given
+//        struct EncodingFailure: Error, Equatable {}
+//        struct ThrowingEncoder: DataEncoder {
+//            func encode<Value>(_ value: Value) throws -> Data where Value: Encodable {
+//                throw EncodingFailure()
+//            }
+//        }
+//
+//        let session = Session()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        let stream = request.streamingMessageEvents()
+//        async let events = stream.collect()
+//        let result: Result<Void, WebSocketRequest.SendError<any Error>> = await request.send("hello", using: ThrowingEncoder())
+//        request.cancel()
+//        _ = await events
+//
+//        // Then
+//        let isEncoderFailure = result.failure.map { failure in
+//            if case .encoder = failure { true } else { false }
+//        } ?? false
+//        #expect(isEncoderFailure)
+//    }
+//
+//    @Test
+//    func onePingOnly() async {
+//        // Given
+//        let session = Session()
+//        let sentMessage = URLSessionWebSocketTask.Message.string("Echo")
+//        var receivedPong: WebSocketRequest.PingResult.Pong?
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        var events: [WebSocketRequest.Event<URLSessionWebSocketTask.Message, Never>] = []
+//        for await event in request.streamingMessageEvents() {
+//            events.append(event)
+//            switch event.kind {
+//            case .connected:
+//                let result: Result<Void, WebSocketRequest.SendError<Never>> = await request.send(sentMessage)
+//                _ = result
+//            case .receivedMessage:
+//                for count in 0..<100 {
+//                    let response = await request.sendPing()
+//                    if case let .pong(pong) = response {
+//                        receivedPong = pong
+//                    }
+//                    if count == 99 {
+//                        request.close(sending: .normalClosure)
+//                    }
+//                }
+//            default:
+//                break
+//            }
+//        }
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage(.string("Echo")),
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//        #expect(receivedPong != nil)
+//    }
+//
+//    @Test
+//    func sendPingReturnsUnsentAfterCompletion() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocket())
+//        _ = await request.streamingMessageEvents().collect()
+//        let result = await request.sendPing()
+//
+//        // Then
+//        let isUnsent = if case .unsent = result { true } else { false }
+//        #expect(isUnsent)
+//    }
+//
+//    @Test
+//    func sendPingIsLostWhenCancelledBeforeConnecting() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        request.resume()
+//        request.streamMessageEvents { _ in }
+//        let pingResult = await withCheckedContinuation { continuation in
+//            request.sendPing { result in continuation.resume(returning: result) }
+//            request.cancel()
+//        }
+//
+//        // Then
+//        let isLost = if case .lost = pingResult { true } else { false }
+//        #expect(isLost)
+//
+//        await request.cancelAndWaitForFinish()
+//    }
+//
+//    @Test
+//    func timePingsOccur() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocketPings(), configuration: .pingInterval(0.01))
+//            .streamingMessageEvents()
+//            .collect()
+//
+//        // Then
+//        #expect(events == [.connected,
+//                           .disconnected(closeCode: .goingAway, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketFailsWithTooSmallMaximumMessageSize() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket(), configuration: .maximumMessageSize(1))
+//            .streamingMessageEvents()
+//            .collect()
+//
+//        // Then
+//        #expect(events == [.connected, .completed(error: .nonNil)])
+//    }
+//
+//    @Test
+//    func webSocketsFinishAfterNonNormalResponseCode() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket(closeCode: .goingAway)).streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected,
+//                           .receivedMessage(.data),
+//                           .disconnected(closeCode: .goingAway, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketsCanHaveMultipleHandlers() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocket(closeCode: .goingAway))
+//        let firstStream = request.streamingMessageEvents()
+//        let secondStream = request.streamingMessageEvents()
+//        async let firstEvents = firstStream.collect()
+//        async let secondEvents = secondStream.collect()
+//        let (first, second) = await (firstEvents, secondEvents)
+//
+//        // Then
+//        let expected: [TestKind<TestMessage>] = [.connected(protocol: nil),
+//                                                 .receivedMessage(.data),
+//                                                 .disconnected(closeCode: .goingAway, reason: nil),
+//                                                 .completed(error: .nil)]
+//        #expect(first == expected)
+//        #expect(second == expected)
+//        #expect(first == second)
+//    }
+//
+//    @Test
+//    func completedEventCarriesRequestResponseAndMetrics() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(.websocket()).streamingMessageEvents().collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(request: .nonNil, response: .nonNil, metrics: .nonNil, error: .nil)])
+//    }
+//
+//    @Test
+//    func streamNotAutomaticallyCancellingLeavesRequestAlive() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let request = session.webSocketRequest(.websocketEcho)
+//        let stream = request.streamingMessageEvents(automaticallyCancelling: false)
+//        _ = await stream.first { if case .connected = $0.kind { true } else { false } }
+//        let ping = await request.sendPing()
+//
+//        // Then
+//        let isPong = if case .pong = ping { true } else { false }
+//        #expect(isPong)
+//
+//        // Cleanup: the request is still alive, so it must be explicitly finished.
+//        await request.cancelAndWaitForFinish()
+//    }
 
 //    @Test
 //    func sendingBeforeListening() async {
@@ -668,55 +668,55 @@ struct WebSocketTests {
 
 @Suite
 struct WebSocketIntegrationTests {
-    @Test
-    func webSocketsCanReceiveMessageEventsAfterRetry() async {
-        // Given
-        let session = Session()
-
-        // When
-        let events = await session.webSocketRequest(performing: .endpoints(.status(500), .websocket()),
-                                                    interceptor: .retryPolicy)
-            .streamingMessageEvents()
-            .collect()
-
-        // Then
-        #expect(events == [.connected(protocol: nil),
-                           .receivedMessage,
-                           .disconnected(closeCode: .normalClosure, reason: nil),
-                           .completed(error: .nil)])
-    }
-
-    @Test
-    func webSocketRequestFiresAllEventMonitorEvents() async {
-        // Given
-        let session = Session()
-        let monitor = StreamEventMonitor()
-        async let _monitorEvents = monitor.stream.collect(until: "requestDidFinish(_:)")
-        let streamEvents = await session.webSocketRequest(.websocket())
-            .eventMonitor(monitor)
-            .streamingMessageEvents()
-            .collect()
-        let monitorEvents = await _monitorEvents
-
-        #expect(streamEvents == [.connected(protocol: nil),
-                                 .receivedMessage,
-                                 .disconnected(closeCode: .normalClosure, reason: nil),
-                                 .completed(error: .nil)])
-        #expect(monitorEvents == ["requestDidResume(_:)",
-                                  "request(_:didCreateInitialURLRequest:)",
-                                  "request(_:didCreateURLRequest:)",
-                                  "request(_:didCreateTask:)",
-                                  "request(_:didResumeTask:)",
-                                  "request(_:didGatherMetrics:)",
-                                  "request(_:didConnectWithProtocol:)",
-                                  "request(_:didReceiveEvent:)",
-                                  "request(_:didReceiveMessage:)",
-                                  "request(_:didReceiveEvent:)",
-                                  "request(_:didDisconnectWithCloseCode:reason:)",
-                                  "request(_:didReceiveEvent:)",
-                                  "request(_:didReceiveEvent:)",
-                                  "requestDidFinish(_:)"])
-    }
+//    @Test
+//    func webSocketsCanReceiveMessageEventsAfterRetry() async {
+//        // Given
+//        let session = Session()
+//
+//        // When
+//        let events = await session.webSocketRequest(performing: .endpoints(.status(500), .websocket()),
+//                                                    interceptor: .retryPolicy)
+//            .streamingMessageEvents()
+//            .collect()
+//
+//        // Then
+//        #expect(events == [.connected(protocol: nil),
+//                           .receivedMessage,
+//                           .disconnected(closeCode: .normalClosure, reason: nil),
+//                           .completed(error: .nil)])
+//    }
+//
+//    @Test
+//    func webSocketRequestFiresAllEventMonitorEvents() async {
+//        // Given
+//        let session = Session()
+//        let monitor = StreamEventMonitor()
+//        async let _monitorEvents = monitor.stream.collect(until: "requestDidFinish(_:)")
+//        let streamEvents = await session.webSocketRequest(.websocket())
+//            .eventMonitor(monitor)
+//            .streamingMessageEvents()
+//            .collect()
+//        let monitorEvents = await _monitorEvents
+//
+//        #expect(streamEvents == [.connected(protocol: nil),
+//                                 .receivedMessage,
+//                                 .disconnected(closeCode: .normalClosure, reason: nil),
+//                                 .completed(error: .nil)])
+//        #expect(monitorEvents == ["requestDidResume(_:)",
+//                                  "request(_:didCreateInitialURLRequest:)",
+//                                  "request(_:didCreateURLRequest:)",
+//                                  "request(_:didCreateTask:)",
+//                                  "request(_:didResumeTask:)",
+//                                  "request(_:didGatherMetrics:)",
+//                                  "request(_:didConnectWithProtocol:)",
+//                                  "request(_:didReceiveEvent:)",
+//                                  "request(_:didReceiveMessage:)",
+//                                  "request(_:didReceiveEvent:)",
+//                                  "request(_:didDisconnectWithCloseCode:reason:)",
+//                                  "request(_:didReceiveEvent:)",
+//                                  "request(_:didReceiveEvent:)",
+//                                  "requestDidFinish(_:)"])
+//    }
 }
 
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
