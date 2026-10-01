@@ -79,22 +79,22 @@ jobs:
             runsOn: xcode-27
           - xcode: "Xcode_26.6"
             name: "Catalyst 26.6"
-            runsOn: self-xcode266
+            runsOn: macos-26
           - xcode: "Xcode_26.4"
             name: "Catalyst 26.4"
-            runsOn: self-xcode264
+            runsOn: macos-26
           - xcode: "Xcode_26.3"
             name: "Catalyst 26.3"
-            runsOn: self-xcode263 # macOS-26
+            runsOn: macos-26
           - xcode: "Xcode_26.2"
             name: "Catalyst 26.2"
-            runsOn: self-xcode262 # macOS-26
+            runsOn: macos-26
           - xcode: "Xcode_26.1"
             name: "Catalyst 26.1"
-            runsOn: self-xcode261 # macOS-26
+            runsOn: macos-26
           - xcode: "Xcode_26.0"
             name: "Catalyst 26.0"
-            runsOn: self-xcode260
+            runsOn: macos-26
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
@@ -136,7 +136,7 @@ jobs:
           - destination: "OS=26.2,name=iPhone 17 Pro"
             name: "iOS 26.2"
             xcode: "Xcode_26.2"
-            runsOn: self-xcode262 # macos-26 # Run on GH since hosted runners can't find it.
+            runsOn: self-xcode262
           - destination: "OS=26.1,name=iPhone 17 Pro"
             name: "iOS 26.1"
             xcode: "Xcode_26.1"
