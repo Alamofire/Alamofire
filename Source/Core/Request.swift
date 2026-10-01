@@ -1113,7 +1113,7 @@ public class Request: @unchecked Sendable {
     /// - Parameter closure: Closure to be called when the request finishes.
     func onFinish(perform finishHandler: @escaping () -> Void) {
         let shouldImmediatelyExecute = mutableState.write { mutableState in
-            if mutableState.state == .finished {
+            if mutableState.state == .finished || mutableState.state == .cancelled {
                 return true
             } else {
                 mutableState.finishHandlers.append(finishHandler)

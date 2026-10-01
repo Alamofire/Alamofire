@@ -482,9 +482,9 @@ extension Session {
 extension WebSocketRequest {
     /// Cancel the request and await `onFinish`, ensuring the socket closes before continuing.
     func cancelAndWaitForFinish() async {
-        cancel()
         await withCheckedContinuation { continuation in
             onFinish { continuation.resume() }
+            cancel()
         }
     }
 }
