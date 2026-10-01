@@ -29,7 +29,7 @@ import Foundation
 public class Request: @unchecked Sendable {
     /// State of the `Request`, with managed transitions between states set when calling `resume()`, `suspend()`, or
     /// `cancel()` on the `Request`.
-    public enum State {
+    public enum State: Sendable {
         /// Initial state of the `Request`.
         case initialized
         /// `State` set when `resume()` is called. Any tasks created for the `Request` will have `resume()` called on
@@ -45,6 +45,10 @@ public class Request: @unchecked Sendable {
         /// `State` set when all response serialization completion closures have been cleared on the `Request` and
         /// enqueued on their respective queues.
         case finished
+
+        func `is`(_ state: State) -> Bool {
+            self == state
+        }
 
         /// Determines whether `self` can be transitioned to the provided `State`.
         func canTransitionTo(_ state: State) -> Bool {
@@ -578,6 +582,14 @@ public class Request: @unchecked Sendable {
         // Start response handlers
         processNextResponseSerializer()
 
+        notifyRequestDidFinish()
+    }
+
+    /// Notifies the instance's `EventMonitor` that the `Request` has finished.
+    ///
+    /// - Note: Allows subclasses to guarantee additional asynchronous work completes, such as delivering a final event,
+    ///         before this event fires.
+    func notifyRequestDidFinish() {
         eventMonitor?.requestDidFinish(self)
     }
 
@@ -1101,7 +1113,7 @@ public class Request: @unchecked Sendable {
     /// - Parameter closure: Closure to be called when the request finishes.
     func onFinish(perform finishHandler: @escaping () -> Void) {
         let shouldImmediatelyExecute = mutableState.write { mutableState in
-            if mutableState.state == .finished {
+            if mutableState.state == .finished || mutableState.state == .cancelled {
                 return true
             } else {
                 mutableState.finishHandlers.append(finishHandler)

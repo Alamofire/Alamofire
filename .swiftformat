@@ -1,7 +1,7 @@
 # file options
 
 --symlinks ignore
---swiftversion 6.0
+--swiftversion 6.2
 --language-mode 5
 
 # format options
@@ -20,6 +20,8 @@
 --selfrequired validate
 --someAny false
 --stripunusedargs closure-only
+--suite-name-format preserve
+--test-case-name-format preserve
 --wraparguments preserve
 --wrapcollections preserve
 --wrapparameters preserve

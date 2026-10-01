@@ -288,11 +288,11 @@ extension SessionDelegate: URLSessionDataDelegate {
 
 #if canImport(Darwin) && !canImport(FoundationNetworking)
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension SessionDelegate: URLSessionWebSocketDelegate {
     open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        // TODO: Add event monitor method.
-//        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didOpenWithProtocol: \(`protocol` ?? "None")")
+        eventMonitor?.urlSession(session, webSocketTask: webSocketTask, didOpenWithProtocol: `protocol`)
+
         guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
             return
         }
@@ -301,8 +301,8 @@ extension SessionDelegate: URLSessionWebSocketDelegate {
     }
 
     open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        // TODO: Add event monitor method.
-//        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didCloseWithCode: \(closeCode.rawValue), reason: \(reason ?? Data())")
+        eventMonitor?.urlSession(session, webSocketTask: webSocketTask, didCloseWith: closeCode, reason: reason)
+
         guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
             return
         }

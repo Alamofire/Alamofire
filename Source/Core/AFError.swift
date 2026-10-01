@@ -30,9 +30,9 @@ import Foundation
 
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
 /// their own associated reasons.
-public enum AFError: Error, Sendable {
+public enum AFError: Error, Equatable, Sendable {
     /// The underlying reason the `.multipartEncodingFailed` error occurred.
-    public enum MultipartEncodingFailureReason: Sendable {
+    public enum MultipartEncodingFailureReason: Equatable, Sendable {
         /// The `fileURL` provided for reading an encodable body part isn't a file `URL`.
         case bodyPartURLInvalid(url: URL)
         /// The filename of the `fileURL` provided has either an empty `lastPathComponent` or `pathExtension`.
@@ -63,7 +63,7 @@ public enum AFError: Error, Sendable {
 
     /// Represents unexpected input stream length that occur when encoding the `MultipartFormData`. Instances will be
     /// embedded within an `AFError.multipartEncodingFailed` `.inputStreamReadFailed` case.
-    public struct UnexpectedInputStreamLength: Error {
+    public struct UnexpectedInputStreamLength: Equatable, Error {
         /// The expected byte count to read.
         public var bytesExpected: UInt64
         /// The actual byte count read.
@@ -71,7 +71,7 @@ public enum AFError: Error, Sendable {
     }
 
     /// The underlying reason the `.parameterEncodingFailed` error occurred.
-    public enum ParameterEncodingFailureReason: Sendable {
+    public enum ParameterEncodingFailureReason: Equatable, Sendable {
         /// The `URLRequest` did not have a `URL` to encode.
         case missingURL
         /// JSON serialization failed with an underlying system error during the encoding process.
@@ -81,9 +81,9 @@ public enum AFError: Error, Sendable {
     }
 
     /// The underlying reason the `.parameterEncoderFailed` error occurred.
-    public enum ParameterEncoderFailureReason: Sendable {
+    public enum ParameterEncoderFailureReason: Equatable, Sendable {
         /// Possible missing components.
-        public enum RequiredComponent: Sendable {
+        public enum RequiredComponent: Equatable, Sendable {
             /// The `URL` was missing or unable to be extracted from the passed `URLRequest` or during encoding.
             case url
             /// The `HTTPMethod` could not be extracted from the passed `URLRequest`.
@@ -97,7 +97,7 @@ public enum AFError: Error, Sendable {
     }
 
     /// The underlying reason the `.responseValidationFailed` error occurred.
-    public enum ResponseValidationFailureReason: Sendable {
+    public enum ResponseValidationFailureReason: Equatable, Sendable {
         /// The data file containing the server response did not exist.
         case dataFileNil
         /// The data file containing the server response at the associated `URL` could not be read.
@@ -114,7 +114,7 @@ public enum AFError: Error, Sendable {
     }
 
     /// The underlying reason the response serialization error occurred.
-    public enum ResponseSerializationFailureReason: Sendable {
+    public enum ResponseSerializationFailureReason: Equatable, Sendable {
         /// The server response contained no data or the data was zero length.
         case inputDataNilOrZeroLength
         /// The file containing the server response did not exist.
@@ -135,9 +135,9 @@ public enum AFError: Error, Sendable {
 
     #if canImport(Security)
     /// Underlying reason a server trust evaluation error occurred.
-    public enum ServerTrustFailureReason: Sendable {
+    public enum ServerTrustFailureReason: Equatable, Sendable {
         /// The output of a server trust evaluation.
-        public struct Output: Sendable {
+        public struct Output: Equatable, Sendable {
             /// The host for which the evaluation was performed.
             public let host: String
             /// The `SecTrust` value which was evaluated.
@@ -186,7 +186,7 @@ public enum AFError: Error, Sendable {
     #endif
 
     /// The underlying reason the `.urlRequestValidationFailed` error occurred.
-    public enum URLRequestValidationFailureReason: Sendable {
+    public enum URLRequestValidationFailureReason: Equatable, Sendable {
         /// URLRequest with GET method had body data.
         case bodyDataInGETRequest(Data)
     }

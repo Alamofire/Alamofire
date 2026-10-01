@@ -790,40 +790,6 @@ final class UploadConcurrencyTests: BaseTestCase {
 }
 #endif
 
-#if canImport(Darwin) && !canImport(FoundationNetworking)
-@_spi(WebSocket) import Alamofire
-
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class WebSocketConcurrencyTests: BaseTestCase {
-    func testThatMessageEventsCanBeStreamed() async {
-        // Given
-        let session = stored(Session())
-        let receivedEvent = expectation(description: "receivedEvent")
-        receivedEvent.expectedFulfillmentCount = 4
-
-        // When
-        for await _ in session.webSocketRequest(.websocket()).webSocketTask().streamingMessageEvents() {
-            receivedEvent.fulfill()
-        }
-
-        await fulfillment(of: [receivedEvent], timeout: timeout)
-
-        // Then
-    }
-
-    func testThatMessagesCanBeStreamed() async {
-        // Given
-        let session = stored(Session())
-
-        // When
-        let messages = await session.webSocketRequest(.websocket()).webSocketTask().streamingMessages().collect()
-
-        // Then
-        XCTAssertTrue(messages.count == 1)
-    }
-}
-#endif
-
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class ClosureAPIConcurrencyTests: BaseTestCase {
     func testThatDownloadProgressStreamReturnsProgress() async {
@@ -880,6 +846,16 @@ extension AsyncSequence {
 
         return elements
     }
-}
+
+    func collect(until finalElement: Element) async rethrows -> [Element] where Element: Equatable {
+        var elements: [Element] = []
+        for try await element in self {
+            elements.append(element)
+            if element == finalElement { break }
+        }
+
+        return elements
+    }
+ }
 
 #endif
