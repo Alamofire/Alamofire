@@ -342,6 +342,23 @@ Importantly, not all `Request` subclasses are able to report their progress accu
 - For download progress, there is a single requirement: - The server response must contain a `Content-Length` header.
   Unfortunately there may be other, undocumented requirements for progress reporting from `URLSession` which prevents accurate progress reporting.
 
+> Note: `UploadRequest` shares the same progress APIs as its `DataRequest` superclass, so all references to `DataRequest`'s progress reporting apply to `UploadRequest` as well.
+
+With Swift Concurrency, the `uploadProgress()` and `downloadProgress()` methods return a `StreamOf<Progress>` which can be iterated using `for await`. However, because `for await` suspends the iterating task until new values arrive, observing progress this way should always be done in a separate `Task`, never on the task which starts or awaits the request. Otherwise the iteration may suspend before the request has started and never receive any values. For simple progress reporting the closure-based APIs are recommended.
+
+```swift
+let request = AF.upload(fileURL, to: "https://httpbin.org/post")
+
+let progressTask = Task {
+    for await progress in request.uploadProgress() {
+        print("Upload Progress: \(progress.fractionCompleted)")
+    }
+}
+
+let response = await request.serializingDecodable(DecodableType.self).response
+progressTask.cancel()
+```
+
 #### Handling Redirects
 
 Alamofire’s `RedirectHandler` protocol provides control and customization of redirect handling for `Request`. In addition to per-`Session` `RedirectHandler`s, each `Request` can be given its own `RedirectHandler` which overrides any provided by the `Session`.

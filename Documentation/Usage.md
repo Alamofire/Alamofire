@@ -866,6 +866,35 @@ AF.upload(fileURL, to: "https://httpbin.org/post")
     }
 ```
 
+> `UploadRequest` shares the same progress APIs as its `DataRequest` superclass, so everything documented for download and upload progress applies to both request types.
+
+##### Observing Progress Asynchronously
+
+With Swift Concurrency, `uploadProgress()` and `downloadProgress()` return a `StreamOf<Progress>`, an `AsyncSequence` of `Progress` values:
+
+```swift
+let request = AF.upload(fileURL, to: "https://httpbin.org/post")
+
+for await progress in request.uploadProgress() {
+    print("Upload Progress: \(progress.fractionCompleted)")
+}
+```
+
+> Important: `for await` suspends the current task while awaiting new values and only resumes once the stream is finished. Iterating a progress stream on the same task that starts the request — or before awaiting the request's response — prevents any other work from running, and may suspend forever if the request hasn't started. Always iterate progress streams in their own `Task`, alongside the task performing the request:
+>
+> ```swift
+> let request = AF.upload(fileURL, to: "https://httpbin.org/post")
+>
+> let progressTask = Task {
+>     for await progress in request.uploadProgress() {
+>         print("Upload Progress: \(progress.fractionCompleted)")
+>     }
+> }
+>
+> let response = await request.serializingDecodable(DecodableType.self).response
+> progressTask.cancel()
+> ```
+
 ### Streaming Data from a Server
 
 Large downloads or long lasting server connections which receive data over time may be better served by streaming rather than accumulating `Data` as it arrives. Alamofire offers the `DataStreamRequest` type and associated APIs to handle this usage. Although it offers much of the same API as other `Request`s, there are several key differences. Most notably, `DataStreamRequest` never accumulates `Data` in memory or saves it to disk. Instead, added `responseStream` closures are repeatedly called as `Data` arrives. The same closures are called again when the connection has completed or received an error.
