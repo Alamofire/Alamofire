@@ -604,6 +604,45 @@ public struct DataStreamTask: Sendable {
         }
     }
 
+    /// Creates an `AsyncThrowingStream` of `Data` values from the underlying `DataStreamRequest`, flattening the
+    /// `DataStreamRequest.Stream` events into a sequence of raw `Data` values. The stream finishes when the request
+    /// completes successfully and throws the request's `AFError` if it fails.
+    ///
+    /// - Parameters:
+    ///   - shouldAutomaticallyCancel: `Bool` indicating whether the underlying `DataStreamRequest` should be canceled
+    ///                                when observation of the stream stops. `true` by default.
+    ///   - bufferingPolicy:           `BufferingPolicy` that determines the stream's buffering behavior.
+    ///                                `.unbounded` by default.
+    ///
+    /// - Returns:                   The `AsyncThrowingStream` of `Data` values.
+    public func bytes(automaticallyCancelling shouldAutomaticallyCancel: Bool = true,
+                      bufferingPolicy: AsyncThrowingStream<Data, any Error>.Continuation.BufferingPolicy = .unbounded)
+        -> AsyncThrowingStream<Data, any Error> {
+        AsyncThrowingStream(bufferingPolicy: bufferingPolicy) { continuation in
+            continuation.onTermination = { _ in
+                guard shouldAutomaticallyCancel,
+                      request.isInitialized || request.isResumed || request.isSuspended else { return }
+
+                request.cancel()
+            }
+
+            request.responseStream(on: .streamCompletionQueue(forRequestID: request.id)) { stream in
+                switch stream.event {
+                case let .stream(result):
+                    if case let .success(data) = result {
+                        continuation.yield(data)
+                    }
+                case let .complete(completion):
+                    if let error = completion.error {
+                        continuation.finish(throwing: error)
+                    } else {
+                        continuation.finish()
+                    }
+                }
+            }
+        }
+    }
+
     /// Creates a `Stream` of `UTF-8` `String`s from the underlying `DataStreamRequest`.
     ///
     /// - Parameters:

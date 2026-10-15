@@ -476,6 +476,71 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         XCTAssertEqual(datas.count, 2)
     }
 
+    func testThatDataStreamTaskCanStreamBytes() async throws {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let task = session.streamRequest(.payloads(2)).streamTask()
+        var datas: [Data] = []
+
+        for try await data in task.bytes() {
+            datas.append(data)
+        }
+
+        // Then
+        XCTAssertEqual(datas.count, 2)
+    }
+
+    func testThatBytesStreamIsCancelledByCancellingIteration() async throws {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let expectedPayloads = 10
+        let request = session.streamRequest(.payloads(expectedPayloads))
+        let task = request.streamTask()
+        var datas: [Data] = []
+
+        for try await data in task.bytes() {
+            datas.append(data)
+            if datas.count == 1 {
+                break
+            }
+        }
+
+        // Then
+        XCTAssertTrue(request.isCancelled)
+        XCTAssertTrue(datas.count == 1)
+    }
+
+    func testThatBytesStreamThrowsWhenRequestIsCancelled() async {
+        // Given
+        let session = stored(Session())
+
+        // When
+        let expectedPayloads = 10
+        let request = session.streamRequest(.payloads(expectedPayloads))
+        let task = request.streamTask()
+        var datas: [Data] = []
+        var thrownError: (any Error)?
+
+        do {
+            for try await data in task.bytes(automaticallyCancelling: false) {
+                datas.append(data)
+                if datas.count == 1 {
+                    task.cancel()
+                }
+            }
+        } catch {
+            thrownError = error
+        }
+
+        // Then
+        XCTAssertTrue(request.isCancelled)
+        XCTAssertEqual(thrownError?.asAFError?.isExplicitlyCancelledError, true)
+    }
+
     #if canImport(Darwin)
     func testThatDataStreamHasAsyncOnHTTPResponse() async {
         // Given
