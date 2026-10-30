@@ -251,4 +251,56 @@ final class InspectorEventMonitor: EventMonitor {
     func request(_ request: DownloadRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, temporaryURL: URL?, destinationURL: URL?, withResult result: Request.ValidationResult) {
         append("\(#function)")
     }
+
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func urlSession(_ session: URLSession,
+                    webSocketTask: URLSessionWebSocketTask,
+                    didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+                    reason: Data?) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request<Success: Sendable, Failure: Error>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message) {
+        append("\(#function)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
+                                                  didFailToSendMessage value: Value,
+                                                  dueToError error: WebSocketRequest.SendError<Failure>) {
+        append("\(#function)")
+    }
+    #endif
 }
