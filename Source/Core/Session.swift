@@ -557,7 +557,6 @@ open class Session: @unchecked Sendable {
                                                       requestModifier: requestModifier)
         let request = WebSocketRequest(convertible: convertible,
                                        configuration: configuration,
-                                       requestQueue: requestQueue,
                                        underlyingQueue: rootQueue,
                                        serializationQueue: serializationQueue,
                                        eventMonitor: eventMonitor,
@@ -577,7 +576,6 @@ open class Session: @unchecked Sendable {
                                shouldAutomaticallyResume: Bool? = nil) -> WebSocketRequest {
         let request = WebSocketRequest(convertible: convertible,
                                        configuration: configuration,
-                                       requestQueue: requestQueue,
                                        underlyingQueue: rootQueue,
                                        serializationQueue: serializationQueue,
                                        eventMonitor: eventMonitor,

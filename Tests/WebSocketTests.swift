@@ -358,17 +358,64 @@ struct WebSocketTests {
     }
 
     @Test
-    func webSocketsWithPendingSendsCompleteTheSendsOnCancellation() async {
+    func sendReturnsStateErrorBeforeResume() async {
         // Given
         let session = Session(startRequestsImmediately: false)
+        let request = session.webSocketRequest(.websocketEcho)
 
         // When
+        let result: Result<Void, WebSocketRequest.SendError<Never>> = await request.send("hello")
+
+        // Then
+        #expect(result.failure?.failedState == .initialized)
+    }
+
+    @Test
+    func sendAndPingAreAcceptedWhileAutomaticResumeIsPending() async {
+        // Given
+        let rootQueue = DispatchQueue(label: "org.alamofire.testRootQueue")
+        let session = Session(rootQueue: rootQueue)
         let request = session.webSocketRequest(.websocketEcho)
+        // Prevent the automatic resume scheduled by adding a handler from running until after the send and ping.
+        rootQueue.suspend()
+        request.streamMessageEvents { _ in }
+
+        // When
+        let sendResult = Protected<Result<Void, WebSocketRequest.SendError<Never>>?>(nil)
+        let pingResult = Protected<WebSocketRequest.PingResult?>(nil)
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let remaining = Protected(2)
+            let complete: @Sendable () -> Void = {
+                if remaining.write({ $0 -= 1; return $0 }) == 0 { continuation.resume() }
+            }
+            request.send("hello", queue: .global()) { result in sendResult.write { $0 = result }; complete() }
+            request.sendPing(respondingOn: .global()) { result in pingResult.write { $0 = result }; complete() }
+            rootQueue.resume()
+        }
+
+        // Then
+        #expect(sendResult.read { $0?.isSuccess } == true, "Send completed with \(String(describing: sendResult.read { $0 })).")
+        let isPong = if case .pong = pingResult.read({ $0 }) { true } else { false }
+        #expect(isPong, "Ping completed with \(String(describing: pingResult.read { $0 })) rather than .pong.")
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func webSocketsWithPendingSendsCompleteTheSendsOnCancellation() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 500))
+        request.resume()
+
+        // When
         let stream = request.streamingMessageEvents()
         async let events = stream.collect()
-        async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send("hello")
-        request.cancel()
-        let (collectedEvents, receivedSendResult) = await (events, sendResult)
+        let receivedSendResult = await withCheckedContinuation { continuation in
+            request.send("hello") { result in continuation.resume(returning: result) }
+            request.cancel()
+        }
+        let collectedEvents = await events
 
         // Then
         #expect(collectedEvents == [.completed(error: .nonNil)])
@@ -379,17 +426,69 @@ struct WebSocketTests {
         }
         #expect(completion.error?.isExplicitlyCancelledError == true)
         #expect(request.error?.isExplicitlyCancelledError == true)
-        #expect(receivedSendResult.failure?.failedState == .cancelled)
+        #expect(receivedSendResult.failure?.isLost == true)
+    }
+
+    @Test
+    func pendingSendIsLostWhenCancelledWithoutStreamHandlers() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 500))
+        request.resume()
+
+        // When
+        let result = await withCheckedContinuation { continuation in
+            request.send("hello") { result in continuation.resume(returning: result) }
+            request.cancel()
+        }
+
+        // Then
+        #expect(result.failure?.isLost == true, "Send completed with \(result) rather than .lost.")
+    }
+
+    @Test
+    func pendingSendIsLostWhenClosedWithoutStreamHandlers() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 500))
+        request.resume()
+
+        // When
+        let result = await withCheckedContinuation { continuation in
+            request.send("hello") { result in continuation.resume(returning: result) }
+            request.close(sending: .normalClosure)
+        }
+
+        // Then
+        #expect(result.failure?.isLost == true, "Send completed with \(result) rather than .lost.")
+    }
+
+    @Test
+    func sendReturnsLostWhenTaskIsCancelledBeforeSending() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 1000))
+        request.resume()
+
+        // When
+        let sendTask = Task { () -> Result<Void, WebSocketRequest.SendError<Never>> in await request.send("hello") }
+        sendTask.cancel()
+        let result = await sendTask.value
+
+        // Then
+        #expect(result.failure?.isLost == true, "Send completed with \(result) rather than .lost.")
+
+        await request.cancelAndWaitForFinish()
     }
 
     @Test
     func webSocketsFlushEnqueuedSendsOnceConnected() async {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = Session()
         let sentMessage = URLSessionWebSocketTask.Message.string("queued")
 
         // When
-        let request = session.webSocketRequest(.websocketEcho)
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 200))
         request.streamMessageEvents { [unowned request] event in
             if case .receivedMessage = event.kind {
                 request.close(sending: .normalClosure)
@@ -397,9 +496,8 @@ struct WebSocketTests {
         }
         let stream = request.streamingMessageEvents()
         async let events = stream.collect()
-        async let sendResult: Result<Void, WebSocketRequest.SendError<Never>> = request.send(sentMessage)
-        request.resume()
-        let (collectedEvents, receivedSendResult) = await (events, sendResult)
+        let receivedSendResult: Result<Void, WebSocketRequest.SendError<Never>> = await request.send(sentMessage)
+        let collectedEvents = await events
 
         // Then
         #expect(receivedSendResult.isSuccess)
@@ -407,6 +505,67 @@ struct WebSocketTests {
                                     .receivedMessage(.string("queued")),
                                     .disconnected(closeCode: .normalClosure, reason: nil),
                                     .completed(error: .nil)])
+    }
+
+    @Test
+    func sendsBeforeConnectingAreSentInOrder() async {
+        // Given
+        let session = Session()
+        let messages = (0..<20).map { "\($0)" }
+        let received = Protected<[String]>([])
+
+        // When
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 200))
+        request.streamMessageEvents { [unowned request] event in
+            guard case let .receivedMessage(.string(string)) = event.kind else { return }
+
+            let count = received.write { $0.append(string); return $0.count }
+            if count == messages.count {
+                request.close(sending: .normalClosure)
+            }
+        }
+        let stream = request.streamingMessageEvents()
+        async let events = stream.collect()
+        let results = Protected<[String]>([])
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let remaining = Protected(messages.count)
+            for message in messages {
+                request.send(message, queue: .main) { result in
+                    if result.isSuccess { results.write { $0.append(message) } }
+                    if remaining.write({ $0 -= 1; return $0 }) == 0 { continuation.resume() }
+                }
+            }
+        }
+        _ = await events
+
+        // Then
+        #expect(results.read { $0 } == messages)
+        #expect(received.read { $0 } == messages)
+    }
+
+    @Test
+    func sendCompletionHandlersAreCalledBeforeCompletion() async {
+        // Given
+        let session = Session()
+        let sendsCompleted = Protected(0)
+
+        // When
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 200))
+        let sendCountAtCompletion = await withCheckedContinuation { (continuation: CheckedContinuation<Int, Never>) in
+            request.streamMessageEvents { event in
+                if case .completed = event.kind {
+                    continuation.resume(returning: sendsCompleted.read { $0 })
+                }
+            }
+            for index in 0..<5 {
+                // Concurrent queue ensures handlers aren't ordered before `.completed` merely by queue order.
+                request.send("\(index)", queue: .global()) { _ in sendsCompleted.write { $0 += 1 } }
+            }
+            request.close(sending: .normalClosure)
+        }
+
+        // Then
+        #expect(sendCountAtCompletion == 5)
     }
 
     @Test
@@ -1102,4 +1261,10 @@ fileprivate func == <Success: TestKindReceivedValue, Failure>(lhs: [TestKind<Suc
     rhs == lhs
 }
 
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+extension WebSocketRequest.SendError {
+    var isLost: Bool {
+        if case .lost = self { true } else { false }
+    }
+}
 #endif
