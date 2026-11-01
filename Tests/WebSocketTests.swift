@@ -405,7 +405,7 @@ struct WebSocketTests {
     func webSocketsWithPendingSendsCompleteTheSendsOnCancellation() async {
         // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketEcho(openDelay: 500))
+        let request = session.webSocketRequest(.websocketEcho, interceptor: ConnectionGate())
         request.resume()
 
         // When
@@ -433,7 +433,7 @@ struct WebSocketTests {
     func pendingSendIsLostWhenCancelledWithoutStreamHandlers() async {
         // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketEcho(openDelay: 500))
+        let request = session.webSocketRequest(.websocketEcho, interceptor: ConnectionGate())
         request.resume()
 
         // When
@@ -450,7 +450,7 @@ struct WebSocketTests {
     func pendingSendIsLostWhenClosedWithoutStreamHandlers() async {
         // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketEcho(openDelay: 500))
+        let request = session.webSocketRequest(.websocketEcho, interceptor: ConnectionGate())
         request.resume()
 
         // When
@@ -467,7 +467,7 @@ struct WebSocketTests {
     func sendReturnsLostWhenTaskIsCancelledBeforeSending() async {
         // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketEcho(openDelay: 1000))
+        let request = session.webSocketRequest(.websocketEcho, interceptor: ConnectionGate())
         request.resume()
 
         // When
@@ -488,7 +488,8 @@ struct WebSocketTests {
         let sentMessage = URLSessionWebSocketTask.Message.string("queued")
 
         // When
-        let request = session.webSocketRequest(.websocketEcho(openDelay: 200))
+        let gate = ConnectionGate()
+        let request = session.webSocketRequest(.websocketEcho, interceptor: gate)
         request.streamMessageEvents { [unowned request] event in
             if case .receivedMessage = event.kind {
                 request.close(sending: .normalClosure)
@@ -496,7 +497,10 @@ struct WebSocketTests {
         }
         let stream = request.streamingMessageEvents()
         async let events = stream.collect()
-        let receivedSendResult: Result<Void, WebSocketRequest.SendError<Never>> = await request.send(sentMessage)
+        let receivedSendResult = await withCheckedContinuation { continuation in
+            request.send(sentMessage) { result in continuation.resume(returning: result) }
+            gate.open()
+        }
         let collectedEvents = await events
 
         // Then
@@ -515,7 +519,8 @@ struct WebSocketTests {
         let received = Protected<[String]>([])
 
         // When
-        let request = session.webSocketRequest(.websocketEcho(openDelay: 200))
+        let gate = ConnectionGate()
+        let request = session.webSocketRequest(.websocketEcho, interceptor: gate)
         request.streamMessageEvents { [unowned request] event in
             guard case let .receivedMessage(.string(string)) = event.kind else { return }
 
@@ -535,6 +540,7 @@ struct WebSocketTests {
                     if remaining.write({ $0 -= 1; return $0 }) == 0 { continuation.resume() }
                 }
             }
+            gate.open()
         }
         _ = await events
 
@@ -550,7 +556,7 @@ struct WebSocketTests {
         let sendsCompleted = Protected(0)
 
         // When
-        let request = session.webSocketRequest(.websocketEcho(openDelay: 200))
+        let request = session.webSocketRequest(.websocketEcho, interceptor: ConnectionGate())
         let sendCountAtCompletion = await withCheckedContinuation { (continuation: CheckedContinuation<Int, Never>) in
             request.streamMessageEvents { event in
                 if case .completed = event.kind {
@@ -680,14 +686,20 @@ struct WebSocketTests {
     }
 
     @Test
-    func sendPingBeforeConnectingIsSentOnceConnected() async {
-        // Given: a server which delays accepting the connection longer than the ping timeout.
+    func sendPingBeforeConnectingIsSentOnceConnected() async throws {
+        // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 500))
+        let gate = ConnectionGate()
+        let request = session.webSocketRequest(.websocketPings(count: 10), interceptor: gate)
         request.resume()
+        let timeout = Duration.milliseconds(250)
 
-        // When: ping is sent with a resumed request, but before the socket is connected.
-        let result = await request.sendPing(timeout: .milliseconds(250))
+        // When: ping is sent with a resumed request, but the socket isn't connected until after the timeout elapses.
+        async let pingResult = request.sendPing(timeout: timeout)
+        // Only a minimum wait, which can't cause a spurious failure, as the ping can't be sent until the gate opens.
+        try await Task.sleep(for: timeout * 2)
+        gate.open()
+        let result = await pingResult
 
         // Then: the ping waits for the connection, and the timeout only applies once it's sent.
         let isPong = if case .pong = result { true } else { false }
@@ -734,7 +746,7 @@ struct WebSocketTests {
     func pendingPingIsLostWhenCancelledWithoutStreamHandlers() async {
         // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 500))
+        let request = session.webSocketRequest(.websocketPings(count: 10), interceptor: ConnectionGate())
         request.resume()
 
         // When
@@ -752,7 +764,7 @@ struct WebSocketTests {
     func pendingPingIsLostWhenClosedWithoutStreamHandlers() async {
         // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 500))
+        let request = session.webSocketRequest(.websocketPings(count: 10), interceptor: ConnectionGate())
         request.resume()
 
         // When
@@ -770,7 +782,7 @@ struct WebSocketTests {
     func sendPingReturnsLostWhenTaskIsCancelled() async {
         // Given
         let session = Session()
-        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 1000))
+        let request = session.webSocketRequest(.websocketPings(count: 10), interceptor: ConnectionGate())
         request.resume()
 
         // When
@@ -791,7 +803,7 @@ struct WebSocketTests {
         let session = Session()
 
         // When
-        let request = session.webSocketRequest(.websocketEcho)
+        let request = session.webSocketRequest(.websocketEcho, interceptor: ConnectionGate())
         request.resume()
         request.streamMessageEvents { _ in }
         let pingResult = await withCheckedContinuation { continuation in
@@ -926,6 +938,301 @@ struct WebSocketTests {
         await request.cancelAndWaitForFinish()
     }
 
+    @Test
+    func closingBeforeConnectingCompletesWithoutCancellationError() async {
+        // Given
+        let session = Session()
+
+        // When
+        // The server doesn't accept the connection during the test, so the task never connects. The delay is never
+        // waited on, as the close cancels the task.
+        let request = session.webSocketRequest(.websocketEcho(openDelay: 60_000))
+        request.onURLSessionTaskCreation { _ in request.close(sending: .normalClosure) }
+        let events = await request.streamingMessageEvents().collect()
+
+        // Then
+        #expect(events == [.completed(error: .nil)])
+        #expect(request.error == nil)
+    }
+
+    @Test
+    func taskCompletingAfterFinishDoesNotFinishAgain() async {
+        // Given
+        let finishCount = Protected(0)
+        let monitorQueue = DispatchQueue(label: "org.alamofire.tests.finishCount")
+        let monitor = ClosureEventMonitor(queue: monitorQueue)
+        monitor.requestDidFinish = { _ in finishCount.write { $0 += 1 } }
+        let session = Session(startRequestsImmediately: false, eventMonitors: [monitor])
+        let request = session.webSocketRequest(.websocketEcho)
+
+        // When
+        await withCheckedContinuation { continuation in
+            request.onFinish { continuation.resume() }
+            request.close(sending: .goingAway)
+        }
+        // Simulate a task created while `close` raced the request's start, which completes after the request has
+        // already finished.
+        let task = URLSession.shared.webSocketTask(with: URL(string: "ws://localhost:8080")!)
+        request.underlyingQueue.async { request.didCompleteTask(task, with: nil) }
+        // Wait for any finish the completion triggers: `didCompleteTask` and `notifyRequestDidFinish` each run on
+        // `underlyingQueue`, then `requestDidFinish` is delivered on the monitor's queue.
+        await request.underlyingQueue.pendingWork()
+        await request.underlyingQueue.pendingWork()
+        await monitorQueue.pendingWork()
+
+        // Then
+        #expect(finishCount.read { $0 } == 1)
+    }
+
+    @Test
+    func requestDidFinishIsCalledAfterStreamHandlersReceiveCompletion() async {
+        // Given
+        let order = Protected<[String]>([])
+        let continuation = Protected<CheckedContinuation<Void, Never>?>(nil)
+        let record: @Sendable (String) -> Void = { value in
+            if order.write({ $0.append(value); return $0.count }) == 2 { continuation.read { $0 }?.resume() }
+        }
+        let rootQueue = DispatchQueue(label: "org.alamofire.tests.rootQueue")
+        let monitorQueue = DispatchQueue(label: "org.alamofire.tests.monitorQueue")
+        // Holds delivery of all stream events until the final `.completed` event has been produced.
+        let handlerQueue = DispatchQueue(label: "org.alamofire.tests.handlerQueue")
+        handlerQueue.suspend()
+        let monitor = WebSocketEventMonitor(queue: monitorQueue,
+                                            didReceiveCompletedEvent: {
+                                                // `.completed` is now enqueued on `handlerQueue`. Before delivering
+                                                // it, let any `requestDidFinish` it doesn't wait for fire: notified on
+                                                // `rootQueue`, then delivered on `monitorQueue`.
+                                                rootQueue.async {
+                                                    rootQueue.async { monitorQueue.async { handlerQueue.resume() } }
+                                                }
+                                            },
+                                            requestDidFinish: { record("requestDidFinish") })
+        let session = Session(rootQueue: rootQueue, eventMonitors: [monitor])
+
+        // When
+        await withCheckedContinuation { (checkedContinuation: CheckedContinuation<Void, Never>) in
+            continuation.write { $0 = checkedContinuation }
+            session.webSocketRequest(.websocket()).streamMessageEvents(on: handlerQueue) { event in
+                if case .completed = event.kind { record("completed") }
+            }
+        }
+
+        // Then
+        #expect(order.read { $0 } == ["completed", "requestDidFinish"])
+    }
+
+    @Test
+    func addingStreamToFinishedRequestDoesNotChangeState() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocket(closeCode: .goingAway))
+        _ = await request.streamingMessageEvents().collect()
+
+        // When
+        let stream = request.streamingMessageEvents()
+        let stateAfterAdding = request.state
+        let events = await stream.collect()
+
+        // Then
+        #expect(stateAfterAdding == .finished)
+        #expect(request.state == .finished)
+        #expect(events == [.completed(error: .nil)])
+    }
+
+    @Test
+    func allMessagesSentBeforeServerCloseAreReceived() async {
+        // Given
+        let session = Session()
+        let count = 1000
+
+        // When
+        let events = await session.webSocketRequest(.websocketCount(count)).streamingMessageEvents().collect()
+
+        // Then
+        let expected: [TestKind<TestMessage>] = [.connected]
+            + Array(repeating: .receivedMessage, count: count)
+            + [.disconnected(closeCode: .normalClosure, reason: nil), .completed(error: .nil)]
+        #expect(events.count == expected.count)
+        #expect(events == expected)
+    }
+
+    @Test(arguments: [false, true], [false, true])
+    func cancellingWhileRetryIsPendingFinishesRequest(closing: Bool, afterRetryDecision: Bool) async {
+        // Given
+        let session = Session()
+        let interceptor = HeldInterceptor()
+        let request = session.webSocketRequest(.status(500), interceptor: interceptor)
+        let events = Task { await request.streamingMessageEvents(automaticallyCancelling: false).collect() }
+        var retries = interceptor.retries.makeAsyncIterator()
+        let completeRetry = await retries.next()
+
+        // When
+        if afterRetryDecision {
+            // The delay is never waited on, as stopping the request finishes it immediately.
+            completeRetry?(.retryWithDelay(60))
+            // The retry decision is delivered on `rootQueue`, then handled by the request on `underlyingQueue`.
+            await request.underlyingQueue.pendingWork()
+            await request.underlyingQueue.pendingWork()
+        }
+        if closing {
+            request.close(sending: .normalClosure)
+        } else {
+            request.cancel()
+        }
+        if !afterRetryDecision {
+            completeRetry?(.retry)
+        }
+        let collected = await withTimeout { await events.value }
+
+        // Then
+        #expect(collected != nil)
+        if let collected {
+            #expect(collected == [.completed(error: .nonNil)])
+        }
+    }
+
+    @Test
+    func resumedSocketContinuesReceivingMessagesAfterSuspension() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho)
+        let stream = request.streamingMessageEvents(automaticallyCancelling: false)
+        let firstMessage = Task { await stream.first { if case .receivedMessage = $0.kind { true } else { false } } }
+        // A pong means the socket has connected.
+        _ = await request.sendPing()
+
+        // When
+        request.suspend()
+        await request.underlyingQueue.pendingWork()
+        request.resume()
+        await request.underlyingQueue.pendingWork()
+        let sendResult = await withTimeout { () async -> Result<Void, WebSocketRequest.SendError<Never>> in
+            await request.send(.string("after resume"))
+        }
+        let received = await withTimeout { await firstMessage.value }
+
+        // Then
+        #expect(sendResult?.isSuccess == true)
+        #expect(received??.kind == .receivedMessage(.string("after resume")))
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func failedAutomaticPingAfterServerCloseDoesNotCancelRequest() async {
+        // Given
+        let session = Session()
+        // The server closes on receipt of the first ping, while its pong is delayed, so the ping fails after the
+        // server has already disconnected.
+        let automaticPing = WebSocketRequest.Configuration.AutomaticPing(interval: .milliseconds(1),
+                                                                         timeout: nil,
+                                                                         failureAction: .cancelRequest(count: 1))
+        let request = session.webSocketRequest(.websocketPings(count: 1, pongDelay: 5000),
+                                               configuration: .init(automaticPing: automaticPing))
+
+        // When
+        let events = await request.streamingMessageEvents().collect()
+
+        // Then
+        #expect(events == [.connected, .disconnected(closeCode: .goingAway, reason: nil), .completed(error: .nil)])
+        #expect(request.error == nil)
+    }
+
+    @Test
+    func suspendingWithInflightAutomaticPingDoesNotCancelRequest() async throws {
+        // Given
+        let session = Session()
+        // Pongs are delayed long enough that a ping is almost always inflight when suspending.
+        let automaticPing = WebSocketRequest.Configuration.AutomaticPing(interval: .milliseconds(1),
+                                                                         timeout: .milliseconds(100),
+                                                                         failureAction: .cancelRequest(count: 1))
+        let request = session.webSocketRequest(.websocketPings(count: 1000, pongDelay: 50),
+                                               configuration: .init(automaticPing: automaticPing))
+        let stream = request.streamingMessageEvents(automaticallyCancelling: false)
+        // A pong means the socket has connected and automatic pings have started.
+        _ = await request.sendPing()
+
+        // When
+        request.suspend()
+        // Wait past the inflight ping's timeout. Only slows the test, it can't make it fail spuriously.
+        try await Task.sleep(for: .milliseconds(300))
+
+        // Then
+        #expect(request.state == .suspended)
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func pingSentBeforeSuspendingDoesNotTimeOutWhileSuspended() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho)
+        let stream = request.streamingMessageEvents(automaticallyCancelling: false)
+        _ = await request.sendPing()
+
+        // When
+        let result = await withCheckedContinuation { continuation in
+            request.sendPing(timeout: .milliseconds(100)) { continuation.resume(returning: $0) }
+            request.suspend()
+            // Stay suspended past the timeout. Only slows the test, it can't make it fail spuriously.
+            request.underlyingQueue.asyncAfter(deadline: .now() + .milliseconds(300)) { request.resume() }
+        }
+
+        // Then
+        let isPong = if case .pong = result { true } else { false }
+        #expect(isPong, "\(result)")
+        _ = stream
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func pausedPingTimeoutStillTimesOutAfterResuming() async {
+        // Given
+        let session = Session()
+        // The server closes after the second ping, so it stays connected while the first pong is delayed.
+        let request = session.webSocketRequest(.websocketPings(count: 2, pongDelay: 5000))
+        let stream = request.streamingMessageEvents(automaticallyCancelling: false)
+
+        // When
+        let result = await withCheckedContinuation { continuation in
+            request.sendPing(timeout: .milliseconds(100)) { continuation.resume(returning: $0) }
+            request.suspend()
+            request.resume()
+        }
+
+        // Then
+        let isTimedOut = if case .timedOut = result { true } else { false }
+        #expect(isTimedOut, "\(result)")
+        _ = stream
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func addingStreamToCancelledRequestFinishesOnce() async {
+        // Given
+        let finishCount = Protected(0)
+        let monitorQueue = DispatchQueue(label: "org.alamofire.tests.finishCount")
+        let monitor = ClosureEventMonitor(queue: monitorQueue)
+        monitor.requestDidFinish = { _ in finishCount.write { $0 += 1 } }
+        let session = Session(eventMonitors: [monitor])
+        let request = session.webSocketRequest(.websocketEcho)
+        _ = await request.streamingMessageEvents().first { if case .connected = $0.kind { true } else { false } }
+        await request.cancelAndWaitForFinish()
+
+        // When
+        let events = await request.streamingMessageEvents().collect()
+        await request.underlyingQueue.pendingWork()
+        await monitorQueue.pendingWork()
+
+        // Then
+        #expect(events == [.completed(error: .nonNil)])
+        #expect(request.state == .cancelled)
+        #expect(finishCount.read { $0 } == 1)
+    }
+
 //    @Test
 //    func sendingBeforeListening() async {
 //        // Given
@@ -963,6 +1270,57 @@ struct WebSocketTests {
 //        #expect(isSecondLost == true)
 //        print(firstPing, secondPing)
 //    }
+}
+
+/// Holds requests before their `URLSessionTask` is created until `open()` is called, so a resumed `WebSocketRequest`
+/// deterministically remains unconnected.
+final class ConnectionGate: RequestInterceptor, Sendable {
+    private let state = Protected<(isOpen: Bool, pending: [@Sendable () -> Void])>((false, []))
+
+    func adapt(_ urlRequest: URLRequest,
+               for session: Session,
+               completion: @escaping @Sendable (_ result: Result<URLRequest, any Error>) -> Void) {
+        let isOpen = state.write { state in
+            if !state.isOpen { state.pending.append { completion(.success(urlRequest)) } }
+            return state.isOpen
+        }
+
+        if isOpen { completion(.success(urlRequest)) }
+    }
+
+    func open() {
+        let pending = state.write { state in
+            state.isOpen = true
+            defer { state.pending = [] }
+            return state.pending
+        }
+
+        pending.forEach { $0() }
+    }
+}
+
+/// Observes `WebSocketRequest` events not available through `ClosureEventMonitor`.
+final class WebSocketEventMonitor: EventMonitor {
+    let queue: DispatchQueue
+    private let didReceiveCompletedEvent: @Sendable () -> Void
+    private let didFinish: @Sendable () -> Void
+
+    init(queue: DispatchQueue,
+         didReceiveCompletedEvent: @escaping @Sendable () -> Void,
+         requestDidFinish: @escaping @Sendable () -> Void) {
+        self.queue = queue
+        self.didReceiveCompletedEvent = didReceiveCompletedEvent
+        didFinish = requestDidFinish
+    }
+
+    func request<Success: Sendable, Failure: Error>(_ request: WebSocketRequest,
+                                                    didReceiveEvent event: WebSocketRequest.Event<Success, Failure>) {
+        if case .completed = event.kind { didReceiveCompletedEvent() }
+    }
+
+    func requestDidFinish(_ request: Request) {
+        didFinish()
+    }
 }
 
 @Suite

@@ -271,11 +271,11 @@ public final class DownloadRequest: Request, @unchecked Sendable {
 
             underlyingQueue.async { self.didCancel() }
 
-            // Ensure we have a task. If we do, didCreateTask has been called but wouldn't have changed the task state
-            // since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, so we can
-            // start the finish process and return early, as didCreateTask will perform the task changes but we won't
-            // receive any task delegate callback.
-            guard let task = mutableState.tasks.last as? URLSessionDownloadTask else {
+            // Ensure we have an active task. If we do, didCreateTask has been called but wouldn't have changed the task
+            // state since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, either
+            // initially or for a pending retry, so we can start the finish process and return early, as didCreateTask
+            // will perform the task changes but we won't receive any task delegate callback.
+            guard let task = mutableState.activeTask as? URLSessionDownloadTask else {
                 underlyingQueue.async { self.finish() }
                 return
             }

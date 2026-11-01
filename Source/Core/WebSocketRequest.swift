@@ -94,8 +94,9 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             ///
             /// - Parameters:
             ///   - interval:      `Duration` between each ping. Defaults to `.seconds(5)`.
-            ///   - timeout:       `Duration` to wait for each pong before the ping is considered failed. `nil` by
-            ///                    default, which waits indefinitely.
+            ///   - timeout:       `Duration` to wait for each pong before the ping is considered failed. Time spent
+            ///                    suspended doesn't count toward the timeout. `nil` by default, which waits
+            ///                    indefinitely.
             ///   - failureAction: `FailureAction` to take when pings fail. `.continue` by default.
             public init(interval: Duration = .seconds(5), timeout: Duration? = nil, failureAction: FailureAction = .continue) {
                 self.interval = interval
@@ -157,8 +158,20 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         let handler: @Sendable (_ result: PingResult) -> Void
         /// Whether the ping has been handed to the `URLSessionWebSocketTask`.
         var isSent = false
-        /// Fires the `.timedOut` result, only set once the ping has been sent.
-        var timeoutItem: DispatchWorkItem?
+        /// Timer for the `.timedOut` result, only set once the ping has been sent with a `timeout`.
+        var timer: PingTimer?
+    }
+
+    /// The state of a sent ping's timeout, which only elapses while the instance is `.resumed`.
+    enum PingTimer {
+        /// Fires `item` at `deadline`.
+        case running(_ item: DispatchWorkItem, deadline: DispatchTime)
+        /// Paused while the instance is suspended, with `remaining` time once resumed.
+        case paused(remaining: Duration)
+
+        func cancel() {
+            if case let .running(item, _) = self { item.cancel() }
+        }
     }
 
     /// The outcome of a message send, mapped to the caller's `Result` by `PendingMessage.complete`.
@@ -188,6 +201,11 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         /// Identifies the active automatic ping chain, so stale chains (e.g. from a previous connection) stop.
         var automaticPingChainID: UUID?
         var pings: [UUID: PendingPing] = [:]
+        /// Whether `close(sending:reason:)` has been called. Preserved by `resetReturningPendingWork()`.
+        var isClosed = false
+        /// Whether `finish()` has been called, so late task completions can't finish the request again. Preserved by
+        /// `resetReturningPendingWork()`.
+        var hasFinished = false
     }
 
     let socketMutableState = Protected(SocketMutableState())
@@ -259,14 +277,24 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         startListening()
     }
 
+    override func didCompleteTask(_ task: URLSessionTask, with error: AFError?) {
+        let (hasFinished, isClosed) = socketMutableState.read { ($0.hasFinished, $0.isClosed) }
+
+        // A task created while `close` or `cancel` raced the request's start can complete after the request has
+        // already finished. Its completion must not produce events, alter the error, or finish the request again.
+        guard !hasFinished else { return }
+
+        // Closing a socket which hasn't connected yet completes its task with a cancellation error, which isn't an
+        // error from the user's perspective.
+        super.didCompleteTask(task, with: isClosed && error.isCancellation ? nil : error)
+    }
+
     func didClose(sending closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
         let eventMonitor = mutableState.write { mutableState in
-            // Check whether error is cancellation or other websocket closing error.
-            // If so, remove it.
-            // Otherwise keep it.
-            if case let .sessionTaskFailed(error) = mutableState.error, (error as? URLError)?.code == .cancelled {
+            // Remove a cancellation error caused by closing, keeping any other error.
+            if mutableState.error.isCancellation {
                 mutableState.error = nil
             }
 
@@ -282,16 +310,17 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
 
             socketMutableState.cancelAutomaticPing()
+            socketMutableState.isClosed = true
 
             mutableState.state = .cancelled
 
             underlyingQueue.async { self.didClose(sending: closeCode, reason: reason) }
 
-            // Ensure we have a task. If we do, didCreateTask has been called but wouldn't have changed the task state
-            // since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, so we can
-            // start the finish process and return early, as didCreateTask will perform the task changes but we won't
-            // receive any task delegate callback.
-            guard let socket = mutableState.socket else {
+            // Ensure we have an active task. If we do, didCreateTask has been called but wouldn't have changed the task
+            // state since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, either
+            // initially or for a pending retry, so we can start the finish process and return early, as didCreateTask
+            // will perform the task changes but we won't receive any task delegate callback.
+            guard let socket = mutableState.activeTask as? URLSessionWebSocketTask else {
                 underlyingQueue.async { self.finish() }
                 return
             }
@@ -313,6 +342,16 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     }
 
     override func finish(error: AFError? = nil) {
+        let isFirstFinish = socketMutableState.write { socketMutableState in
+            guard !socketMutableState.hasFinished else { return false }
+
+            socketMutableState.hasFinished = true
+            return true
+        }
+        // Unlike other `Request`s, `isFinishing` can't prevent a second finish, as it's reset once response
+        // serialization completes, so a late task completion could otherwise run the finish process again.
+        guard isFirstFinish else { return }
+
         super.finish(error: error)
 
         // `isFinishing` is now set, so no new messages or pings can be added after this drain. Any added in the window
@@ -326,6 +365,30 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         streamCompletionGroup.notify(queue: underlyingQueue) {
             self.eventMonitor?.requestDidFinish(self)
         }
+    }
+
+    /// Suspends the instance. The timeouts of any pings awaiting a pong are paused until the instance is resumed.
+    ///
+    /// - Returns: The instance.
+    @discardableResult
+    override public func suspend() -> Self {
+        super.suspend()
+
+        pausePingTimeouts()
+
+        return self
+    }
+
+    /// Resumes the instance, resuming the timeouts of any pings awaiting a pong.
+    ///
+    /// - Returns: The instance.
+    @discardableResult
+    override public func resume() -> Self {
+        super.resume()
+
+        resumePingTimeouts()
+
+        return self
     }
 
     @discardableResult
@@ -473,13 +536,33 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     }
 
     private func startListening() {
-        withBothStates { mutableState, _ in
-            #if compiler(>=6.2.3)
-            weak let request = self
-            #else
-            weak var request = self
-            #endif
-            mutableState.listen(onBehalfOf: request)
+        guard let socket = mutableState.read(\.socket) else { return }
+
+        listen(to: socket)
+    }
+
+    /// Receives the next message from `socket`, re-arming only while `socket` is still the instance's current task, so a
+    /// receive completing on a previous task (e.g. after a retry) doesn't start a second receive loop on the new one.
+    private func listen(to socket: URLSessionWebSocketTask) {
+        socket.receive { [weak self] result in
+            // It doesn't seem like any relevant errors are received here, just incorrect garbage, like errors when the
+            // socket disconnects.
+            guard let self, case let .success(message) = result else { return }
+
+            eventMonitor?.request(self, didReceiveMessage: message)
+
+            let isCurrentSocket = withBothStates { mutableState, socketMutableState in
+                for handler in socketMutableState.handlers {
+                    // Saved handler calls out to serializationQueue immediately, then to handler's queue.
+                    handler(.receivedMessage(message))
+                }
+
+                return mutableState.socket === socket
+            }
+
+            if isCurrentSocket {
+                listen(to: socket)
+            }
         }
     }
 
@@ -496,8 +579,8 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - timeout:    `Duration` to wait for a pong once the ping has been sent, after which `.timedOut` is returned.
-    ///                 Time spent waiting for the socket to connect doesn't count toward the timeout. `nil` by default,
-    ///                 which waits indefinitely.
+    ///                 Time spent waiting for the socket to connect, or while the instance is suspended, doesn't count
+    ///                 toward the timeout. `nil` by default, which waits indefinitely.
     ///   - queue:      `DispatchQueue` on which to call `onResponse`. `.main` by default.
     ///   - onResponse: Closure called with the `PingResult`.
     public func sendPing(timeout: Duration? = nil,
@@ -511,8 +594,8 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     /// - Note: Cancelling the calling `Task` returns `.lost` but doesn't cancel the instance.
     ///
     /// - Parameter timeout: `Duration` to wait for a pong once the ping has been sent, after which `.timedOut` is
-    ///                      returned. Time spent waiting for the socket to connect doesn't count toward the timeout.
-    ///                      `nil` by default, which waits indefinitely.
+    ///                      returned. Time spent waiting for the socket to connect, or while the instance is
+    ///                      suspended, doesn't count toward the timeout. `nil` by default, which waits indefinitely.
     ///
     /// - Returns: The `PingResult`.
     public func sendPing(timeout: Duration? = nil) async -> PingResult {
@@ -565,11 +648,15 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     /// Sends an already registered ping using `socket`. Must not be called while holding either lock.
     private func performPing(_ id: UUID, timeout: Duration?, on socket: URLSessionWebSocketTask) {
         if let timeout {
-            // Strongly capture self so the handler is always called.
-            let timeoutItem = DispatchWorkItem { self.completePing(id, with: .timedOut) }
-            // If the ping has already completed there's no entry to update, so the item fires as a no-op.
-            socketMutableState.write { $0.pings[id]?.timeoutItem = timeoutItem }
-            underlyingQueue.asyncAfter(deadline: .now() + timeout.timeInterval, execute: timeoutItem)
+            withBothStates { mutableState, socketMutableState in
+                // If the ping has already completed there's no entry to update.
+                guard socketMutableState.pings[id] != nil else { return }
+
+                // A ping sent while suspended, e.g. when connecting while suspended, starts with its timeout paused.
+                socketMutableState.pings[id]?.timer = mutableState.state == .suspended
+                    ? .paused(remaining: timeout)
+                    : startPingTimer(id, timeout: timeout)
+            }
         }
 
         let startTimestamp = Instant()
@@ -588,8 +675,64 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
     private func completePing(_ id: UUID, with result: PingResult) {
         guard let ping = socketMutableState.write({ $0.pings.removeValue(forKey: id) }) else { return }
 
-        ping.timeoutItem?.cancel()
+        ping.timer?.cancel()
         ping.queue.async { ping.handler(result) }
+    }
+
+    /// Starts a timer completing the ping for `id` with `.timedOut` after `timeout`. Must be called while holding both
+    /// locks.
+    private func startPingTimer(_ id: UUID, timeout: Duration) -> PingTimer {
+        // Strongly capture self so the handler is always called.
+        let item = DispatchWorkItem { self.pingDidTimeOut(id) }
+        let deadline = DispatchTime.now() + timeout.timeInterval
+        underlyingQueue.asyncAfter(deadline: deadline, execute: item)
+
+        return .running(item, deadline: deadline)
+    }
+
+    private func pingDidTimeOut(_ id: UUID) {
+        let isPaused = withBothStates { mutableState, socketMutableState in
+            // Suspended after the timeout elapsed but before pausing timeouts, so time out immediately once resumed.
+            guard mutableState.state == .suspended, socketMutableState.pings[id] != nil else { return false }
+
+            socketMutableState.pings[id]?.timer = .paused(remaining: .zero)
+            return true
+        }
+
+        guard !isPaused else { return }
+
+        completePing(id, with: .timedOut)
+    }
+
+    /// Pauses the timeouts of all sent pings, as pongs can't be received while the socket is suspended.
+    private func pausePingTimeouts() {
+        withBothStates { mutableState, socketMutableState in
+            // Resumed again before pausing.
+            guard mutableState.state == .suspended else { return }
+
+            let now = DispatchTime.now()
+            for (id, ping) in socketMutableState.pings {
+                guard case let .running(item, deadline) = ping.timer else { continue }
+
+                item.cancel()
+                let remaining = deadline > now ? deadline.uptimeNanoseconds - now.uptimeNanoseconds : 0
+                socketMutableState.pings[id]?.timer = .paused(remaining: .nanoseconds(Int64(remaining)))
+            }
+        }
+    }
+
+    /// Resumes the timeouts of all sent pings paused by `pausePingTimeouts()`.
+    private func resumePingTimeouts() {
+        withBothStates { mutableState, socketMutableState in
+            // Suspended again before resuming.
+            guard mutableState.state == .resumed else { return }
+
+            for (id, ping) in socketMutableState.pings {
+                guard case let .paused(remaining) = ping.timer else { continue }
+
+                socketMutableState.pings[id]?.timer = startPingTimer(id, timeout: remaining)
+            }
+        }
     }
 
     /// Whether new messages and pings can be accepted. They're accepted while the instance is `.resumed`, or is
@@ -625,7 +768,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         }
 
         for ping in pings {
-            ping.timeoutItem?.cancel()
+            ping.timer?.cancel()
             ping.queue.async { ping.handler(.lost) }
         }
     }
@@ -864,7 +1007,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         on queue: DispatchQueue = .main,
         handler: @escaping @Sendable (_ event: Event<Serializer.Output, Serializer.Failure>) -> Void
     ) -> Self where Serializer: WebSocketMessageDecoder {
-        forIncomingEvent { [self] incomingEvent in
+        forIncomingEvent { [self] incomingEvent, didDeliver in
             let event: Event<Serializer.Output, Serializer.Failure>
             switch incomingEvent {
             case let .connected(`protocol`):
@@ -884,7 +1027,10 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
 
             eventMonitor?.request(self, didReceiveEvent: event)
 
-            queue.async { handler(event) }
+            queue.async {
+                handler(event)
+                didDeliver?()
+            }
         }
     }
 
@@ -915,7 +1061,7 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         on queue: DispatchQueue = .main,
         handler: @escaping @Sendable (_ event: Event<URLSessionWebSocketTask.Message, Never>) -> Void
     ) -> Self {
-        forIncomingEvent { [self] incomingEvent in
+        forIncomingEvent { [self] incomingEvent, didDeliver in
             let event: Event<URLSessionWebSocketTask.Message, Never> = switch incomingEvent {
             case let .connected(`protocol`):
                 .init(socket: self, kind: .connected(protocol: `protocol`))
@@ -929,7 +1075,10 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
 
             eventMonitor?.request(self, didReceiveEvent: event)
 
-            queue.async { handler(event) }
+            queue.async {
+                handler(event)
+                didDeliver?()
+            }
         }
     }
 
@@ -943,11 +1092,27 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
         }
     }
 
-    func forIncomingEvent(handler: @escaping @Sendable (IncomingEvent) -> Void) -> Self {
+    /// Registers `handler` to receive all `IncomingEvent`s on `serializationQueue`.
+    ///
+    /// `handler` must call the provided `didDeliver` closure, when non-`nil`, once the event has been delivered to the
+    /// user's handler. It's only provided with the final `.completed` event, and delays `requestDidFinish` until called.
+    func forIncomingEvent(
+        handler: @escaping @Sendable (_ event: IncomingEvent, _ didDeliver: (@Sendable () -> Void)?) -> Void
+    ) -> Self {
+        // A finished request won't produce any more events, so new handlers only receive `.completed`. Adding a response
+        // serializer would transition the request from `.finished` back to `.resumed` while the serializer runs.
+        let isFinished = mutableState.read { $0.state == .finished && $0.responseSerializerProcessingFinished }
+        guard !isFinished else {
+            let completion = Completion(request: request, response: response, metrics: metrics, error: error)
+            serializationQueue.async { handler(.completed(completion), nil) }
+
+            return self
+        }
+
         socketMutableState.write { socketMutableState in
             socketMutableState.handlers.append { [self] incomingEvent in
                 serializationQueue.async {
-                    handler(incomingEvent)
+                    handler(incomingEvent, nil)
                 }
             }
         }
@@ -963,11 +1128,8 @@ public final class WebSocketRequest: Request, @unchecked Sendable {
                 let metrics = metrics
                 let error = error
                 sendGroup.notify(queue: serializationQueue) {
-                    handler(.completed(.init(request: request,
-                                             response: response,
-                                             metrics: metrics,
-                                             error: error)))
-                    self.streamCompletionGroup.leave()
+                    let completion = Completion(request: request, response: response, metrics: metrics, error: error)
+                    handler(.completed(completion)) { self.streamCompletionGroup.leave() }
                 }
             }
         }
@@ -1190,7 +1352,7 @@ extension WebSocketRequest.SocketMutableState {
                                                   pings: [WebSocketRequest.PendingPing]) {
         cancelAutomaticPing()
         let pendingWork = (messages, Array(pings.values))
-        self = .init()
+        self = .init(isClosed: isClosed, hasFinished: hasFinished)
         return pendingWork
     }
 }
@@ -1200,34 +1362,12 @@ extension WebSocketRequest.MutableState {
     var socket: URLSessionWebSocketTask? {
         tasks.last as? URLSessionWebSocketTask
     }
+}
 
-    func listen(onBehalfOf request: WebSocketRequest?) {
-        guard let request, let socket else { return }
-
-        socket.receive { result in
-            switch result {
-            case let .success(message):
-                request.eventMonitor?.request(request, didReceiveMessage: message)
-
-                request.withBothStates { mutableState, socketMutableState in
-                    for handler in socketMutableState.handlers {
-                        // Saved handler calls out to serializationQueue immediately, then to handler's queue.
-                        handler(.receivedMessage(message))
-                    }
-
-                    #if compiler(>=6.2.3)
-                    weak let request = request
-                    #else
-                    weak var request = request
-                    #endif
-                    mutableState.listen(onBehalfOf: request)
-                }
-            case .failure:
-                // It doesn't seem like any relevant errors are received here, just incorrect garbage, like errors when
-                // the socket disconnects.
-                break
-            }
-        }
+extension AFError? {
+    /// Whether the instance is a `URLError.cancelled` session task failure, as produced by closing a socket.
+    fileprivate var isCancellation: Bool {
+        if case let .sessionTaskFailed(error) = self, (error as? URLError)?.code == .cancelled { true } else { false }
     }
 }
 

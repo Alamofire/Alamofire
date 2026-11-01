@@ -486,6 +486,70 @@ extension Session {
     #endif
 }
 
+/// Hands control of retry decisions, and optionally of adapting retried requests, to the test.
+final class HeldInterceptor: RequestInterceptor, Sendable {
+    typealias RetryCompletion = @Sendable (RetryResult) -> Void
+
+    /// Each retry's completion, to be called by the test with the `RetryResult`.
+    let retries: AsyncStream<RetryCompletion>
+    /// For each adapt of a retried request, a closure continuing the adapt. Empty unless `holdsRetriedAdapts`.
+    let retriedAdapts: AsyncStream<@Sendable () -> Void>
+
+    private let holdsRetriedAdapts: Bool
+    private let adaptCount = Protected(0)
+    private let retriesContinuation: AsyncStream<RetryCompletion>.Continuation
+    private let retriedAdaptsContinuation: AsyncStream<@Sendable () -> Void>.Continuation
+
+    init(holdsRetriedAdapts: Bool = false) {
+        self.holdsRetriedAdapts = holdsRetriedAdapts
+        (retries, retriesContinuation) = AsyncStream.makeStream()
+        (retriedAdapts, retriedAdaptsContinuation) = AsyncStream.makeStream()
+    }
+
+    func adapt(_ urlRequest: URLRequest,
+               for session: Session,
+               completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
+        let isRetry = adaptCount.write { count in
+            defer { count += 1 }
+            return count > 0
+        }
+
+        if holdsRetriedAdapts, isRetry {
+            retriedAdaptsContinuation.yield { completion(.success(urlRequest)) }
+        } else {
+            completion(.success(urlRequest))
+        }
+    }
+
+    func retry(_ request: Request,
+               for session: Session,
+               dueTo error: any Error,
+               completion: @escaping @Sendable (RetryResult) -> Void) {
+        retriesContinuation.yield(completion)
+    }
+}
+
+/// Returns the result of `operation`, or `nil` if it doesn't complete within `seconds`. Only used to bound waits for
+/// work which hangs when a bug is present, so the bound is never reached by a passing test.
+func withTimeout<T: Sendable>(seconds: Double = 5,
+                              _ operation: @escaping @Sendable () async -> T) async -> T? {
+    let hasResumed = Protected(false)
+    let timeout = Protected<Task<Void, Never>?>(nil)
+    return await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
+        let resume: @Sendable (T?) -> Void = { value in
+            guard hasResumed.write({ hasResumed in defer { hasResumed = true }; return !hasResumed }) else { return }
+
+            timeout.read { $0 }?.cancel()
+            continuation.resume(returning: value)
+        }
+        timeout.write { $0 = Task {
+            try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+            resume(nil)
+        } }
+        Task { await resume(operation()) }
+    }
+}
+
 #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 extension WebSocketRequest {
