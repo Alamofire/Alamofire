@@ -256,8 +256,17 @@ struct Endpoint {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     static let websocketEcho = Endpoint(path: .websocketEcho)
 
-    static func websocketPings(count: Int = 5) -> Endpoint {
-        Endpoint(path: .websocketPingCount(count))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static func websocketEcho(openDelay: Int) -> Endpoint {
+        Endpoint(path: .websocketEcho, queryItems: [.init(name: "openDelay", value: "\(openDelay)")])
+    }
+
+    static func websocketPings(count: Int = 5, openDelay: Int? = nil, pongDelay: Int? = nil) -> Endpoint {
+        var queryItems: [URLQueryItem] = []
+        if let openDelay { queryItems.append(.init(name: "openDelay", value: "\(openDelay)")) }
+        if let pongDelay { queryItems.append(.init(name: "pongDelay", value: "\(pongDelay)")) }
+
+        return Endpoint(path: .websocketPingCount(count), queryItems: queryItems)
     }
     #endif
 

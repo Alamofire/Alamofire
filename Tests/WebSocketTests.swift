@@ -505,6 +505,128 @@ struct WebSocketTests {
     }
 
     @Test
+    func sendPingReturnsUnsentBeforeResume() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho)
+
+        // When
+        let result = await request.sendPing()
+
+        // Then
+        let isUnsent = if case .unsent = result { true } else { false }
+        #expect(isUnsent, "Unresumed request completed ping with \(result) rather than .unsent.")
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func sendPingBeforeConnectingIsSentOnceConnected() async {
+        // Given: a server which delays accepting the connection longer than the ping timeout.
+        let session = Session()
+        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 500))
+        request.resume()
+
+        // When: ping is sent with a resumed request, but before the socket is connected.
+        let result = await request.sendPing(timeout: .milliseconds(250))
+
+        // Then: the ping waits for the connection, and the timeout only applies once it's sent.
+        let isPong = if case .pong = result { true } else { false }
+        #expect(isPong, "Ping sent before connection completed with \(result) rather than .pong.")
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func sendPingTimesOutWhenPongIsDelayed() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketPings(count: 10, pongDelay: 2000))
+        request.resume()
+
+        // When
+        let result = await request.sendPing(timeout: .milliseconds(100))
+
+        // Then
+        let isTimedOut = if case .timedOut = result { true } else { false }
+        #expect(isTimedOut, "Ping completed with \(result) rather than .timedOut.")
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func sendPingWithTimeoutReceivesPong() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketEcho)
+        request.resume()
+
+        // When
+        let result = await request.sendPing(timeout: .seconds(10))
+
+        // Then
+        let isPong = if case .pong = result { true } else { false }
+        #expect(isPong, "Ping completed with \(result) rather than .pong.")
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
+    func pendingPingIsLostWhenCancelledWithoutStreamHandlers() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 500))
+        request.resume()
+
+        // When
+        let result = await withCheckedContinuation { continuation in
+            request.sendPing { result in continuation.resume(returning: result) }
+            request.cancel()
+        }
+
+        // Then
+        let isLost = if case .lost = result { true } else { false }
+        #expect(isLost, "Ping completed with \(result) rather than .lost.")
+    }
+
+    @Test
+    func pendingPingIsLostWhenClosedWithoutStreamHandlers() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 500))
+        request.resume()
+
+        // When
+        let result = await withCheckedContinuation { continuation in
+            request.sendPing { result in continuation.resume(returning: result) }
+            request.close(sending: .normalClosure)
+        }
+
+        // Then
+        let isLost = if case .lost = result { true } else { false }
+        #expect(isLost, "Ping completed with \(result) rather than .lost.")
+    }
+
+    @Test
+    func sendPingReturnsLostWhenTaskIsCancelled() async {
+        // Given
+        let session = Session()
+        let request = session.webSocketRequest(.websocketPings(count: 10, openDelay: 1000))
+        request.resume()
+
+        // When
+        let pingTask = Task { await request.sendPing() }
+        pingTask.cancel()
+        let result = await pingTask.value
+
+        // Then
+        let isLost = if case .lost = result { true } else { false }
+        #expect(isLost, "Ping completed with \(result) rather than .lost.")
+
+        await request.cancelAndWaitForFinish()
+    }
+
+    @Test
     func sendPingIsLostWhenCancelledBeforeConnecting() async {
         // Given
         let session = Session()
@@ -539,6 +661,24 @@ struct WebSocketTests {
         #expect(events == [.connected,
                            .disconnected(closeCode: .goingAway, reason: nil),
                            .completed(error: .nil)])
+    }
+
+    @Test
+    func automaticPingTimeoutsCancelRequest() async {
+        // Given
+        let session = Session()
+        let automaticPing = WebSocketRequest.Configuration.AutomaticPing(interval: .milliseconds(10),
+                                                                         timeout: .milliseconds(50),
+                                                                         failureAction: .cancelRequest(count: 2))
+
+        // When
+        let events = await session.webSocketRequest(.websocketPings(count: 100, pongDelay: 2000),
+                                                    configuration: .init(automaticPing: automaticPing))
+            .streamingMessageEvents()
+            .collect()
+
+        // Then
+        #expect(events == [.connected, .completed(error: .nonNil)])
     }
 
     @Test
