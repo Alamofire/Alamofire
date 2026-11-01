@@ -69,12 +69,7 @@ public struct DeflateRequestCompressor: Sendable, RequestInterceptor {
 
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         // No need to compress unless we have body data. No support for compressing streams.
-        guard let bodyData = urlRequest.httpBody else {
-            completion(.success(urlRequest))
-            return
-        }
-
-        guard shouldCompressBodyData(bodyData) else {
+        guard let bodyData = urlRequest.httpBody, shouldCompressBodyData(bodyData) else {
             completion(.success(urlRequest))
             return
         }

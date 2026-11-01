@@ -1207,9 +1207,8 @@ extension WebSocketRequest {
         forResponse onResponse: @Sendable @escaping (@escaping @Sendable (_ event: WebSocketRequest.Event<Success, Failure>) -> Void) -> Void
     ) -> StreamOf<Value> {
         StreamOf(bufferingPolicy: bufferingPolicy) { [weak self] in
-            guard let self else { return }
-
-            guard shouldAutomaticallyCancel,
+            guard let self,
+                  shouldAutomaticallyCancel,
                   withBothStates({ mutableState, _ in
                       mutableState.state.is(.initialized)
                       || mutableState.state.is(.resumed)

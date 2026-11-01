@@ -384,38 +384,38 @@ extension AFError {
     public var underlyingError: (any Error)? {
         switch self {
         case let .multipartEncodingFailed(reason):
-            return reason.underlyingError
+            reason.underlyingError
         case let .parameterEncodingFailed(reason):
-            return reason.underlyingError
+            reason.underlyingError
         case let .parameterEncoderFailed(reason):
-            return reason.underlyingError
+            reason.underlyingError
         case let .requestAdaptationFailed(error):
-            return error
+            error
         case let .requestRetryFailed(retryError, _):
-            return retryError
+            retryError
         case let .responseValidationFailed(reason):
-            return reason.underlyingError
+            reason.underlyingError
         case let .responseSerializationFailed(reason):
-            return reason.underlyingError
+            reason.underlyingError
         #if canImport(Security)
         case let .serverTrustEvaluationFailed(reason):
-            return reason.underlyingError
+            reason.underlyingError
         #endif
         case let .sessionInvalidated(error):
-            return error
+            error
         case let .createUploadableFailed(error):
-            return error
+            error
         case let .createURLRequestFailed(error):
-            return error
+            error
         case let .downloadedFileMoveFailed(error, _, _):
-            return error
+            error
         case let .sessionTaskFailed(error):
-            return error
+            error
         case .explicitlyCancelled,
              .invalidURL,
              .sessionDeinitialized,
              .urlRequestValidationFailed:
-            return nil
+            nil
         }
     }
 
@@ -665,47 +665,47 @@ extension AFError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .explicitlyCancelled:
-            return "Request explicitly cancelled."
+            "Request explicitly cancelled."
         case let .invalidURL(url):
-            return "URL is not valid: \(url)"
+            "URL is not valid: \(url)"
         case let .parameterEncodingFailed(reason):
-            return reason.localizedDescription
+            reason.localizedDescription
         case let .parameterEncoderFailed(reason):
-            return reason.localizedDescription
+            reason.localizedDescription
         case let .multipartEncodingFailed(reason):
-            return reason.localizedDescription
+            reason.localizedDescription
         case let .requestAdaptationFailed(error):
-            return "Request adaption failed with error: \(error.localizedDescription)"
+            "Request adaption failed with error: \(error.localizedDescription)"
         case let .responseValidationFailed(reason):
-            return reason.localizedDescription
+            reason.localizedDescription
         case let .responseSerializationFailed(reason):
-            return reason.localizedDescription
+            reason.localizedDescription
         case let .requestRetryFailed(retryError, originalError):
-            return """
+            """
             Request retry failed with retry error: \(retryError.localizedDescription), \
             original error: \(originalError.localizedDescription)
             """
         case .sessionDeinitialized:
-            return """
+            """
             Session was invalidated without error, so it was likely deinitialized unexpectedly. \
             Be sure to retain a reference to your Session for the duration of your requests.
             """
         case let .sessionInvalidated(error):
-            return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
+            "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
         #if canImport(Security)
         case let .serverTrustEvaluationFailed(reason):
-            return "Server trust evaluation failed due to reason: \(reason.localizedDescription)"
+            "Server trust evaluation failed due to reason: \(reason.localizedDescription)"
         #endif
         case let .urlRequestValidationFailed(reason):
-            return "URLRequest validation failed due to reason: \(reason.localizedDescription)"
+            "URLRequest validation failed due to reason: \(reason.localizedDescription)"
         case let .createUploadableFailed(error):
-            return "Uploadable creation failed with error: \(error.localizedDescription)"
+            "Uploadable creation failed with error: \(error.localizedDescription)"
         case let .createURLRequestFailed(error):
-            return "URLRequest creation failed with error: \(error.localizedDescription)"
+            "URLRequest creation failed with error: \(error.localizedDescription)"
         case let .downloadedFileMoveFailed(error, source, destination):
-            return "Moving downloaded file from: \(source) to: \(destination) failed with error: \(error.localizedDescription)"
+            "Moving downloaded file from: \(source) to: \(destination) failed with error: \(error.localizedDescription)"
         case let .sessionTaskFailed(error):
-            return "URLSessionTask failed with error: \(error.localizedDescription)"
+            "URLSessionTask failed with error: \(error.localizedDescription)"
         }
     }
 }

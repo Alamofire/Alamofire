@@ -24,10 +24,10 @@
 
 import Alamofire
 import Foundation
+import Testing
 #if canImport(Security)
 @preconcurrency import Security
 #endif
-import Testing
 
 @Suite
 struct AFErrorTests {

@@ -68,9 +68,7 @@ extension Equatable {
 
 @inline(__always)
 func _isEqualError<E: Error>(_ lhs: E, _ rhs: any Error) -> Bool {
-    guard type(of: lhs) == type(of: rhs) else { return false }
-
-    guard let rhs = rhs as? E else { return false }
+    guard type(of: lhs) == type(of: rhs), let rhs = rhs as? E else { return false }
 
     guard let lhs = lhs as? (any Equatable) else {
         return (lhs as AnyObject) === (rhs as AnyObject)
@@ -101,44 +99,44 @@ extension AFError {
     public static func ==(lhs: AFError, rhs: AFError) -> Bool {
         switch (lhs, rhs) {
         case let (.createUploadableFailed(lhsError), .createUploadableFailed(rhsError)):
-            return lhsError.isEqual(to: rhsError)
+            lhsError.isEqual(to: rhsError)
         case let (.createURLRequestFailed(lhsError), .createURLRequestFailed(rhsError)):
-            return lhsError.isEqual(to: rhsError)
+            lhsError.isEqual(to: rhsError)
         case let (.downloadedFileMoveFailed(lhsError, lhsSource, lhsDestination),
                   .downloadedFileMoveFailed(rhsError, rhsSource, rhsDestination)):
-            return lhsError.isEqual(to: rhsError) && lhsSource == rhsSource && lhsDestination == rhsDestination
+            lhsError.isEqual(to: rhsError) && lhsSource == rhsSource && lhsDestination == rhsDestination
         case (.explicitlyCancelled, .explicitlyCancelled):
-            return true
+            true
         case let (.invalidURL(lhsURL), .invalidURL(rhsURL)):
-            return Alamofire.isEqual(lhsURL, rhsURL)
+            Alamofire.isEqual(lhsURL, rhsURL)
         case let (.multipartEncodingFailed(lhsReason), .multipartEncodingFailed(rhsReason)):
-            return lhsReason == rhsReason
+            lhsReason == rhsReason
         case let (.parameterEncodingFailed(lhsReason), .parameterEncodingFailed(rhsReason)):
-            return lhsReason == rhsReason
+            lhsReason == rhsReason
         case let (.parameterEncoderFailed(lhsReason), .parameterEncoderFailed(rhsReason)):
-            return lhsReason == rhsReason
+            lhsReason == rhsReason
         case let (.requestAdaptationFailed(lhsError), .requestAdaptationFailed(rhsError)):
-            return lhsError.isEqual(to: rhsError)
+            lhsError.isEqual(to: rhsError)
         case let (.requestRetryFailed(lhsRetryError, lhsOriginalError), .requestRetryFailed(rhsRetryError, rhsOriginalError)):
-            return lhsRetryError.isEqual(to: rhsRetryError) && lhsOriginalError.isEqual(to: rhsOriginalError)
+            lhsRetryError.isEqual(to: rhsRetryError) && lhsOriginalError.isEqual(to: rhsOriginalError)
         case let (.responseValidationFailed(lhsReason), .responseValidationFailed(rhsReason)):
-            return lhsReason == rhsReason
+            lhsReason == rhsReason
         case let (.responseSerializationFailed(lhsReason), .responseSerializationFailed(rhsReason)):
-            return lhsReason == rhsReason
+            lhsReason == rhsReason
         #if canImport(Security)
         case let (.serverTrustEvaluationFailed(lhsReason), .serverTrustEvaluationFailed(rhsReason)):
-            return lhsReason == rhsReason
+            lhsReason == rhsReason
         #endif
         case (.sessionDeinitialized, .sessionDeinitialized):
-            return true
+            true
         case let (.sessionInvalidated(lhsError), .sessionInvalidated(rhsError)):
-            return Alamofire.isEqual(lhsError, rhsError)
+            Alamofire.isEqual(lhsError, rhsError)
         case let (.sessionTaskFailed(lhsError), .sessionTaskFailed(rhsError)):
-            return lhsError.isEqual(to: rhsError)
+            lhsError.isEqual(to: rhsError)
         case let (.urlRequestValidationFailed(lhsReason), .urlRequestValidationFailed(rhsReason)):
-            return lhsReason == rhsReason
+            lhsReason == rhsReason
         default:
-            return false
+            false
         }
     }
 }
