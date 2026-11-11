@@ -553,7 +553,7 @@ public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLRespon
 By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request's `Accept` value. Validation can be further customized by passing a `Validation` closure:
 
 ```swift
-AF.request(...)
+AF.streamRequest(...)
     .validate { request, response in
         ...
     }
@@ -1300,12 +1300,12 @@ AF.streamRequest(...).responseStream(using: CustomSerializer()) { stream in
 Alamofire includes `DecodableStreamSerializer`, a `DataStreamSerializer` which can parse `Decodable` types from incoming `Data`. It can be customized with both a `DataDecoder` instance and a `DataPreprocessor` and used through the `responseStreamDecodable` method:
 
 ```swift
-AF.streamRequest(...).responseDecodable(of: DecodableType.self) { stream in
+AF.streamRequest(...).responseStreamDecodable(of: DecodableType.self) { stream in
     // Process stream.
 }
 ```
 
-Or by using it directly in the previously mentioned `streamResponse` method:
+Or by using it directly in the previously mentioned `responseStream` method:
 
 ```swift
 AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableType>(decoder: JSONDecoder())) { stream in
@@ -1485,7 +1485,7 @@ This automatic cancellation only takes affect when one of the asynchronous prope
 `DataStreamRequest`, unlike the other request types, does not read a single value and complete. Instead, it continuously streams `Data` from the server to be processed through a handler. With Swift Concurrency, this callback API has been replaced with `StreamOf` values vended by `DataStreamTask`. `StreamOf` conforms to `AsyncSequence`, allowing the use of `for await` syntax to observe values as they're received by the stream. Unlike `DataTask` and `DownloadTask`, `DataStreamTask` doesn't vend asynchronous properties itself. Instead, it vends the streams that can be observed.
 
 ```swift
-let streamTask = AF.dataStreamRequest(...).streamTask()
+let streamTask = AF.streamRequest(...).streamTask()
 
 // Later...
 
@@ -1497,7 +1497,7 @@ for await data in streamTask.streamingData() {
 This loop only ends when the `DataStreamRequest` completes, either through the server closing the connection or the `DataStreamRequest` being cancelled. If the loop is ended early by `break`ing out of it, the `DataStreamRequest` is canceled and no further values can be received. If the use of multiple observers without automatically cancellation is desired, you can pass `false` for the `automaticallyCancelling` parameter.
 
 ```swift
-let streamTask = AF.dataStreamRequest(...).streamTask()
+let streamTask = AF.streamRequest(...).streamTask()
 
 // Later...
 
