@@ -372,10 +372,25 @@ extension AFError {
         return url
     }
 
-    /// The `URL` associated with the error.
+    /// The `URL` associated with the error, if any.
+    ///
+    /// For `.multipartEncodingFailed` errors, this is the body part `URL` that triggered the failure. For errors that
+    /// wrap an underlying error, such as `.sessionTaskFailed`, this is the `URL` extracted from that error, like the
+    /// `failingURL` of an underlying `URLError`. For `.requestRetryFailed`, only the `retryError` is consulted.
+    ///
+    /// - Note: Cases that carry no associated `URL`, such as `.explicitlyCancelled` and `.invalidURL`, return `nil`.
+    ///         Use `urlConvertible` to recover the value of an `.invalidURL` error.
     public var url: URL? {
-        guard case let .multipartEncodingFailed(reason) = self else { return nil }
-        return reason.url
+        switch self {
+        case let .multipartEncodingFailed(reason):
+            reason.url
+        case let .responseValidationFailed(reason):
+            reason.url
+        case let .responseSerializationFailed(reason):
+            reason.url
+        default:
+            underlyingError?.url
+        }
     }
 
     /// The underlying `Error` responsible for generating the failure associated with `.sessionInvalidated`,
@@ -461,6 +476,23 @@ extension AFError {
         (underlyingError as? URLError)?.userInfo[NSURLSessionDownloadTaskResumeData] as? Data
     }
     #endif
+}
+
+extension Error {
+    /// The `URL` associated with the error, extracted from well-known Foundation error types.
+    ///
+    /// Returns the `failingURL` of a `URLError`, the `NSURLErrorKey` value of any other bridged `NSError`, or, when the
+    /// error is an `AFError`, that error's own `url`, so nested errors resolve transparently.
+    var url: URL? {
+        switch self {
+        case let afError as AFError:
+            afError.url
+        case let urlError as URLError:
+            urlError.failingURL
+        default:
+            (self as NSError).userInfo[NSURLErrorKey] as? URL
+        }
+    }
 }
 
 extension AFError.ParameterEncodingFailureReason {
@@ -580,6 +612,20 @@ extension AFError.ResponseValidationFailureReason {
             nil
         }
     }
+
+    var url: URL? {
+        switch self {
+        case let .dataFileReadFailed(url):
+            url
+        case let .customValidationFailed(error):
+            error.url
+        case .dataFileNil,
+             .missingContentType,
+             .unacceptableContentType,
+             .unacceptableStatusCode:
+            nil
+        }
+    }
 }
 
 extension AFError.ResponseSerializationFailureReason {
@@ -607,6 +653,22 @@ extension AFError.ResponseSerializationFailureReason {
         case .inputDataNilOrZeroLength,
              .inputFileNil,
              .inputFileReadFailed,
+             .stringSerializationFailed,
+             .invalidEmptyResponse:
+            nil
+        }
+    }
+
+    var url: URL? {
+        switch self {
+        case let .inputFileReadFailed(url):
+            url
+        case let .jsonSerializationFailed(error),
+             let .decodingFailed(error),
+             let .customSerializationFailed(error):
+            error.url
+        case .inputDataNilOrZeroLength,
+             .inputFileNil,
              .stringSerializationFailed,
              .invalidEmptyResponse:
             nil
