@@ -24,521 +24,549 @@
 
 import Alamofire
 import Foundation
-import XCTest
+import Testing
 
-final class ResponseTestCase: BaseTestCase {
-    @MainActor
-    func testThatResponseReturnsSuccessResultWithValidData() {
+@Suite(.storesInstances)
+struct ResponseTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseReturnsSuccessResultWithValidData() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatResponseReturnsFailureResultWithOptionalDataAndError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseReturnsFailureResultWithOptionalDataAndError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail with invalid URL error")
+        let expectation = Completion("request should fail with invalid URL error")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(urlString, parameters: ["foo": "bar"]).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertNotNil(response?.error)
-        XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.error != nil)
+        #expect(response.error?.isSessionTaskError == true)
+        #expect(response.metrics != nil)
     }
 }
 
 // MARK: -
 
-final class ResponseDataTestCase: BaseTestCase {
-    @MainActor
-    func testThatResponseDataReturnsSuccessResultWithValidData() {
+@Suite(.storesInstances)
+struct ResponseDataTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseDataReturnsSuccessResultWithValidData() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<Data, AFError>?
+        let response = Capture<DataResponse<Data, AFError>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseDataReturnsFailureResultWithOptionalDataAndError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail with invalid URL error")
+        let expectation = Completion("request should fail with invalid URL error")
 
-        var response: DataResponse<Data, AFError>?
+        let response = Capture<DataResponse<Data, AFError>?>()
 
         // When
         session.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isSessionTaskError == true)
+        #expect(response.metrics != nil)
     }
 }
 
 // MARK: -
 
-final class ResponseStringTestCase: BaseTestCase {
-    @MainActor
-    func testThatResponseStringReturnsSuccessResultWithValidString() {
+@Suite(.storesInstances)
+struct ResponseStringTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseStringReturnsSuccessResultWithValidString() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<String, AFError>?
+        let response = Capture<DataResponse<String, AFError>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseString { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseStringReturnsFailureResultWithOptionalDataAndError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail with invalid URL error")
+        let expectation = Completion("request should fail with invalid URL error")
 
-        var response: DataResponse<String, AFError>?
+        let response = Capture<DataResponse<String, AFError>?>()
 
         // When
         session.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isSessionTaskError == true)
+        #expect(response.metrics != nil)
     }
 }
 
 // MARK: -
 
-@available(*, deprecated)
-final class ResponseJSONTestCase: BaseTestCase {
-    @MainActor
-    func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
+@Suite(.storesInstances)
+struct ResponseJSONTestCase {
+    @Test
+    @available(*, deprecated)
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseJSONReturnsSuccessResultWithValidJSON() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<Any, AFError>?
+        let response = Capture<DataResponse<Any, AFError>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
+    @Test
+    @available(*, deprecated)
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseStringReturnsFailureResultWithOptionalDataAndError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail")
+        let expectation = Completion("request should fail")
 
-        var response: DataResponse<Any, AFError>?
+        let response = Capture<DataResponse<Any, AFError>?>()
 
         // When
         session.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isSessionTaskError == true)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatResponseJSONReturnsSuccessResultForGETRequest() {
+    @Test
+    @available(*, deprecated)
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseJSONReturnsSuccessResultForGETRequest() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<Any, AFError>?
+        let response = Capture<DataResponse<Any, AFError>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.metrics != nil)
 
         if
-            let responseDictionary = response?.result.success as? [String: Any],
+            let responseDictionary = response.result?.success as? [String: Any],
             let args = responseDictionary["args"] as? [String: String] {
-            XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
+            #expect(args == ["foo": "bar"], "args should match parameters")
         } else {
-            XCTFail("args should not be nil")
+            Issue.record("args should not be nil")
         }
     }
 
-    @MainActor
-    func testThatResponseJSONReturnsSuccessResultForPOSTRequest() {
+    @Test
+    @available(*, deprecated)
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseJSONReturnsSuccessResultForPOSTRequest() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<Any, AFError>?
+        let response = Capture<DataResponse<Any, AFError>?>()
 
         // When
         session.request(.method(.post), parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.metrics != nil)
 
         if
-            let responseDictionary = response?.result.success as? [String: Any],
+            let responseDictionary = response.result?.success as? [String: Any],
             let form = responseDictionary["form"] as? [String: String] {
-            XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
+            #expect(form == ["foo": "bar"], "form should match parameters")
         } else {
-            XCTFail("form should not be nil")
+            Issue.record("form should not be nil")
         }
     }
 }
 
-final class ResponseJSONDecodableTestCase: BaseTestCase {
-    @MainActor
-    func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {
+@Suite(.storesInstances)
+struct ResponseJSONDecodableTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseDecodableReturnsSuccessResultWithValidJSON() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let url = Endpoint().url
-        let expectation = expectation(description: "request should succeed")
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<TestResponse, AFError>?
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.success?.url, url.absoluteString)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.result?.success?.url == url.absoluteString)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let url = Endpoint().url
-        let expectation = expectation(description: "request should succeed")
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<TestResponse, AFError>?
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(url, parameters: [:]).responseDecodable(of: TestResponse.self) {
-            response = $0
-            expectation.fulfill()
+            response.value = $0
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.success?.url, url.absoluteString)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.result?.success?.url == url.absoluteString)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseStringReturnsFailureResultWithOptionalDataAndError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail")
+        let expectation = Completion("request should fail")
 
-        var response: DataResponse<TestResponse, AFError>?
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(urlString, parameters: [:]).responseDecodable(of: TestResponse.self) { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isSessionTaskError == true)
+        #expect(response.metrics != nil)
     }
 }
 
 // MARK: -
 
-final class ResponseMapTestCase: BaseTestCase {
-    @MainActor
-    func testThatMapTransformsSuccessValue() {
+@Suite(.storesInstances)
+struct ResponseMapTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func mapTransformsSuccessValue() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<String, AFError>?
+        let response = Capture<DataResponse<String, AFError>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
-            response = resp.map { response in
+            response.value = resp.map { response in
                 response.args["foo"] ?? "invalid"
             }
 
-            expectation.fulfill()
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.success, "bar")
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.result?.success == "bar")
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatMapPreservesFailureError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func mapPreservesFailureError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail with invalid URL error")
+        let expectation = Completion("request should fail with invalid URL error")
 
-        var response: DataResponse<String, AFError>?
+        let response = Capture<DataResponse<String, AFError>?>()
 
         // When
         session.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.map { _ in "ignored" }
-            expectation.fulfill()
+            response.value = resp.map { _ in "ignored" }
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isSessionTaskError == true)
+        #expect(response.metrics != nil)
     }
 }
 
 // MARK: -
 
-final class ResponseTryMapTestCase: BaseTestCase {
-    @MainActor
-    func testThatTryMapTransformsSuccessValue() {
+@Suite(.storesInstances)
+struct ResponseTryMapTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func tryMapTransformsSuccessValue() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<String, any Error>?
+        let response = Capture<DataResponse<String, any Error>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseDecodable(of: TestResponse.self) { resp in
-            response = resp.tryMap { response in
+            response.value = resp.tryMap { response in
                 response.args["foo"] ?? "invalid"
             }
 
-            expectation.fulfill()
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.success, "bar")
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.result?.success == "bar")
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatTryMapCatchesTransformationError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func tryMapCatchesTransformationError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         struct TransformError: Error {}
 
-        let expectation = expectation(description: "request should succeed")
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<String, any Error>?
+        let response = Capture<DataResponse<String, any Error>?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.tryMap { _ in
+            response.value = resp.tryMap { _ in
                 throw TransformError()
             }
 
-            expectation.fulfill()
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isFailure == true)
 
-        if let error = response?.result.failure {
-            XCTAssertTrue(error is TransformError)
+        if let error = response.result?.failure {
+            #expect(error is TransformError)
         } else {
-            XCTFail("tryMap should catch the transformation error")
+            Issue.record("tryMap should catch the transformation error")
         }
 
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatTryMapPreservesFailureError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func tryMapPreservesFailureError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail with invalid URL error")
+        let expectation = Completion("request should fail with invalid URL error")
 
-        var response: DataResponse<String, any Error>?
+        let response = Capture<DataResponse<String, any Error>?>()
 
         // When
         session.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.tryMap { _ in "ignored" }
-            expectation.fulfill()
+            response.value = resp.tryMap { _ in "ignored" }
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.asAFError?.isSessionTaskError, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.asAFError?.isSessionTaskError == true)
+        #expect(response.metrics != nil)
     }
 }
 
@@ -556,143 +584,150 @@ enum TransformationError: Error {
     }
 }
 
-final class ResponseMapErrorTestCase: BaseTestCase {
-    @MainActor
-    func testThatMapErrorTransformsFailureValue() {
+@Suite(.storesInstances)
+struct ResponseMapErrorTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func mapErrorTransformsFailureValue() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should not succeed")
+        let expectation = Completion("request should not succeed")
 
-        var response: DataResponse<TestResponse, TestError>?
+        let response = Capture<DataResponse<TestResponse, TestError>?>()
 
         // When
         session.request(urlString).responseDecodable(of: TestResponse.self) { resp in
-            response = resp.mapError { error in
+            response.value = resp.mapError { error in
                 TestError.error(error: error)
             }
 
-            expectation.fulfill()
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        guard let error = response?.error, case .error = error else { XCTFail(); return }
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        guard let error = response.error, case .error = error else { Issue.record(); return }
 
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatMapErrorPreservesSuccessValue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func mapErrorPreservesSuccessValue() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<Data, TestError>?
+        let response = Capture<DataResponse<Data, TestError>?>()
 
         // When
         session.request(.default).responseData { resp in
-            response = resp.mapError { TestError.error(error: $0) }
-            expectation.fulfill()
+            response.value = resp.mapError { TestError.error(error: $0) }
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.metrics != nil)
     }
 }
 
 // MARK: -
 
-final class ResponseTryMapErrorTestCase: BaseTestCase {
-    @MainActor
-    func testThatTryMapErrorPreservesSuccessValue() {
+@Suite(.storesInstances)
+struct ResponseTryMapErrorTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func tryMapErrorPreservesSuccessValue() async {
         // Given
-        let session = stored(Session())
-        let expectation = expectation(description: "request should succeed")
+        let session = stored(Session.independent())
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<Data, any Error>?
+        let response = Capture<DataResponse<Data, any Error>?>()
 
         // When
         session.request(.default).responseData { resp in
-            response = resp.tryMapError { TestError.error(error: $0) }
-            expectation.fulfill()
+            response.value = resp.tryMapError { TestError.error(error: $0) }
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatTryMapErrorCatchesTransformationError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func tryMapErrorCatchesTransformationError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail")
+        let expectation = Completion("request should fail")
 
-        var response: DataResponse<Data, any Error>?
+        let response = Capture<DataResponse<Data, any Error>?>()
 
         // When
         session.request(urlString).responseData { resp in
-            response = resp.tryMapError { _ in try TransformationError.error.alwaysFails() }
-            expectation.fulfill()
+            response.value = resp.tryMapError { _ in try TransformationError.error.alwaysFails() }
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
 
-        if let error = response?.result.failure {
-            XCTAssertTrue(error is TransformationError)
+        if let error = response.result?.failure {
+            #expect(error is TransformationError)
         } else {
-            XCTFail("tryMapError should catch the transformation error")
+            Issue.record("tryMapError should catch the transformation error")
         }
 
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.metrics != nil)
     }
 
-    @MainActor
-    func testThatTryMapErrorTransformsError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func tryMapErrorTransformsError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlString = String.invalidURL
-        let expectation = expectation(description: "request should fail")
+        let expectation = Completion("request should fail")
 
-        var response: DataResponse<Data, any Error>?
+        let response = Capture<DataResponse<Data, any Error>?>()
 
         // When
         session.request(urlString).responseData { resp in
-            response = resp.tryMapError { TestError.error(error: $0) }
-            expectation.fulfill()
+            response.value = resp.tryMapError { TestError.error(error: $0) }
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertNotNil(response?.metrics)
+        #expect(response.request != nil)
+        #expect(response.response == nil)
+        #expect(response.data == nil)
+        #expect(response.result?.isFailure == true)
+        #expect(response.metrics != nil)
     }
 }
