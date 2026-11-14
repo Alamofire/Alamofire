@@ -451,7 +451,7 @@ struct DataStreamTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataStreamCanBeManuallyResumed() async {
         // Given
-        let session = Session.independent(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let response = Capture<HTTPURLResponse?>()
         let streamOnMain = Capture(false)
         let completeOnMain = Capture(false)
@@ -952,7 +952,7 @@ struct DataStreamIntegrationTests {
             }
         }
 
-        let session = Session.independent(interceptor: GoodRetry())
+        let session = stored(Session.independent(interceptor: GoodRetry()))
         let accumulatedData = Capture(Data())
         let streamOnMain = Capture(false)
         let completeOnMain = Capture(false)
@@ -1096,9 +1096,9 @@ struct DataStreamIntegrationTests {
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         // Require manual start so both serializers can be added before the stream starts.
-        let session = Session.independent(startRequestsImmediately: false,
-                                          requestQueue: requestQueue,
-                                          serializationQueue: serializationQueue)
+        let session = stored(Session.independent(startRequestsImmediately: false,
+                                                 requestQueue: requestQueue,
+                                                 serializationQueue: serializationQueue))
         let firstResponse = Capture<HTTPURLResponse?>()
         let firstDecodedResponse = Capture<TestResponse?>()
         let firstDecodingError = Capture<AFError?>()
@@ -1180,7 +1180,7 @@ struct DataStreamIntegrationTests {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
-        let session = Session.independent(requestQueue: requestQueue, serializationQueue: serializationQueue)
+        let session = stored(Session.independent(requestQueue: requestQueue, serializationQueue: serializationQueue))
         let firstResponse = Capture<HTTPURLResponse?>()
         let firstDecodedResponse = Capture<TestResponse?>()
         let firstDecodingError = Capture<AFError?>()
@@ -1341,7 +1341,7 @@ struct DataStreamLifetimeEvents {
         eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.complete() }
         eventMonitor.requestDidValidateRequestResponseWithResult = { _, _, _, _ in didValidate.complete() }
 
-        let session = Session.independent(eventMonitors: [eventMonitor, Monitor { didParse.complete() }])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor, Monitor { didParse.complete() }]))
 
         // When
         let request = session.streamRequest(.stream(1))

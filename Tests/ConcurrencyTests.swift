@@ -34,7 +34,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskSerializesResponseUsingSerializer() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.request(.get)
@@ -50,7 +50,7 @@ struct DataRequestConcurrencyTests {
     func dataTaskCanBeCancelledConcurrently() async {
         // Tests fix for https://github.com/Alamofire/Alamofire/issues/3978
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
 
         // When: a single request has multiple DataTasks attached.
         for _ in 0..<100 {
@@ -81,7 +81,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func status500ResponseCanBeRetried() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.request(.endpoints(.status(500), .method(.get)), interceptor: .retryPolicy)
@@ -96,7 +96,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskSerializesDecodable() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.request(.get).serializingDecodable(TestResponse.self).value
@@ -109,7 +109,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskSerializesString() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.request(.get).serializingString().value
@@ -122,7 +122,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskSerializesData() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.request(.get).serializingData().value
@@ -135,7 +135,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskProducesResult() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let result = await session.request(.get).serializingDecodable(TestResponse.self).result
@@ -148,7 +148,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskProducesValue() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.request(.get).serializingDecodable(TestResponse.self).value
@@ -161,7 +161,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskProperlySupportsConcurrentRequests() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         async let first = session.request(.get).serializingDecodable(TestResponse.self).response
@@ -180,7 +180,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskCancellationCancelsRequest() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.request(.get)
         let task = request.serializingDecodable(TestResponse.self)
 
@@ -197,7 +197,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskIsAutomaticallyCancelledInTask() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.request(.get)
 
         // When
@@ -218,7 +218,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.request(.get)
 
         // When
@@ -239,7 +239,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskIsAutomaticallyCancelledInTaskGroup() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.request(.get)
 
         // When
@@ -266,7 +266,7 @@ struct DataRequestConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.request(.get)
 
         // When
@@ -296,7 +296,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskSerializesResponseFromSerializer() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.download(.get)
@@ -311,7 +311,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskSerializesDecodable() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
@@ -324,7 +324,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskSerializesString() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.download(.get).serializingString().value
@@ -337,7 +337,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskSerializesData() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.download(.get).serializingData().value
@@ -350,7 +350,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskSerializesURL() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.download(.get).serializingDownloadedFileURL().value
@@ -363,7 +363,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskProducesResult() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let result = await session.download(.get).serializingDecodable(TestResponse.self).result
@@ -376,7 +376,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskProducesValue() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
@@ -389,7 +389,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskProperlySupportsConcurrentRequests() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         async let first = session.download(.get).serializingDecodable(TestResponse.self).response
@@ -408,7 +408,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskCancelsRequest() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.download(.get)
         let task = request.serializingDecodable(TestResponse.self)
 
@@ -424,7 +424,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskIsAutomaticallyCancelledInTask() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.download(.get)
 
         // When
@@ -445,7 +445,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.download(.get)
 
         // When
@@ -466,7 +466,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskIsAutomaticallyCancelledInTaskGroup() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.download(.get)
 
         // When
@@ -493,7 +493,7 @@ struct DownloadConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.download(.get)
 
         // When
@@ -889,7 +889,7 @@ struct ClosureAPIConcurrencyTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func downloadProgressStreamReturnsProgress() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let request = session.request(.get)
