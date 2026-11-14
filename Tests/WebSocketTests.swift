@@ -10,681 +10,687 @@
 
 @_spi(WebSocket) import Alamofire
 import Foundation
-import XCTest
+import Testing
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class WebSocketTests: BaseTestCase {
-    func testThatWebSocketsCanReceiveMessageEvents() {
+@Suite(.storesInstances)
+struct WebSocketTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveMessageEvents() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var message: URLSessionWebSocketTask.Message?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<URLSessionWebSocketTask.Message?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocket()).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                message = receivedMessage
-                didReceiveMessage.fulfill()
+                message.value = receivedMessage
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(message.value != nil)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketsCanReceiveMessageEventsWithParameters() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveMessageEventsWithParameters() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var message: URLSessionWebSocketTask.Message?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<URLSessionWebSocketTask.Message?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocket()).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                message = receivedMessage
-                didReceiveMessage.fulfill()
+                message.value = receivedMessage
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(message.value != nil)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketsCanReceiveAMessage() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveAMessage() async {
         // Given
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var receivedMessage: URLSessionWebSocketTask.Message?
+        let receivedMessage = Capture<URLSessionWebSocketTask.Message?>()
 
         // When
         session.webSocketRequest(.websocket()).streamMessages { message in
-            receivedMessage = message
-            didReceiveMessage.fulfill()
+            receivedMessage.value = message
+            didReceiveMessage.complete()
         }
         .onCompletion {
-            didComplete.fulfill()
+            didComplete.complete()
         }
 
-        wait(for: [didReceiveMessage, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveMessage, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNotNil(receivedMessage)
-        XCTAssertNotNil(receivedMessage?.data)
+        #expect(receivedMessage.value != nil)
+        #expect(receivedMessage.data != nil)
     }
 
-    func testThatWebSocketsCanReceiveADecodableMessage() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveADecodableMessage() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var message: TestResponse?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<TestResponse?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocketCount(1)).streamDecodableEvents(TestResponse.self) { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                message = receivedMessage
-                didReceiveMessage.fulfill()
+                message.value = receivedMessage
+                didReceiveMessage.complete()
             case let .serializerFailed(error):
-                XCTFail("websocket message serialization failed with error: \(error)")
+                Issue.record("websocket message serialization failed with error: \(error)")
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(message.value != nil)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketsCanReceiveADecodableValue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveADecodableValue() async {
         // Given
-        let didReceiveValue = expectation(description: "didReceiveMessage")
-        let didComplete = expectation(description: "didComplete")
+        let didReceiveValue = Completion("didReceiveMessage")
+        let didComplete = Completion("didComplete")
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        var receivedValue: TestResponse?
+        let receivedValue = Capture<TestResponse?>()
 
         // When
         session.webSocketRequest(.websocket()).streamDecodable(TestResponse.self) { value in
-            receivedValue = value
-            didReceiveValue.fulfill()
+            receivedValue.value = value
+            didReceiveValue.complete()
         }
         .onCompletion {
-            didComplete.fulfill()
+            didComplete.complete()
         }
 
-        wait(for: [didReceiveValue, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveValue, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNotNil(receivedValue)
+        #expect(receivedValue.value != nil)
     }
 
-    func testThatWebSocketsCanReceiveAMessageWithAProtocol() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveAMessageWithAProtocol() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
         let `protocol` = "protocol"
-        var connectedProtocol: String?
-        var message: URLSessionWebSocketTask.Message?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<URLSessionWebSocketTask.Message?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocket(), configuration: .protocol(`protocol`)).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                message = receivedMessage
-                didReceiveMessage.fulfill()
+                message.value = receivedMessage
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(connectedProtocol, `protocol`)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == `protocol`)
+        #expect(message.value != nil)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketsCanReceiveMultipleMessages() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveMultipleMessages() async {
         // Given
         let count = 5
-        let didConnect = expectation(description: "didConnect")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        didReceiveMessage.expectedFulfillmentCount = count
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
+        let didConnect = Completion("didConnect")
+        let didReceiveMessage = Completion("didReceiveMessage", expectedCount: count)
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var messages: [URLSessionWebSocketTask.Message] = []
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let messages = Capture<[URLSessionWebSocketTask.Message]>([])
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocketCount(count)).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                messages.append(receivedMessage)
-                didReceiveMessage.fulfill()
+                messages.write { $0.append(receivedMessage) }
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertEqual(messages.count, count)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(messages.count == count)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketsCanSendAndReceiveMessages() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanSendAndReceiveMessages() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didSend = expectation(description: "didSend")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didSend = Completion("didSend")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
         let sentMessage = URLSessionWebSocketTask.Message.string("Echo")
 
-        var connectedProtocol: String?
-        var message: URLSessionWebSocketTask.Message?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<URLSessionWebSocketTask.Message?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         let request = session.webSocketRequest(.websocketEcho)
         request.streamMessageEvents { [unowned request] event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
-                request.send(sentMessage) { _ in didSend.fulfill() }
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
+                request.send(sentMessage) { _ in didSend.complete() }
             case let .receivedMessage(receivedMessage):
-                message = receivedMessage
+                message.value = receivedMessage
                 event.close(sending: .normalClosure)
-                didReceiveMessage.fulfill()
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didSend, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didSend, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(sentMessage, message)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(message.value != nil)
+        #expect(sentMessage == message.value)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketsCanBeCancelled() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanBeCancelled() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         let request = session.webSocketRequest(.websocketEcho)
         request.streamMessageEvents { [unowned request] event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
                 request.cancel()
             case let .receivedMessage(receivedMessage):
-                XCTFail("cancelled socket received message: \(receivedMessage)")
+                Issue.record("cancelled socket received message: \(receivedMessage)")
             case .disconnected:
-                XCTFail("cancelled socket shouldn't receive disconnected event")
+                Issue.record("cancelled socket shouldn't receive disconnected event")
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didConnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertTrue(receivedCompletion?.error?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(request.error?.isExplicitlyCancelledError == true)
+        #expect(connectedProtocol.value == nil)
+        #expect(receivedCompletion.error?.isExplicitlyCancelledError == true)
+        #expect(request.error?.isExplicitlyCancelledError == true)
     }
 
-    func testOnePingOnly() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func onePingOnly() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didSend = expectation(description: "didSend")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didReceivePong = expectation(description: "didReceivePong")
-        didReceivePong.expectedFulfillmentCount = 100
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didSend = Completion("didSend")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didReceivePong = Completion("didReceivePong", expectedCount: 100)
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
         let sentMessage = URLSessionWebSocketTask.Message.string("Echo")
 
-        var connectedProtocol: String?
-        var message: URLSessionWebSocketTask.Message?
-        var receivedPong: WebSocketRequest.PingResponse.Pong?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<URLSessionWebSocketTask.Message?>()
+        let receivedPong = Capture<WebSocketRequest.PingResponse.Pong?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         let request = session.webSocketRequest(.websocketEcho)
         request.streamMessageEvents { [unowned request] event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
-                request.send(sentMessage) { _ in didSend.fulfill() }
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
+                request.send(sentMessage) { _ in didSend.complete() }
             case let .receivedMessage(receivedMessage):
-                message = receivedMessage
-                didReceiveMessage.fulfill()
+                message.value = receivedMessage
+                didReceiveMessage.complete()
                 for count in 0..<100 {
                     request.sendPing { response in
                         switch response {
                         case let .pong(pong):
-                            receivedPong = pong
+                            receivedPong.value = pong
                         default:
                             break
                         }
-                        didReceivePong.fulfill()
+                        didReceivePong.complete()
                         if count == 99 {
                             request.close(sending: .normalClosure)
                         }
                     }
                 }
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didSend, didReceiveMessage, didReceivePong, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didSend, didReceiveMessage, didReceivePong, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(sentMessage, message)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNotNil(receivedCompletion)
-        XCTAssertNil(receivedCompletion?.error)
-        XCTAssertNotNil(receivedPong)
+        #expect(connectedProtocol.value == nil)
+        #expect(message.value != nil)
+        #expect(sentMessage == message.value)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.value != nil)
+        #expect(receivedCompletion.error == nil)
+        #expect(receivedPong.value != nil)
     }
 
-    func testThatTimePingsOccur() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func timePingsOccur() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         let request = session.webSocketRequest(.websocketPings(), configuration: .pingInterval(0.01))
         request.streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case .receivedMessage:
                 break
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didDisconnect, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didConnect, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertEqual(closeCode, .goingAway) // Default Vapor close() code.
-        XCTAssertNil(closeReason)
-        XCTAssertNotNil(receivedCompletion)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(closeCode.value == .goingAway) // Default Vapor close() code.
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.value != nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketFailsWithTooSmallMaximumMessageSize() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketFailsWithTooSmallMaximumMessageSize() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocket(), configuration: .maximumMessageSize(1)).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case .receivedMessage, .disconnected:
                 break
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didConnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(receivedCompletion.error != nil)
     }
 
-    func testThatWebSocketsFinishAfterNonNormalResponseCode() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsFinishAfterNonNormalResponseCode() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var message: URLSessionWebSocketTask.Message?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<URLSessionWebSocketTask.Message?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocket(closeCode: .goingAway)).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                connectedProtocol = `protocol`
-                didConnect.fulfill()
+                connectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                message = receivedMessage
-                didReceiveMessage.fulfill()
+                message.value = receivedMessage
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                closeCode = code
-                closeReason = reason
-                didDisconnect.fulfill()
+                closeCode.value = code
+                closeReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                receivedCompletion = completion
-                didComplete.fulfill()
+                receivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(closeCode, .goingAway)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(message.value != nil)
+        #expect(closeCode.value == .goingAway)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 
-    func testThatWebSocketsCanHaveMultipleHandlers() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanHaveMultipleHandlers() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        didConnect.expectedFulfillmentCount = 2
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        didReceiveMessage.expectedFulfillmentCount = 2
-        let didDisconnect = expectation(description: "didDisconnect")
-        didDisconnect.expectedFulfillmentCount = 2
-        let didComplete = expectation(description: "didComplete")
-        didComplete.expectedFulfillmentCount = 2
-        let session = stored(Session())
+        let didConnect = Completion("didConnect", expectedCount: 2)
+        let didReceiveMessage = Completion("didReceiveMessage", expectedCount: 2)
+        let didDisconnect = Completion("didDisconnect", expectedCount: 2)
+        let didComplete = Completion("didComplete", expectedCount: 2)
+        let session = stored(Session.independent())
 
-        var firstConnectedProtocol: String?
-        var firstMessage: URLSessionWebSocketTask.Message?
-        var firstCloseCode: URLSessionWebSocketTask.CloseCode?
-        var firstCloseReason: Data?
-        var firstReceivedCompletion: WebSocketRequest.Completion?
-        var secondConnectedProtocol: String?
-        var secondMessage: URLSessionWebSocketTask.Message?
-        var secondCloseCode: URLSessionWebSocketTask.CloseCode?
-        var secondCloseReason: Data?
-        var secondReceivedCompletion: WebSocketRequest.Completion?
+        let firstConnectedProtocol = Capture<String?>()
+        let firstMessage = Capture<URLSessionWebSocketTask.Message?>()
+        let firstCloseCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let firstCloseReason = Capture<Data?>()
+        let firstReceivedCompletion = Capture<WebSocketRequest.Completion?>()
+        let secondConnectedProtocol = Capture<String?>()
+        let secondMessage = Capture<URLSessionWebSocketTask.Message?>()
+        let secondCloseCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let secondCloseReason = Capture<Data?>()
+        let secondReceivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(.websocket(closeCode: .goingAway)).streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                firstConnectedProtocol = `protocol`
-                didConnect.fulfill()
+                firstConnectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                firstMessage = receivedMessage
-                didReceiveMessage.fulfill()
+                firstMessage.value = receivedMessage
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                firstCloseCode = code
-                firstCloseReason = reason
-                didDisconnect.fulfill()
+                firstCloseCode.value = code
+                firstCloseReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                firstReceivedCompletion = completion
-                didComplete.fulfill()
+                firstReceivedCompletion.value = completion
+                didComplete.complete()
             }
         }
         .streamMessageEvents { event in
             switch event.kind {
             case let .connected(`protocol`):
-                secondConnectedProtocol = `protocol`
-                didConnect.fulfill()
+                secondConnectedProtocol.value = `protocol`
+                didConnect.complete()
             case let .receivedMessage(receivedMessage):
-                secondMessage = receivedMessage
-                didReceiveMessage.fulfill()
+                secondMessage.value = receivedMessage
+                didReceiveMessage.complete()
             case let .disconnected(code, reason):
-                secondCloseCode = code
-                secondCloseReason = reason
-                didDisconnect.fulfill()
+                secondCloseCode.value = code
+                secondCloseReason.value = reason
+                didDisconnect.complete()
             case let .completed(completion):
-                secondReceivedCompletion = completion
-                didComplete.fulfill()
+                secondReceivedCompletion.value = completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(firstConnectedProtocol)
-        XCTAssertEqual(firstConnectedProtocol, secondConnectedProtocol)
-        XCTAssertNotNil(firstMessage)
-        XCTAssertEqual(firstMessage, secondMessage)
-        XCTAssertEqual(firstCloseCode, .goingAway)
-        XCTAssertEqual(firstCloseCode, secondCloseCode)
-        XCTAssertNil(firstCloseReason)
-        XCTAssertEqual(firstCloseReason, secondCloseReason)
-        XCTAssertNil(firstReceivedCompletion?.error)
-        XCTAssertNil(secondReceivedCompletion?.error)
+        #expect(firstConnectedProtocol.value == nil)
+        #expect(firstConnectedProtocol.value == secondConnectedProtocol.value)
+        #expect(firstMessage.value != nil)
+        #expect(firstMessage.value == secondMessage.value)
+        #expect(firstCloseCode.value == .goingAway)
+        #expect(firstCloseCode.value == secondCloseCode.value)
+        #expect(firstCloseReason.value == nil)
+        #expect(firstCloseReason.value == secondCloseReason.value)
+        #expect(firstReceivedCompletion.error == nil)
+        #expect(secondReceivedCompletion.error == nil)
     }
 }
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class WebSocketIntegrationTests: BaseTestCase {
-    func testThatWebSocketsCanReceiveMessageEventsAfterRetry() {
+@Suite(.storesInstances)
+struct WebSocketIntegrationTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func webSocketsCanReceiveMessageEventsAfterRetry() async {
         // Given
-        let didConnect = expectation(description: "didConnect")
-        let didReceiveMessage = expectation(description: "didReceiveMessage")
-        let didDisconnect = expectation(description: "didDisconnect")
-        let didComplete = expectation(description: "didComplete")
-        let session = stored(Session())
+        let didConnect = Completion("didConnect")
+        let didReceiveMessage = Completion("didReceiveMessage")
+        let didDisconnect = Completion("didDisconnect")
+        let didComplete = Completion("didComplete")
+        let session = stored(Session.independent())
 
-        var connectedProtocol: String?
-        var message: URLSessionWebSocketTask.Message?
-        var closeCode: URLSessionWebSocketTask.CloseCode?
-        var closeReason: Data?
-        var receivedCompletion: WebSocketRequest.Completion?
+        let connectedProtocol = Capture<String?>()
+        let message = Capture<URLSessionWebSocketTask.Message?>()
+        let closeCode = Capture<URLSessionWebSocketTask.CloseCode?>()
+        let closeReason = Capture<Data?>()
+        let receivedCompletion = Capture<WebSocketRequest.Completion?>()
 
         // When
         session.webSocketRequest(performing: .endpoints(.status(500), .websocket()), interceptor: .retryPolicy)
             .streamMessageEvents { event in
                 switch event.kind {
                 case let .connected(`protocol`):
-                    connectedProtocol = `protocol`
-                    didConnect.fulfill()
+                    connectedProtocol.value = `protocol`
+                    didConnect.complete()
                 case let .receivedMessage(receivedMessage):
-                    message = receivedMessage
-                    didReceiveMessage.fulfill()
+                    message.value = receivedMessage
+                    didReceiveMessage.complete()
                 case let .disconnected(code, reason):
-                    closeCode = code
-                    closeReason = reason
-                    didDisconnect.fulfill()
+                    closeCode.value = code
+                    closeReason.value = reason
+                    didDisconnect.complete()
                 case let .completed(completion):
-                    receivedCompletion = completion
-                    didComplete.fulfill()
+                    receivedCompletion.value = completion
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete],
-             timeout: timeout,
-             enforceOrder: true)
+        await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNil(connectedProtocol)
-        XCTAssertNotNil(message)
-        XCTAssertEqual(closeCode, .normalClosure)
-        XCTAssertNil(closeReason)
-        XCTAssertNil(receivedCompletion?.error)
+        #expect(connectedProtocol.value == nil)
+        #expect(message.value != nil)
+        #expect(closeCode.value == .normalClosure)
+        #expect(closeReason.value == nil)
+        #expect(receivedCompletion.error == nil)
     }
 }
 
@@ -726,8 +732,8 @@ extension Foundation.URLSessionWebSocketTask.Message: Swift.Equatable {
     }
 }
 
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension Session {
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func webSocketRequest(_ endpoint: Endpoint,
                           configuration: WebSocketRequest.Configuration = .default,
                           interceptor: (any RequestInterceptor)? = nil) -> WebSocketRequest {
