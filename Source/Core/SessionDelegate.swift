@@ -46,12 +46,18 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
     ///   - task: The `URLSessionTask` for which to find the associated `Request`.
     ///   - type: The `Request` subclass type to cast any `Request` associate with `task`.
     func request<R: Request>(for task: URLSessionTask, as type: R.Type) -> R? {
-        guard let provider = stateProvider else {
-            assertionFailure("StateProvider is nil for task \(task.taskIdentifier).")
-            return nil
-        }
+        // When a Session is deinitialized, its URLSession can still deliver callbacks it had already queued, after
+        // stateProvider has dropped to nil. There's no request left to find for them.
+        guard let provider = stateProvider else { return nil }
 
         return provider.request(for: task) as? R
+    }
+
+    /// Reports a callback that didn't find its request, which is a bug unless the `Session` has been deinitialized.
+    func requestNotFound(_ message: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
+        guard stateProvider != nil else { return }
+
+        assertionFailure(message(), file: file, line: line)
     }
 }
 
@@ -189,7 +195,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         eventMonitor?.urlSession(session, taskNeedsNewBodyStream: task)
 
         guard let request = request(for: task, as: UploadRequest.self) else {
-            assertionFailure("needNewBodyStream did not find UploadRequest.")
+            requestNotFound("needNewBodyStream did not find UploadRequest.")
             completionHandler(nil)
             return
         }
@@ -251,7 +257,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
             request.didReceiveResponse(response, completionHandler: completionHandler)
         } else {
-            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive response")
+            requestNotFound("dataTask did not find DataRequest or DataStreamRequest in didReceive response")
             completionHandler(.allow)
             return
         }
@@ -265,7 +271,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
             request.didReceive(data: data)
         } else {
-            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive data")
+            requestNotFound("dataTask did not find DataRequest or DataStreamRequest in didReceive data")
             return
         }
     }
@@ -327,7 +333,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  didResumeAtOffset: fileOffset,
                                  expectedTotalBytes: expectedTotalBytes)
         guard let downloadRequest = request(for: downloadTask, as: DownloadRequest.self) else {
-            assertionFailure("downloadTask did not find DownloadRequest.")
+            requestNotFound("downloadTask did not find DownloadRequest.")
             return
         }
 
@@ -346,7 +352,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  totalBytesWritten: totalBytesWritten,
                                  totalBytesExpectedToWrite: totalBytesExpectedToWrite)
         guard let downloadRequest = request(for: downloadTask, as: DownloadRequest.self) else {
-            assertionFailure("downloadTask did not find DownloadRequest.")
+            requestNotFound("downloadTask did not find DownloadRequest.")
             return
         }
 
@@ -358,7 +364,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
         eventMonitor?.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
 
         guard let request = request(for: downloadTask, as: DownloadRequest.self) else {
-            assertionFailure("downloadTask did not find DownloadRequest.")
+            requestNotFound("downloadTask did not find DownloadRequest.")
             return
         }
 

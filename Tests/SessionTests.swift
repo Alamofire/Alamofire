@@ -1788,7 +1788,7 @@ struct SessionMassActionTestCase {
         monitor.requestDidCreateTask = { _, _ in createdTasks.complete() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.complete() }
         let session = stored(Session.independent(requestSetup: .eager, eventMonitors: [monitor]))
-        let request = Endpoint.delay(1)
+        let request = Endpoint.slowResponse
         let requests = Capture<[DataRequest]>([])
         let responses = Capture<[DataResponse<Data?, AFError>]>([])
 
@@ -1834,7 +1834,7 @@ struct SessionMassActionTestCase {
         monitor.requestDidCreateTask = { _, _ in createdTasks.complete() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.complete() }
         let session = stored(Session.independent(eventMonitors: [monitor]))
-        let request = Endpoint.delay(1)
+        let request = Endpoint.slowResponse
         let requests = Capture<[DataRequest]>([])
         let responses = Capture<[DataResponse<Data?, AFError>]>([])
 
@@ -1880,7 +1880,7 @@ struct SessionMassActionTestCase {
         monitor.requestDidCreateTask = { _, _ in createdTasks.complete() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.complete() }
         let session = stored(Session.independent(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [monitor]))
-        let request = Endpoint.delay(1)
+        let request = Endpoint.slowResponse
         let requests = Capture<[DataRequest]>([])
         let responses = Capture<[DataResponse<Data?, AFError>]>([])
 
@@ -1926,7 +1926,7 @@ struct SessionMassActionTestCase {
         monitor.requestDidCreateTask = { _, _ in createdTasks.complete() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.complete() }
         let session = stored(Session.independent(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [monitor]))
-        let request = Endpoint.delay(1)
+        let request = Endpoint.slowResponse
         let responses = Capture<[DataResponse<Data?, AFError>]>([])
 
         // When
@@ -1969,7 +1969,7 @@ struct SessionMassActionTestCase {
         monitor.requestDidCreateTask = { _, _ in createdTasks.complete() }
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.complete() }
         let session = stored(Session.independent(startRequestsImmediately: false, eventMonitors: [monitor]))
-        let request = Endpoint.delay(1)
+        let request = Endpoint.slowResponse
         let responses = Capture<[DataResponse<Data?, AFError>]>([])
 
         // When
@@ -2128,4 +2128,9 @@ struct SessionConfigurationHeadersTestCase {
         #expect(response.result?.isSuccess == true)
         #expect(response.value?.value?.headers["Authorization"] == "Bearer 123456", "Authorization header should match")
     }
+}
+
+extension Endpoint {
+    /// A response slow enough that requests are still running when a test cancels them, even on a loaded machine.
+    fileprivate static var slowResponse: Endpoint { .delay(10) }
 }

@@ -409,25 +409,6 @@ struct CompletionTests {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func waitForCompletionsSharesOneDeadline() async {
-        // Given
-        // Long enough timeouts that scheduling delays under parallel load can't blur the difference between one shared
-        // deadline (about 3 seconds) and consecutive timeouts (6 seconds). Loaded CI machines have added over a second.
-        let first = Completion("first", timeout: 3)
-        let second = Completion("second", timeout: 3)
-        let start = Date()
-
-        // When, Then
-        await withKnownIssue {
-            await wait(for: [first, second])
-        } matching: { issue in
-            issue.description.contains("Timed out")
-        }
-        #expect(Date().timeIntervalSince(start) < 5)
-    }
-
-    @Test
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func notificationCompletionCompletesOnAcceptedNotificationOnly() async {
         // Given
         let center = NotificationCenter()

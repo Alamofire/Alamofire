@@ -550,12 +550,17 @@ struct DataStreamTests {
         let completion = Capture<DataStreamRequest.Completion?>()
         let didReceive = Completion("stream should receive")
         let didComplete = Completion("stream should complete")
+        let hasReceived = Capture(false)
 
         // When
-        // The 250 ms pause after the first chunk keeps the request running until the stream cancels it.
-        session.streamRequest(.chunked(2, delay: 250)).responseStream { stream in
+        // A long stream, so it's still running when the test cancels it. Chunks that arrived before cancelling can
+        // still be delivered, so only the first one completes didReceive.
+        session.streamRequest(.chunked(100)).responseStream { stream in
             switch stream.event {
             case .stream:
+                guard !hasReceived.value else { return }
+
+                hasReceived.value = true
                 didReceive.complete()
                 stream.cancel()
             case .complete:
@@ -581,12 +586,17 @@ struct DataStreamTests {
         let completion = Capture<DataStreamRequest.Completion?>()
         let didReceive = Completion("stream should receive")
         let didComplete = Completion("stream should complete")
+        let hasReceived = Capture(false)
 
         // When
-        // The 250 ms pause after the first chunk keeps the request running until the stream cancels it.
-        session.streamRequest(.chunked(2, delay: 250)).responseStream { stream in
+        // A long stream, so it's still running when the test cancels it. Chunks that arrived before cancelling can
+        // still be delivered, so only the first one completes didReceive.
+        session.streamRequest(.chunked(100)).responseStream { stream in
             switch stream.event {
             case .stream:
+                guard !hasReceived.value else { return }
+
+                hasReceived.value = true
                 didReceive.complete()
                 stream.token.cancel()
             case .complete:

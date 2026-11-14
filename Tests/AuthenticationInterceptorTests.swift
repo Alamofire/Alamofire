@@ -908,7 +908,7 @@ struct AuthenticationInterceptorTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
-                                                    refreshWindow: .init(interval: 30, maximumAttempts: 2))
+                                                    refreshWindow: .init(interval: .longRefreshWindow, maximumAttempts: 2))
 
         let session = stored(Session.independent())
 
@@ -955,7 +955,7 @@ struct AuthenticationInterceptorTestCase {
         let authenticator = TestAuthenticator(refreshResult: .success(refreshedCredential))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
-                                                    refreshWindow: .init(interval: 30, maximumAttempts: 1))
+                                                    refreshWindow: .init(interval: .longRefreshWindow, maximumAttempts: 1))
 
         let session = stored(Session.independent())
 
@@ -996,7 +996,7 @@ struct AuthenticationInterceptorTestCase {
         let authenticator = TestAuthenticator(refreshResult: .success(refreshedCredential))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
-                                                    refreshWindow: .init(interval: 30, maximumAttempts: 1))
+                                                    refreshWindow: .init(interval: .longRefreshWindow, maximumAttempts: 1))
 
         let requestCount = 3
         let session = stored(Session.independent())
@@ -1299,7 +1299,7 @@ struct AuthenticationInterceptorTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
-                                                    refreshWindow: .init(interval: 30, maximumAttempts: 1))
+                                                    refreshWindow: .init(interval: .longRefreshWindow, maximumAttempts: 1))
         let session = stored(Session.independent())
 
         // First, one successful refresh consumes the entire budget (maximumAttempts: 1).
@@ -1405,7 +1405,7 @@ struct AuthenticationInterceptorTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
-                                                    refreshWindow: .init(interval: 30, maximumAttempts: 0))
+                                                    refreshWindow: .init(interval: .longRefreshWindow, maximumAttempts: 0))
         let session = stored(Session.independent())
 
         let expect = Completion("request should complete")
@@ -1445,7 +1445,7 @@ struct AuthenticationInterceptorTestCase {
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
-                                                    refreshWindow: .init(interval: 30, maximumAttempts: 1))
+                                                    refreshWindow: .init(interval: .longRefreshWindow, maximumAttempts: 1))
 
         let requestCount = 3
         let session = stored(Session.independent())
@@ -1540,4 +1540,9 @@ struct AuthenticationInterceptorTestCase {
         #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
         #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
     }
+}
+
+extension TimeInterval {
+    /// A refresh window longer than any test run, so a slow run can't outlast it and allow an extra refresh.
+    fileprivate static let longRefreshWindow: TimeInterval = 3600
 }

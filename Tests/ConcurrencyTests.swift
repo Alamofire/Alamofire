@@ -690,7 +690,9 @@ struct DataStreamConcurrencyTests {
         let session = stored(Session.independent())
 
         // When
-        let expectedPayloads = 10
+        // A long stream, so it's still running when the test cancels it. A loaded test run can receive several
+        // payloads in one callback, which can finish a short stream before it can be cancelled.
+        let expectedPayloads = 100
         let request = session.streamRequest(.payloads(expectedPayloads))
         let task = request.streamTask()
         var datas: [Data] = []
@@ -716,7 +718,9 @@ struct DataStreamConcurrencyTests {
         let session = stored(Session.independent())
 
         // When
-        let expectedPayloads = 10
+        // A long stream, so it's still running when the test cancels it. A loaded test run can receive several
+        // payloads in one callback, which can finish a short stream before it can be cancelled.
+        let expectedPayloads = 100
         let request = session.streamRequest(.payloads(expectedPayloads))
         let task = request.streamTask()
         var datas: [Data] = []
@@ -766,7 +770,9 @@ struct DataStreamConcurrencyTests {
         let session = stored(Session.independent())
 
         // When
-        let expectedPayloads = 10
+        // A long stream, so it's still running when the test cancels it. A loaded test run can receive several
+        // payloads in one callback, which can finish a short stream before it can be cancelled.
+        let expectedPayloads = 100
         let request = session.streamRequest(.payloads(expectedPayloads))
         let task = Task<[Data], Never> {
             var datas: [Data] = []

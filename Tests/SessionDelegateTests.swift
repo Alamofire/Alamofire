@@ -28,6 +28,22 @@ import Testing
 
 @Suite(.storesInstances)
 struct SessionDelegateTestCase {
+    // MARK: - Tests - Deinitialized Session
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func delegateIgnoresDataReceivedAfterItsSessionIsDeinitialized() {
+        // Given
+        // A delegate with no Session, as when the Session is deinitialized while its URLSession still has data
+        // callbacks queued.
+        let delegate = SessionDelegate()
+        let task = URLSession.shared.dataTask(with: Endpoint().url)
+
+        // When, Then: this used to trap with "StateProvider is nil" in debug builds.
+        delegate.urlSession(URLSession.shared, dataTask: task, didReceive: Data("data".utf8))
+        #expect(delegate.request(for: task, as: DataRequest.self) == nil)
+    }
+
     // MARK: - Tests - Redirects
 
     @Test

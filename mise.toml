@@ -1,0 +1,152 @@
+# Alamofire's CI tools and tasks, runnable locally and from GitHub Actions. `mise install` installs the tools, `mise tasks`
+# lists the tasks, and `mise run <task> --help` shows a task's arguments.
+#
+# Settings, all optional, as environment variables:
+#   OS      Simulator OS version, such as 27.2. Defaults to the newest runtime with a matching device.
+#   DEVICE  Simulator name, such as "iPhone 18 Pro". Defaults to the first matching device on OS.
+#   XCODE   Xcode to use, such as Xcode_27.2 for /Applications/Xcode_27.2.app. Defaults to the selected Xcode.
+#   RESULT  Result bundle path. Defaults to .build/results/<platform>.xcresult.
+#   ARGS    Extra arguments for xcodebuild or swift test, such as -only-testing:"Alamofire iOS Tests/RequestTests".
+#   ALAMOFIRE_TEST_CONCURRENCY  The most tests to run at once. Unlimited by default. CI sets it for its smaller machines.
+# The simulator tasks also take OS and DEVICE as arguments. Test tasks start Firewalk first if it isn't running.
+#
+# Examples:
+#   mise run test:ios
+#   mise run test:tvos 27.2 "Apple TV 4K (4th generation)"
+#   XCODE=Xcode_27.2 mise run test:macos
+
+[tools]
+xcbeautify = "3.2.1"
+# Firewalk's release has a single universal macOS binary, so name the asset.
+"github:Alamofire/Firewalk" = { version = "0.15.0", asset_pattern = "firewalk.zip" }
+
+[env]
+NSUnbufferedIO = "YES"
+
+# mise ignores a default shell set in a project's config, so each script task names its own. `-u` is left off because
+# bash 3.2, which macOS ships, treats an empty array as unset.
+
+[tasks.firewalk]
+description = "Start Firewalk unless it's already running, and wait until it answers."
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+url=http://localhost:8080/get
+if curl -sf -o /dev/null $url; then echo "Firewalk is already running."; exit 0; fi
+mkdir -p .build
+# Parallel tests open hundreds of connections at once, more than the default open file limit allows.
+ulimit -n 10240
+nohup firewalk > .build/firewalk.log 2>&1 &
+for _ in $(seq 1 30); do curl -sf -o /dev/null $url && exit 0; sleep 1; done
+echo "Firewalk didn't start. Its log:" >&2; cat .build/firewalk.log >&2; exit 1
+'''
+
+[tasks."test:macos"]
+description = "Test on macOS."
+depends = ["firewalk"]
+env = { SCHEME = "Alamofire macOS", PLAN = "macOS", DESTINATION = "platform=macOS", NAME = "macOS", ACTION = "test" }
+run = "mise run xcodebuild"
+
+[tasks."test:catalyst"]
+description = "Test on Mac Catalyst."
+depends = ["firewalk"]
+env = { SCHEME = "Alamofire iOS", PLAN = "iOS", DESTINATION = "platform=macOS,variant=Mac Catalyst", NAME = "Catalyst", ACTION = "test" }
+run = "mise run xcodebuild"
+
+# mise doesn't pass a task's arguments on to the tasks it runs, so the simulator tasks pass them as environment variables.
+
+[tasks."test:ios"]
+description = "Test on an iOS simulator."
+depends = ["firewalk"]
+usage = '''
+arg "[os]" help="Simulator OS version, such as 27.2" default=""
+arg "[device]" help="Simulator name, such as \"iPhone 18 Pro\"" default=""
+'''
+env = { PLATFORM = "iOS", FAMILY = "iPhone" }
+run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+
+[tasks."test:tvos"]
+description = "Test on a tvOS simulator."
+depends = ["firewalk"]
+usage = '''
+arg "[os]" help="Simulator OS version, such as 27.2" default=""
+arg "[device]" help="Simulator name, such as \"Apple TV 4K (4th generation)\"" default=""
+'''
+env = { PLATFORM = "tvOS", FAMILY = "Apple TV" }
+run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+
+[tasks."test:visionos"]
+description = "Test on a visionOS simulator."
+depends = ["firewalk"]
+usage = '''
+arg "[os]" help="Simulator OS version, such as 27.2" default=""
+arg "[device]" help="Simulator name, such as \"Apple Vision Pro\"" default=""
+'''
+env = { PLATFORM = "visionOS", FAMILY = "Apple Vision" }
+run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+
+[tasks."test:watchos"]
+description = "Test on a watchOS simulator."
+depends = ["firewalk"]
+usage = '''
+arg "[os]" help="Simulator OS version, such as 27.2" default=""
+arg "[device]" help="Simulator name, such as \"Apple Watch Series 12 (46mm)\"" default=""
+'''
+env = { PLATFORM = "watchOS", FAMILY = "Apple Watch" }
+run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+
+[tasks."test:spm"]
+description = "Test with SwiftPM."
+depends = ["firewalk"]
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+eval "args=(${ARGS:-})"
+swift test -c debug "${args[@]}" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
+'''
+
+[tasks."build:macos"]
+description = "Build for macOS without testing, as CodeQL does."
+env = { SCHEME = "Alamofire macOS", PLAN = "", DESTINATION = "platform=macOS", NAME = "build-macOS", ACTION = "build" }
+run = "mise run xcodebuild"
+
+# Without DEVICE, picks the first FAMILY device on OS, or on the newest runtime that has one. simctl lists runtimes
+# oldest first.
+[tasks.simulator]
+hide = true
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+if [ -n "$DEVICE" ]; then
+    destination="platform=$PLATFORM Simulator,OS=${OS:-latest},name=$DEVICE"
+    echo "Testing on $DEVICE, $PLATFORM ${OS:-latest}"
+else
+    picked=$(xcrun simctl list devices available | awk -v platform="$PLATFORM" -v os="$OS" -v family="$FAMILY" '
+        /^-- / { runtime = $0; split($0, f, " "); wanted = f[2] == platform && (os == "" || f[3] == os); next }
+        wanted && index($0, family) && match($0, /\([0-9A-F]+-[0-9A-F-]+\)/) && runtime != picked {
+            picked = runtime; id = substr($0, RSTART + 1, RLENGTH - 2); name = substr($0, 1, RSTART - 2); sub(/^ +/, "", name) }
+        END { if (id) print id "|" name ", " substr(picked, 4, length(picked) - 6) }')
+    if [ -z "$picked" ]; then echo "No available $FAMILY simulator for $PLATFORM $OS." >&2; exit 1; fi
+    destination="id=${picked%%|*}"
+    echo "Testing on ${picked#*|}"
+fi
+SCHEME="Alamofire $PLATFORM" PLAN="$PLATFORM" DESTINATION="$destination" NAME="$PLATFORM" ACTION=test mise run xcodebuild
+'''
+
+[tasks.xcodebuild]
+hide = true
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+if [ -n "${XCODE:-}" ]; then export DEVELOPER_DIR="/Applications/$XCODE.app/Contents/Developer"; fi
+# xcodebuild passes TEST_RUNNER_ variables on to the tests, without the prefix.
+if [ -n "${ALAMOFIRE_TEST_CONCURRENCY:-}" ]; then export TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY="$ALAMOFIRE_TEST_CONCURRENCY"; fi
+result="${RESULT:-.build/results/$NAME.xcresult}"
+mkdir -p .build/results
+rm -rf "$result"
+# ARGS is shell text, so evaluate it to keep quoted arguments together.
+eval "args=(${ARGS:-})"
+# Busy CI machines can take a while to boot a simulator.
+xcodebuild -project Alamofire.xcodeproj -scheme "$SCHEME" -destination "$DESTINATION" -destination-timeout 120 ${PLAN:+-testPlan "$PLAN"} \
+    -resultBundlePath "$result" "${args[@]}" clean "$ACTION" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
+'''

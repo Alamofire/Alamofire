@@ -44,7 +44,61 @@ extension TestLifetimeStorage {
     @TaskLocal static var current: TestLifetimeStorage?
 }
 
-/// Gives each test its own `TestLifetimeStorage`, released when the test ends.
+/// Limits how many tests run at once to the `ALAMOFIRE_TEST_CONCURRENCY` environment variable, when it's set.
+///
+/// Swift Testing starts every test at once. That's fine on a fast Mac, but on a small CI machine running a simulator,
+/// hundreds of simultaneous requests starve the test process until timers and requests time out. Swift Testing's own
+/// limit, `SWT_EXPERIMENTAL_MAXIMUM_PARALLELIZATION_WIDTH`, isn't available before Xcode 26.6. Set the variable for
+/// `xcodebuild` as `TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY`.
+final class TestConcurrencyLimit: @unchecked Sendable {
+    static let shared: TestConcurrencyLimit? = ProcessInfo.processInfo.environment["ALAMOFIRE_TEST_CONCURRENCY"]
+        .flatMap(Int.init)
+        .flatMap { $0 > 0 ? TestConcurrencyLimit(limit: $0) : nil }
+
+    private let lock = NSLock()
+    private var available: Int
+    private var waiters: [CheckedContinuation<Void, Never>] = []
+
+    init(limit: Int) {
+        available = limit
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func acquire() async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            lock.lock()
+            if available > 0 {
+                available -= 1
+                lock.unlock()
+                continuation.resume()
+            } else {
+                waiters.append(continuation)
+                lock.unlock()
+            }
+        }
+    }
+
+    func release() {
+        lock.lock()
+        guard !waiters.isEmpty else {
+            available += 1
+            lock.unlock()
+            return
+        }
+
+        let next = waiters.removeFirst()
+        lock.unlock()
+        next.resume()
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension TestConcurrencyLimit {
+    /// Whether the running test already holds a place, so a nested scope doesn't wait for a second one.
+    @TaskLocal static var isHeld = false
+}
+
+/// Gives each test its own `TestLifetimeStorage`, released when the test ends, and applies `TestConcurrencyLimit`.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 struct StoresInstancesTrait: TestTrait, SuiteTrait, TestScoping {
     var isRecursive: Bool { true }
@@ -57,6 +111,20 @@ struct StoresInstancesTrait: TestTrait, SuiteTrait, TestScoping {
     func provideScope(for test: Test,
                       testCase: Test.Case?,
                       performing function: @Sendable () async throws -> Void) async throws {
+        guard let limit = TestConcurrencyLimit.shared, !TestConcurrencyLimit.isHeld else {
+            try await withStorage(performing: function)
+            return
+        }
+
+        await limit.acquire()
+        defer { limit.release() }
+
+        try await TestConcurrencyLimit.$isHeld.withValue(true) {
+            try await withStorage(performing: function)
+        }
+    }
+
+    private func withStorage(performing function: @Sendable () async throws -> Void) async throws {
         // A closure, rather than passing `function` directly, selects the non-deprecated
         // `nonisolated(nonsending)` overload of `withValue` on Swift 6.4 and later.
         try await TestLifetimeStorage.$current.withValue(TestLifetimeStorage()) {
