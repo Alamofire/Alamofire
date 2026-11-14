@@ -201,7 +201,7 @@ struct RequestResponseTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func pOSTRequestWithUnicodeParameters() async {
+    func postRequestWithUnicodeParameters() async {
         // Given
         let session = stored(Session.independent())
         let parameters = ["french": "français",
@@ -239,7 +239,7 @@ struct RequestResponseTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func pOSTRequestWithBase64EncodedImages() async {
+    func postRequestWithBase64EncodedImages() async {
         // Given
         let session = stored(Session.independent())
         let pngBase64EncodedString: String = {
@@ -1070,7 +1070,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func gETRequestCURLDescription() async {
+    func getRequestCURLDescription() async {
         // Given
         let url = Endpoint().url
         let expectation = Completion("request should complete")
@@ -1093,7 +1093,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func gETRequestCURLDescriptionOnMainQueue() async {
+    func getRequestCURLDescriptionOnMainQueue() async {
         // Given
         let url = Endpoint().url
         let expectation = Completion("request should complete")
@@ -1118,7 +1118,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func gETRequestCURLDescriptionSynchronous() async {
+    func getRequestCURLDescriptionSynchronous() async {
         // Given
         let url = Endpoint().url
         let expectation = Completion("request should complete")
@@ -1144,7 +1144,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func gETRequestCURLDescriptionCanBeRequestedManyTimes() async {
+    func getRequestCURLDescriptionCanBeRequestedManyTimes() async {
         // Given
         let url = Endpoint().url
         let expectation = Completion("request should complete")
@@ -1172,7 +1172,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func gETRequestWithCustomHeaderCURLDescription() async {
+    func getRequestWithCustomHeaderCURLDescription() async {
         // Given
         let url = Endpoint().url
         let expectation = Completion("request should complete")
@@ -1193,7 +1193,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func gETRequestWithDuplicateHeadersDebugDescription() async {
+    func getRequestWithDuplicateHeadersDebugDescription() async {
         // Given
         let url = Endpoint().url
         let expectation = Completion("request should complete")
@@ -1223,7 +1223,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func pOSTRequestCURLDescription() async {
+    func postRequestCURLDescription() async {
         // Given
         let url = Endpoint.method(.post).url
         let expectation = Completion("request should complete")
@@ -1245,7 +1245,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func pOSTRequestWithJSONParametersCURLDescription() async {
+    func postRequestWithJSONParametersCURLDescription() async {
         // Given
         let url = Endpoint.method(.post).url
         let expectation = Completion("request should complete")
@@ -1280,7 +1280,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func pOSTRequestWithCookieCURLDescription() async {
+    func postRequestWithCookieCURLDescription() async {
         // Given
         let url = Endpoint.method(.post).url
 
@@ -1309,7 +1309,7 @@ struct RequestCURLDescriptionTestCase {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func pOSTRequestWithCookiesDisabledCURLDescriptionHasNoCookies() async {
+    func postRequestWithCookiesDisabledCURLDescriptionHasNoCookies() async {
         // Given
         let url = Endpoint.method(.post).url
 

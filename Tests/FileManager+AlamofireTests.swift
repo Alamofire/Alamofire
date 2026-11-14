@@ -87,7 +87,7 @@ extension FileManager {
 }
 
 /// A directory for one Swift Testing test's files, removed when the suite instance running the test is deinitialized.
-final class TemporaryDirectory {
+final class TemporaryDirectory: Sendable {
     let url = FileManager.temporaryDirectoryURL
         .appendingPathComponent("org.alamofire.tests")
         .appendingPathComponent(UUID().uuidString)
