@@ -23,186 +23,192 @@
 //
 
 import Alamofire
-import XCTest
+import Foundation
+import Testing
 
-final class RequestModifierTests: BaseTestCase {
+@Suite(.storesInstances)
+struct RequestModifierTests {
     // MARK: - DataRequest
 
-    @MainActor
-    func testThatDataRequestsCanHaveCustomTimeoutValueSet() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestsCanHaveCustomTimeoutValueSet() async {
         // Given
-        let session = stored(Session())
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified")
-        var response: AFDataResponse<Data?>?
+        let session = stored(Session.independent())
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
-        session.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
-            .response { response = $0; completed.fulfill() }
+        session.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.complete() }
+            .response { response.value = $0; completed.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @MainActor
-    func testThatDataRequestsCallRequestModifiersOnRetry() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestsCallRequestModifiersOnRetry() async {
         // Given
         let inspector = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0))
-        let session = Session(interceptor: inspector)
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified twice")
-        modified.expectedFulfillmentCount = 2
-        var response: AFDataResponse<Data?>?
+        let session = stored(Session.independent(interceptor: inspector))
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified twice", expectedCount: 2)
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
-        session.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
-            .response { response = $0; completed.fulfill() }
+        session.request(.delay(1)) { $0.timeoutInterval = 0.001; modified.complete() }
+            .response { response.value = $0; completed.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
-        XCTAssertEqual(inspector.retryCalledCount, 2)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
+        #expect(inspector.retryCalledCount == 2)
     }
 
     // MARK: - UploadRequest
 
-    @MainActor
-    func testThatUploadRequestsCanHaveCustomTimeoutValueSet() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func uploadRequestsCanHaveCustomTimeoutValueSet() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.delay(1).modifying(\.method, to: .post)
         let data = Data("data".utf8)
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified")
-        var response: AFDataResponse<Data?>?
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
-        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.fulfill() }
-            .response { response = $0; completed.fulfill() }
+        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.complete() }
+            .response { response.value = $0; completed.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @MainActor
-    func testThatUploadRequestsCallRequestModifiersOnRetry() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func uploadRequestsCallRequestModifiersOnRetry() async {
         // Given
         let endpoint = Endpoint.delay(1).modifying(\.method, to: .post)
         let data = Data("data".utf8)
         let policy = RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0, retryableHTTPMethods: [.post])
         let inspector = InspectorInterceptor(policy)
-        let session = Session(interceptor: inspector)
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified twice")
-        modified.expectedFulfillmentCount = 2
-        var response: AFDataResponse<Data?>?
+        let session = stored(Session.independent(interceptor: inspector))
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified twice", expectedCount: 2)
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
-        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.fulfill() }
-            .response { response = $0; completed.fulfill() }
+        session.upload(data, to: endpoint) { $0.timeoutInterval = 0.001; modified.complete() }
+            .response { response.value = $0; completed.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
-        XCTAssertEqual(inspector.retryCalledCount, 2)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
+        #expect(inspector.retryCalledCount == 2)
     }
 
     // MARK: - DownloadRequest
 
-    @MainActor
-    func testThatDownloadRequestsCanHaveCustomTimeoutValueSet() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestsCanHaveCustomTimeoutValueSet() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let url = Endpoint.delay(1).url
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified")
-        var response: AFDownloadResponse<URL?>?
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified")
+        let response = Capture<AFDownloadResponse<URL?>?>()
 
         // When
-        session.download(url, requestModifier: { $0.timeoutInterval = 0.001; modified.fulfill() })
-            .response { response = $0; completed.fulfill() }
+        session.download(url, requestModifier: { $0.timeoutInterval = 0.001; modified.complete() })
+            .response { response.value = $0; completed.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @MainActor
-    func testThatDownloadRequestsCallRequestModifiersOnRetry() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestsCallRequestModifiersOnRetry() async {
         // Given
         let inspector = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0))
-        let session = Session(interceptor: inspector)
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified twice")
-        modified.expectedFulfillmentCount = 2
-        var response: AFDownloadResponse<URL?>?
+        let session = stored(Session.independent(interceptor: inspector))
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified twice", expectedCount: 2)
+        let response = Capture<AFDownloadResponse<URL?>?>()
 
         // When
-        session.download(.delay(1), requestModifier: { $0.timeoutInterval = 0.001; modified.fulfill() })
-            .response { response = $0; completed.fulfill() }
+        session.download(.delay(1), requestModifier: { $0.timeoutInterval = 0.001; modified.complete() })
+            .response { response.value = $0; completed.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
-        XCTAssertEqual(inspector.retryCalledCount, 2)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
+        #expect(inspector.retryCalledCount == 2)
     }
 
     // MARK: - DataStreamRequest
 
-    @MainActor
-    func testThatDataStreamRequestsCanHaveCustomTimeoutValueSet() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestsCanHaveCustomTimeoutValueSet() async {
         // Given
-        let session = stored(Session())
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified")
-        var response: DataStreamRequest.Completion?
+        let session = stored(Session.independent())
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified")
+        let response = Capture<DataStreamRequest.Completion?>()
 
         // When
-        session.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
+        session.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.complete() }
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
 
-                response = completion
-                completed.fulfill()
+                response.value = completion
+                completed.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @MainActor
-    func testThatDataStreamRequestsCallRequestModifiersOnRetry() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestsCallRequestModifiersOnRetry() async {
         // Given
         let inspector = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0))
-        let session = Session(interceptor: inspector)
-        let completed = expectation(description: "request completed")
-        let modified = expectation(description: "request should be modified twice")
-        modified.expectedFulfillmentCount = 2
-        var response: DataStreamRequest.Completion?
+        let session = stored(Session.independent(interceptor: inspector))
+        let completed = Completion("request completed")
+        let modified = Completion("request should be modified twice", expectedCount: 2)
+        let response = Capture<DataStreamRequest.Completion?>()
 
         // When
-        session.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.fulfill() }
+        session.streamRequest(.delay(1)) { $0.timeoutInterval = 0.001; modified.complete() }
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
 
-                response = completion
-                completed.fulfill()
+                response.value = completion
+                completed.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [completed, modified])
 
         // Then
-        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
-        XCTAssertEqual(inspector.retryCalledCount, 2)
+        #expect((response.error?.underlyingError as? URLError)?.code == .timedOut)
+        #expect(inspector.retryCalledCount == 2)
     }
 }
