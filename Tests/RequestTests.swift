@@ -25,216 +25,223 @@
 import Alamofire
 import Foundation
 import Testing
-import XCTest
 
-final class RequestResponseTestCase: BaseTestCase {
-    @MainActor
-    func testRequestResponse() {
+@Suite(.storesInstances)
+struct RequestResponseTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestResponse() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let url = Endpoint.get.url
-        let expectation = expectation(description: "GET request should succeed: \(url)")
-        var response: DataResponse<Data?, AFError>?
+        let expectation = Completion("GET request should succeed: \(url)")
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(url, parameters: ["foo": "bar"])
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
     }
 
-    @MainActor
-    func testThatDataRequestReceivesInitialResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestReceivesInitialResponse() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let url = Endpoint.get.url
-        var initialResponse: HTTPURLResponse?
-        let didReceiveResponse = expectation(description: "didReceiveResponse")
-        let didComplete = expectation(description: "GET request should succeed: \(url)")
-        var response: DataResponse<Data?, AFError>?
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let didReceiveResponse = Completion("didReceiveResponse")
+        let didComplete = Completion("GET request should succeed: \(url)")
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(url, parameters: ["foo": "bar"])
             .onHTTPResponse { response in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
             }
             .response { resp in
-                response = resp
-                didComplete.fulfill()
+                response.value = resp
+                didComplete.complete()
             }
 
-        wait(for: [didReceiveResponse, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(initialResponse, response?.response)
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(initialResponse.value == response.response)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
     }
 
-    @MainActor
-    func testThatDataRequestOnHTTPResponseCanAllow() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestOnHTTPResponseCanAllow() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let url = Endpoint.get.url
-        var initialResponse: HTTPURLResponse?
-        let didReceiveResponse = expectation(description: "didReceiveResponse")
-        let didComplete = expectation(description: "GET request should succeed: \(url)")
-        var response: DataResponse<Data?, AFError>?
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let didReceiveResponse = Completion("didReceiveResponse")
+        let didComplete = Completion("GET request should succeed: \(url)")
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(url, parameters: ["foo": "bar"])
             .onHTTPResponse { response, completionHandler in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
                 completionHandler(.allow)
             }
             .response { resp in
-                response = resp
-                didComplete.fulfill()
+                response.value = resp
+                didComplete.complete()
             }
 
-        wait(for: [didReceiveResponse, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(initialResponse, response?.response)
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(initialResponse.value == response.response)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
     }
 
-    @MainActor
-    func testThatDataRequestOnHTTPResponseCanCancel() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestOnHTTPResponseCanCancel() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let url = Endpoint.get.url
-        var initialResponse: HTTPURLResponse?
-        let didReceiveResponse = expectation(description: "didReceiveResponse")
-        let didComplete = expectation(description: "GET request should succeed: \(url)")
-        var response: DataResponse<Data?, AFError>?
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let didReceiveResponse = Completion("didReceiveResponse")
+        let didComplete = Completion("GET request should succeed: \(url)")
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         let request = session.request(url, parameters: ["foo": "bar"])
             .onHTTPResponse { response, completionHandler in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
                 completionHandler(.cancel)
             }
             .response { resp in
-                response = resp
-                didComplete.fulfill()
+                response.value = resp
+                didComplete.complete()
             }
 
-        wait(for: [didReceiveResponse, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(initialResponse, response?.response)
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertTrue(request.isCancelled, "onHTTPResponse cancelled request should have isCancelled == true")
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled request should be explicitly cancelled")
+        #expect(initialResponse.value == response.response)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data == nil)
+        #expect(request.isCancelled, "onHTTPResponse cancelled request should have isCancelled == true")
+        #expect(response.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled request should be explicitly cancelled")
     }
 
-    @MainActor
-    func testRequestResponseWithProgress() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestResponseWithProgress() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let byteCount = 1024
         let url = Endpoint.bytes(byteCount).url
 
-        let expectation = expectation(description: "Bytes download progress should be reported: \(url)")
+        let expectation = Completion("Bytes download progress should be reported: \(url)")
 
-        var progressValues: [(fraction: Double, total: Int64)] = []
-        var response: DataResponse<Data?, AFError>?
+        let progressValues = Capture<[(fraction: Double, total: Int64)]>([])
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(url)
             .downloadProgress(queue: session.rootQueue) { progress in
-                progressValues.append((fraction: progress.fractionCompleted, total: progress.totalUnitCount))
+                progressValues.write { $0.append((fraction: progress.fractionCompleted, total: progress.totalUnitCount)) }
             }
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
         var previousProgress: (fraction: Double, total: Int64) = progressValues.first ?? (fraction: 0, total: 0)
 
-        for progress in progressValues {
-            XCTAssertGreaterThanOrEqual(progress.fraction, previousProgress.fraction, """
+        for progress in progressValues.value {
+            #expect(progress.fraction >= previousProgress.fraction, """
             previous fraction \(progress.fraction) is not >= \(previousProgress.fraction)
             """)
             previousProgress = progress
         }
 
         if let lastProgressValue = progressValues.last {
-            XCTAssertEqual(lastProgressValue.fraction, 1.0)
+            #expect(lastProgressValue.fraction == 1.0)
         } else {
-            XCTFail("last item in progressValues should not be nil")
+            Issue.record("last item in progressValues should not be nil")
         }
     }
 
-    @MainActor
-    func testPOSTRequestWithUnicodeParameters() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func pOSTRequestWithUnicodeParameters() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let parameters = ["french": "français",
                           "japanese": "日本語",
                           "arabic": "العربية",
                           "emoji": "😃"]
 
-        let expectation = expectation(description: "request should succeed")
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<TestResponse, AFError>?
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(.method(.post), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { closureResponse in
-                response = closureResponse
-                expectation.fulfill()
+                response.value = closureResponse
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
 
-        if let form = response?.result.success?.form {
-            XCTAssertEqual(form["french"], parameters["french"])
-            XCTAssertEqual(form["japanese"], parameters["japanese"])
-            XCTAssertEqual(form["arabic"], parameters["arabic"])
-            XCTAssertEqual(form["emoji"], parameters["emoji"])
+        if let form = response.result?.success?.form {
+            #expect(form["french"] == parameters["french"])
+            #expect(form["japanese"] == parameters["japanese"])
+            #expect(form["arabic"] == parameters["arabic"])
+            #expect(form["emoji"] == parameters["emoji"])
         } else {
-            XCTFail("form parameter in JSON should not be nil")
+            Issue.record("form parameter in JSON should not be nil")
         }
     }
 
-    @MainActor
-    func testPOSTRequestWithBase64EncodedImages() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func pOSTRequestWithBase64EncodedImages() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let pngBase64EncodedString: String = {
             let fileURL = url(forResource: "unicorn", withExtension: "png")
             let data = try! Data(contentsOf: fileURL)
@@ -253,271 +260,278 @@ final class RequestResponseTestCase: BaseTestCase {
                           "png_image": pngBase64EncodedString,
                           "jpeg_image": jpegBase64EncodedString]
 
-        let expectation = expectation(description: "request should succeed")
+        let expectation = Completion("request should succeed")
 
-        var response: DataResponse<TestResponse, AFError>?
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(Endpoint.method(.post), method: .post, parameters: parameters)
             .responseDecodable(of: TestResponse.self) { closureResponse in
-                response = closureResponse
-                expectation.fulfill()
+                response.value = closureResponse
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.result?.isSuccess == true)
 
-        if let form = response?.result.success?.form {
-            XCTAssertEqual(form["email"], parameters["email"])
-            XCTAssertEqual(form["png_image"], parameters["png_image"])
-            XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"])
+        if let form = response.result?.success?.form {
+            #expect(form["email"] == parameters["email"])
+            #expect(form["png_image"] == parameters["png_image"])
+            #expect(form["jpeg_image"] == parameters["jpeg_image"])
         } else {
-            XCTFail("form parameter in JSON should not be nil")
+            Issue.record("form parameter in JSON should not be nil")
         }
     }
 
     // MARK: Queues
 
-    @MainActor
-    func testThatResponseSerializationWorksWithSerializationQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func responseSerializationWorksWithSerializationQueue() async {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
-        let manager = Session(serializationQueue: queue)
-        let expectation = expectation(description: "request should complete")
-        var response: DataResponse<TestResponse, AFError>?
+        let manager = stored(Session.independent(serializationQueue: queue))
+        let expectation = Completion("request should complete")
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         manager.request(.get).responseDecodable(of: TestResponse.self) { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @MainActor
-    func testThatRequestsWorksWithRequestAndSerializationQueues() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestsWorksWithRequestAndSerializationQueues() async {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
-        let manager = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
-        let expectation = expectation(description: "request should complete")
-        var response: DataResponse<TestResponse, AFError>?
+        let manager = stored(Session.independent(requestQueue: requestQueue, serializationQueue: serializationQueue))
+        let expectation = Completion("request should complete")
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         manager.request(.get).responseDecodable(of: TestResponse.self) { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @MainActor
-    func testThatRequestsWorksWithConcurrentRequestAndSerializationQueues() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestsWorksWithConcurrentRequestAndSerializationQueues() async {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
-        let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
+        let session = stored(Session.independent(requestQueue: requestQueue, serializationQueue: serializationQueue))
         let count = 10
-        let expectation = expectation(description: "request should complete")
-        expectation.expectedFulfillmentCount = count
-        var responses: [DataResponse<TestResponse, AFError>] = []
+        let expectation = Completion("request should complete", expectedCount: count)
+        let responses = Capture<[DataResponse<TestResponse, AFError>]>([])
 
         // When
         DispatchQueue.concurrentPerform(iterations: count) { _ in
             session.request(.default).responseDecodable(of: TestResponse.self) { resp in
-                responses.append(resp)
-                expectation.fulfill()
+                responses.write { $0.append(resp) }
+                expectation.complete()
             }
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(responses.count, count)
-        XCTAssertTrue(responses.allSatisfy(\.result.isSuccess))
+        #expect(responses.count == count)
+        // #expect treats a key path passed to rethrowing allSatisfy as a throwing call.
+        // swiftformat:disable:next preferKeyPath
+        #expect(responses.value.allSatisfy { $0.result.isSuccess })
     }
 
     // MARK: Encodable Parameters
 
-    @MainActor
-    func testThatRequestsCanPassEncodableParametersAsJSONBodyData() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestsCanPassEncodableParametersAsJSONBodyData() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let parameters = TestParameters(property: "one")
-        let expect = expectation(description: "request should complete")
-        var receivedResponse: DataResponse<TestResponse, AFError>?
+        let expect = Completion("request should complete")
+        let receivedResponse = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(.method(.post), parameters: parameters, encoder: JSONParameterEncoder.default)
             .responseDecodable(of: TestResponse.self) { response in
-                receivedResponse = response
-                expect.fulfill()
+                receivedResponse.value = response
+                expect.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.success?.data, "{\"property\":\"one\"}")
+        #expect(receivedResponse.result?.success?.data == "{\"property\":\"one\"}")
     }
 
-    @MainActor
-    func testThatRequestsCanPassEncodableParametersAsAURLQuery() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestsCanPassEncodableParametersAsAURLQuery() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let parameters = TestParameters(property: "one")
-        let expect = expectation(description: "request should complete")
-        var receivedResponse: DataResponse<TestResponse, AFError>?
+        let expect = Completion("request should complete")
+        let receivedResponse = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(.method(.get), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { response in
-                receivedResponse = response
-                expect.fulfill()
+                receivedResponse.value = response
+                expect.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.success?.args, ["property": "one"])
+        #expect(receivedResponse.result?.success?.args == ["property": "one"])
     }
 
-    @MainActor
-    func testThatRequestsCanPassEncodableParametersAsURLEncodedBodyData() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestsCanPassEncodableParametersAsURLEncodedBodyData() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let parameters = TestParameters(property: "one")
-        let expect = expectation(description: "request should complete")
-        var receivedResponse: DataResponse<TestResponse, AFError>?
+        let expect = Completion("request should complete")
+        let receivedResponse = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         session.request(.method(.post), parameters: parameters)
             .responseDecodable(of: TestResponse.self) { response in
-                receivedResponse = response
-                expect.fulfill()
+                receivedResponse.value = response
+                expect.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.success?.form, ["property": "one"])
+        #expect(receivedResponse.result?.success?.form == ["property": "one"])
     }
 
     // MARK: Lifetime Events
 
-    @MainActor
-    func testThatAutomaticallyResumedRequestReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func automaticallyResumedRequestReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 4
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 4)
 
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidFinish = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
-        let request = session.request(.default).response { _ in expect.fulfill() }
+        let request = session.request(.default).response { _ in expect.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatInstanceAutomaticallyResumedRequestReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func instanceAutomaticallyResumedRequestReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(startRequestsImmediately: false, eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 4
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 4)
 
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidFinish = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
-        let request = session.request(.default, shouldAutomaticallyResume: true).response { _ in expect.fulfill() }
+        let request = session.request(.default, shouldAutomaticallyResume: true).response { _ in expect.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatAutomaticallyAndManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func automaticallyAndManuallyResumedRequestReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 4
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 4)
 
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidFinish = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
-        let request = session.request(.default).response { _ in expect.fulfill() }
+        let request = session.request(.default).response { _ in expect.complete() }
         for _ in 0..<100 {
             request.resume()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func manuallyResumedRequestReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(startRequestsImmediately: false, eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 3
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 3)
 
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidFinish = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
         let request = session.request(.default)
@@ -525,29 +539,29 @@ final class RequestResponseTestCase: BaseTestCase {
             request.resume()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatInstanceManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func instanceManuallyResumedRequestReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 3
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 3)
 
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidFinish = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
         let request = session.request(.default, shouldAutomaticallyResume: false)
@@ -555,86 +569,86 @@ final class RequestResponseTestCase: BaseTestCase {
             request.resume()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatRequestManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(startRequestsImmediately: false, eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 4
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 4)
 
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidFinish = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
-        let request = session.request(.default).response { _ in expect.fulfill() }
+        let request = session.request(.default).response { _ in expect.complete() }
         for _ in 0..<100 {
             request.resume()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatRequestInstanceManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestInstanceManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 4
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 4)
 
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidFinish = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidFinish = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
-        let request = session.request(.default, shouldAutomaticallyResume: false).response { _ in expect.fulfill() }
+        let request = session.request(.default, shouldAutomaticallyResume: false).response { _ in expect.complete() }
         for _ in 0..<100 {
             request.resume()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatRequestManuallySuspendedManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestManuallySuspendedManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 2
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 2)
 
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
         let request = session.request(.default)
@@ -642,28 +656,28 @@ final class RequestResponseTestCase: BaseTestCase {
             request.suspend()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .suspended)
+        #expect(request.state == .suspended)
     }
 
-    @MainActor
-    func testThatRequestManuallySuspendedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestManuallySuspendedManyTimesOnlyReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 2
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 2)
 
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
 
         // When
         let request = session.request(.default)
@@ -671,349 +685,352 @@ final class RequestResponseTestCase: BaseTestCase {
             request.suspend()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .suspended)
+        #expect(request.state == .suspended)
     }
 
-    @MainActor
-    func testThatRequestManuallyCancelledManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestManuallyCancelledManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() async {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.testQueue")
         let eventMonitor = ClosureEventMonitor(queue: queue)
-        let session = Session(rootQueue: queue, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
-        let didFinish = expectation(description: "request should finish")
-        let events = expectation(description: "request should receive appropriate lifetime events")
-        events.expectedFulfillmentCount = 2
+        let didFinish = Completion("request should finish")
+        let events = Completion("request should receive appropriate lifetime events", expectedCount: 2)
 
-        eventMonitor.requestDidCancelTask = { _, _ in events.fulfill() }
-        eventMonitor.requestDidCancel = { _ in events.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in events.complete() }
+        eventMonitor.requestDidCancel = { _ in events.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in events.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in events.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in events.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in events.complete() }
 
         // When
-        let request = session.request(.default)
-        // Cancellation stops task creation, so don't cancel the request until the task has been created.
-        eventMonitor.requestDidCreateTask = { [unowned request] _, _ in
+        eventMonitor.requestDidCreateTask = { request, _ in
             for _ in 0..<100 {
                 request.cancel()
             }
         }
+        let request = session.request(.default)
         request.response { _ in
-            didFinish.fulfill()
+            didFinish.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [didFinish, events])
 
         // Then
-        XCTAssertEqual(request.state, .cancelled)
+        #expect(request.state == .cancelled)
     }
 
-    @MainActor
-    func testThatRequestManuallyCancelledManyTimesOnlyReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestManuallyCancelledManyTimesOnlyReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(startRequestsImmediately: false, requestSetup: .eager, eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 2
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 2)
 
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
 
         // When
-        let request = session.request(.default)
-        // Cancellation stops task creation, so don't cancel the request until the task has been created.
-        eventMonitor.requestDidCreateTask = { [unowned request] _, _ in
+        eventMonitor.requestDidCreateTask = { request, _ in
             for _ in 0..<100 {
                 request.cancel()
             }
         }
+        let request = session.request(.default)
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .cancelled)
+        #expect(request.state == .cancelled)
     }
 
-    @MainActor
-    func testThatRequestManuallyCancelledManyTimesOnManyQueuesOnlyReceivesAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestManuallyCancelledManyTimesOnManyQueuesOnlyReceivesAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 6
+        let expect = Completion("request should receive appropriate lifetime events", expectedCount: 6)
 
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidResume = { _ in expect.fulfill() }
-        eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.complete() }
+        eventMonitor.requestDidCancel = { _ in expect.complete() }
+        eventMonitor.requestDidResume = { _ in expect.complete() }
+        eventMonitor.requestDidResumeTask = { _, _ in expect.complete() }
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
-        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
-        eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidSuspend = { _ in expect.complete() }
+        eventMonitor.requestDidSuspendTask = { _, _ in expect.complete() }
 
         // When
-        let request = session.request(.delay(5)).response { _ in expect.fulfill() }
-        // Cancellation stops task creation, so don't cancel the request until the task has been created.
-        eventMonitor.requestDidCreateTask = { [unowned request] _, _ in
+        eventMonitor.requestDidCreateTask = { request, _ in
             DispatchQueue.concurrentPerform(iterations: 100) { i in
                 request.cancel()
 
-                if i == 99 { expect.fulfill() }
+                if i == 99 { expect.complete() }
             }
         }
+        let request = session.request(.delay(5)).response { _ in expect.complete() }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(request.state, .cancelled)
+        #expect(request.state == .cancelled)
     }
 
-    @MainActor
-    func testThatRequestTriggersAllAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestTriggersAllAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
         // Disable event test until Firewalk support HTTPS.
-        //  let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
-        let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
-        let didReceiveData = expectation(description: "didReceiveData should fire")
-        let willCacheResponse = expectation(description: "willCacheResponse should fire")
-        let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
-        let didCreateTask = expectation(description: "didCreateTask should fire")
-        let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
-        let didComplete = expectation(description: "didComplete should fire")
-        let didFinish = expectation(description: "didFinish should fire")
-        let didResume = expectation(description: "didResume should fire")
-        let didResumeTask = expectation(description: "didResumeTask should fire")
-        let didParseResponse = expectation(description: "didParseResponse should fire")
-        let responseHandler = expectation(description: "responseHandler should fire")
+        //  let didReceiveChallenge = Completion("didReceiveChallenge should fire")
+        let taskDidFinishCollecting = Completion("taskDidFinishCollecting should fire")
+        let didReceiveData = Completion("didReceiveData should fire")
+        let willCacheResponse = Completion("willCacheResponse should fire")
+        let didCreateURLRequest = Completion("didCreateInitialURLRequest should fire")
+        let didCreateTask = Completion("didCreateTask should fire")
+        let didGatherMetrics = Completion("didGatherMetrics should fire")
+        let didComplete = Completion("didComplete should fire")
+        let didFinish = Completion("didFinish should fire")
+        let didResume = Completion("didResume should fire")
+        let didResumeTask = Completion("didResumeTask should fire")
+        let didParseResponse = Completion("didParseResponse should fire")
+        let responseHandler = Completion("responseHandler should fire")
 
-        var dataReceived = false
+        let dataReceived = Capture(false)
 
         // Disable event test until Firewalk supports HTTPS.
-        //  eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
-        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        //  eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.complete() }
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.complete() }
         eventMonitor.dataTaskDidReceiveData = { _, _, _ in
-            guard !dataReceived else { return }
+            guard !dataReceived.value else { return }
             // Data may be received many times, fulfill only once.
-            dataReceived = true
-            didReceiveData.fulfill()
+            dataReceived.value = true
+            didReceiveData.complete()
         }
-        eventMonitor.dataTaskWillCacheResponse = { _, _, _ in willCacheResponse.fulfill() }
-        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.fulfill() }
-        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
-        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
-        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
-        eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.fulfill() }
-        eventMonitor.requestDidParseResponse = { _, _ in didParseResponse.fulfill() }
+        eventMonitor.dataTaskWillCacheResponse = { _, _, _ in willCacheResponse.complete() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.complete() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.complete() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.complete() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.complete() }
+        eventMonitor.requestDidFinish = { _ in didFinish.complete() }
+        eventMonitor.requestDidResume = { _ in didResume.complete() }
+        eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.complete() }
+        eventMonitor.requestDidParseResponse = { _, _ in didParseResponse.complete() }
 
         // When
         let request = session.request(.default).response { _ in
-            responseHandler.fulfill()
+            responseHandler.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [taskDidFinishCollecting, didReceiveData, willCacheResponse, didCreateURLRequest, didCreateTask, didGatherMetrics, didComplete, didFinish, didResume, didResumeTask, didParseResponse, responseHandler])
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 
-    @MainActor
-    func testThatCancelledRequestTriggersAllAppropriateLifetimeEvents() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func cancelledRequestTriggersAllAppropriateLifetimeEvents() async {
         // Given
         let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let session = stored(Session.independent(startRequestsImmediately: false, eventMonitors: [eventMonitor]))
 
-        let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
-        let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
-        let didCreateTask = expectation(description: "didCreateTask should fire")
-        let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
-        let didComplete = expectation(description: "didComplete should fire")
-        let didFinish = expectation(description: "didFinish should fire")
-        let didResume = expectation(description: "didResume should fire")
-        let didResumeTask = expectation(description: "didResumeTask should fire")
-        let didParseResponse = expectation(description: "didParseResponse should fire")
-        let didCancel = expectation(description: "didCancel should fire")
-        let didCancelTask = expectation(description: "didCancelTask should fire")
-        let responseHandler = expectation(description: "responseHandler should fire")
+        let taskDidFinishCollecting = Completion("taskDidFinishCollecting should fire")
+        let didCreateURLRequest = Completion("didCreateInitialURLRequest should fire")
+        let didCreateTask = Completion("didCreateTask should fire")
+        let didGatherMetrics = Completion("didGatherMetrics should fire")
+        let didComplete = Completion("didComplete should fire")
+        let didFinish = Completion("didFinish should fire")
+        let didResume = Completion("didResume should fire")
+        let didResumeTask = Completion("didResumeTask should fire")
+        let didParseResponse = Completion("didParseResponse should fire")
+        let didCancel = Completion("didCancel should fire")
+        let didCancelTask = Completion("didCancelTask should fire")
+        let responseHandler = Completion("responseHandler should fire")
 
-        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
-        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.fulfill() }
-        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
-        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
-        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
-        eventMonitor.requestDidParseResponse = { _, _ in didParseResponse.fulfill() }
-        eventMonitor.requestDidCancel = { _ in didCancel.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.complete() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.complete() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.complete() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.complete() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.complete() }
+        eventMonitor.requestDidFinish = { _ in didFinish.complete() }
+        eventMonitor.requestDidResume = { _ in didResume.complete() }
+        eventMonitor.requestDidParseResponse = { _, _ in didParseResponse.complete() }
+        eventMonitor.requestDidCancel = { _ in didCancel.complete() }
+        eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.complete() }
 
         // When
         let request = session.request(.delay(5)).response { _ in
-            responseHandler.fulfill()
+            responseHandler.complete()
         }
 
         eventMonitor.requestDidResumeTask = { [unowned request] _, _ in
             request.cancel()
-            didResumeTask.fulfill()
+            didResumeTask.complete()
         }
 
         request.resume()
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [taskDidFinishCollecting, didCreateURLRequest, didCreateTask, didGatherMetrics, didComplete, didFinish, didResume, didResumeTask, didParseResponse, didCancel, didCancelTask, responseHandler])
 
         // Then
-        XCTAssertEqual(request.state, .cancelled)
+        #expect(request.state == .cancelled)
     }
 
-    @MainActor
-    func testThatAppendingResponseSerializerToCancelledRequestCallsCompletion() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func appendingResponseSerializerToCancelledRequestCallsCompletion() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
 
-        var response1: DataResponse<TestResponse, AFError>?
-        var response2: DataResponse<TestResponse, AFError>?
+        let response1 = Capture<DataResponse<TestResponse, AFError>?>()
+        let response2 = Capture<DataResponse<TestResponse, AFError>?>()
 
-        let expect = expectation(description: "both response serializer completions should be called")
-        expect.expectedFulfillmentCount = 2
+        let expect = Completion("both response serializer completions should be called", expectedCount: 2)
 
         // When
         let request = session.request(.delay(1))
 
         request.responseDecodable(of: TestResponse.self) { resp in
-            response1 = resp
-            expect.fulfill()
+            response1.value = resp
+            expect.complete()
 
             request.responseDecodable(of: TestResponse.self) { resp in
-                response2 = resp
-                expect.fulfill()
+                response2.value = resp
+                expect.complete()
             }
         }
 
         request.cancel()
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response1?.error?.isExplicitlyCancelledError, true)
-        XCTAssertEqual(response2?.error?.isExplicitlyCancelledError, true)
+        #expect(response1.error?.isExplicitlyCancelledError == true)
+        #expect(response2.error?.isExplicitlyCancelledError == true)
     }
 
-    @MainActor
-    func testThatAppendingResponseSerializerToCompletedRequestInsideCompletionResumesRequest() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func appendingResponseSerializerToCompletedRequestInsideCompletionResumesRequest() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
 
-        var response1: DataResponse<TestResponse, AFError>?
-        var response2: DataResponse<TestResponse, AFError>?
-        var response3: DataResponse<TestResponse, AFError>?
+        let response1 = Capture<DataResponse<TestResponse, AFError>?>()
+        let response2 = Capture<DataResponse<TestResponse, AFError>?>()
+        let response3 = Capture<DataResponse<TestResponse, AFError>?>()
 
-        let expect = expectation(description: "all response serializer completions should be called")
-        expect.expectedFulfillmentCount = 3
+        let expect = Completion("all response serializer completions should be called", expectedCount: 3)
 
         // When
         let request = session.request(.default)
 
         request.responseDecodable(of: TestResponse.self) { resp in
-            response1 = resp
-            expect.fulfill()
+            response1.value = resp
+            expect.complete()
 
             request.responseDecodable(of: TestResponse.self) { resp in
-                response2 = resp
-                expect.fulfill()
+                response2.value = resp
+                expect.complete()
 
                 request.responseDecodable(of: TestResponse.self) { resp in
-                    response3 = resp
-                    expect.fulfill()
+                    response3.value = resp
+                    expect.complete()
                 }
             }
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertNotNil(response1?.value)
-        XCTAssertNotNil(response2?.value)
-        XCTAssertNotNil(response3?.value)
+        #expect(response1.value?.value != nil)
+        #expect(response2.value?.value != nil)
+        #expect(response3.value?.value != nil)
     }
 
-    @MainActor
-    func testThatAppendingResponseSerializerToCompletedRequestOutsideCompletionResumesRequest() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func appendingResponseSerializerToCompletedRequestOutsideCompletionResumesRequest() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let request = session.request(.default)
 
-        var response1: DataResponse<TestResponse, AFError>?
-        var response2: DataResponse<TestResponse, AFError>?
-        var response3: DataResponse<TestResponse, AFError>?
+        let response1 = Capture<DataResponse<TestResponse, AFError>?>()
+        let response2 = Capture<DataResponse<TestResponse, AFError>?>()
+        let response3 = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
-        let expect1 = expectation(description: "response serializer 1 completion should be called")
-        request.responseDecodable(of: TestResponse.self) { response1 = $0; expect1.fulfill() }
-        waitForExpectations(timeout: timeout)
+        let expect1 = Completion("response serializer 1 completion should be called")
+        request.responseDecodable(of: TestResponse.self) { response1.value = $0; expect1.complete() }
+        await expect1.wait()
 
-        let expect2 = expectation(description: "response serializer 2 completion should be called")
-        request.responseDecodable(of: TestResponse.self) { response2 = $0; expect2.fulfill() }
-        waitForExpectations(timeout: timeout)
+        let expect2 = Completion("response serializer 2 completion should be called")
+        request.responseDecodable(of: TestResponse.self) { response2.value = $0; expect2.complete() }
+        await expect2.wait()
 
-        let expect3 = expectation(description: "response serializer 3 completion should be called")
-        request.responseDecodable(of: TestResponse.self) { response3 = $0; expect3.fulfill() }
-        waitForExpectations(timeout: timeout)
+        let expect3 = Completion("response serializer 3 completion should be called")
+        request.responseDecodable(of: TestResponse.self) { response3.value = $0; expect3.complete() }
+        await expect3.wait()
 
         // Then
-        XCTAssertNotNil(response1?.value)
-        XCTAssertNotNil(response2?.value)
-        XCTAssertNotNil(response3?.value)
+        #expect(response1.value?.value != nil)
+        #expect(response2.value?.value != nil)
+        #expect(response3.value?.value != nil)
     }
 }
 
 // MARK: -
 
-final class RequestDescriptionTestCase: BaseTestCase {
-    @MainActor
-    func testRequestDescription() {
+@Suite(.storesInstances)
+struct RequestDescriptionTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestDescription() async {
         // Given
         let url = Endpoint().url
-        let manager = Session(startRequestsImmediately: false)
+        let manager = stored(Session.independent(startRequestsImmediately: false))
         let request = manager.request(url)
 
-        let expectation = expectation(description: "Request description should update: \(url)")
+        let expectation = Completion("Request description should update: \(url)")
 
-        var response: HTTPURLResponse?
+        let response = Capture<HTTPURLResponse?>()
 
         // When
         request.response { resp in
-            response = resp.response
+            response.value = resp.response
 
-            expectation.fulfill()
+            expectation.complete()
         }.resume()
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(request.description, "GET \(url) (\(response?.statusCode ?? -1))")
+        #expect(request.description == "GET \(url) (\(response.statusCode ?? -1))")
     }
 }
 
 // MARK: -
 
-final class RequestCURLDescriptionTestCase: BaseTestCase {
+@Suite(.storesInstances)
+struct RequestCURLDescriptionTestCase {
     // MARK: Properties
 
-    let session: Session = .init(requestSetup: .eager)
+    let session: Session = stored(Session.independent(requestSetup: .eager))
 
     let sessionWithAcceptLanguageHeader: Session = {
         var headers = HTTPHeaders.default
@@ -1022,7 +1039,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        return Session(configuration: configuration, requestSetup: .eager)
+        return stored(Session.independent(configuration: configuration, requestSetup: .eager))
     }()
 
     let sessionWithContentTypeHeader: Session = {
@@ -1032,200 +1049,208 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers = headers
 
-        return Session(configuration: configuration, requestSetup: .eager)
+        return stored(Session.independent(configuration: configuration, requestSetup: .eager))
     }()
 
     func sessionWithCookie(_ cookie: HTTPCookie) -> Session {
-        let configuration = URLSessionConfiguration.af.default
+        let configuration = URLSessionConfiguration.af.default.withIndependentStorage()
         configuration.httpCookieStorage?.setCookie(cookie)
 
-        return Session(configuration: configuration, requestSetup: .eager)
+        return Session.independent(configuration: configuration, requestSetup: .eager)
     }
 
     let sessionDisallowingCookies: Session = {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpShouldSetCookies = false
 
-        return Session(configuration: configuration, requestSetup: .eager)
+        return stored(Session.independent(configuration: configuration, requestSetup: .eager))
     }()
 
     // MARK: Tests
 
-    @MainActor
-    func testGETRequestCURLDescription() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func gETRequestCURLDescription() async {
         // Given
         let url = Endpoint().url
-        let expectation = expectation(description: "request should complete")
-        var components: [String]?
+        let expectation = Completion("request should complete")
+        let components = Capture<[String]?>()
 
         // When
         session.request(url).cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            expectation.complete()
         }
         // requires eager perform
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(url)\"")
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?.contains("-X") == true)
+        #expect(components.last == "\"\(url)\"")
     }
 
-    @MainActor
-    func testGETRequestCURLDescriptionOnMainQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func gETRequestCURLDescriptionOnMainQueue() async {
         // Given
         let url = Endpoint().url
-        let expectation = expectation(description: "request should complete")
-        var isMainThread = false
-        var components: [String]?
+        let expectation = Completion("request should complete")
+        let isMainThread = Capture(false)
+        let components = Capture<[String]?>()
 
         // When
         session.request(url).cURLDescription(on: .main) {
-            components = self.cURLCommandComponents(from: $0)
-            isMainThread = Thread.isMainThread
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            isMainThread.value = Thread.isMainThread
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        await expectation.wait()
 
         // Then
-        XCTAssertTrue(isMainThread)
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(url)\"")
+        #expect(isMainThread.value)
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?.contains("-X") == true)
+        #expect(components.last == "\"\(url)\"")
     }
 
-    @MainActor
-    func testGETRequestCURLDescriptionSynchronous() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func gETRequestCURLDescriptionSynchronous() async {
         // Given
         let url = Endpoint().url
-        let expectation = expectation(description: "request should complete")
-        var components: [String]?
-        var syncComponents: [String]?
+        let expectation = Completion("request should complete")
+        let components = Capture<[String]?>()
+        let syncComponents = Capture<[String]?>()
 
         // When
         let request = session.request(url)
         request.cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            syncComponents = self.cURLCommandComponents(from: request.cURLDescription())
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            syncComponents.value = cURLCommandComponents(from: request.cURLDescription())
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(url)\"")
-        XCTAssertEqual(components?.sorted(), syncComponents?.sorted())
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?.contains("-X") == true)
+        #expect(components.last == "\"\(url)\"")
+        #expect(components.value?.sorted() == syncComponents.value?.sorted())
     }
 
-    @MainActor
-    func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func gETRequestCURLDescriptionCanBeRequestedManyTimes() async {
         // Given
         let url = Endpoint().url
-        let expectation = expectation(description: "request should complete")
-        var components: [String]?
-        var secondComponents: [String]?
+        let expectation = Completion("request should complete")
+        let components = Capture<[String]?>()
+        let secondComponents = Capture<[String]?>()
 
         // When
         let request = session.request(url)
         request.cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
+            components.value = cURLCommandComponents(from: $0)
             request.cURLDescription {
-                secondComponents = self.cURLCommandComponents(from: $0)
-                expectation.fulfill()
+                secondComponents.value = cURLCommandComponents(from: $0)
+                expectation.complete()
             }
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(url)\"")
-        XCTAssertEqual(components?.sorted(), secondComponents?.sorted())
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?.contains("-X") == true)
+        #expect(components.last == "\"\(url)\"")
+        #expect(components.value?.sorted() == secondComponents.value?.sorted())
     }
 
-    @MainActor
-    func testGETRequestWithCustomHeaderCURLDescription() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func gETRequestWithCustomHeaderCURLDescription() async {
         // Given
         let url = Endpoint().url
-        let expectation = expectation(description: "request should complete")
-        var cURLDescription: String?
+        let expectation = Completion("request should complete")
+        let cURLDescription = Capture<String?>()
 
         // When
         let headers: HTTPHeaders = ["X-Custom-Header": "{\"key\": \"value\"}"]
         session.request(url, headers: headers).cURLDescription {
-            cURLDescription = $0
-            expectation.fulfill()
+            cURLDescription.value = $0
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(cURLDescription?.range(of: "-H \"X-Custom-Header: {\\\"key\\\": \\\"value\\\"}\""))
+        #expect(cURLDescription.value?.range(of: "-H \"X-Custom-Header: {\\\"key\\\": \\\"value\\\"}\"") != nil)
     }
 
-    @MainActor
-    func testGETRequestWithDuplicateHeadersDebugDescription() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func gETRequestWithDuplicateHeadersDebugDescription() async {
         // Given
         let url = Endpoint().url
-        let expectation = expectation(description: "request should complete")
-        var cURLDescription: String?
-        var components: [String]?
+        let expectation = Completion("request should complete")
+        let cURLDescription = Capture<String?>()
+        let components = Capture<[String]?>()
 
         // When
         let headers: HTTPHeaders = ["Accept-Language": "en-GB"]
         sessionWithAcceptLanguageHeader.request(url, headers: headers).cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            cURLDescription = $0
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            cURLDescription.value = $0
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(url)\"")
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?.contains("-X") == true)
+        #expect(components.last == "\"\(url)\"")
 
-        let acceptLanguageCount = components?.count(where: { $0.contains("Accept-Language") })
-        XCTAssertEqual(acceptLanguageCount, 1, "command should contain a single Accept-Language header")
+        let acceptLanguageCount = components.value?.count(where: { $0.contains("Accept-Language") })
+        #expect(acceptLanguageCount == 1, "command should contain a single Accept-Language header")
 
-        XCTAssertNotNil(cURLDescription?.range(of: "-H \"Accept-Language: en-GB\""))
+        #expect(cURLDescription.value?.range(of: "-H \"Accept-Language: en-GB\"") != nil)
     }
 
-    @MainActor
-    func testPOSTRequestCURLDescription() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func pOSTRequestCURLDescription() async {
         // Given
         let url = Endpoint.method(.post).url
-        let expectation = expectation(description: "request should complete")
-        var components: [String]?
+        let expectation = Completion("request should complete")
+        let components = Capture<[String]?>()
 
         // When
         session.request(url, method: .post).cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertEqual(components?[3..<5], ["-X", "POST"])
-        XCTAssertEqual(components?.last, "\"\(url)\"")
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?[3..<5] == ["-X", "POST"])
+        #expect(components.last == "\"\(url)\"")
     }
 
-    @MainActor
-    func testPOSTRequestWithJSONParametersCURLDescription() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func pOSTRequestWithJSONParametersCURLDescription() async {
         // Given
         let url = Endpoint.method(.post).url
-        let expectation = expectation(description: "request should complete")
-        var cURLDescription: String?
-        var components: [String]?
+        let expectation = Completion("request should complete")
+        let cURLDescription = Capture<String?>()
+        let components = Capture<[String]?>()
 
         let parameters = ["foo": "bar",
                           "fo\"o": "b\"ar",
@@ -1233,28 +1258,29 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
 
         // When
         session.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default).cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            cURLDescription = $0
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            cURLDescription.value = $0
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertEqual(components?[3..<5], ["-X", "POST"])
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?[3..<5] == ["-X", "POST"])
 
-        XCTAssertNotNil(cURLDescription?.range(of: "-H \"Content-Type: application/json\""))
-        XCTAssertNotNil(cURLDescription?.range(of: "-d \"{"))
-        XCTAssertNotNil(cURLDescription?.range(of: "\\\"f'oo\\\":\\\"ba'r\\\""))
-        XCTAssertNotNil(cURLDescription?.range(of: "\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\""))
-        XCTAssertNotNil(cURLDescription?.range(of: "\\\"foo\\\":\\\"bar\\"))
+        #expect(cURLDescription.value?.range(of: "-H \"Content-Type: application/json\"") != nil)
+        #expect(cURLDescription.value?.range(of: "-d \"{") != nil)
+        #expect(cURLDescription.value?.range(of: "\\\"f'oo\\\":\\\"ba'r\\\"") != nil)
+        #expect(cURLDescription.value?.range(of: "\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\"") != nil)
+        #expect(cURLDescription.value?.range(of: "\\\"foo\\\":\\\"bar\\") != nil)
 
-        XCTAssertEqual(components?.last, "\"\(url)\"")
+        #expect(components.last == "\"\(url)\"")
     }
 
-    @MainActor
-    func testPOSTRequestWithCookieCURLDescription() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func pOSTRequestWithCookieCURLDescription() async {
         // Given
         let url = Endpoint.method(.post).url
 
@@ -1262,27 +1288,28 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
                                              .path: url.path,
                                              .name: "foo",
                                              .value: "bar"])!
-        let cookieManager = sessionWithCookie(cookie)
-        let expectation = expectation(description: "request should complete")
-        var components: [String]?
+        let cookieManager = stored(sessionWithCookie(cookie))
+        let expectation = Completion("request should complete")
+        let components = Capture<[String]?>()
 
         // When
         cookieManager.request(url, method: .post).cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertEqual(components?[3..<5], ["-X", "POST"])
-        XCTAssertEqual(components?.last, "\"\(url)\"")
-        XCTAssertEqual(components?[5..<6], ["-b"])
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?[3..<5] == ["-X", "POST"])
+        #expect(components.last == "\"\(url)\"")
+        #expect(components.value?[5..<6] == ["-b"])
     }
 
-    @MainActor
-    func testPOSTRequestWithCookiesDisabledCURLDescriptionHasNoCookies() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func pOSTRequestWithCookiesDisabledCURLDescriptionHasNoCookies() async {
         // Given
         let url = Endpoint.method(.post).url
 
@@ -1291,70 +1318,72 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
                                              .name: "foo",
                                              .value: "bar"])!
         sessionDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
-        let expectation = expectation(description: "request should complete")
-        var components: [String]?
+        let expectation = Completion("request should complete")
+        let components = Capture<[String]?>()
 
         // When
         sessionDisallowingCookies.request(url, method: .post).cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        let cookieComponents = components?.filter { $0 == "-b" }
-        XCTAssertTrue(cookieComponents?.isEmpty == true)
+        let cookieComponents = components.value?.filter { $0 == "-b" }
+        #expect(cookieComponents?.isEmpty == true)
     }
 
-    @MainActor
-    func testMultipartFormDataRequestWithDuplicateHeadersCURLDescriptionHasOneContentTypeHeader() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipartFormDataRequestWithDuplicateHeadersCURLDescriptionHasOneContentTypeHeader() async {
         // Given
         let url = Endpoint.method(.post).url
         let japaneseData = Data("日本語".utf8)
-        let expectation = expectation(description: "multipart form data encoding should succeed")
-        var cURLDescription: String?
-        var components: [String]?
+        let expectation = Completion("multipart form data encoding should succeed")
+        let cURLDescription = Capture<String?>()
+        let components = Capture<[String]?>()
 
         // When
         sessionWithContentTypeHeader.upload(multipartFormData: { data in
             data.append(japaneseData, withName: "japanese")
         }, to: url).cURLDescription {
-            components = self.cURLCommandComponents(from: $0)
-            cURLDescription = $0
-            expectation.fulfill()
+            components.value = cURLCommandComponents(from: $0)
+            cURLDescription.value = $0
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components?.contains("-X") == true)
-        XCTAssertEqual(components?.last, "\"\(url)\"")
+        #expect(components.value?[0..<3] == ["$", "curl", "-v"])
+        #expect(components.value?.contains("-X") == true)
+        #expect(components.last == "\"\(url)\"")
 
-        let contentTypeCount = components?.count(where: { $0.contains("Content-Type") })
-        XCTAssertEqual(contentTypeCount, 1, "command should contain a single Content-Type header")
+        let contentTypeCount = components.value?.count(where: { $0.contains("Content-Type") })
+        #expect(contentTypeCount == 1, "command should contain a single Content-Type header")
 
-        XCTAssertNotNil(cURLDescription?.range(of: "-H \"Content-Type: multipart/form-data;"))
+        #expect(cURLDescription.value?.range(of: "-H \"Content-Type: multipart/form-data;") != nil)
     }
 
-    @MainActor
-    func testThatRequestWithInvalidURLDebugDescription() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestWithInvalidURLDebugDescription() async {
         // Given
         let urlString = "invalid_url"
-        let expectation = expectation(description: "request should complete")
-        var cURLDescription: String?
+        let expectation = Completion("request should complete")
+        let cURLDescription = Capture<String?>()
 
         // When
         session.request(urlString).cURLDescription {
-            cURLDescription = $0
-            expectation.fulfill()
+            cURLDescription.value = $0
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(cURLDescription, "debugDescription should not crash")
+        #expect(cURLDescription.value != nil, "debugDescription should not crash")
     }
 
     // MARK: Test Helper Methods
@@ -1365,121 +1394,128 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
     }
 }
 
-final class RequestLifetimeTests: BaseTestCase {
-    @MainActor
-    func testThatRequestProvidesURLRequestWhenCreated() {
+@Suite(.storesInstances)
+struct RequestLifetimeTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestProvidesURLRequestWhenCreated() async {
         // Given
-        let session = stored(Session())
-        let didReceiveRequest = expectation(description: "did receive task")
-        let didComplete = expectation(description: "request did complete")
-        var request: URLRequest?
+        let session = stored(Session.independent())
+        let didReceiveRequest = Completion("did receive task")
+        let didComplete = Completion("request did complete")
+        let request = Capture<URLRequest?>()
 
         // When
         session.request(.default)
-            .onURLRequestCreation { request = $0; didReceiveRequest.fulfill() }
-            .responseDecodable(of: TestResponse.self) { _ in didComplete.fulfill() }
+            .onURLRequestCreation { request.value = $0; didReceiveRequest.complete() }
+            .responseDecodable(of: TestResponse.self) { _ in didComplete.complete() }
 
-        wait(for: [didReceiveRequest, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveRequest, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNotNil(request)
+        #expect(request.value != nil)
     }
 
-    @MainActor
-    func testThatRequestProvidesTaskWhenCreated() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestProvidesTaskWhenCreated() async {
         // Given
-        let session = stored(Session())
-        let didReceiveTask = expectation(description: "did receive task")
-        let didComplete = expectation(description: "request did complete")
-        var task: URLSessionTask?
+        let session = stored(Session.independent())
+        let didReceiveTask = Completion("did receive task")
+        let didComplete = Completion("request did complete")
+        let task = Capture<URLSessionTask?>()
 
         // When
         session.request(.default)
-            .onURLSessionTaskCreation { task = $0; didReceiveTask.fulfill() }
-            .responseDecodable(of: TestResponse.self) { _ in didComplete.fulfill() }
+            .onURLSessionTaskCreation { task.value = $0; didReceiveTask.complete() }
+            .responseDecodable(of: TestResponse.self) { _ in didComplete.complete() }
 
-        wait(for: [didReceiveTask, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveTask, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNotNil(task)
+        #expect(task.value != nil)
     }
 }
 
 // MARK: -
 
-final class RequestInvalidURLTestCase: BaseTestCase {
-    @MainActor
-    func testThatDataRequestWithFileURLThrowsError() {
+@Suite(.storesInstances)
+struct RequestInvalidURLTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestWithFileURLThrowsError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = expectation(description: "Request should succeed.")
-        var response: DataResponse<Data?, AFError>?
+        let expectation = Completion("Request should succeed.")
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(fileURL)
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @MainActor
-    func testThatDownloadRequestWithFileURLThrowsError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestWithFileURLThrowsError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = expectation(description: "Request should succeed.")
-        var response: DownloadResponse<URL?, AFError>?
+        let expectation = Completion("Request should succeed.")
+        let response = Capture<DownloadResponse<URL?, AFError>?>()
 
         // When
         session.download(fileURL)
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @MainActor
-    func testThatDataStreamRequestWithFileURLThrowsError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestWithFileURLThrowsError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let fileURL = url(forResource: "valid_data", withExtension: "json")
-        let expectation = expectation(description: "Request should succeed.")
-        var response: DataStreamRequest.Completion?
+        let expectation = Completion("Request should succeed.")
+        let response = Capture<DataStreamRequest.Completion?>()
 
         // When
         session.streamRequest(fileURL)
             .responseStream { stream in
                 guard case let .complete(completion) = stream.event else { return }
 
-                response = completion
-                expectation.fulfill()
+                response.value = completion
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNil(response?.response)
+        #expect(response.response == nil)
     }
 }
 
-@Suite
+@Suite(.storesInstances)
 struct RequestInstanceInterceptorTests {
     @Test
-    func instanceAdapterIsCalled() async throws {
+    func instanceAdapterIsCalled() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let adapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
 
         // When
@@ -1493,9 +1529,9 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func instanceAdaptersAreCalledInAddedOrder() async throws {
+    func instanceAdaptersAreCalledInAddedOrder() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let firstAdapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
         let secondAdapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in completion(.success(request)) })
 
@@ -1513,14 +1549,14 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func sessionAdapterIsCalledBeforeInstanceAdapter() async throws {
+    func sessionAdapterIsCalledBeforeInstanceAdapter() async {
         // Given
         let sessionInterceptor = InspectorInterceptor(.adapter { @Sendable request, _, completion in
             var request = request
             request.headers["session"] = "\(Date.now.timeIntervalSince1970)"
             completion(.success(request))
         })
-        let session = Session(interceptor: sessionInterceptor)
+        let session = stored(Session.independent(interceptor: sessionInterceptor))
         let instanceInterceptor = InspectorInterceptor(.adapter { @Sendable request, _, completion in
             var request = request
             request.headers["instance"] = "\(Date.now.timeIntervalSince1970)"
@@ -1544,9 +1580,9 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func instanceInterceptorIsCalled() async throws {
+    func instanceInterceptorIsCalled() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let interceptor = InspectorInterceptor(
             .interceptor { @Sendable request, _, completion in
                 completion(.success(request))
@@ -1567,9 +1603,9 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func multipleInstanceInterceptorsAreCalledInAddedOrder() async throws {
+    func multipleInstanceInterceptorsAreCalledInAddedOrder() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let firstInterceptor = InspectorInterceptor(
             .interceptor { @Sendable request, _, completion in
                 completion(.success(request))
@@ -1603,9 +1639,9 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func instanceRetrierIsCalled() async throws {
+    func instanceRetrierIsCalled() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let interceptor = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.retry) })
 
         // When
@@ -1619,9 +1655,9 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func multipleInstanceRetriersAreCalledInAddedOrder() async throws {
+    func multipleInstanceRetriersAreCalledInAddedOrder() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let firstRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.doNotRetry) })
         let secondRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.retry) })
 
@@ -1639,10 +1675,10 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func sessionRetrierIsCalledBeforeInstanceRetrier() async throws {
+    func sessionRetrierIsCalledBeforeInstanceRetrier() async {
         // Given
         let sessionRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.doNotRetry) })
-        let session = Session(interceptor: sessionRetrier)
+        let session = stored(Session.independent(interceptor: sessionRetrier))
         let instanceRetrier = InspectorInterceptor(.retrier { @Sendable _, _, _, completion in completion(.retry) })
 
         // When
@@ -1658,11 +1694,11 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func instanceEventMonitorIsCalled() async throws {
+    func instanceEventMonitorIsCalled() async {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.\(#function)")
         let monitor = InspectorEventMonitor(queue: queue)
-        let session = Session(rootQueue: queue, eventMonitors: [])
+        let session = stored(Session.independent(eventMonitors: []))
 
         // When
         let response = await session
@@ -1687,12 +1723,12 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func multipleInstanceEventMonitorsAreCalledInAddedOrder() async throws {
+    func multipleInstanceEventMonitorsAreCalledInAddedOrder() async {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.\(#function)")
         let firstMonitor = InspectorEventMonitor(queue: queue)
         let secondMonitor = InspectorEventMonitor(queue: queue)
-        let session = Session(rootQueue: queue, eventMonitors: [])
+        let session = stored(Session.independent(eventMonitors: []))
 
         // When
         let response = await session
@@ -1722,12 +1758,12 @@ struct RequestInstanceInterceptorTests {
     }
 
     @Test
-    func instanceAndSessionEventMonitorsAreCalledInCorrectOrder() async throws {
+    func instanceAndSessionEventMonitorsAreCalledInCorrectOrder() async {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.\(#function)")
         let sessionMonitor = InspectorEventMonitor(label: "session", queue: queue)
         let instanceMonitor = InspectorEventMonitor(label: "instance", queue: queue)
-        let session = Session(rootQueue: queue, eventMonitors: [sessionMonitor])
+        let session = stored(Session.independent(eventMonitors: [sessionMonitor]))
 
         // When
         let response = await session
@@ -1775,13 +1811,13 @@ struct RequestInstanceInterceptorTests {
 }
 
 #if canImport(zlib) && !os(Android) // Same condition as `DeflateRequestCompressor`.
-@Suite
+@Suite(.storesInstances)
 struct RequestCompressionTests {
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatRequestsCanBeCompressed() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
@@ -1802,7 +1838,7 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorThrowsErrorByDefaultWhenRequestAlreadyHasHeader() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
@@ -1825,7 +1861,7 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorThrowsErrorWhenConfigured() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
@@ -1848,7 +1884,7 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorReplacesHeaderWhenConfigured() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
@@ -1870,7 +1906,7 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorSkipsCompressionWhenConfigured() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
@@ -1893,7 +1929,7 @@ struct RequestCompressionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatDeflateCompressorDoesNotCompressDataWhenClosureReturnsFalse() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let url = Endpoint.method(.post).url
         let parameters = TestParameters(property: "compressed")
 
