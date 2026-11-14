@@ -25,60 +25,63 @@
 import Alamofire
 import Foundation
 import Testing
-import XCTest
 
-final class CachedResponseHandlerTestCase: BaseTestCase {
+@Suite(.storesInstances)
+struct CachedResponseHandlerTestCase {
     // MARK: Tests - Per Request
 
-    @MainActor
-    func testThatRequestCachedResponseHandlerCanCacheResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestCachedResponseHandlerCanCacheResponse() async {
         // Given
         let session = session()
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should cache response")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should cache response")
 
         // When
         let request = session.request(.default).cacheResponse(using: ResponseCacher.cache).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.cachedResponseExists(for: request))
+        #expect(response.result?.isSuccess == true)
+        #expect(session.cachedResponseExists(for: request))
     }
 
-    @MainActor
-    func testThatRequestCachedResponseHandlerCanNotCacheResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestCachedResponseHandlerCanNotCacheResponse() async {
         // Given
         let session = session()
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should not cache response")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should not cache response")
 
         // When
         let request = session.request(.default).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertFalse(session.cachedResponseExists(for: request))
+        #expect(response.result?.isSuccess == true)
+        #expect(!session.cachedResponseExists(for: request))
     }
 
-    @MainActor
-    func testThatRequestCachedResponseHandlerCanModifyCacheResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestCachedResponseHandlerCanModifyCacheResponse() async {
         // Given
         let session = session()
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should cache response")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should cache response")
 
         // When
         let cacher = ResponseCacher(behavior: .modify { _, response in
@@ -89,64 +92,67 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         })
 
         let request = session.request(.default).cacheResponse(using: cacher).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.cachedResponseExists(for: request))
-        XCTAssertEqual(session.cachedResponse(for: request)?.userInfo?["key"] as? String, "value")
+        #expect(response.result?.isSuccess == true)
+        #expect(session.cachedResponseExists(for: request))
+        #expect(session.cachedResponse(for: request)?.userInfo?["key"] as? String == "value")
     }
 
     // MARK: Tests - Per Session
 
-    @MainActor
-    func testThatSessionCachedResponseHandlerCanCacheResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func sessionCachedResponseHandlerCanCacheResponse() async {
         // Given
         let session = session(using: ResponseCacher.cache)
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should cache response")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should cache response")
 
         // When
         let request = session.request(.default).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.cachedResponseExists(for: request))
+        #expect(response.result?.isSuccess == true)
+        #expect(session.cachedResponseExists(for: request))
     }
 
-    @MainActor
-    func testThatSessionCachedResponseHandlerCanNotCacheResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func sessionCachedResponseHandlerCanNotCacheResponse() async {
         // Given
         let session = session(using: ResponseCacher.doNotCache)
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should not cache response")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should not cache response")
 
         // When
         let request = session.request(.default).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertFalse(session.cachedResponseExists(for: request))
+        #expect(response.result?.isSuccess == true)
+        #expect(!session.cachedResponseExists(for: request))
     }
 
-    @MainActor
-    func testThatSessionCachedResponseHandlerCanModifyCacheResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func sessionCachedResponseHandlerCanModifyCacheResponse() async {
         // Given
         let cacher = ResponseCacher(behavior: .modify { _, response in
             CachedURLResponse(response: response.response,
@@ -157,48 +163,50 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
         let session = session(using: cacher)
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should cache response")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should cache response")
 
         // When
         let request = session.request(.default).cacheResponse(using: cacher).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.cachedResponseExists(for: request))
-        XCTAssertEqual(session.cachedResponse(for: request)?.userInfo?["key"] as? String, "value")
+        #expect(response.result?.isSuccess == true)
+        #expect(session.cachedResponseExists(for: request))
+        #expect(session.cachedResponse(for: request)?.userInfo?["key"] as? String == "value")
     }
 
     // MARK: Tests - Per Request Prioritization
 
-    @MainActor
-    func testThatRequestCachedResponseHandlerIsPrioritizedOverSessionCachedResponseHandler() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestCachedResponseHandlerIsPrioritizedOverSessionCachedResponseHandler() async {
         // Given
         let session = session(using: ResponseCacher.cache)
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should cache response")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should cache response")
 
         // When
         let request = session.request(.default).cacheResponse(using: ResponseCacher.doNotCache).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertFalse(session.cachedResponseExists(for: request))
+        #expect(response.result?.isSuccess == true)
+        #expect(!session.cachedResponseExists(for: request))
     }
 
     // MARK: Private - Test Helpers
 
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     private func session(using handler: (any CachedResponseHandler)? = nil) -> Session {
         let configuration = URLSessionConfiguration.af.default
         let capacity = 100_000_000
@@ -212,7 +220,8 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         #endif
         configuration.urlCache = cache
 
-        return Session(configuration: configuration, cachedResponseHandler: handler)
+        // Independent keeps the provided cache and replaces only the shared cookie and credential storage.
+        return stored(Session.independent(configuration: configuration, cachedResponseHandler: handler))
     }
 }
 
