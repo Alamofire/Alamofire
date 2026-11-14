@@ -1199,11 +1199,11 @@ extension Request {
                     guard let user = credential.user, let password = credential.password else { continue }
                     components.append("-u \(user):\(password)")
                 }
-            } else {
-                if let credential, let user = credential.user, let password = credential.password {
-                    components.append("-u \(user):\(password)")
-                }
+            } else if let credential, let user = credential.user, let password = credential.password {
+                components.append("-u \(user):\(password)")
             }
+        } else if let credential, let user = credential.user, let password = credential.password {
+            components.append("-u \(user):\(password)")
         }
 
         if let configuration = delegate?.sessionConfiguration, configuration.httpShouldSetCookies {
@@ -1218,13 +1218,15 @@ extension Request {
 
         var headers = HTTPHeaders()
 
+        let shouldFilterCookieHeader = delegate?.sessionConfiguration.httpShouldSetCookies ?? true
+
         if let sessionHeaders = delegate?.sessionConfiguration.headers {
-            for header in sessionHeaders where header.name != "Cookie" {
+            for header in sessionHeaders where !shouldFilterCookieHeader || header.name != "Cookie" {
                 headers[header.name] = header.value
             }
         }
 
-        for header in request.headers where header.name != "Cookie" {
+        for header in request.headers where !shouldFilterCookieHeader || header.name != "Cookie" {
             headers[header.name] = header.value
         }
 
