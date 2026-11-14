@@ -46,6 +46,14 @@ final class Completion: @unchecked Sendable {
     private var completionOrder: UInt64?
     private var waiter: CheckedContinuation<Bool, Never>?
     private var timeoutTask: Task<Void, Never>?
+    /// Removes the notification observer of a completion made by `notification(_:object:center:handler:)`.
+    private var stopObserving: (() -> Void)?
+    /// Whether a notification completion is still waiting for an accepted notification.
+    private var isObservingNotification = false
+
+    deinit {
+        stopObserving?()
+    }
 
     /// Creates a completion.
     ///
@@ -90,6 +98,70 @@ final class Completion: @unchecked Sendable {
         }
 
         continuation?.resume(returning: true)
+    }
+
+    /// Creates a completion that completes when `center` posts a `name` notification that `handler` accepts, like
+    /// `XCTestCase.expectation(forNotification:object:handler:)`.
+    ///
+    /// The completion stops observing once a notification is accepted, or when it's deinitialized.
+    ///
+    /// - Parameters:
+    ///   - name:    The notification name to observe.
+    ///   - object:  The object whose notifications to observe, or `nil` for any object.
+    ///   - center:  The `NotificationCenter` to observe. `.default` by default.
+    ///   - timeout: How long `wait()` waits, in seconds. `10` by default.
+    ///   - handler: Returns whether a notification completes the completion. Accepts every notification by default.
+    static func notification(_ name: Notification.Name,
+                             object: AnyObject? = nil,
+                             center: NotificationCenter = .default,
+                             timeout: TimeInterval = 10,
+                             fileID: String = #fileID,
+                             filePath: String = #filePath,
+                             line: Int = #line,
+                             column: Int = #column,
+                             handler: @escaping @Sendable (Notification) -> Bool = { _ in true }) -> Completion {
+        let completion = Completion("notification \(name.rawValue)",
+                                    timeout: timeout,
+                                    fileID: fileID,
+                                    filePath: filePath,
+                                    line: line,
+                                    column: column)
+        // Mark the completion as observing before registering, so a notification posted right away still counts.
+        completion.withLock { completion.isObservingNotification = true }
+        // The observer holds the completion weakly, so the completion's deinit can remove it.
+        let observer = center.addObserver(forName: name, object: object, queue: nil) { [weak completion] notification in
+            guard let completion, handler(notification) else { return }
+
+            completion.completeObservedNotification()
+        }
+        let removeObserver = { center.removeObserver(observer) }
+        let isStillObserving = completion.withLock { () -> Bool in
+            guard completion.isObservingNotification else { return false }
+
+            completion.stopObserving = removeObserver
+            return true
+        }
+        // A notification already completed it while the observer was being registered.
+        if !isStillObserving { removeObserver() }
+
+        return completion
+    }
+
+    /// Completes once for an accepted notification, then stops observing.
+    private func completeObservedNotification() {
+        // Clearing the flag under the lock ensures only one accepted notification completes, even if several are posted
+        // at once.
+        let (shouldComplete, stopObserving) = withLock { () -> (Bool, (() -> Void)?) in
+            guard isObservingNotification else { return (false, nil) }
+
+            isObservingNotification = false
+            defer { self.stopObserving = nil }
+            return (true, self.stopObserving)
+        }
+        guard shouldComplete else { return }
+
+        stopObserving?()
+        complete()
     }
 
     /// Suspends until `expectedCount` completions have happened, or records an issue after `timeout` seconds.
@@ -350,5 +422,42 @@ struct CompletionTests {
             issue.description.contains("Timed out")
         }
         #expect(Date().timeIntervalSince(start) < 0.35)
+    }
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func notificationCompletionCompletesOnAcceptedNotificationOnly() async {
+        // Given
+        let center = NotificationCenter()
+        let name = Notification.Name("org.alamofire.tests.completion")
+        let completion = Completion.notification(name, center: center) { notification in
+            notification.userInfo?["accept"] as? Bool == true
+        }
+
+        // When
+        center.post(name: name, object: nil, userInfo: ["accept": false])
+        DispatchQueue.global().async {
+            center.post(name: name, object: nil, userInfo: ["accept": true])
+        }
+
+        // Then
+        await completion.wait()
+    }
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func notificationCompletionStopsObservingAfterCompleting() async {
+        // Given
+        let center = NotificationCenter()
+        let name = Notification.Name("org.alamofire.tests.completion")
+        let completion = Completion.notification(name, center: center)
+
+        // When
+        center.post(name: name, object: nil)
+        // Would record an over-completion issue if the completion still observed.
+        center.post(name: name, object: nil)
+
+        // Then
+        await completion.wait()
     }
 }

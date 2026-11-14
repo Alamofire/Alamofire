@@ -24,132 +24,137 @@
 
 @testable import Alamofire
 import Foundation
-import XCTest
+import Testing
 
-final class SessionDelegateTestCase: BaseTestCase {
+@Suite(.storesInstances)
+struct SessionDelegateTestCase {
     // MARK: - Tests - Redirects
 
-    @MainActor
-    func testThatRequestWillPerformHTTPRedirectionByDefault() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestWillPerformHTTPRedirectionByDefault() async {
         // Given
-        let session = Session(configuration: .ephemeral)
+        let session = stored(Session.independent(configuration: .ephemeral))
         let redirectURLString = Endpoint().url.absoluteString
 
-        let expectation = expectation(description: "Request should redirect to \(redirectURLString)")
+        let expectation = Completion("Request should redirect to \(redirectURLString)")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(.redirectTo(redirectURLString))
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.response?.url?.absoluteString == redirectURLString)
+        #expect(response.response?.statusCode == 200)
     }
 
-    @MainActor
-    func testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestWillPerformRedirectionMultipleTimesByDefault() async {
         // Given
-        let session = Session(configuration: .ephemeral)
+        let session = stored(Session.independent(configuration: .ephemeral))
 
-        let expectation = expectation(description: "Request should redirect")
+        let expectation = Completion("Request should redirect")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(.redirect(5))
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
+        #expect(response.response?.statusCode == 200)
     }
 
-    @MainActor
-    func testThatRequestWillPerformRedirectionFor307Response() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestWillPerformRedirectionFor307Response() async {
         // Given
-        let session = Session(configuration: .ephemeral)
+        let session = stored(Session.independent(configuration: .ephemeral))
         let redirectURLString = Endpoint().url.absoluteString
 
-        let expectation = expectation(description: "Request should redirect to \(redirectURLString)")
+        let expectation = Completion("Request should redirect to \(redirectURLString)")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(.redirectTo(redirectURLString, code: 307))
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.response?.url?.absoluteString == redirectURLString)
+        #expect(response.response?.statusCode == 200)
     }
 
     // MARK: - Tests - Notification
 
-    @MainActor
-    func testThatAppropriateNotificationsAreCalledWithRequestForDataRequest() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func appropriateNotificationsAreCalledWithRequestForDataRequest() async {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let resumedRequest = Protected<Request?>(nil)
         let resumedTaskRequest = Protected<Request?>(nil)
         let completedTaskRequest = Protected<Request?>(nil)
         let completedRequest = Protected<Request?>(nil)
-        var requestResponse: DataResponse<Data?, AFError>?
-        let expect = expectation(description: "request should complete")
+        let requestResponse = Capture<DataResponse<Data?, AFError>?>()
+        let expect = Completion("request should complete")
 
         // When
         let request = session.request(.default).response { response in
-            requestResponse = response
-            expect.fulfill()
+            requestResponse.value = response
+            expect.complete()
         }
-        expectation(forNotification: Request.didResumeNotification, object: nil) { notification in
+        let didResume = Completion.notification(Request.didResumeNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             resumedRequest.write(notification.request)
             return true
         }
-        expectation(forNotification: Request.didResumeTaskNotification, object: nil) { notification in
+        let didResumeTask = Completion.notification(Request.didResumeTaskNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             resumedTaskRequest.write(notification.request)
             return true
         }
-        expectation(forNotification: Request.didCompleteTaskNotification, object: nil) { notification in
+        let didCompleteTask = Completion.notification(Request.didCompleteTaskNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             completedTaskRequest.write(notification.request)
             return true
         }
-        expectation(forNotification: Request.didFinishNotification, object: nil) { notification in
+        let didFinish = Completion.notification(Request.didFinishNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             completedRequest.write(notification.request)
@@ -158,53 +163,54 @@ final class SessionDelegateTestCase: BaseTestCase {
 
         request.resume()
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expect, didResume, didResumeTask, didCompleteTask, didFinish])
 
         // Then
-        XCTAssertNotNil(resumedRequest)
-        XCTAssertNotNil(resumedTaskRequest)
-        XCTAssertNotNil(completedTaskRequest)
-        XCTAssertNotNil(completedRequest)
-        XCTAssertEqual(resumedRequest, completedRequest)
-        XCTAssertEqual(resumedTaskRequest, completedTaskRequest)
-        XCTAssertEqual(requestResponse?.response?.statusCode, 200)
+        #expect(resumedRequest.read { $0 } != nil)
+        #expect(resumedTaskRequest.read { $0 } != nil)
+        #expect(completedTaskRequest.read { $0 } != nil)
+        #expect(completedRequest.read { $0 } != nil)
+        #expect(resumedRequest == completedRequest)
+        #expect(resumedTaskRequest == completedTaskRequest)
+        #expect(requestResponse.response?.statusCode == 200)
     }
 
-    @MainActor
-    func testThatDidCompleteNotificationIsCalledWithRequestForDownloadRequests() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func didCompleteNotificationIsCalledWithRequestForDownloadRequests() async {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let resumedRequest = Protected<Request?>(nil)
         let resumedTaskRequest = Protected<Request?>(nil)
         let completedTaskRequest = Protected<Request?>(nil)
         let completedRequest = Protected<Request?>(nil)
-        var requestResponse: DownloadResponse<URL?, AFError>?
-        let expect = expectation(description: "request should complete")
+        let requestResponse = Capture<DownloadResponse<URL?, AFError>?>()
+        let expect = Completion("request should complete")
 
         // When
         let request = session.download(.default).response { response in
-            requestResponse = response
-            expect.fulfill()
+            requestResponse.value = response
+            expect.complete()
         }
-        expectation(forNotification: Request.didResumeNotification, object: nil) { notification in
+        let didResume = Completion.notification(Request.didResumeNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             resumedRequest.write(notification.request)
             return true
         }
-        expectation(forNotification: Request.didResumeTaskNotification, object: nil) { notification in
+        let didResumeTask = Completion.notification(Request.didResumeTaskNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             resumedTaskRequest.write(notification.request)
             return true
         }
-        expectation(forNotification: Request.didCompleteTaskNotification, object: nil) { notification in
+        let didCompleteTask = Completion.notification(Request.didCompleteTaskNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             completedTaskRequest.write(notification.request)
             return true
         }
-        expectation(forNotification: Request.didFinishNotification, object: nil) { notification in
+        let didFinish = Completion.notification(Request.didFinishNotification) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             completedRequest.write(notification.request)
@@ -213,15 +219,16 @@ final class SessionDelegateTestCase: BaseTestCase {
 
         request.resume()
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [didResume, didResumeTask, didCompleteTask, didFinish], enforceOrder: true)
+        await expect.wait()
 
         // Then
-        XCTAssertNotNil(resumedRequest)
-        XCTAssertNotNil(resumedTaskRequest)
-        XCTAssertNotNil(completedTaskRequest)
-        XCTAssertNotNil(completedRequest)
-        XCTAssertEqual(resumedRequest, completedRequest)
-        XCTAssertEqual(resumedTaskRequest, completedTaskRequest)
-        XCTAssertEqual(requestResponse?.response?.statusCode, 200)
+        #expect(resumedRequest.read { $0 } != nil)
+        #expect(resumedTaskRequest.read { $0 } != nil)
+        #expect(completedTaskRequest.read { $0 } != nil)
+        #expect(completedRequest.read { $0 } != nil)
+        #expect(resumedRequest == completedRequest)
+        #expect(resumedTaskRequest == completedTaskRequest)
+        #expect(requestResponse.response?.statusCode == 200)
     }
 }
