@@ -26,207 +26,208 @@
 
 import Alamofire
 import Combine
-import XCTest
+import Foundation
+import Testing
 
-@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-final class DataRequestCombineTests: CombineTestCase {
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanBePublished() {
+@Suite(.storesInstances)
+struct DataRequestCombineTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanBePublished() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DataResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatNonAutomaticDataRequestCanBePublished() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func nonAutomaticDataRequestCanBePublished() async {
         // Given
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        let session = Session(startRequestsImmediately: false)
-        var response: DataResponse<TestResponse, AFError>?
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let session = Session.independent(startRequestsImmediately: false)
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanPublishData() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanPublishData() async {
         // Given
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        let session = Session(startRequestsImmediately: false)
-        var response: DataResponse<Data, AFError>?
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let session = Session.independent(startRequestsImmediately: false)
+        let response = Capture<DataResponse<Data, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishData()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanPublishString() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanPublishString() async {
         // Given
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        let session = Session(startRequestsImmediately: false)
-        var response: DataResponse<String, AFError>?
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let session = Session.independent(startRequestsImmediately: false)
+        let response = Capture<DataResponse<String, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishString()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanBePublishedUnserialized() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanBePublishedUnserialized() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DataResponse<Data?, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishUnserialized()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanBePublishedWithMultipleHandlers() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanBePublishedWithMultipleHandlers() async {
         // Given
-        let session = stored(Session())
-        let handlerResponseReceived = expectation(description: "handler response should be received")
-        let publishedResponseReceived = expectation(description: "published response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var handlerResponse: DataResponse<TestResponse, AFError>?
-        var publishedResponse: DataResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let handlerResponseReceived = Completion("handler response should be received")
+        let publishedResponseReceived = Completion("published response should be received")
+        let completionReceived = Completion("stream should complete")
+        let handlerResponse = Capture<DataResponse<TestResponse, AFError>?>()
+        let publishedResponse = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.request(.default)
-                .responseDecodable(of: TestResponse.self) { handlerResponse = $0; handlerResponseReceived.fulfill() }
+                .responseDecodable(of: TestResponse.self) { handlerResponse.value = $0; handlerResponseReceived.complete() }
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { publishedResponse = $0; publishedResponseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { publishedResponse.value = $0; publishedResponseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [handlerResponseReceived, publishedResponseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(handlerResponse?.result.isSuccess == true)
-        XCTAssertTrue(publishedResponse?.result.isSuccess == true)
+        #expect(handlerResponse.result?.isSuccess == true)
+        #expect(publishedResponse.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanPublishResult() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanPublishResult() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var result: Result<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { result = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { result.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(result?.isSuccess == true)
+        #expect(result.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanPublishValue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanPublishValue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var value: TestResponse?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let value = Capture<TestResponse?>()
 
         // When
         store {
             session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .value()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { value = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { value.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value.value != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanPublishValueWithFailure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanPublishValueWithFailure() async {
         // Given
-        let session = stored(Session())
-        let completionReceived = expectation(description: "stream should complete")
-        var error: AFError?
+        let session = stored(Session.independent())
+        let completionReceived = Completion("stream should complete")
+        let error = Capture<AFError?>()
 
         // When
         store {
@@ -236,29 +237,29 @@ final class DataRequestCombineTests: CombineTestCase {
                 .sink(receiveCompletion: { completion in
                     switch completion {
                     case let .failure(err):
-                        error = err
+                        error.value = err
                     case .finished:
-                        error = nil
+                        error.value = nil
                     }
-                    completionReceived.fulfill()
+                    completionReceived.complete()
                 }, receiveValue: { _ in })
         }
 
-        waitForExpectations(timeout: timeout)
+        await completionReceived.wait()
 
         // Then
-        XCTAssertNotNil(error)
-        XCTAssertEqual((error?.underlyingError as? URLError)?.code, .timedOut)
+        #expect(error.value != nil)
+        #expect((error.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatPublishedDataRequestIsNotResumedUnlessSubscribed() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDataRequestIsNotResumedUnlessSubscribed() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DataResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         let request = session.request(.default)
@@ -267,60 +268,60 @@ final class DataRequestCombineTests: CombineTestCase {
         let stateAfterPublisher = request.state
 
         store {
-            publisher.sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                           receiveValue: { response = $0; responseReceived.fulfill() })
+            publisher.sink(receiveCompletion: { _ in completionReceived.complete() },
+                           receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
         let stateAfterSubscription = request.state
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
-        XCTAssertEqual(stateAfterPublisher, .initialized)
-        XCTAssertNotEqual(stateAfterSubscription, .initialized)
+        #expect(response.result?.isSuccess == true)
+        #expect(stateAfterPublisher == .initialized)
+        #expect(stateAfterSubscription != .initialized)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var receivedOnMain = false
-        var response: DataResponse<TestResponse, AFError>?
+        let receivedOnMain = Capture(false)
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: {
-                          receivedOnMain = Thread.isMainThread
-                          response = $0
-                          responseReceived.fulfill()
+                          receivedOnMain.value = Thread.isMainThread
+                          response.value = $0
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
-        XCTAssertTrue(receivedOnMain)
+        #expect(response.result?.isSuccess == true)
+        #expect(receivedOnMain.value)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var response: DataResponse<TestResponse, AFError>?
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         store {
@@ -328,120 +329,115 @@ final class DataRequestCombineTests: CombineTestCase {
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
-                          completionReceived.fulfill()
+                          completionReceived.complete()
                       },
                       receiveValue: {
                           dispatchPrecondition(condition: .onQueue(queue))
-                          response = $0
-                          responseReceived.fulfill()
+                          response.value = $0
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDataRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var receivedOnMain = false
-        var response: DataResponse<TestResponse, AFError>?
+        let receivedOnMain = Capture(false)
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: {
-                          receivedOnMain = Thread.isMainThread
-                          response = $0
-                          responseReceived.fulfill()
+                          receivedOnMain.value = Thread.isMainThread
+                          response.value = $0
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
-        XCTAssertTrue(receivedOnMain)
+        #expect(response.result?.isSuccess == true)
+        #expect(receivedOnMain.value)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatPublishedDataRequestCanBeCancelledAutomatically() throws {
-        if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
-            throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
-        }
-
+    @Test(.enabled(if: combineCancellationEmitsValue,
+                   "Skip on 2020 OS versions, as Combine cancellation no longer emits a value."))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDataRequestCanBeCancelledAutomatically() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DataResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         let request = session.request(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
-            .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                  receiveValue: { response = $0; responseReceived.fulfill() })
+            .sink(receiveCompletion: { _ in completionReceived.complete() },
+                  receiveValue: { response.value = $0; responseReceived.complete() })
         token = nil
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
-                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertNil(token)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isExplicitlyCancelledError == true, "error is not explicitly cancelled but \(response.error?.localizedDescription ?? "None")")
+        #expect(request.isCancelled)
+        #expect(token == nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatPublishedDataRequestCanBeCancelledManually() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDataRequestCanBeCancelledManually() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DataResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         let request = session.request(.delay(1))
         store {
             request
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
         request.cancel()
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
-                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
-        XCTAssertTrue(request.isCancelled)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isExplicitlyCancelledError == true, "error is not explicitly cancelled but \(response.error?.localizedDescription ?? "None")")
+        #expect(request.isCancelled)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatMultipleDataRequestPublishersCanBeCombined() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipleDataRequestPublishersCanBeCombined() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "combined response should be received")
-        let completionReceived = expectation(description: "combined stream should complete")
-        var firstResponse: DataResponse<TestResponse, AFError>?
-        var secondResponse: DataResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("combined response should be received")
+        let completionReceived = Completion("combined stream should complete")
+        let firstResponse = Capture<DataResponse<TestResponse, AFError>?>()
+        let secondResponse = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         let first = session.request(.default)
@@ -451,186 +447,190 @@ final class DataRequestCombineTests: CombineTestCase {
 
         store {
             Publishers.CombineLatest(first, second)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() }) { first, second in
-                    firstResponse = first
-                    secondResponse = second
-                    responseReceived.fulfill()
+                .sink(receiveCompletion: { _ in completionReceived.complete() }) { first, second in
+                    firstResponse.value = first
+                    secondResponse.value = second
+                    responseReceived.complete()
                 }
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(firstResponse?.result.isSuccess == true)
-        XCTAssertTrue(secondResponse?.result.isSuccess == true)
+        #expect(firstResponse.result?.isSuccess == true)
+        #expect(secondResponse.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatMultipleDataRequestPublishersCanBeChained() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipleDataRequestPublishersCanBeChained() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "combined response should be received")
-        let completionReceived = expectation(description: "combined stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("combined response should be received")
+        let completionReceived = Completion("combined stream should complete")
         let customValue = "CustomValue"
-        var firstResponse: DataResponse<TestResponse, AFError>?
-        var secondResponse: DataResponse<TestResponse, AFError>?
+        let firstResponse = Capture<DataResponse<TestResponse, AFError>?>()
+        let secondResponse = Capture<DataResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.request(.default)
                 .publishDecodable(type: TestResponse.self)
                 .flatMap { response -> DataResponsePublisher<TestResponse> in
-                    firstResponse = response
+                    firstResponse.value = response
                     let request = Endpoint(headers: ["X-Custom": customValue])
                     return session.request(request)
                         .publishDecodable(type: TestResponse.self)
                 }
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() }) { response in
-                    secondResponse = response
-                    responseReceived.fulfill()
+                .sink(receiveCompletion: { _ in completionReceived.complete() }) { response in
+                    secondResponse.value = response
+                    responseReceived.complete()
                 }
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(firstResponse?.result.isSuccess == true)
-        XCTAssertTrue(secondResponse?.result.isSuccess == true)
-        XCTAssertEqual(secondResponse?.value?.headers["X-Custom"], customValue)
+        #expect(firstResponse.result?.isSuccess == true)
+        #expect(secondResponse.result?.isSuccess == true)
+        #expect(secondResponse.value?.value?.headers["X-Custom"] == customValue)
     }
 }
 
 // MARK: - DataStreamRequest
 
-@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-@MainActor
-final class DataStreamRequestCombineTests: CombineTestCase {
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanBePublished() {
+@Suite(.storesInstances)
+struct DataStreamRequestCombineTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanBePublished() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var result: Result<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { stream in
                           switch stream.event {
                           case let .stream(value):
-                              result = value
+                              result.value = value
                           case .complete:
-                              responseReceived.fulfill()
+                              responseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
+        #expect(result.success != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatNonAutomaticDataStreamRequestCanBePublished() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func nonAutomaticDataStreamRequestCanBePublished() async {
         // Given
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        let session = Session(startRequestsImmediately: false)
-        var result: Result<TestResponse, AFError>?
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let session = Session.independent(startRequestsImmediately: false)
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { stream in
                           switch stream.event {
                           case let .stream(value):
-                              result = value
+                              result.value = value
                           case .complete:
-                              responseReceived.fulfill()
+                              responseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
+        #expect(result.success != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanPublishData() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanPublishData() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var result: Result<Data, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let result = Capture<Result<Data, AFError>?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishData()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { stream in
                           switch stream.event {
                           case let .stream(value):
-                              result = value
+                              result.value = value
                           case .complete:
-                              responseReceived.fulfill()
+                              responseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
+        #expect(result.success != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanPublishString() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanPublishString() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var result: Result<String, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let result = Capture<Result<String, AFError>?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishString()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { stream in
                           switch stream.event {
                           case let .stream(value):
-                              result = value
+                              result.value = value
                           case .complete:
-                              responseReceived.fulfill()
+                              responseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
+        #expect(result.success != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanBePublishedWithMultipleHandlers() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanBePublishedWithMultipleHandlers() async {
         // Given
-        let session = stored(Session())
-        let handlerResponseReceived = expectation(description: "handler response should be received")
-        let publishedResponseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var handlerResult: Result<TestResponse, AFError>?
-        var publishedResult: Result<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let handlerResponseReceived = Completion("handler response should be received")
+        let publishedResponseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let handlerResult = Capture<Result<TestResponse, AFError>?>()
+        let publishedResult = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
@@ -638,115 +638,119 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                 .responseStreamDecodable(of: TestResponse.self) { stream in
                     switch stream.event {
                     case let .stream(value):
-                        handlerResult = value
+                        handlerResult.value = value
                     case .complete:
-                        handlerResponseReceived.fulfill()
+                        handlerResponseReceived.complete()
                     }
                 }
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { stream in
                           switch stream.event {
                           case let .stream(value):
-                              publishedResult = value
+                              publishedResult.value = value
                           case .complete:
-                              publishedResponseReceived.fulfill()
+                              publishedResponseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [handlerResponseReceived, publishedResponseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(handlerResult?.success)
-        XCTAssertNotNil(publishedResult?.success)
+        #expect(handlerResult.success != nil)
+        #expect(publishedResult.success != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanPublishResult() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanPublishResult() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var result: Result<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { received in
-                          result = received
-                          responseReceived.fulfill()
+                          result.value = received
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
+        #expect(result.success != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanPublishResultWithResponseFailure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanPublishResultWithResponseFailure() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var result: Result<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.streamRequest(Endpoint.delay(1).modifying(\.timeout, to: 0.1))
                 .publishDecodable(type: TestResponse.self)
                 .result()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { received in
-                          result = received
-                          responseReceived.fulfill()
+                          result.value = received
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNil(result?.success)
-        XCTAssertEqual((result?.failure?.underlyingError as? URLError)?.code, .timedOut)
+        #expect(result.success == nil)
+        #expect((result.failure?.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanPublishValue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanPublishValue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: TestResponse?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<TestResponse?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .value()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { received in
-                          response = received
-                          responseReceived.fulfill()
+                          response.value = received
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(response)
+        #expect(response.value != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanPublishValueWithFailure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanPublishValueWithFailure() async {
         // Given
-        let session = stored(Session())
-        let completionReceived = expectation(description: "stream should complete")
-        var error: AFError?
+        let session = stored(Session.independent())
+        let completionReceived = Completion("stream should complete")
+        let error = Capture<AFError?>()
 
         // When
         store {
@@ -756,28 +760,29 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                 .sink(receiveCompletion: { completion in
                     switch completion {
                     case let .failure(err):
-                        error = err
+                        error.value = err
                     case .finished:
-                        error = nil
+                        error.value = nil
                     }
-                    completionReceived.fulfill()
+                    completionReceived.complete()
                 }, receiveValue: { _ in })
         }
 
-        waitForExpectations(timeout: timeout)
+        await completionReceived.wait()
 
         // Then
-        XCTAssertNotNil(error)
-        XCTAssertEqual((error?.underlyingError as? URLError)?.code, .timedOut)
+        #expect(error.value != nil)
+        #expect((error.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatPublishedDataStreamRequestIsNotResumedUnlessSubscribed() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDataStreamRequestIsNotResumedUnlessSubscribed() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var result: Result<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         let request = session.streamRequest(.default)
@@ -786,69 +791,71 @@ final class DataStreamRequestCombineTests: CombineTestCase {
         let stateAfterPublisher = request.state
 
         store {
-            publisher.sink(receiveCompletion: { _ in completionReceived.fulfill() },
+            publisher.sink(receiveCompletion: { _ in completionReceived.complete() },
                            receiveValue: { stream in
                                switch stream.event {
                                case let .stream(value):
-                                   result = value
+                                   result.value = value
                                case .complete:
-                                   responseReceived.fulfill()
+                                   responseReceived.complete()
                                }
                            })
         }
 
         let stateAfterSubscription = request.state
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(result?.isSuccess == true)
-        XCTAssertEqual(stateAfterPublisher, .initialized)
-        XCTAssertNotEqual(stateAfterSubscription, .initialized)
+        #expect(result.isSuccess == true)
+        #expect(stateAfterPublisher == .initialized)
+        #expect(stateAfterSubscription != .initialized)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var receivedOnMain = false
-        var result: Result<TestResponse, AFError>?
+        let receivedOnMain = Capture(false)
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { stream in
-                          receivedOnMain = Thread.isMainThread
+                          receivedOnMain.value = Thread.isMainThread
                           switch stream.event {
                           case let .stream(value):
-                              result = value
+                              result.value = value
                           case .complete:
-                              responseReceived.fulfill()
+                              responseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
-        XCTAssertTrue(receivedOnMain)
+        #expect(result.success != nil)
+        #expect(receivedOnMain.value)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var result: Result<TestResponse, AFError>?
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
@@ -856,124 +863,123 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
-                          completionReceived.fulfill()
+                          completionReceived.complete()
                       },
                       receiveValue: { stream in
                           dispatchPrecondition(condition: .onQueue(queue))
                           switch stream.event {
                           case let .stream(value):
-                              result = value
+                              result.value = value
                           case .complete:
-                              responseReceived.fulfill()
+                              responseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
+        #expect(result.success != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatDataStreamRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var receivedOnMain = false
-        var result: Result<TestResponse, AFError>?
+        let receivedOnMain = Capture(false)
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.streamRequest(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { stream in
-                          receivedOnMain = Thread.isMainThread
+                          receivedOnMain.value = Thread.isMainThread
                           switch stream.event {
                           case let .stream(value):
-                              result = value
+                              result.value = value
                           case .complete:
-                              responseReceived.fulfill()
+                              responseReceived.complete()
                           }
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(result?.success)
-        XCTAssertTrue(receivedOnMain)
+        #expect(result.success != nil)
+        #expect(receivedOnMain.value)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatPublishedDataStreamRequestCanBeCancelledAutomatically() throws {
-        if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
-            throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
-        }
-
+    @Test(.enabled(if: combineCancellationEmitsValue,
+                   "Skip on 2020 OS versions, as Combine cancellation no longer emits a value."))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDataStreamRequestCanBeCancelledAutomatically() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var error: AFError?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let error = Capture<AFError?>()
 
         // When
         let request = session.streamRequest(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
-            .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                  receiveValue: { error = $0.completion?.error; responseReceived.fulfill() })
+            .sink(receiveCompletion: { _ in completionReceived.complete() },
+                  receiveValue: { error.value = $0.completion?.error; responseReceived.complete() })
         token = nil
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(error)
-        XCTAssertTrue(error?.isExplicitlyCancelledError == true,
-                      "error is not explicitly cancelled but \(error?.localizedDescription ?? "None")")
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertNil(token)
+        #expect(error.value != nil)
+        #expect(error.isExplicitlyCancelledError == true, "error is not explicitly cancelled but \(error.localizedDescription ?? "None")")
+        #expect(request.isCancelled)
+        #expect(token == nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatPublishedDataStreamRequestCanBeCancelledManually() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDataStreamRequestCanBeCancelledManually() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var error: AFError?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let error = Capture<AFError?>()
 
         // When
         let request = session.streamRequest(.delay(1))
         store {
             request
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { error = $0.completion?.error; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { error.value = $0.completion?.error; responseReceived.complete() })
         }
         request.cancel()
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(error)
-        XCTAssertTrue(error?.isExplicitlyCancelledError == true,
-                      "error is not explicitly cancelled but \(error?.localizedDescription ?? "None")")
-        XCTAssertTrue(request.isCancelled)
+        #expect(error.value != nil)
+        #expect(error.isExplicitlyCancelledError == true, "error is not explicitly cancelled but \(error.localizedDescription ?? "None")")
+        #expect(request.isCancelled)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatMultipleDataStreamPublishersCanBeCombined() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipleDataStreamPublishersCanBeCombined() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "combined response should be received")
-        let completionReceived = expectation(description: "combined stream should complete")
-        var firstCompletion: DataStreamRequest.Completion?
-        var secondCompletion: DataStreamRequest.Completion?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("combined response should be received")
+        let completionReceived = Completion("combined stream should complete")
+        let firstCompletion = Capture<DataStreamRequest.Completion?>()
+        let secondCompletion = Capture<DataStreamRequest.Completion?>()
 
         // When
         let first = session.streamRequest(.default)
@@ -983,29 +989,30 @@ final class DataStreamRequestCombineTests: CombineTestCase {
 
         store {
             Publishers.CombineLatest(first.compactMap(\.completion), second.compactMap(\.completion))
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: { first, second in
-                          firstCompletion = first
-                          secondCompletion = second
-                          responseReceived.fulfill()
+                          firstCompletion.value = first
+                          secondCompletion.value = second
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(firstCompletion)
-        XCTAssertNotNil(secondCompletion)
+        #expect(firstCompletion.value != nil)
+        #expect(secondCompletion.value != nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatMultipleDataStreamRequestPublishersCanBeChained() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipleDataStreamRequestPublishersCanBeChained() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "combined response should be received")
-        let completionReceived = expectation(description: "combined stream should complete")
-        var firstCompletion: DataStreamRequest.Completion?
-        var secondCompletion: DataStreamRequest.Completion?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("combined response should be received")
+        let completionReceived = Completion("combined stream should complete")
+        let firstCompletion = Capture<DataStreamRequest.Completion?>()
+        let secondCompletion = Capture<DataStreamRequest.Completion?>()
 
         // When
         store {
@@ -1013,221 +1020,221 @@ final class DataStreamRequestCombineTests: CombineTestCase {
                 .publishDecodable(type: TestResponse.self)
                 .compactMap(\.completion)
                 .flatMap { completion -> DataStreamPublisher<TestResponse> in
-                    firstCompletion = completion
+                    firstCompletion.value = completion
                     return session.streamRequest(.default)
                         .publishDecodable(type: TestResponse.self)
                 }
                 .compactMap(\.completion)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { secondCompletion = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { secondCompletion.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertNotNil(firstCompletion)
-        XCTAssertNotNil(secondCompletion)
+        #expect(firstCompletion.value != nil)
+        #expect(secondCompletion.value != nil)
     }
 }
 
-@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-final class DownloadRequestCombineTests: CombineTestCase {
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanBePublished() {
+@Suite(.storesInstances)
+struct DownloadRequestCombineTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanBePublished() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "publisher should complete")
-        var response: DownloadResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("publisher should complete")
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatNonAutomaticDownloadRequestCanBePublished() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func nonAutomaticDownloadRequestCanBePublished() async {
         // Given
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "publisher should complete")
-        let session = Session(startRequestsImmediately: false)
-        var response: DownloadResponse<TestResponse, AFError>?
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("publisher should complete")
+        let session = Session.independent(startRequestsImmediately: false)
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanPublishData() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanPublishData() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "publisher should complete")
-        var response: DownloadResponse<Data, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("publisher should complete")
+        let response = Capture<DownloadResponse<Data, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishData()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanPublishString() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanPublishString() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "publisher should complete")
-        var response: DownloadResponse<String, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("publisher should complete")
+        let response = Capture<DownloadResponse<String, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishString()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanPublishUnserialized() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanPublishUnserialized() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "publisher should complete")
-        var response: DownloadResponse<URL?, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("publisher should complete")
+        let response = Capture<DownloadResponse<URL?, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishUnserialized()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanPublishURL() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanPublishURL() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "publisher should complete")
-        var response: DownloadResponse<URL, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("publisher should complete")
+        let response = Capture<DownloadResponse<URL, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishURL()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanPublishWithMultipleHandlers() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanPublishWithMultipleHandlers() async {
         // Given
-        let session = stored(Session())
-        let handlerResponseReceived = expectation(description: "handler response should be received")
-        let publishedResponseReceived = expectation(description: "published response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var handlerResponse: DownloadResponse<TestResponse, AFError>?
-        var publishedResponse: DownloadResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let handlerResponseReceived = Completion("handler response should be received")
+        let publishedResponseReceived = Completion("published response should be received")
+        let completionReceived = Completion("stream should complete")
+        let handlerResponse = Capture<DownloadResponse<TestResponse, AFError>?>()
+        let publishedResponse = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.download(.default)
-                .responseDecodable(of: TestResponse.self) { handlerResponse = $0; handlerResponseReceived.fulfill() }
+                .responseDecodable(of: TestResponse.self) { handlerResponse.value = $0; handlerResponseReceived.complete() }
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { publishedResponse = $0; publishedResponseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { publishedResponse.value = $0; publishedResponseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [handlerResponseReceived, publishedResponseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(handlerResponse?.result.isSuccess == true)
-        XCTAssertTrue(publishedResponse?.result.isSuccess == true)
+        #expect(handlerResponse.result?.isSuccess == true)
+        #expect(publishedResponse.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanPublishResult() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanPublishResult() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "publisher should complete")
-        var result: Result<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("publisher should complete")
+        let result = Capture<Result<TestResponse, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .result()
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { result = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { result.value = $0; responseReceived.complete() })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(result?.isSuccess == true)
+        #expect(result.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanPublishValueWithFailure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanPublishValueWithFailure() async {
         // Given
-        let session = stored(Session())
-        let completionReceived = expectation(description: "stream should complete")
-        var error: AFError?
+        let session = stored(Session.independent())
+        let completionReceived = Completion("stream should complete")
+        let error = Capture<AFError?>()
 
         // When
         store {
@@ -1237,91 +1244,91 @@ final class DownloadRequestCombineTests: CombineTestCase {
                 .sink(receiveCompletion: { completion in
                     switch completion {
                     case let .failure(err):
-                        error = err
+                        error.value = err
                     case .finished:
-                        error = nil
+                        error.value = nil
                     }
-                    completionReceived.fulfill()
+                    completionReceived.complete()
                 }, receiveValue: { _ in })
         }
 
-        waitForExpectations(timeout: timeout)
+        await completionReceived.wait()
 
         // Then
-        XCTAssertNotNil(error)
-        XCTAssertEqual((error?.underlyingError as? URLError)?.code, .timedOut)
+        #expect(error.value != nil)
+        #expect((error.underlyingError as? URLError)?.code == .timedOut)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatPublishedDownloadRequestIsNotResumedUnlessSubscribed() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDownloadRequestIsNotResumedUnlessSubscribed() async {
         // Given
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DownloadResponse<TestResponse, AFError>?
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = session.download(.default)
         let publisher = request.publishDecodable(type: TestResponse.self)
 
         let stateAfterPublisher = request.state
 
         store {
-            publisher.sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                           receiveValue: { response = $0; responseReceived.fulfill() })
+            publisher.sink(receiveCompletion: { _ in completionReceived.complete() },
+                           receiveValue: { response.value = $0; responseReceived.complete() })
         }
 
         let stateAfterSubscription = request.state
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
-        XCTAssertEqual(stateAfterPublisher, .initialized)
-        XCTAssertNotEqual(stateAfterSubscription, .initialized)
+        #expect(response.result?.isSuccess == true)
+        #expect(stateAfterPublisher == .initialized)
+        #expect(stateAfterSubscription != .initialized)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestCanSubscribedFromNonMainQueueButPublishedOnMainQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var receivedOnMain = false
-        var response: DownloadResponse<TestResponse, AFError>?
+        let receivedOnMain = Capture(false)
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .subscribe(on: queue)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: {
-                          receivedOnMain = Thread.isMainThread
-                          response = $0
-                          responseReceived.fulfill()
+                          receivedOnMain.value = Thread.isMainThread
+                          response.value = $0
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
-        XCTAssertTrue(receivedOnMain)
+        #expect(response.result?.isSuccess == true)
+        #expect(receivedOnMain.value)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestPublishedOnSeparateQueueIsReceivedOnThatQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var response: DownloadResponse<TestResponse, AFError>?
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         store {
@@ -1329,120 +1336,115 @@ final class DownloadRequestCombineTests: CombineTestCase {
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                           dispatchPrecondition(condition: .onQueue(queue))
-                          completionReceived.fulfill()
+                          completionReceived.complete()
                       },
                       receiveValue: {
                           dispatchPrecondition(condition: .onQueue(queue))
-                          response = $0
-                          responseReceived.fulfill()
+                          response.value = $0
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
+        #expect(response.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatDownloadRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadRequestPublishedOnSeparateQueueCanBeReceivedOntoMainQueue() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
         let queue = DispatchQueue(label: "org.alamofire.tests.combineEventQueue")
-        var receivedOnMain = false
-        var response: DownloadResponse<TestResponse, AFError>?
+        let receivedOnMain = Capture(false)
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishDecodable(type: TestResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
                       receiveValue: {
-                          receivedOnMain = Thread.isMainThread
-                          response = $0
-                          responseReceived.fulfill()
+                          receivedOnMain.value = Thread.isMainThread
+                          response.value = $0
+                          responseReceived.complete()
                       })
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isSuccess == true)
-        XCTAssertTrue(receivedOnMain)
+        #expect(response.result?.isSuccess == true)
+        #expect(receivedOnMain.value)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatPublishedDownloadRequestCanBeCancelledAutomatically() throws {
-        if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
-            throw XCTSkip("Skip on 2020 OS versions, as Combine cancellation no longer emits a value.")
-        }
-
+    @Test(.enabled(if: combineCancellationEmitsValue,
+                   "Skip on 2020 OS versions, as Combine cancellation no longer emits a value."))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDownloadRequestCanBeCancelledAutomatically() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DownloadResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         let request = session.download(.default)
         var token: AnyCancellable? = request
             .publishDecodable(type: TestResponse.self)
-            .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                  receiveValue: { response = $0; responseReceived.fulfill() })
+            .sink(receiveCompletion: { _ in completionReceived.complete() },
+                  receiveValue: { response.value = $0; responseReceived.complete() })
         token = nil
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
-                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertNil(token)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isExplicitlyCancelledError == true, "error is not explicitly cancelled but \(response.error?.localizedDescription ?? "None")")
+        #expect(request.isCancelled)
+        #expect(token == nil)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatPublishedDownloadRequestCanBeCancelledManually() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func publishedDownloadRequestCanBeCancelledManually() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "response should be received")
-        let completionReceived = expectation(description: "stream should complete")
-        var response: DownloadResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("response should be received")
+        let completionReceived = Completion("stream should complete")
+        let response = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         let request = session.download(.delay(1))
         store {
             request
                 .publishDecodable(type: TestResponse.self)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
-                      receiveValue: { response = $0; responseReceived.fulfill() })
+                .sink(receiveCompletion: { _ in completionReceived.complete() },
+                      receiveValue: { response.value = $0; responseReceived.complete() })
         }
         request.cancel()
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(response?.result.isFailure == true)
-        XCTAssertTrue(response?.error?.isExplicitlyCancelledError == true,
-                      "error is not explicitly cancelled but \(response?.error?.localizedDescription ?? "None")")
-        XCTAssertTrue(request.isCancelled)
+        #expect(response.result?.isFailure == true)
+        #expect(response.error?.isExplicitlyCancelledError == true, "error is not explicitly cancelled but \(response.error?.localizedDescription ?? "None")")
+        #expect(request.isCancelled)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatMultipleDownloadRequestPublishersCanBeCombined() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipleDownloadRequestPublishersCanBeCombined() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "combined response should be received")
-        let completionReceived = expectation(description: "combined stream should complete")
-        var firstResponse: DownloadResponse<TestResponse, AFError>?
-        var secondResponse: DownloadResponse<TestResponse, AFError>?
+        let session = stored(Session.independent())
+        let responseReceived = Completion("combined response should be received")
+        let completionReceived = Completion("combined stream should complete")
+        let firstResponse = Capture<DownloadResponse<TestResponse, AFError>?>()
+        let secondResponse = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         let first = session.download(.default)
@@ -1452,69 +1454,68 @@ final class DownloadRequestCombineTests: CombineTestCase {
 
         store {
             Publishers.CombineLatest(first, second)
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() }) { first, second in
-                    firstResponse = first
-                    secondResponse = second
-                    responseReceived.fulfill()
+                .sink(receiveCompletion: { _ in completionReceived.complete() }) { first, second in
+                    firstResponse.value = first
+                    secondResponse.value = second
+                    responseReceived.complete()
                 }
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(firstResponse?.result.isSuccess == true)
-        XCTAssertTrue(secondResponse?.result.isSuccess == true)
+        #expect(firstResponse.result?.isSuccess == true)
+        #expect(secondResponse.result?.isSuccess == true)
     }
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    @MainActor
-    func testThatMultipleDownloadRequestPublishersCanBeChained() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipleDownloadRequestPublishersCanBeChained() async {
         // Given
-        let session = stored(Session())
-        let responseReceived = expectation(description: "combined response should be received")
-        let completionReceived = expectation(description: "combined stream should complete")
+        let session = stored(Session.independent())
+        let responseReceived = Completion("combined response should be received")
+        let completionReceived = Completion("combined stream should complete")
         let customValue = "CustomValue"
-        var firstResponse: DownloadResponse<TestResponse, AFError>?
-        var secondResponse: DownloadResponse<TestResponse, AFError>?
+        let firstResponse = Capture<DownloadResponse<TestResponse, AFError>?>()
+        let secondResponse = Capture<DownloadResponse<TestResponse, AFError>?>()
 
         // When
         store {
             session.download(.default)
                 .publishDecodable(type: TestResponse.self)
                 .flatMap { response -> DownloadResponsePublisher<TestResponse> in
-                    firstResponse = response
+                    firstResponse.value = response
                     let request = Endpoint(headers: ["X-Custom": customValue])
                     return session.download(request)
                         .publishDecodable(type: TestResponse.self)
                 }
-                .sink(receiveCompletion: { _ in completionReceived.fulfill() }) { response in
-                    secondResponse = response
-                    responseReceived.fulfill()
+                .sink(receiveCompletion: { _ in completionReceived.complete() }) { response in
+                    secondResponse.value = response
+                    responseReceived.complete()
                 }
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [responseReceived, completionReceived])
 
         // Then
-        XCTAssertTrue(firstResponse?.result.isSuccess == true)
-        XCTAssertTrue(secondResponse?.result.isSuccess == true)
-        XCTAssertEqual(secondResponse?.value?.headers["X-Custom"], customValue)
+        #expect(firstResponse.result?.isSuccess == true)
+        #expect(secondResponse.result?.isSuccess == true)
+        #expect(secondResponse.value?.value?.headers["X-Custom"] == customValue)
     }
 }
 
+/// Keeps the cancellable `toStore` returns alive until the end of the current test, the Swift Testing counterpart of
+/// `CombineTestCase.store(_:)`. Requires the `.storesInstances` trait on the test or its suite.
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-class CombineTestCase: BaseTestCase {
-    private lazy var storage: Set<AnyCancellable> = .init()
-
-    override func tearDown() {
-        storage.removeAll()
-
-        super.tearDown()
-    }
-
-    func store(_ toStore: () -> AnyCancellable) {
-        storage.insert(toStore())
-    }
+func store(_ toStore: () -> AnyCancellable) {
+    stored(toStore())
 }
+
+/// Whether cancelling a Combine subscription still emits a value, which stopped with the 2020 OS versions.
+let combineCancellationEmitsValue: Bool = if #available(macOS 11, iOS 14, watchOS 7, tvOS 14, *) {
+        false
+    } else {
+        true
+    }
 
 #endif
