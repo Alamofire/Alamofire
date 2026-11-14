@@ -48,9 +48,25 @@
 		3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */; };
 		3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */; };
 		31181E122794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */; };
+		BBD32E4DB70646C2A2EA6349 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
+		4D68BE6CC1CF4C7EA7F300C2 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
+		CD57FCA3469948C195305052 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		904E8169FDD04C06BC97CC32 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
 		31181E132794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */; };
+		726C8066756E4A2EB9057727 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
+		FC78E0E412704D54B56E98B8 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
+		F3961A04AECC417F80796880 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		EA4C1A63E41D455592436B24 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
 		31181E142794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */; };
+		56794B8350A142AA8E0E0C95 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
+		841DFFCBA29143428D71C29C /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
+		F4671C718A9143918A7E683C /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		864FF480423C4172A8CB61F2 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
 		31181E152794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */; };
+		13302D2E3E4C4201A794943B /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
+		E2DBC5EE352A4305A36696FF /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
+		D92546FC9C1B4BACBBD16A1A /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		A35B6BB28DBE4E4C95D7EE42 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
 		31181E302794FF9600E88600 /* certPEM.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E172794FF9600E88600 /* certPEM.cer */; };
 		31181E312794FF9600E88600 /* certPEM.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E172794FF9600E88600 /* certPEM.cer */; };
 		31181E322794FF9600E88600 /* certPEM.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E172794FF9600E88600 /* certPEM.cer */; };
@@ -298,6 +314,10 @@
 		3173390D2A43BE9000D4EA0A /* UploadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5F19A9674D0040E7D1 /* UploadTests.swift */; };
 		3173390E2A43BE9000D4EA0A /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		3173390F2A43BE9000D4EA0A /* Bundle+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */; };
+		931DF85BD8EF4FA0B72DD5F9 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
+		39915DC8E38A4AE2B6E76C2D /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
+		E663243C677D404BBBA6A427 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		4CD2EC8BE4F44EF29B0B6433 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
 		317339102A43BE9000D4EA0A /* FileManager+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB028F1D7CF28F0056F249 /* FileManager+AlamofireTests.swift */; };
 		317339112A43BE9000D4EA0A /* Request+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314998E927A6560600ABB856 /* Request+AlamofireTests.swift */; };
 		317339122A43BE9000D4EA0A /* Result+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+AlamofireTests.swift */; };
@@ -664,6 +684,10 @@
 		3111CE8720A77843008315E2 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
 		3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeadersTests.swift; sourceTree = "<group>"; };
 		31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+AlamofireTests.swift"; sourceTree = "<group>"; };
+		7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Session+AlamofireTests.swift"; sourceTree = "<group>"; };
+		3DD35F23AE314951847FFC8E /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
+		2D784F12365E49248CDDC344 /* Completion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
+		28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLifetimes.swift; sourceTree = "<group>"; };
 		31181E172794FF9600E88600 /* certPEM.cer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = certPEM.cer; sourceTree = "<group>"; };
 		31181E182794FF9600E88600 /* randomGibberish.crt */ = {isa = PBXFileReference; lastKnownFileType = file; path = randomGibberish.crt; sourceTree = "<group>"; };
 		31181E192794FF9600E88600 /* certDER.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = certDER.der; sourceTree = "<group>"; };
@@ -1135,6 +1159,10 @@
 			children = (
 				31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */,
 				31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */,
+				7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */,
+				3DD35F23AE314951847FFC8E /* Capture.swift */,
+				2D784F12365E49248CDDC344 /* Completion.swift */,
+				28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */,
 				31303CC22EF64B2A00EEB257 /* DispatchQueue+AlamofireTests.swift */,
 				4CFB028F1D7CF28F0056F249 /* FileManager+AlamofireTests.swift */,
 				314998E927A6560600ABB856 /* Request+AlamofireTests.swift */,
@@ -1823,6 +1851,10 @@
 				3129308F263E184500473CEA /* MultipartFormDataTests.swift in Sources */,
 				31293078263E183C00473CEA /* SessionTests.swift in Sources */,
 				31181E152794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				13302D2E3E4C4201A794943B /* Session+AlamofireTests.swift in Sources */,
+				E2DBC5EE352A4305A36696FF /* Capture.swift in Sources */,
+				D92546FC9C1B4BACBBD16A1A /* Completion.swift in Sources */,
+				A35B6BB28DBE4E4C95D7EE42 /* TestLifetimes.swift in Sources */,
 				31293088263E184500473CEA /* RequestInterceptorTests.swift in Sources */,
 				31293082263E184500473CEA /* ProtectedTests.swift in Sources */,
 				31293070263E183500473CEA /* BaseTestCase.swift in Sources */,
@@ -1909,6 +1941,10 @@
 				3173390D2A43BE9000D4EA0A /* UploadTests.swift in Sources */,
 				3173390E2A43BE9000D4EA0A /* AFError+AlamofireTests.swift in Sources */,
 				3173390F2A43BE9000D4EA0A /* Bundle+AlamofireTests.swift in Sources */,
+				931DF85BD8EF4FA0B72DD5F9 /* Session+AlamofireTests.swift in Sources */,
+				39915DC8E38A4AE2B6E76C2D /* Capture.swift in Sources */,
+				E663243C677D404BBBA6A427 /* Completion.swift in Sources */,
+				4CD2EC8BE4F44EF29B0B6433 /* TestLifetimes.swift in Sources */,
 				317339102A43BE9000D4EA0A /* FileManager+AlamofireTests.swift in Sources */,
 				317339112A43BE9000D4EA0A /* Request+AlamofireTests.swift in Sources */,
 				317339122A43BE9000D4EA0A /* Result+AlamofireTests.swift in Sources */,
@@ -2025,6 +2061,10 @@
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E142794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				56794B8350A142AA8E0E0C95 /* Session+AlamofireTests.swift in Sources */,
+				841DFFCBA29143428D71C29C /* Capture.swift in Sources */,
+				F4671C718A9143918A7E683C /* Completion.swift in Sources */,
+				864FF480423C4172A8CB61F2 /* TestLifetimes.swift in Sources */,
 				31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
@@ -2230,6 +2270,10 @@
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E122794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				BBD32E4DB70646C2A2EA6349 /* Session+AlamofireTests.swift in Sources */,
+				4D68BE6CC1CF4C7EA7F300C2 /* Capture.swift in Sources */,
+				CD57FCA3469948C195305052 /* Completion.swift in Sources */,
+				904E8169FDD04C06BC97CC32 /* TestLifetimes.swift in Sources */,
 				31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
@@ -2282,6 +2326,10 @@
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E132794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				726C8066756E4A2EB9057727 /* Session+AlamofireTests.swift in Sources */,
+				FC78E0E412704D54B56E98B8 /* Capture.swift in Sources */,
+				F3961A04AECC417F80796880 /* Completion.swift in Sources */,
+				EA4C1A63E41D455592436B24 /* TestLifetimes.swift in Sources */,
 				31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
@@ -2644,11 +2692,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				IPHONEOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_XCODE_1600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2700 = 12.0;
 				MARKETING_VERSION = 5.12.2;
@@ -2665,12 +2711,10 @@
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = "$(TVOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				TVOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				WATCHOS_DEPLOYMENT_TARGET = "$(WATCHOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				WATCHOS_DEPLOYMENT_TARGET_XCODE_1600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2700 = 9.0;
 				XROS_DEPLOYMENT_TARGET = 1.0;
@@ -2725,11 +2769,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				IPHONEOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_XCODE_1600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2700 = 12.0;
 				MARKETING_VERSION = 5.12.2;
@@ -2745,13 +2787,11 @@
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = "$(TVOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				TVOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				WATCHOS_DEPLOYMENT_TARGET = "$(WATCHOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				WATCHOS_DEPLOYMENT_TARGET_XCODE_1600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2700 = 9.0;
 				XROS_DEPLOYMENT_TARGET = 1.0;

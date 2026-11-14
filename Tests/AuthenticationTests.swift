@@ -24,181 +24,192 @@
 
 import Alamofire
 import Foundation
-import XCTest
+import Testing
 
-final class BasicAuthenticationTestCase: BaseTestCase {
-    @MainActor
-    func testHTTPBasicAuthenticationFailsWithInvalidCredentials() {
+@Suite(.storesInstances)
+struct BasicAuthenticationTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func httpBasicAuthenticationFailsWithInvalidCredentials() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let endpoint = Endpoint.basicAuth()
-        let expectation = expectation(description: "\(endpoint.url) 401")
+        let completion = Completion("\(endpoint.url) 401")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(endpoint)
             .authenticate(username: "invalid", password: "credentials")
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                completion.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await completion.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertEqual(response?.response?.statusCode, 401)
-        XCTAssertNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.response?.statusCode == 401)
+        #expect(response.data == nil)
+        #expect(response.error == nil)
     }
 
-    @MainActor
-    func testHTTPBasicAuthenticationWithValidCredentials() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func httpBasicAuthenticationWithValidCredentials() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let user = "user1", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
-        let expectation = expectation(description: "\(endpoint.url) 200")
+        let completion = Completion("\(endpoint.url) 200")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(endpoint)
             .authenticate(username: user, password: password)
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                completion.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await completion.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.response?.statusCode == 200)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
     }
 
-    @MainActor
-    func testHTTPBasicAuthenticationWithStoredCredentials() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func httpBasicAuthenticationWithStoredCredentials() async {
         // Given
-        let session = Session()
+        let credentialStorage = URLCredentialStorage.independent()
+        let configuration = URLSessionConfiguration.af.default
+        configuration.urlCredentialStorage = credentialStorage
+        let session = stored(Session.independent(configuration: configuration))
         let user = "user2", password = "password"
         let endpoint = Endpoint.basicAuth(forUser: user, password: password)
-        let expectation = expectation(description: "\(endpoint.url) 200")
+        let completion = Completion("\(endpoint.url) 200")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         let credential = URLCredential(user: user, password: password, persistence: .forSession)
-        URLCredentialStorage.shared.setDefaultCredential(credential,
-                                                         for: .init(host: endpoint.host.rawValue,
-                                                                    port: endpoint.port,
-                                                                    protocol: endpoint.scheme.rawValue,
-                                                                    realm: endpoint.host.rawValue,
-                                                                    authenticationMethod: NSURLAuthenticationMethodHTTPBasic))
+        credentialStorage.setDefaultCredential(credential,
+                                               for: .init(host: endpoint.host.rawValue,
+                                                          port: endpoint.port,
+                                                          protocol: endpoint.scheme.rawValue,
+                                                          realm: endpoint.host.rawValue,
+                                                          authenticationMethod: NSURLAuthenticationMethodHTTPBasic))
+
         session.request(endpoint)
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                completion.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await completion.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.response?.statusCode == 200)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
     }
 
-    @MainActor
-    func testHiddenHTTPBasicAuthentication() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func hiddenHTTPBasicAuthentication() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let endpoint = Endpoint.hiddenBasicAuth()
-        let expectation = expectation(description: "\(endpoint.url) 200")
+        let completion = Completion("\(endpoint.url) 200")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(endpoint)
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                completion.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await completion.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.response?.statusCode == 200)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
     }
 }
 
 // MARK: -
 
-// Disabled due to HTTPBin flakiness.
-final class HTTPDigestAuthenticationTestCase: BaseTestCase {
-    @MainActor
-    func disabled_testHTTPDigestAuthenticationWithInvalidCredentials() {
+@Suite(.storesInstances)
+struct HTTPDigestAuthenticationTestCase {
+    @Test(.disabled("Disabled due to HTTPBin flakiness."))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func httpDigestAuthenticationWithInvalidCredentials() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let endpoint = Endpoint.digestAuth()
-        let expectation = expectation(description: "\(endpoint.url) 401")
+        let completion = Completion("\(endpoint.url) 401")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(endpoint)
             .authenticate(username: "invalid", password: "credentials")
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                completion.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await completion.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertEqual(response?.response?.statusCode, 401)
-        XCTAssertNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.response?.statusCode == 401)
+        #expect(response.data == nil)
+        #expect(response.error == nil)
     }
 
-    @MainActor
-    func disabled_testHTTPDigestAuthenticationWithValidCredentials() {
+    @Test(.disabled("Disabled due to HTTPBin flakiness."))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func httpDigestAuthenticationWithValidCredentials() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let user = "user", password = "password"
         let endpoint = Endpoint.digestAuth(forUser: user, password: password)
-        let expectation = expectation(description: "\(endpoint.url) 200")
+        let completion = Completion("\(endpoint.url) 200")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         session.request(endpoint)
             .authenticate(username: user, password: password)
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                completion.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await completion.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertEqual(response?.response?.statusCode, 200)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.response?.statusCode == 200)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
     }
 }

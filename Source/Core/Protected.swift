@@ -123,9 +123,7 @@ final class Protected<Value> {
     }
 }
 
-#if compiler(>=6)
 extension Protected: Sendable {}
-#endif
 
 extension Protected where Value == Request.MutableState {
     /// Attempts to transition to the passed `State`.
