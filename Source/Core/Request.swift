@@ -29,7 +29,7 @@ import Foundation
 public class Request: @unchecked Sendable {
     /// State of the `Request`, with managed transitions between states set when calling `resume()`, `suspend()`, or
     /// `cancel()` on the `Request`.
-    public enum State {
+    public enum State: Sendable {
         /// Initial state of the `Request`.
         case initialized
         /// `State` set when `resume()` is called. Any tasks created for the `Request` will have `resume()` called on
@@ -45,6 +45,10 @@ public class Request: @unchecked Sendable {
         /// `State` set when all response serialization completion closures have been cleared on the `Request` and
         /// enqueued on their respective queues.
         case finished
+
+        func `is`(_ state: State) -> Bool {
+            self == state
+        }
 
         /// Determines whether `self` can be transitioned to the provided `State`.
         func canTransitionTo(_ state: State) -> Bool {
@@ -138,6 +142,15 @@ public class Request: @unchecked Sendable {
         var isFinishing = false
         /// Actions to run when requests are finished. Use for concurrency support.
         var finishHandlers: [() -> Void] = []
+        /// Whether a retry has been decided on, but its `URLSessionTask` hasn't been created yet.
+        var isRetryPending = false
+
+        /// The `URLSessionTask` whose completion will finish or retry the instance, if any. `nil` before the first task
+        /// is created, and while a retry is pending, as the previous task has already completed. Cancelling an instance
+        /// without an active task must finish it directly, as no task completion will.
+        var activeTask: URLSessionTask? {
+            isRetryPending ? nil : tasks.last
+        }
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
@@ -390,6 +403,7 @@ public class Request: @unchecked Sendable {
 
         mutableState.write { mutableState in
             mutableState.tasks.append(task)
+            mutableState.isRetryPending = false
 
             if let urlSessionTaskHandler = mutableState.urlSessionTaskHandler {
                 urlSessionTaskHandler.queue.async { urlSessionTaskHandler.handler(task) }
@@ -543,6 +557,12 @@ public class Request: @unchecked Sendable {
     func retryOrFinish(error: AFError?) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
+        let (isCancelled, hasActiveTask) = mutableState.read { ($0.state == .cancelled, $0.activeTask != nil) }
+
+        // Cancelling an instance without an active task has already finished it, so a failure before a task is
+        // created, such as from adaptation, must not finish it again.
+        guard !isCancelled || hasActiveTask else { return }
+
         guard !isCancelled, let error, let delegate else { finish(); return }
 
         delegate.retryResult(for: self, dueTo: error) { retryResult in
@@ -552,6 +572,17 @@ public class Request: @unchecked Sendable {
             case let .doNotRetryWithError(retryError):
                 self.finish(error: retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
             case .retry, .retryWithDelay:
+                let wasCancelled = self.mutableState.write { mutableState in
+                    guard mutableState.state != .cancelled else { return true }
+
+                    mutableState.isRetryPending = true
+                    return false
+                }
+
+                // Cancelled while the retrier was deciding. The task had already completed, so `cancel()` didn't
+                // finish the instance, and the retry would be dropped.
+                guard !wasCancelled else { self.finish(); return }
+
                 delegate.retryRequest(self, withDelay: retryResult.delay)
             }
         }
@@ -578,6 +609,14 @@ public class Request: @unchecked Sendable {
         // Start response handlers
         processNextResponseSerializer()
 
+        notifyRequestDidFinish()
+    }
+
+    /// Notifies the instance's `EventMonitor` that the `Request` has finished.
+    ///
+    /// - Note: Allows subclasses to guarantee additional asynchronous work completes, such as delivering a final event,
+    ///         before this event fires.
+    func notifyRequestDidFinish() {
         eventMonitor?.requestDidFinish(self)
     }
 
@@ -719,11 +758,11 @@ public class Request: @unchecked Sendable {
 
             underlyingQueue.async { self.didCancel() }
 
-            // Ensure we have a task. If we do, didCreateTask has been called but wouldn't have changed the task state
-            // since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, so we can
-            // start the finish process and return early, as didCreateTask will perform the task changes but we won't
-            // receive any task delegate callback.
-            guard let task = mutableState.tasks.last else {
+            // Ensure we have an active task. If we do, didCreateTask has been called but wouldn't have changed the task
+            // state since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, either
+            // initially or for a pending retry, so we can start the finish process and return early, as didCreateTask
+            // will perform the task changes but we won't receive any task delegate callback.
+            guard let task = mutableState.activeTask else {
                 underlyingQueue.async { self.finish() }
                 return
             }
@@ -1101,7 +1140,7 @@ public class Request: @unchecked Sendable {
     /// - Parameter closure: Closure to be called when the request finishes.
     func onFinish(perform finishHandler: @escaping () -> Void) {
         let shouldImmediatelyExecute = mutableState.write { mutableState in
-            if mutableState.state == .finished {
+            if mutableState.state == .finished || mutableState.state == .cancelled {
                 return true
             } else {
                 mutableState.finishHandlers.append(finishHandler)

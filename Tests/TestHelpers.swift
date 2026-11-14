@@ -242,37 +242,31 @@ struct Endpoint {
     static let upload: Endpoint = .init(path: .upload, method: .post, headers: [.contentType("application/octet-stream")])
 
     #if canImport(Darwin) && !canImport(FoundationNetworking)
-    static var defaultCloseDelay: Int64 {
-        if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-            0
-        } else if #available(macOS 11.3, iOS 14.5, tvOS 14.5, watchOS 7.4, *) {
-            // iOS 14.5 to 14.7 have a bug where immediate connection closure will drop messages, so delay close by 60
-            // milliseconds.
-            60
-        } else {
-            0
-        }
-    }
-
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    static func websocket(closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure, closeDelay: Int64 = defaultCloseDelay) -> Endpoint {
-        Endpoint(path: .websocket, queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
-                                                .init(name: "closeDelay", value: "\(closeDelay)")])
+    static func websocket(closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure) -> Endpoint {
+        Endpoint(path: .websocket, queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)")])
     }
 
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     static func websocketCount(_ count: Int = 2,
-                               closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure,
-                               closeDelay: Int64 = defaultCloseDelay) -> Endpoint {
-        Endpoint(path: .websocketCount(count), queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)"),
-                                                            .init(name: "closeDelay", value: "\(closeDelay)")])
+                               closeCode: URLSessionWebSocketTask.CloseCode = .normalClosure) -> Endpoint {
+        Endpoint(path: .websocketCount(count), queryItems: [.init(name: "closeCode", value: "\(closeCode.rawValue)")])
     }
 
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     static let websocketEcho = Endpoint(path: .websocketEcho)
 
-    static func websocketPings(count: Int = 5) -> Endpoint {
-        Endpoint(path: .websocketPingCount(count))
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    static func websocketEcho(openDelay: Int) -> Endpoint {
+        Endpoint(path: .websocketEcho, queryItems: [.init(name: "openDelay", value: "\(openDelay)")])
+    }
+
+    static func websocketPings(count: Int = 5, openDelay: Int? = nil, pongDelay: Int? = nil) -> Endpoint {
+        var queryItems: [URLQueryItem] = []
+        if let openDelay { queryItems.append(.init(name: "openDelay", value: "\(openDelay)")) }
+        if let pongDelay { queryItems.append(.init(name: "pongDelay", value: "\(pongDelay)")) }
+
+        return Endpoint(path: .websocketPingCount(count), queryItems: queryItems)
     }
     #endif
 
@@ -479,7 +473,95 @@ extension Session {
                fileManager: fileManager,
                requestModifier: requestModifier)
     }
+
+    #if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    func webSocketRequest(_ endpoint: Endpoint,
+                          configuration: WebSocketRequest.Configuration = .default,
+                          interceptor: (any RequestInterceptor)? = nil) -> WebSocketRequest {
+        webSocketRequest(performing: endpoint as (any URLRequestConvertible),
+                         configuration: configuration,
+                         interceptor: interceptor)
+    }
+    #endif
 }
+
+/// Hands control of retry decisions, and optionally of adapting retried requests, to the test.
+final class HeldInterceptor: RequestInterceptor, Sendable {
+    typealias RetryCompletion = @Sendable (RetryResult) -> Void
+
+    /// Each retry's completion, to be called by the test with the `RetryResult`.
+    let retries: AsyncStream<RetryCompletion>
+    /// For each adapt of a retried request, a closure continuing the adapt. Empty unless `holdsRetriedAdapts`.
+    let retriedAdapts: AsyncStream<@Sendable () -> Void>
+
+    private let holdsRetriedAdapts: Bool
+    private let adaptCount = Protected(0)
+    private let retriesContinuation: AsyncStream<RetryCompletion>.Continuation
+    private let retriedAdaptsContinuation: AsyncStream<@Sendable () -> Void>.Continuation
+
+    init(holdsRetriedAdapts: Bool = false) {
+        self.holdsRetriedAdapts = holdsRetriedAdapts
+        (retries, retriesContinuation) = AsyncStream.makeStream()
+        (retriedAdapts, retriedAdaptsContinuation) = AsyncStream.makeStream()
+    }
+
+    func adapt(_ urlRequest: URLRequest,
+               for session: Session,
+               completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
+        let isRetry = adaptCount.write { count in
+            defer { count += 1 }
+            return count > 0
+        }
+
+        if holdsRetriedAdapts, isRetry {
+            retriedAdaptsContinuation.yield { completion(.success(urlRequest)) }
+        } else {
+            completion(.success(urlRequest))
+        }
+    }
+
+    func retry(_ request: Request,
+               for session: Session,
+               dueTo error: any Error,
+               completion: @escaping @Sendable (RetryResult) -> Void) {
+        retriesContinuation.yield(completion)
+    }
+}
+
+/// Returns the result of `operation`, or `nil` if it doesn't complete within `seconds`. Only used to bound waits for
+/// work which hangs when a bug is present, so the bound is never reached by a passing test.
+func withTimeout<T: Sendable>(seconds: Double = 5,
+                              _ operation: @escaping @Sendable () async -> T) async -> T? {
+    let hasResumed = Protected(false)
+    let timeout = Protected<Task<Void, Never>?>(nil)
+    return await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
+        let resume: @Sendable (T?) -> Void = { value in
+            guard hasResumed.write({ hasResumed in defer { hasResumed = true }; return !hasResumed }) else { return }
+
+            timeout.read { $0 }?.cancel()
+            continuation.resume(returning: value)
+        }
+        timeout.write { $0 = Task {
+            try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+            resume(nil)
+        } }
+        Task { await resume(operation()) }
+    }
+}
+
+#if canImport(Darwin) && !canImport(FoundationNetworking) // Only Apple platforms support URLSessionWebSocketTask.
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+extension WebSocketRequest {
+    /// Cancel the request and await `onFinish`, ensuring the socket closes before continuing.
+    func cancelAndWaitForFinish() async {
+        await withCheckedContinuation { continuation in
+            onFinish { continuation.resume() }
+            cancel()
+        }
+    }
+}
+#endif
 
 extension Data {
     var asString: String {
@@ -491,7 +573,7 @@ extension Data {
     }
 }
 
-struct TestResponse: Decodable {
+struct TestResponse: Decodable, Equatable, Sendable {
     let headers: HTTPHeaders
     let origin: String
     let url: String

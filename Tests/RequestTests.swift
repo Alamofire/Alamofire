@@ -1774,6 +1774,78 @@ struct RequestInstanceInterceptorTests {
     }
 }
 
+@Suite
+struct RequestCancellationDuringRetryTests {
+    /// When the instance is cancelled, relative to its retry.
+    enum Stage: CaseIterable {
+        /// While the retrier is deciding whether to retry. The retrier then retries.
+        case whileRetrierDecides
+        /// While the retry delay elapses. The delay is never waited on, as cancelling finishes the instance.
+        case duringRetryDelay
+        /// While the retried request is being adapted, before its task is created.
+        case whileAdaptingRetriedRequest
+    }
+
+    @Test(arguments: Stage.allCases)
+    func cancellingDataRequestWhileRetryIsPendingFinishesRequest(stage: Stage) async {
+        // Given
+        let session = Session()
+        let interceptor = HeldInterceptor(holdsRetriedAdapts: true)
+        let request = session.request(.status(500), interceptor: interceptor).validate()
+        let response = Task { await request.serializingData().response }
+
+        // When
+        await cancel(request, at: stage, using: interceptor)
+        let result = await withTimeout { await response.value }
+
+        // Then
+        #expect(result != nil)
+        #expect(result?.error != nil)
+        #expect(request.isCancelled)
+    }
+
+    @Test(arguments: Stage.allCases)
+    func cancellingDownloadRequestWhileRetryIsPendingFinishesRequest(stage: Stage) async {
+        // Given
+        let session = Session()
+        let interceptor = HeldInterceptor(holdsRetriedAdapts: true)
+        let request = session.download(.status(500), interceptor: interceptor).validate()
+        let response = Task { await request.serializingData().response }
+
+        // When
+        await cancel(request, at: stage, using: interceptor)
+        let result = await withTimeout { await response.value }
+
+        // Then
+        #expect(result != nil)
+        #expect(result?.error != nil)
+        #expect(request.isCancelled)
+    }
+
+    private func cancel(_ request: Request, at stage: Stage, using interceptor: HeldInterceptor) async {
+        var retries = interceptor.retries.makeAsyncIterator()
+        let completeRetry = await retries.next()
+
+        switch stage {
+        case .whileRetrierDecides:
+            request.cancel()
+            completeRetry?(.retry)
+        case .duringRetryDelay:
+            completeRetry?(.retryWithDelay(60))
+            // The retry decision is delivered on `rootQueue`, then handled by the request on `underlyingQueue`.
+            await request.underlyingQueue.pendingWork()
+            await request.underlyingQueue.pendingWork()
+            request.cancel()
+        case .whileAdaptingRetriedRequest:
+            completeRetry?(.retry)
+            var adapts = interceptor.retriedAdapts.makeAsyncIterator()
+            let continueAdapt = await adapts.next()
+            request.cancel()
+            continueAdapt?()
+        }
+    }
+}
+
 #if canImport(zlib) && !os(Android) // Same condition as `DeflateRequestCompressor`.
 @Suite
 struct RequestCompressionTests {

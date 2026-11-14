@@ -117,9 +117,9 @@ public final class DownloadRequest: Request, @unchecked Sendable {
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
     public var resumeData: Data? {
         #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
-        return mutableDownloadState.read(\.resumeData) ?? error?.downloadResumeData
+        mutableDownloadState.read(\.resumeData) ?? error?.downloadResumeData
         #else
-        return mutableDownloadState.read(\.resumeData)
+        mutableDownloadState.read(\.resumeData)
         #endif
     }
 
@@ -271,11 +271,11 @@ public final class DownloadRequest: Request, @unchecked Sendable {
 
             underlyingQueue.async { self.didCancel() }
 
-            // Ensure we have a task. If we do, didCreateTask has been called but wouldn't have changed the task state
-            // since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, so we can
-            // start the finish process and return early, as didCreateTask will perform the task changes but we won't
-            // receive any task delegate callback.
-            guard let task = mutableState.tasks.last as? URLSessionDownloadTask else {
+            // Ensure we have an active task. If we do, didCreateTask has been called but wouldn't have changed the task
+            // state since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, either
+            // initially or for a pending retry, so we can start the finish process and return early, as didCreateTask
+            // will perform the task changes but we won't receive any task delegate callback.
+            guard let task = mutableState.activeTask as? URLSessionDownloadTask else {
                 underlyingQueue.async { self.finish() }
                 return
             }
