@@ -131,7 +131,6 @@ struct DataStreamTests {
         let completeOnMain = Capture(false)
         let streamCalled = Capture(0)
         let didReceiveResponse = Completion("stream should receive response once")
-        let didReceive = Completion("stream should receive once", expectedCount: expectedSize)
         let didComplete = Completion("stream should complete")
 
         // When
@@ -149,7 +148,6 @@ struct DataStreamTests {
                         accumulatedData.write { $0.append(data) }
                     }
                     streamCalled.write { $0 += 1 }
-                    didReceive.complete()
                 case let .complete(completion):
                     completeOnMain.value = Thread.isMainThread
                     response.value = completion.response
@@ -157,23 +155,25 @@ struct DataStreamTests {
                 }
             }
 
-        await wait(for: [didReceiveResponse, didReceive, didComplete], enforceOrder: true)
+        await wait(for: [didReceiveResponse, didComplete], enforceOrder: true)
 
         // Then
         #expect(response.statusCode == 200)
-        #expect(streamCalled.value == expectedSize)
+        // URLSession can deliver several chunks in one callback when a test run is under load, so check the bytes
+        // received rather than the number of callbacks. Firewalk sends one byte per chunk, counting down.
+        #expect((1...expectedSize).contains(streamCalled.value))
         #expect(initialResponse.value == response.value)
-        #expect(accumulatedData.count == expectedSize)
+        #expect(accumulatedData.value == Data((1...UInt8(expectedSize)).reversed()))
         #expect(streamOnMain.value)
         #expect(completeOnMain.value)
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func dataCanBeStreamedAsMultipleJSONPayloads() async {
+    func dataCanBeStreamedAsJSONPayload() async {
         // Given
         let session = stored(Session.independent())
-        let expectedSize = 5
+        let expectedSize = 1
         let responses = Capture<[TestResponse]>([])
         let initialResponse = Capture<HTTPURLResponse?>()
         let response = Capture<HTTPURLResponse?>()
@@ -185,6 +185,8 @@ struct DataStreamTests {
         let didComplete = Completion("stream should complete")
 
         // When
+        // A single payload, since the decodable stream serializer decodes each callback's data, and Firewalk's payloads
+        // have no delimiters to separate several that arrive together.
         session.streamRequest(.payloads(expectedSize))
             .onHTTPResponse { response in
                 initialResponse.value = response

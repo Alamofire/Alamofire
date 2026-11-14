@@ -412,9 +412,9 @@ struct CompletionTests {
     func waitForCompletionsSharesOneDeadline() async {
         // Given
         // Long enough timeouts that scheduling delays under parallel load can't blur the difference between one shared
-        // deadline (about 1 second) and consecutive timeouts (2 seconds).
-        let first = Completion("first", timeout: 1)
-        let second = Completion("second", timeout: 1)
+        // deadline (about 3 seconds) and consecutive timeouts (6 seconds). Loaded CI machines have added over a second.
+        let first = Completion("first", timeout: 3)
+        let second = Completion("second", timeout: 3)
         let start = Date()
 
         // When, Then
@@ -423,7 +423,7 @@ struct CompletionTests {
         } matching: { issue in
             issue.description.contains("Timed out")
         }
-        #expect(Date().timeIntervalSince(start) < 1.9)
+        #expect(Date().timeIntervalSince(start) < 5)
     }
 
     @Test

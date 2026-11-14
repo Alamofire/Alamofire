@@ -161,8 +161,9 @@ struct Endpoint {
 
     static let cache: Endpoint = .init(path: .cache)
 
-    // 250 ms between chunks keeps them separate even under full parallel test load; at 70 ms, URLSession could
-    // deliver two chunks in one callback.
+    // 250 ms between chunks keeps a stream running long enough for tests to act on it mid-stream. URLSession can still
+    // deliver several chunks in one callback when a test run is under load, so tests check the content received rather
+    // than the number of callbacks.
     static func chunked(_ count: Int, delay: Int = 250) -> Endpoint {
         Endpoint(path: .chunked(count: count, delay: delay))
     }
@@ -207,8 +208,9 @@ struct Endpoint {
         Endpoint(path: .method(method), method: method)
     }
 
-    // 250 ms between chunks keeps them separate even under full parallel test load; at 70 ms, URLSession could
-    // deliver two chunks in one callback.
+    // 250 ms between chunks keeps a stream running long enough for tests to act on it mid-stream. URLSession can still
+    // deliver several chunks in one callback when a test run is under load, so tests check the content received rather
+    // than the number of callbacks.
     static func payloads(_ count: Int, delay: Int = 250) -> Endpoint {
         Endpoint(path: .payloads(count: count, delay: delay))
     }

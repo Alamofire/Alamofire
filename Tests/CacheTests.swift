@@ -125,7 +125,9 @@ final class CacheTestCase {
                                        testID: testID,
                                        queue: serialQueue,
                                        completion: { _, response in
-                                           let timestamp = response!.headers["Date"]
+                                           // A failed priming request has no response. The tests then fail on their
+                                           // own assertions, where force unwrapping would crash the whole test run.
+                                           let timestamp = response?.headers["Date"]
                                            timestamps.write { $0[cacheControl] = timestamp }
 
                                            allRequestsFinished.complete()

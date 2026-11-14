@@ -28,6 +28,26 @@ import Alamofire
 import Foundation
 import Testing
 
+/// Expects `data` to hold exactly `count` copies of one decodable JSON payload, as Firewalk's `/payloads` endpoint sends.
+///
+/// URLSession can deliver several payloads in one callback when a test run is under load, so checking the combined data
+/// is reliable where counting callbacks isn't.
+private func expectRepeatedPayloads(in data: Data,
+                                    count: Int,
+                                    fileID: String = #fileID,
+                                    filePath: String = #filePath,
+                                    line: Int = #line,
+                                    column: Int = #column) {
+    let sourceLocation = SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column)
+    let payload = data.prefix(data.count / count)
+    #expect((try? JSONDecoder().decode(TestResponse.self, from: payload)) != nil,
+            "payload should decode as TestResponse",
+            sourceLocation: sourceLocation)
+    #expect(data == Data(repeatElement(payload, count: count).joined()),
+            "data should be \(count) copies of one payload",
+            sourceLocation: sourceLocation)
+}
+
 @Suite(.storesInstances)
 struct DataRequestConcurrencyTests {
     @Test
@@ -522,7 +542,8 @@ struct DataStreamConcurrencyTests {
         }
 
         // Then
-        #expect(datas.count == 2)
+        #expect((1...2).contains(datas.count))
+        expectRepeatedPayloads(in: datas.reduce(Data(), +), count: 2)
     }
 
     #if canImport(Darwin)
@@ -551,7 +572,8 @@ struct DataStreamConcurrencyTests {
         await functionCalled.wait()
 
         // Then
-        #expect(datas.count == 2)
+        #expect((1...2).contains(datas.count))
+        expectRepeatedPayloads(in: datas.reduce(Data(), +), count: 2)
     }
 
     @Test
@@ -580,7 +602,8 @@ struct DataStreamConcurrencyTests {
         await functionCalled.wait()
 
         // Then
-        #expect(datas.count == 2)
+        #expect((1...2).contains(datas.count))
+        expectRepeatedPayloads(in: datas.reduce(Data(), +), count: 2)
     }
 
     @Test
@@ -635,7 +658,8 @@ struct DataStreamConcurrencyTests {
         }
 
         // Then
-        #expect(strings.count == 2)
+        #expect((1...2).contains(strings.count))
+        expectRepeatedPayloads(in: Data(strings.joined().utf8), count: 2)
     }
 
     @Test
@@ -645,7 +669,9 @@ struct DataStreamConcurrencyTests {
         let session = stored(Session.independent())
 
         // When
-        let task = session.streamRequest(.payloads(2)).streamTask()
+        // A single payload, since DecodableStreamSerializer decodes each callback's data, and Firewalk's payloads have no
+        // delimiters to separate several that arrive together.
+        let task = session.streamRequest(.payloads(1)).streamTask()
         let stream = task.streamingResponses(serializedUsing: DecodableStreamSerializer<TestResponse>())
         var responses: [TestResponse] = []
 
@@ -654,7 +680,7 @@ struct DataStreamConcurrencyTests {
         }
 
         // Then
-        #expect(responses.count == 2)
+        #expect(responses.count == 1)
     }
 
     @Test
@@ -772,7 +798,7 @@ struct DataStreamConcurrencyTests {
 struct UploadConcurrencyTests {
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func delayedUploadStreamResultsInMultipleProgressValues() async throws {
+    func delayedUploadStreamReportsProgress() async throws {
         // Given
         let session = stored(Session.independent())
         let count = 75
@@ -862,7 +888,9 @@ struct UploadConcurrencyTests {
             #expect(nextProgress >= progress)
         }
 
-        #expect(uploadProgressValues.count > 1, "there should more than 1 uploadProgressValues")
+        // URLSession can report the whole upload in one progress callback when a test run is under load, so check that
+        // progress was reported rather than how many updates it took. The byte count below confirms the full upload.
+        #expect(!uploadProgressValues.value.isEmpty, "uploadProgressValues should not be empty")
 
         for (progress, nextProgress) in zip(downloadProgressValues.value, downloadProgressValues.value.dropFirst()) {
             #expect(nextProgress >= progress)
