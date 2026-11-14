@@ -24,6 +24,7 @@
 
 import Alamofire
 import Foundation
+import Testing
 import XCTest
 
 final class RedirectHandlerTestCase: BaseTestCase {
@@ -227,22 +228,26 @@ final class RedirectHandlerTestCase: BaseTestCase {
     }
 }
 
-final class StaticRedirectHandlerTests: BaseTestCase {
+@Suite
+struct StaticRedirectHandlerTests {
     func takeRedirectHandler(_ handler: any RedirectHandler) {
         _ = handler
     }
 
-    func testThatFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func followRedirectorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeRedirectHandler(.follow)
     }
 
-    func testThatDoNotFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func doNotFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeRedirectHandler(.doNotFollow)
     }
 
-    func testThatModifyRedirectorCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func modifyRedirectorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeRedirectHandler(.modify { _, _, _ in nil })
     }

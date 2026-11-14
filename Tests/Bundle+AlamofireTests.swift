@@ -36,3 +36,8 @@ extension Bundle {
         return bundle
     }
 }
+
+/// The URL of a resource in the test bundle, for Swift Testing suites that don't inherit `BaseTestCase.url(forResource:withExtension:)`.
+func url(forResource fileName: String, withExtension ext: String) -> URL {
+    Bundle.test.url(forResource: fileName, withExtension: ext)!
+}

@@ -85,3 +85,21 @@ extension FileManager {
         removeAllItemsInsideDirectory(atPath: url.path)
     }
 }
+
+/// A directory for one Swift Testing test's files, removed when the suite instance running the test is deinitialized.
+final class TemporaryDirectory {
+    let url = FileManager.temporaryDirectoryURL
+        .appendingPathComponent("org.alamofire.tests")
+        .appendingPathComponent(UUID().uuidString)
+
+    /// A new, unique file URL inside the directory.
+    var fileURL: URL { url.appendingPathComponent(UUID().uuidString) }
+
+    init() {
+        FileManager.createDirectory(at: url)
+    }
+
+    deinit {
+        FileManager.removeItem(at: url)
+    }
+}

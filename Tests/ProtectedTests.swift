@@ -24,10 +24,13 @@
 
 @testable
 import Alamofire
+import Testing
 import XCTest
 
-final class ProtectedTests: BaseTestCase {
-    func testThatProtectedValuesAreAccessedSafely() {
+@Suite
+struct ProtectedTests {
+    @Test
+    func protectedValuesAreAccessedSafely() {
         // Given
         let initialValue = "value"
         let protected = Protected<String>(initialValue)
@@ -39,10 +42,11 @@ final class ProtectedTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertNotEqual(protected.read { $0 }, initialValue)
+        #expect(protected.read { $0 } != initialValue)
     }
 
-    func testThatProtectedAPIIsSafe() {
+    @Test
+    func protectedAPIIsSafe() {
         // Given
         let initialValue = "value"
         let protected = Protected<String>(initialValue)
@@ -54,20 +58,16 @@ final class ProtectedTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertNotEqual(protected.read { $0 }, initialValue)
+        #expect(protected.read { $0 } != initialValue)
     }
 }
 
-final class ProtectedWrapperTests: BaseTestCase {
+@Suite
+struct ProtectedWrapperTests {
     let value = Protected("value")
 
-    override func setUp() {
-        super.setUp()
-
-        value.write("value")
-    }
-
-    func testThatWrappedValuesAreAccessedSafely() {
+    @Test
+    func wrappedValuesAreAccessedSafely() {
         // Given
         let initialValue = value.read { $0 }
 
@@ -78,7 +78,7 @@ final class ProtectedWrapperTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertNotEqual(value.read { $0 }, initialValue)
+        #expect(value.read { $0 } != initialValue)
     }
 }
 

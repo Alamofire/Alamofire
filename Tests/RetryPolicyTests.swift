@@ -24,6 +24,7 @@
 
 @testable import Alamofire
 import Foundation
+import Testing
 import XCTest
 
 class BaseRetryPolicyTestCase: BaseTestCase {
@@ -426,21 +427,26 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
 
 // MARK: -
 
-final class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
-    func testThatConnectionLostRetryPolicyCanBeInitializedWithDefaultValues() {
+@Suite
+struct ConnectionLostRetryPolicyTestCase {
+    private let idempotentMethods: Set<HTTPMethod> = [.get, .head, .put, .delete, .options, .trace]
+
+    @Test
+    func connectionLostRetryPolicyCanBeInitializedWithDefaultValues() {
         // Given, When
         let retryPolicy = ConnectionLostRetryPolicy()
 
         // Then
-        XCTAssertEqual(retryPolicy.retryLimit, 2)
-        XCTAssertEqual(retryPolicy.exponentialBackoffBase, 2)
-        XCTAssertEqual(retryPolicy.exponentialBackoffScale, 0.5)
-        XCTAssertEqual(retryPolicy.retryableHTTPMethods, idempotentMethods)
-        XCTAssertEqual(retryPolicy.retryableHTTPStatusCodes, [])
-        XCTAssertEqual(retryPolicy.retryableURLErrorCodes, [.networkConnectionLost])
+        #expect(retryPolicy.retryLimit == 2)
+        #expect(retryPolicy.exponentialBackoffBase == 2)
+        #expect(retryPolicy.exponentialBackoffScale == 0.5)
+        #expect(retryPolicy.retryableHTTPMethods == idempotentMethods)
+        #expect(retryPolicy.retryableHTTPStatusCodes == [])
+        #expect(retryPolicy.retryableURLErrorCodes == [.networkConnectionLost])
     }
 
-    func testThatConnectionLostRetryPolicyCanBeInitializedWithCustomValues() {
+    @Test
+    func connectionLostRetryPolicyCanBeInitializedWithCustomValues() {
         // Given, When
         let retryPolicy = ConnectionLostRetryPolicy(retryLimit: 3,
                                                     exponentialBackoffBase: 4,
@@ -448,11 +454,11 @@ final class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
                                                     retryableHTTPMethods: [.delete, .get])
 
         // Then
-        XCTAssertEqual(retryPolicy.retryLimit, 3)
-        XCTAssertEqual(retryPolicy.exponentialBackoffBase, 4)
-        XCTAssertEqual(retryPolicy.exponentialBackoffScale, 0.25)
-        XCTAssertEqual(retryPolicy.retryableHTTPMethods, [.delete, .get])
-        XCTAssertEqual(retryPolicy.retryableHTTPStatusCodes, [])
-        XCTAssertEqual(retryPolicy.retryableURLErrorCodes, [.networkConnectionLost])
+        #expect(retryPolicy.retryLimit == 3)
+        #expect(retryPolicy.exponentialBackoffBase == 4)
+        #expect(retryPolicy.exponentialBackoffScale == 0.25)
+        #expect(retryPolicy.retryableHTTPMethods == [.delete, .get])
+        #expect(retryPolicy.retryableHTTPStatusCodes == [])
+        #expect(retryPolicy.retryableURLErrorCodes == [.networkConnectionLost])
     }
 }

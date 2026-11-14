@@ -24,6 +24,7 @@
 
 import Alamofire
 import Foundation
+import Testing
 import XCTest
 
 final class CachedResponseHandlerTestCase: BaseTestCase {
@@ -215,22 +216,26 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
     }
 }
 
-final class StaticCachedResponseHandlerTests: BaseTestCase {
+@Suite
+struct StaticCachedResponseHandlerTests {
     func takeCachedResponseHandler(_ handler: any CachedResponseHandler) {
         _ = handler
     }
 
-    func testThatCacheResponseCacherCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func cacheResponseCacherCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeCachedResponseHandler(.cache)
     }
 
-    func testThatDoNotCacheResponseCacherCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func doNotCacheResponseCacherCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeCachedResponseHandler(.doNotCache)
     }
 
-    func testThatModifyResponseCacherCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func modifyResponseCacherCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeCachedResponseHandler(.modify { _, _ in nil })
     }

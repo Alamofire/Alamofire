@@ -25,13 +25,16 @@
 #if canImport(_Concurrency)
 
 import Alamofire
+import Testing
 import XCTest
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class DataRequestConcurrencyTests: BaseTestCase {
-    func testThatDataTaskSerializesResponseUsingSerializer() async throws {
+@Suite
+struct DataRequestConcurrencyTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskSerializesResponseUsingSerializer() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.request(.get)
@@ -39,10 +42,12 @@ final class DataRequestConcurrencyTests: BaseTestCase {
             .value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDataTaskCanBeCancelledConcurrently() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskCanBeCancelledConcurrently() async {
         // Tests fix for https://github.com/Alamofire/Alamofire/issues/3978
         // Given
         let session = Session()
@@ -72,9 +77,11 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         }
     }
 
-    func testThat500ResponseCanBeRetried() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func status500ResponseCanBeRetried() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.request(.endpoints(.status(500), .method(.get)), interceptor: .retryPolicy)
@@ -82,67 +89,79 @@ final class DataRequestConcurrencyTests: BaseTestCase {
             .value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDataTaskSerializesDecodable() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskSerializesDecodable() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.request(.get).serializingDecodable(TestResponse.self).value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDataTaskSerializesString() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskSerializesString() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.request(.get).serializingString().value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDataTaskSerializesData() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskSerializesData() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.request(.get).serializingData().value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDataTaskProducesResult() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskProducesResult() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let result = await session.request(.get).serializingDecodable(TestResponse.self).result
 
         // Then
-        XCTAssertNotNil(result.success)
+        #expect(result.success != nil)
     }
 
-    func testThatDataTaskProducesValue() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskProducesValue() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.request(.get).serializingDecodable(TestResponse.self).value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDataTaskProperlySupportsConcurrentRequests() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskProperlySupportsConcurrentRequests() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         async let first = session.request(.get).serializingDecodable(TestResponse.self).response
@@ -151,13 +170,17 @@ final class DataRequestConcurrencyTests: BaseTestCase {
 
         // Then
         let responses = await [first, second, third]
-        XCTAssertEqual(responses.count, 3)
-        XCTAssertTrue(responses.allSatisfy(\.result.isSuccess))
+        #expect(responses.count == 3)
+        // #expect treats a key path passed to rethrowing allSatisfy as a throwing call.
+        // swiftformat:disable:next preferKeyPath
+        #expect(responses.allSatisfy { $0.result.isSuccess })
     }
 
-    func testThatDataTaskCancellationCancelsRequest() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskCancellationCancelsRequest() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.request(.get)
         let task = request.serializingDecodable(TestResponse.self)
 
@@ -166,13 +189,15 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         let response = await task.response
 
         // Then
-        XCTAssertTrue(response.error?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(request.isCancelled, "Underlying DataRequest should be cancelled.")
+        #expect(response.error?.isExplicitlyCancelledError == true)
+        #expect(request.isCancelled, "Underlying DataRequest should be cancelled.")
     }
 
-    func testThatDataTaskIsAutomaticallyCancelledInTask() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskIsAutomaticallyCancelledInTask() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.request(.get)
 
         // When
@@ -184,14 +209,16 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertTrue(request.isCancelled, "Underlying DataRequest should be cancelled.")
+        #expect(result.failure?.isExplicitlyCancelledError == true)
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(request.isCancelled, "Underlying DataRequest should be cancelled.")
     }
 
-    func testThatDataTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.request(.get)
 
         // When
@@ -203,14 +230,16 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertFalse(request.isCancelled, "Underlying DataRequest should not be cancelled.")
-        XCTAssertTrue(result.isSuccess, "DataRequest should succeed.")
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(!request.isCancelled, "Underlying DataRequest should not be cancelled.")
+        #expect(result.isSuccess, "DataRequest should succeed.")
     }
 
-    func testThatDataTaskIsAutomaticallyCancelledInTaskGroup() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskIsAutomaticallyCancelledInTaskGroup() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.request(.get)
 
         // When
@@ -228,14 +257,16 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertTrue(request.isCancelled, "Underlying DataRequest should be cancelled.")
+        #expect(result.failure?.isExplicitlyCancelledError == true)
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(request.isCancelled, "Underlying DataRequest should be cancelled.")
     }
 
-    func testThatDataTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.request(.get)
 
         // When
@@ -253,17 +284,19 @@ final class DataRequestConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertFalse(request.isCancelled, "Underlying DataRequest should not be cancelled.")
-        XCTAssertTrue(result.isSuccess, "DataRequest should succeed.")
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(!request.isCancelled, "Underlying DataRequest should not be cancelled.")
+        #expect(result.isSuccess, "DataRequest should succeed.")
     }
 }
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class DownloadConcurrencyTests: BaseTestCase {
-    func testThatDownloadTaskSerializesResponseFromSerializer() async throws {
+@Suite
+struct DownloadConcurrencyTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskSerializesResponseFromSerializer() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.download(.get)
@@ -271,78 +304,92 @@ final class DownloadConcurrencyTests: BaseTestCase {
             .value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDownloadTaskSerializesDecodable() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskSerializesDecodable() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDownloadTaskSerializesString() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskSerializesString() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.download(.get).serializingString().value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDownloadTaskSerializesData() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskSerializesData() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.download(.get).serializingData().value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDownloadTaskSerializesURL() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskSerializesURL() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.download(.get).serializingDownloadedFileURL().value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDownloadTaskProducesResult() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskProducesResult() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let result = await session.download(.get).serializingDecodable(TestResponse.self).result
 
         // Then
-        XCTAssertNotNil(result.success)
+        #expect(result.success != nil)
     }
 
-    func testThatDownloadTaskProducesValue() async throws {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskProducesValue() async throws {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
 
         // Then
-        XCTAssertNotNil(value)
+        #expect(value != nil)
     }
 
-    func testThatDownloadTaskProperlySupportsConcurrentRequests() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskProperlySupportsConcurrentRequests() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         async let first = session.download(.get).serializingDecodable(TestResponse.self).response
@@ -351,13 +398,17 @@ final class DownloadConcurrencyTests: BaseTestCase {
 
         // Then
         let responses = await [first, second, third]
-        XCTAssertEqual(responses.count, 3)
-        XCTAssertTrue(responses.allSatisfy(\.result.isSuccess))
+        #expect(responses.count == 3)
+        // #expect treats a key path passed to rethrowing allSatisfy as a throwing call.
+        // swiftformat:disable:next preferKeyPath
+        #expect(responses.allSatisfy { $0.result.isSuccess })
     }
 
-    func testThatDownloadTaskCancelsRequest() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskCancelsRequest() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.download(.get)
         let task = request.serializingDecodable(TestResponse.self)
 
@@ -366,12 +417,14 @@ final class DownloadConcurrencyTests: BaseTestCase {
         let response = await task.response
 
         // Then
-        XCTAssertTrue(response.error?.isExplicitlyCancelledError == true)
+        #expect(response.error?.isExplicitlyCancelledError == true)
     }
 
-    func testThatDownloadTaskIsAutomaticallyCancelledInTask() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskIsAutomaticallyCancelledInTask() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.download(.get)
 
         // When
@@ -383,14 +436,16 @@ final class DownloadConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertTrue(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
+        #expect(result.failure?.isExplicitlyCancelledError == true)
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
     }
 
-    func testThatDownloadTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskIsNotAutomaticallyCancelledInTaskWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.download(.get)
 
         // When
@@ -402,14 +457,16 @@ final class DownloadConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertFalse(request.isCancelled, "Underlying DownloadRequest should not be cancelled.")
-        XCTAssertTrue(result.isSuccess, "DownloadRequest should succeed.")
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(!request.isCancelled, "Underlying DownloadRequest should not be cancelled.")
+        #expect(result.isSuccess, "DownloadRequest should succeed.")
     }
 
-    func testThatDownloadTaskIsAutomaticallyCancelledInTaskGroup() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskIsAutomaticallyCancelledInTaskGroup() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.download(.get)
 
         // When
@@ -427,14 +484,16 @@ final class DownloadConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(result.failure?.isExplicitlyCancelledError == true)
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertTrue(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
+        #expect(result.failure?.isExplicitlyCancelledError == true)
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(request.isCancelled, "Underlying DownloadRequest should be cancelled.")
     }
 
-    func testThatDownloadTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadTaskIsNotAutomaticallyCancelledInTaskGroupWhenDisabled() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
         let request = session.download(.get)
 
         // When
@@ -452,9 +511,9 @@ final class DownloadConcurrencyTests: BaseTestCase {
         let result = await task.value
 
         // Then
-        XCTAssertTrue(task.isCancelled, "Task should be cancelled.")
-        XCTAssertFalse(request.isCancelled, "Underlying DownloadRequest should not be cancelled.")
-        XCTAssertTrue(result.isSuccess, "DownloadRequest should succeed.")
+        #expect(task.isCancelled, "Task should be cancelled.")
+        #expect(!request.isCancelled, "Underlying DownloadRequest should not be cancelled.")
+        #expect(result.isSuccess, "DownloadRequest should succeed.")
     }
 }
 
@@ -824,11 +883,13 @@ final class WebSocketConcurrencyTests: BaseTestCase {
 }
 #endif
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class ClosureAPIConcurrencyTests: BaseTestCase {
-    func testThatDownloadProgressStreamReturnsProgress() async {
+@Suite
+struct ClosureAPIConcurrencyTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func downloadProgressStreamReturnsProgress() async {
         // Given
-        let session = stored(Session())
+        let session = Session()
 
         // When
         let request = session.request(.get)
@@ -859,14 +920,14 @@ final class ClosureAPIConcurrencyTests: BaseTestCase {
         values = await (httpResponses, uploadProgress, downloadProgress, requests, tasks, descriptions, response)
 
         // Then
-        XCTAssertTrue(values.httpResponses.count == 1, "httpResponses should have one response")
-        XCTAssertTrue(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
-        XCTAssertNotNil(values.downloadProgresses.last, "downloadProgresses should not be empty")
-        XCTAssertTrue(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")
-        XCTAssertNotNil(values.requests.last, "requests should not be empty")
-        XCTAssertNotNil(values.tasks.last, "tasks should not be empty")
-        XCTAssertNotNil(values.descriptions.last, "descriptions should not be empty")
-        XCTAssertTrue(values.response.result.isSuccess, "request should succeed")
+        #expect(values.httpResponses.count == 1, "httpResponses should have one response")
+        #expect(values.uploadProgresses.isEmpty, "uploadProgresses should be empty")
+        #expect(values.downloadProgresses.last != nil, "downloadProgresses should not be empty")
+        #expect(values.downloadProgresses.last?.isFinished == true, "last download progression should be finished")
+        #expect(values.requests.last != nil, "requests should not be empty")
+        #expect(values.tasks.last != nil, "tasks should not be empty")
+        #expect(values.descriptions.last != nil, "descriptions should not be empty")
+        #expect(values.response.result.isSuccess, "request should succeed")
     }
 }
 
