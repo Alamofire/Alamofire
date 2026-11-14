@@ -1717,6 +1717,7 @@ struct RequestInstanceInterceptorTests {
                         "request(_:didCreateTask:)",
                         "request(_:didResumeTask:)",
                         "request(_:didGatherMetrics:)",
+                        "request(_:didCompleteTask:with:)",
                         "requestDidFinish(_:)",
                         "request(_:didParseResponse:)"]
         #expect(monitor.events == expected, "Events didn't match, actual events: \(monitor.events)")
@@ -1748,6 +1749,7 @@ struct RequestInstanceInterceptorTests {
                         "request(_:didCreateTask:)",
                         "request(_:didResumeTask:)",
                         "request(_:didGatherMetrics:)",
+                        "request(_:didCompleteTask:with:)",
                         "requestDidFinish(_:)",
                         "request(_:didParseResponse:)"]
         #expect(firstMonitor.events == expected, "firstMonitor events didn't match, actual events: \(firstMonitor.events)")
@@ -1783,6 +1785,7 @@ struct RequestInstanceInterceptorTests {
                                       "request(_:didCreateTask:)",
                                       "request(_:didResumeTask:)",
                                       "request(_:didGatherMetrics:)",
+                                      "request(_:didCompleteTask:with:)",
                                       "requestDidFinish(_:)",
                                       "request(_:didParseResponse:)"]
         let expectedSessionEvents = ["requestDidResume(_:)",
@@ -1795,6 +1798,7 @@ struct RequestInstanceInterceptorTests {
                                      "urlSession(_:task:didFinishCollecting:)",
                                      "request(_:didGatherMetrics:)",
                                      "urlSession(_:task:didCompleteWithError:)",
+                                     "request(_:didCompleteTask:with:)",
                                      "requestDidFinish(_:)",
                                      "request(_:didParseResponse:)"]
         #expect(sessionMonitor.events == expectedSessionEvents, "Session events didn't match, actual events: \(sessionMonitor.events)")

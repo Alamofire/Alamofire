@@ -671,7 +671,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
         state = Protected(State(onAdaptation: onAdaptation, onRetry: onRetry))
     }
 
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
         let sessionID = ObjectIdentifier(session)
         interceptor.adapt(urlRequest, for: session) { result in
             let onAdaptation = self.state.write { state in

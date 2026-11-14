@@ -24,9 +24,10 @@
 
 @testable import Alamofire
 import Foundation
-import XCTest
+import Testing
 
-final class AuthenticationInterceptorTestCase: BaseTestCase {
+@Suite(.storesInstances)
+struct AuthenticationInterceptorTestCase {
     // MARK: - Helper Types
 
     struct TestCredential: AuthenticationCredential {
@@ -55,13 +56,21 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
     }
 
     final class TestAuthenticator: Authenticator {
-        private(set) var applyCount = 0
-        private(set) var refreshCount = 0
-        private(set) var didRequestFailDueToAuthErrorCount = 0
-        private(set) var isRequestAuthenticatedWithCredentialCount = 0
+        private struct Counts {
+            var apply = 0
+            var refresh = 0
+            var didRequestFailDueToAuthError = 0
+            var isRequestAuthenticatedWithCredential = 0
+        }
+
+        private let counts = Protected(Counts())
+
+        var applyCount: Int { counts.read(\.apply) }
+        var refreshCount: Int { counts.read(\.refresh) }
+        var didRequestFailDueToAuthErrorCount: Int { counts.read(\.didRequestFailDueToAuthError) }
+        var isRequestAuthenticatedWithCredentialCount: Int { counts.read(\.isRequestAuthenticatedWithCredential) }
 
         let refreshResult: Result<TestCredential, any Error>?
-        let lock = NSLock()
         let refreshQueue: DispatchQueue?
 
         init(refreshQueue: DispatchQueue? = DispatchQueue(label: "org.alamofire.TestAuthenticator"),
@@ -71,19 +80,18 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         }
 
         func apply(_ credential: TestCredential, to urlRequest: inout URLRequest) {
-            lock.lock(); defer { lock.unlock() }
-
-            applyCount += 1
+            counts.write { $0.apply += 1 }
 
             urlRequest.headers.add(.authorization(credential.accessToken))
         }
 
         func refresh(_ credential: TestCredential,
                      for session: Session,
-                     completion: @escaping (Result<TestCredential, any Error>) -> Void) {
-            lock.lock()
-
-            refreshCount += 1
+                     completion: @escaping @Sendable (Result<TestCredential, any Error>) -> Void) {
+            let refreshCount = counts.write { counts in
+                counts.refresh += 1
+                return counts.refresh
+            }
 
             let result = refreshResult ?? .success(
                 TestCredential(accessToken: "a\(refreshCount)",
@@ -95,9 +103,7 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
             if let refreshQueue {
                 // The 10 ms delay here is important to allow multiple requests to queue up while refreshing.
                 refreshQueue.asyncAfter(deadline: .now() + 0.01) { completion(result) }
-                lock.unlock()
             } else {
-                lock.unlock()
                 completion(result)
             }
         }
@@ -106,34 +112,30 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                         with response: HTTPURLResponse,
                         failDueToAuthenticationError error: any Error)
             -> Bool {
-            lock.lock(); defer { lock.unlock() }
-
-            didRequestFailDueToAuthErrorCount += 1
+            counts.write { $0.didRequestFailDueToAuthError += 1 }
 
             return response.statusCode == 401
         }
 
         func isRequest(_ urlRequest: URLRequest, authenticatedWith credential: TestCredential) -> Bool {
-            lock.lock(); defer { lock.unlock() }
-
-            isRequestAuthenticatedWithCredentialCount += 1
+            counts.write { $0.isRequestAuthenticatedWithCredential += 1 }
 
             return urlRequest.headers["Authorization"] == credential.accessToken
         }
     }
 
     final class PathAdapter: RequestAdapter {
-        var paths: [String]
+        private let paths: Protected<[String]>
 
         init(paths: [String]) {
-            self.paths = paths
+            self.paths = Protected(paths)
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
             var request = urlRequest
 
             var urlComponents = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
-            urlComponents.path = paths.removeFirst()
+            urlComponents.path = paths.write { $0.removeFirst() }
 
             request.url = urlComponents.url
 
@@ -143,324 +145,332 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
     // MARK: - Tests - Adapt
 
-    @MainActor
-    func testThatInterceptorCanAdaptURLRequest() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorCanAdaptURLRequest() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request?.headers["Authorization"] == "a0")
+        #expect(response.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorRethrowsRefreshErrorToAllDeferredAdaptOperations() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorRethrowsRefreshErrorToAllDeferredAdaptOperations() async {
         // Given
-        let queue = DispatchQueue(label: "org.alamofire.\(#function)")
+        let session = stored(Session.independent())
         let credential = TestCredential(requiresRefresh: true)
-        let authenticator = TestAuthenticator(refreshQueue: queue, refreshResult: .failure(TestAuthError.refreshNetworkFailure))
+        // Completing the refresh on the session's root queue queues it behind every request's adapt call, so all of them
+        // are deferred while refreshing.
+        let authenticator = TestAuthenticator(refreshQueue: session.rootQueue,
+                                              refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let requestCount = 3
-        let session = stored(Session(rootQueue: queue))
 
-        let expect = expectation(description: "all requests should complete")
-        expect.expectedFulfillmentCount = requestCount
+        let expect = Completion("all requests should complete", expectedCount: requestCount)
 
-        var requests: [Int: Request] = [:]
-        var responses: [Int: AFDataResponse<Data?>] = [:]
+        let requests = Capture<[Int: Request]>([:])
+        let responses = Capture<[Int: AFDataResponse<Data?>]>([:])
 
         // When
         for index in 0..<requestCount {
             let request = session.request(.status(200), interceptor: interceptor).validate().response {
-                responses[index] = $0
-                expect.fulfill()
+                responses.value[index] = $0
+                expect.complete()
             }
-            requests[index] = request
+            requests.value[index] = request
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
         for index in 0..<requestCount {
-            XCTAssertEqual(responses[index]?.request?.headers.count, 0)
-            XCTAssertEqual(responses[index]?.result.isFailure, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.isRequestAdaptationError, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
-            XCTAssertEqual(requests[index]?.retryCount, 0)
+            #expect(responses.value[index]?.request?.headers.isEmpty == true)
+            #expect(responses.value[index]?.result.isFailure == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.isRequestAdaptationError == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.underlyingError as? TestAuthError == .refreshNetworkFailure)
+            #expect(requests.value[index]?.retryCount == 0)
         }
 
-        XCTAssertEqual(authenticator.applyCount, 0)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 0)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorQueuesAdaptOperationWhenRefreshing() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorQueuesAdaptOperationWhenRefreshing() async {
         // Given
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "both requests should complete")
-        expect.expectedFulfillmentCount = 2
+        let expect = Completion("both requests should complete", expectedCount: 2)
 
-        var response1: AFDataResponse<Data?>?
-        var response2: AFDataResponse<Data?>?
+        let response1 = Capture<AFDataResponse<Data?>?>()
+        let response2 = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request1 = session.request(.status(200), interceptor: interceptor).validate().response {
-            response1 = $0
-            expect.fulfill()
+            response1.value = $0
+            expect.complete()
         }
 
         let request2 = session.request(.status(202), interceptor: interceptor).validate().response {
-            response2 = $0
-            expect.fulfill()
+            response2.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response1?.request?.headers["Authorization"], "a1")
-        XCTAssertEqual(response2?.request?.headers["Authorization"], "a1")
-        XCTAssertEqual(response1?.result.isSuccess, true)
-        XCTAssertEqual(response2?.result.isSuccess, true)
+        #expect(response1.request?.headers["Authorization"] == "a1")
+        #expect(response2.request?.headers["Authorization"] == "a1")
+        #expect(response1.result?.isSuccess == true)
+        #expect(response2.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 2)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 2)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request1.retryCount, 0)
-        XCTAssertEqual(request2.retryCount, 0)
+        #expect(request1.retryCount == 0)
+        #expect(request2.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorQueuesMultipleAdaptOperationsWhenRefreshing() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorQueuesMultipleAdaptOperationsWhenRefreshing() async {
         // Given
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let requestCount = 6
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "all requests should complete")
-        expect.expectedFulfillmentCount = requestCount
+        let expect = Completion("all requests should complete", expectedCount: requestCount)
 
-        var requests: [Int: Request] = [:]
-        var responses: [Int: AFDataResponse<Data?>] = [:]
+        let requests = Capture<[Int: Request]>([:])
+        let responses = Capture<[Int: AFDataResponse<Data?>]>([:])
 
         // When
         for index in 0..<requestCount {
             let request = session.request(.status(200 + index), interceptor: interceptor).validate().response {
-                responses[index] = $0
-                expect.fulfill()
+                responses.value[index] = $0
+                expect.complete()
             }
-            requests[index] = request
+            requests.value[index] = request
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
         for index in 0..<requestCount {
-            XCTAssertEqual(responses[index]?.request?.headers["Authorization"], "a1")
-            XCTAssertEqual(responses[index]?.result.isSuccess, true)
-            XCTAssertEqual(requests[index]?.retryCount, 0)
+            #expect(responses.value[index]?.request?.headers["Authorization"] == "a1")
+            #expect(responses.value[index]?.result.isSuccess == true)
+            #expect(requests.value[index]?.retryCount == 0)
         }
 
-        XCTAssertEqual(authenticator.applyCount, requestCount)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == requestCount)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsMissingCredentialErrorWhenCredentialIsNil() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsMissingCredentialErrorWhenCredentialIsNil() async {
         // Given
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers.count, 0)
+        #expect(response.request?.headers.isEmpty == true)
 
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestAdaptationError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .missingCredential)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestAdaptationError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .missingCredential)
 
-        XCTAssertEqual(authenticator.applyCount, 0)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 0)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorRethrowsRefreshErrorFromAdapt() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorRethrowsRefreshErrorFromAdapt() async {
         // Given
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers.count, 0)
+        #expect(response.request?.headers.isEmpty == true)
 
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestAdaptationError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestAdaptationError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? TestAuthError == .refreshNetworkFailure)
 
-        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
-            XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
-            XCTAssertEqual(originalError.asAFError?.responseCode, 401)
+        if case let .requestRetryFailed(_, originalError) = response.result?.failure {
+            #expect(originalError.asAFError?.isResponseValidationError == true)
+            #expect(originalError.asAFError?.responseCode == 401)
         }
 
-        XCTAssertEqual(authenticator.applyCount, 0)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 0)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
     // MARK: - Tests - Retry
 
     // If we not using swift-corelibs-foundation where URLRequest to /invalid/path is a fatal error.
     #if !canImport(FoundationNetworking)
-    @MainActor
-    func testThatInterceptorDoesNotRetryWithoutResponse() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorDoesNotRetryWithoutResponse() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let urlRequest = URLRequest(url: URL(string: "/invalid/path")!)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(urlRequest, interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
+        #expect(response.request?.headers["Authorization"] == "a0")
 
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isSessionTaskError, true)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isSessionTaskError == true)
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
     #endif
 
-    @MainActor
-    func testThatInterceptorDoesNotRetryWhenRequestDoesNotFailDueToAuthError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorDoesNotRetryWhenRequestDoesNotFailDueToAuthError() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.status(500), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
+        #expect(response.request?.headers["Authorization"] == "a0")
 
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isResponseValidationError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.responseCode, 500)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isResponseValidationError == true)
+        #expect(response.result?.failure?.asAFError?.responseCode == 500)
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsMissingCredentialErrorWhenCredentialIsNilAndRequestShouldBeRetried() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsMissingCredentialErrorWhenCredentialIsNilAndRequestShouldBeRetried() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.status(401), interceptor: interceptor)
@@ -468,46 +478,47 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                 interceptor.credential = nil
             }
             .response {
-                response = $0
-                expect.fulfill()
+                response.value = $0
+                expect.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
+        #expect(response.request?.headers["Authorization"] == "a0")
 
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .missingCredential)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .missingCredential)
 
-        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
-            XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
-            XCTAssertEqual(originalError.asAFError?.responseCode, 401)
+        if case let .requestRetryFailed(_, originalError) = response.result?.failure {
+            #expect(originalError.asAFError?.isResponseValidationError == true)
+            #expect(originalError.asAFError?.responseCode == 401)
         }
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorRetriesRequestThatFailedWithOutdatedCredential() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorRetriesRequestThatFailedWithOutdatedCredential() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         let pathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: compositeInterceptor)
@@ -519,27 +530,28 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                         requiresRefresh: false)
             }
             .response {
-                response = $0
-                expect.fulfill()
+                response.value = $0
+                expect.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request?.headers["Authorization"] == "a1")
+        #expect(response.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 2)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
+        #expect(authenticator.applyCount == 2)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
 
-        XCTAssertEqual(request.retryCount, 1)
+        #expect(request.retryCount == 1)
     }
 
     // Produces double lock reported in https://github.com/Alamofire/Alamofire/issues/3294#issuecomment-703241558
-    @MainActor
-    func testThatInterceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnCallingQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnCallingQueue() async {
         // Given
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator(refreshQueue: nil)
@@ -555,36 +567,37 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     requiresRefresh: false)
         }
 
-        let session = stored(Session(eventMonitors: [eventMonitor]))
+        let session = stored(Session.independent(eventMonitors: [eventMonitor]))
 
         let pathAdapter = PathAdapter(paths: ["/status/200"])
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request?.headers["Authorization"] == "a1")
+        #expect(response.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorRetriesRequestAfterRefresh() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorRetriesRequestAfterRefresh() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
@@ -594,33 +607,34 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request?.headers["Authorization"] == "a1")
+        #expect(response.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 2)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
+        #expect(authenticator.applyCount == 2)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
 
-        XCTAssertEqual(request.retryCount, 1)
+        #expect(request.retryCount == 1)
     }
 
-    @MainActor
-    func testThatInterceptorTriggersRetryRefreshAfterProactiveRefreshUsesStaleURL() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorTriggersRetryRefreshAfterProactiveRefreshUsesStaleURL() async {
         // Given
         // When a request is deferred via requiresRefresh, handleRefreshSuccess replays it through
         // AuthenticationInterceptor.adapt only (not the full adapter chain). A stateful adapter earlier in the chain
@@ -633,115 +647,117 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let pathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a2")
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request?.headers["Authorization"] == "a2")
+        #expect(response.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 2)
-        XCTAssertEqual(authenticator.refreshCount, 2)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
+        #expect(authenticator.applyCount == 2)
+        #expect(authenticator.refreshCount == 2)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
 
-        XCTAssertEqual(request.retryCount, 1)
+        #expect(request.retryCount == 1)
     }
 
-    @MainActor
-    func testThatInterceptorRethrowsRefreshErrorFromRetry() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorRethrowsRefreshErrorFromRetry() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.status(401), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
+        #expect(response.request?.headers["Authorization"] == "a0")
 
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? TestAuthError == .refreshNetworkFailure)
 
-        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
-            XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
-            XCTAssertEqual(originalError.asAFError?.responseCode, 401)
+        if case let .requestRetryFailed(_, originalError) = response.result?.failure {
+            #expect(originalError.asAFError?.isResponseValidationError == true)
+            #expect(originalError.asAFError?.responseCode == 401)
         }
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorRethrowsRefreshErrorToAllPendingRetryRequests() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorRethrowsRefreshErrorToAllPendingRetryRequests() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let requestCount = 3
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "all requests should complete")
-        expect.expectedFulfillmentCount = requestCount
+        let expect = Completion("all requests should complete", expectedCount: requestCount)
 
-        var requests: [Int: Request] = [:]
-        var responses: [Int: AFDataResponse<Data?>] = [:]
+        let requests = Capture<[Int: Request]>([:])
+        let responses = Capture<[Int: AFDataResponse<Data?>]>([:])
 
         // When
         for index in 0..<requestCount {
             let request = session.request(.status(401), interceptor: interceptor).validate().response {
-                responses[index] = $0
-                expect.fulfill()
+                responses.value[index] = $0
+                expect.complete()
             }
-            requests[index] = request
+            requests.value[index] = request
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
         for index in 0..<requestCount {
-            XCTAssertEqual(responses[index]?.request?.headers["Authorization"], "a0")
-            XCTAssertEqual(responses[index]?.result.isFailure, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.isRequestRetryError, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
-            XCTAssertEqual(requests[index]?.retryCount, 0)
+            #expect(responses.value[index]?.request?.headers["Authorization"] == "a0")
+            #expect(responses.value[index]?.result.isFailure == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.isRequestRetryError == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.underlyingError as? TestAuthError == .refreshNetworkFailure)
+            #expect(requests.value[index]?.retryCount == 0)
         }
 
-        XCTAssertEqual(authenticator.applyCount, requestCount)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, requestCount)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, requestCount)
+        #expect(authenticator.applyCount == requestCount)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == requestCount)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == requestCount)
     }
 
-    @MainActor
-    func testThatInterceptorAllowsNewRequestsToTriggerRefreshAfterPreviousRefreshFailure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorAllowsNewRequestsToTriggerRefreshAfterPreviousRefreshFailure() async {
         // Given
         // A failed refresh sets .failed state on the interceptor. A subsequent, independent request
         // that also receives a 401 must be able to trigger a fresh refresh attempt; it is not a
@@ -749,65 +765,65 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let credential = TestCredential()
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // Phase 1 — first request triggers a refresh that fails.
-        let firstExpect = expectation(description: "first request should complete")
-        var firstResponse: AFDataResponse<Data?>?
+        let firstExpect = Completion("first request should complete")
+        let firstResponse = Capture<AFDataResponse<Data?>?>()
 
         let firstRequest = session.request(.status(401), interceptor: interceptor).validate().response {
-            firstResponse = $0
-            firstExpect.fulfill()
+            firstResponse.value = $0
+            firstExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await firstExpect.wait()
 
         // Precondition: first request failed and triggered exactly one refresh.
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
-        XCTAssertEqual(firstResponse?.result.isFailure, true)
-        XCTAssertEqual(firstRequest.retryCount, 0)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
+        #expect(firstResponse.result?.isFailure == true)
+        #expect(firstRequest.retryCount == 0)
 
         // Phase 2 — a new, independent request is made after the failed refresh has fully completed.
-        let secondExpect = expectation(description: "second request should complete")
-        var secondResponse: AFDataResponse<Data?>?
+        let secondExpect = Completion("second request should complete")
+        let secondResponse = Capture<AFDataResponse<Data?>?>()
 
         let secondRequest = session.request(.status(401), interceptor: interceptor).validate().response {
-            secondResponse = $0
-            secondExpect.fulfill()
+            secondResponse.value = $0
+            secondExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await secondExpect.wait()
 
         // Then: the new request must trigger its own fresh refresh attempt rather than
         // immediately failing with the cached error left over from the previous failed refresh.
-        XCTAssertEqual(authenticator.applyCount, 2)
-        XCTAssertEqual(authenticator.refreshCount, 2) // Fails: .failed state blocks the new refresh, refreshCount stays at 1.
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 2)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 2)
-        XCTAssertEqual(secondResponse?.result.isFailure, true)
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
-        XCTAssertEqual(secondRequest.retryCount, 0)
+        #expect(authenticator.applyCount == 2)
+        #expect(authenticator.refreshCount == 2) // Fails: .failed state blocks the new refresh, refreshCount stays at 1.
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 2)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 2)
+        #expect(secondResponse.result?.isFailure == true)
+        #expect(secondResponse.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(secondResponse.result?.failure?.asAFError?.underlyingError as? TestAuthError == .refreshNetworkFailure)
+        #expect(secondRequest.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorTriggersRefreshWithMultipleParallelRequestsReturning401Responses() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorTriggersRefreshWithMultipleParallelRequestsReturning401Responses() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
 
         let requestCount = 6
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "both requests should complete")
-        expect.expectedFulfillmentCount = requestCount
+        let expect = Completion("both requests should complete", expectedCount: requestCount)
 
-        var requests: [Int: Request] = [:]
-        var responses: [Int: AFDataResponse<Data?>] = [:]
+        let requests = Capture<[Int: Request]>([:])
+        let responses = Capture<[Int: AFDataResponse<Data?>]>([:])
 
         for index in 0..<requestCount {
             let pathAdapter = PathAdapter(paths: ["/status/401", "/status/20\(index)"])
@@ -815,35 +831,36 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
             // When
             let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-                responses[index] = $0
-                expect.fulfill()
+                responses.value[index] = $0
+                expect.complete()
             }
 
-            requests[index] = request
+            requests.value[index] = request
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
         for index in 0..<requestCount {
-            let response = responses[index]
-            XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
-            XCTAssertEqual(response?.result.isSuccess, true)
+            let response = responses.value[index]
+            #expect(response?.request?.headers["Authorization"] == "a1")
+            #expect(response?.result.isSuccess == true)
 
-            let request = requests[index]
-            XCTAssertEqual(request?.retryCount, 1)
+            let request = requests.value[index]
+            #expect(request?.retryCount == 1)
         }
 
-        XCTAssertEqual(authenticator.applyCount, 12)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 6)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 6)
+        #expect(authenticator.applyCount == 12)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 6)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 6)
     }
 
     // MARK: - Tests - Excessive Refresh
 
-    @MainActor
-    func testThatInterceptorIgnoresExcessiveRefreshWhenRefreshWindowIsNil() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorIgnoresExcessiveRefreshWhenRefreshWindowIsNil() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
@@ -858,33 +875,34 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a5")
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request?.headers["Authorization"] == "a5")
+        #expect(response.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 6)
-        XCTAssertEqual(authenticator.refreshCount, 5)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 5)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 5)
+        #expect(authenticator.applyCount == 6)
+        #expect(authenticator.refreshCount == 5)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 5)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 5)
 
-        XCTAssertEqual(request.retryCount, 5)
+        #expect(request.retryCount == 5)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsExcessiveRefreshErrorWhenExcessiveRefreshOccurs() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsExcessiveRefreshErrorWhenExcessiveRefreshOccurs() async {
         // Given
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
@@ -892,41 +910,42 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     credential: credential,
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 2))
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.status(401), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a2")
+        #expect(response.request?.headers["Authorization"] == "a2")
 
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .excessiveRefresh)
 
-        if case let .requestRetryFailed(_, originalError) = response?.result.failure {
-            XCTAssertEqual(originalError.asAFError?.isResponseValidationError, true)
-            XCTAssertEqual(originalError.asAFError?.responseCode, 401)
+        if case let .requestRetryFailed(_, originalError) = response.result?.failure {
+            #expect(originalError.asAFError?.isResponseValidationError == true)
+            #expect(originalError.asAFError?.responseCode == 401)
         }
 
-        XCTAssertEqual(authenticator.applyCount, 3)
-        XCTAssertEqual(authenticator.refreshCount, 2)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 3)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 3)
+        #expect(authenticator.applyCount == 3)
+        #expect(authenticator.refreshCount == 2)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 3)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 3)
 
-        XCTAssertEqual(request.retryCount, 2)
+        #expect(request.retryCount == 2)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsExcessiveRefreshErrorFromAdaptPath() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsExcessiveRefreshErrorFromAdaptPath() async {
         // Given
         // The requiresRefresh path can also trigger excessive refresh. When a refresh produces a credential that still
         // has requiresRefresh == true, the next adapt attempt will trigger another refresh, and the refresh window
@@ -938,35 +957,36 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     credential: credential,
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 1))
 
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.status(200), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers.count, 0)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestAdaptationError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
+        #expect(response.request?.headers.isEmpty == true)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestAdaptationError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .excessiveRefresh)
 
-        XCTAssertEqual(authenticator.applyCount, 0)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 0)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsExcessiveRefreshErrorToAllDeferredAdaptOperationsOnReplay() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsExcessiveRefreshErrorToAllDeferredAdaptOperationsOnReplay() async {
         // Given
         // When multiple requests are queued during a requiresRefresh-triggered refresh, and the refresh produces a
         // credential that still requires refresh, each deferred adapt attempt independently hits the excessive refresh
@@ -979,44 +999,44 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 1))
 
         let requestCount = 3
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "all requests should complete")
-        expect.expectedFulfillmentCount = requestCount
+        let expect = Completion("all requests should complete", expectedCount: requestCount)
 
-        var requests: [Int: Request] = [:]
-        var responses: [Int: AFDataResponse<Data?>] = [:]
+        let requests = Capture<[Int: Request]>([:])
+        let responses = Capture<[Int: AFDataResponse<Data?>]>([:])
 
         // When
         for index in 0..<requestCount {
             let request = session.request(.status(200), interceptor: interceptor).validate().response {
-                responses[index] = $0
-                expect.fulfill()
+                responses.value[index] = $0
+                expect.complete()
             }
-            requests[index] = request
+            requests.value[index] = request
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
         for index in 0..<requestCount {
-            XCTAssertEqual(responses[index]?.request?.headers.count, 0)
-            XCTAssertEqual(responses[index]?.result.isFailure, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.isRequestAdaptationError, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
-            XCTAssertEqual(requests[index]?.retryCount, 0)
+            #expect(responses.value[index]?.request?.headers.isEmpty == true)
+            #expect(responses.value[index]?.result.isFailure == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.isRequestAdaptationError == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.underlyingError as? AuthenticationError == .excessiveRefresh)
+            #expect(requests.value[index]?.retryCount == 0)
         }
 
-        XCTAssertEqual(authenticator.applyCount, 0)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 0)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
     }
 
     // MARK: - Tests - Additional Coverage
 
-    @MainActor
-    func testThatInterceptorHandlesMultipleSuccessiveRefreshCyclesCorrectly() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorHandlesMultipleSuccessiveRefreshCyclesCorrectly() async {
         // Given
         // Two independent 401→refresh→success cycles on the same interceptor instance. Verifies that
         // updateCredential(_:) fully resets the state machine after each successful refresh so that
@@ -1024,55 +1044,56 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When — cycle 1: request with a0 gets 401, refresh (a0 → a1), retry succeeds.
-        let firstExpect = expectation(description: "first cycle should complete")
-        var firstResponse: AFDataResponse<Data?>?
+        let firstExpect = Completion("first cycle should complete")
+        let firstResponse = Capture<AFDataResponse<Data?>?>()
 
         let firstPathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let firstCompositeInterceptor = Interceptor(adapters: [firstPathAdapter, interceptor], retriers: [interceptor])
 
         let firstRequest = session.request(.default, interceptor: firstCompositeInterceptor).validate().response {
-            firstResponse = $0
-            firstExpect.fulfill()
+            firstResponse.value = $0
+            firstExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await firstExpect.wait()
 
         // Then — cycle 1
-        XCTAssertEqual(firstResponse?.request?.headers["Authorization"], "a1")
-        XCTAssertEqual(firstResponse?.result.isSuccess, true)
-        XCTAssertEqual(firstRequest.retryCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 1)
+        #expect(firstResponse.request?.headers["Authorization"] == "a1")
+        #expect(firstResponse.result?.isSuccess == true)
+        #expect(firstRequest.retryCount == 1)
+        #expect(authenticator.refreshCount == 1)
 
         // When — cycle 2: new request with a1 gets 401, refresh (a1 → a2), retry succeeds.
-        let secondExpect = expectation(description: "second cycle should complete")
-        var secondResponse: AFDataResponse<Data?>?
+        let secondExpect = Completion("second cycle should complete")
+        let secondResponse = Capture<AFDataResponse<Data?>?>()
 
         let secondPathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let secondCompositeInterceptor = Interceptor(adapters: [secondPathAdapter, interceptor], retriers: [interceptor])
 
         let secondRequest = session.request(.default, interceptor: secondCompositeInterceptor).validate().response {
-            secondResponse = $0
-            secondExpect.fulfill()
+            secondResponse.value = $0
+            secondExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await secondExpect.wait()
 
         // Then — cycle 2 and cumulative state
-        XCTAssertEqual(secondResponse?.request?.headers["Authorization"], "a2")
-        XCTAssertEqual(secondResponse?.result.isSuccess, true)
-        XCTAssertEqual(secondRequest.retryCount, 1)
+        #expect(secondResponse.request?.headers["Authorization"] == "a2")
+        #expect(secondResponse.result?.isSuccess == true)
+        #expect(secondRequest.retryCount == 1)
 
-        XCTAssertEqual(authenticator.applyCount, 4)
-        XCTAssertEqual(authenticator.refreshCount, 2)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 2)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 2)
+        #expect(authenticator.applyCount == 4)
+        #expect(authenticator.refreshCount == 2)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 2)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 2)
     }
 
-    @MainActor
-    func testThatInterceptorAdaptsNewRequestWithoutDeferringWhileRetryPathRefreshIsInProgress() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorAdaptsNewRequestWithoutDeferringWhileRetryPathRefreshIsInProgress() async {
         // Given
         // When a refresh is triggered by the retry path, adaptOperations is empty. Any new adapt call must NOT be
         // deferred, it should proceed immediately with the current credential.
@@ -1081,13 +1102,12 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "both requests should complete")
-        expect.expectedFulfillmentCount = 2
+        let expect = Completion("both requests should complete", expectedCount: 2)
 
-        var firstResponse: AFDataResponse<Data?>?
-        var secondResponse: AFDataResponse<Data?>?
+        let firstResponse = Capture<AFDataResponse<Data?>?>()
+        let secondResponse = Capture<AFDataResponse<Data?>?>()
 
         // When
         // Request A: gets 401, triggering an async retry-path refresh.
@@ -1095,35 +1115,36 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
         let requestA = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            firstResponse = $0
-            expect.fulfill()
+            firstResponse.value = $0
+            expect.complete()
         }
 
         // Request B: adapts while A's refresh may be running. Since adaptOperations is empty,
         // B must not be deferred regardless of the current refreshState.
         let requestB = session.request(.status(200), interceptor: interceptor).validate().response {
-            secondResponse = $0
-            expect.fulfill()
+            secondResponse.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then: both succeed, only one refresh occurred, and B was applied (not deferred).
-        XCTAssertEqual(firstResponse?.result.isSuccess, true)
-        XCTAssertEqual(secondResponse?.result.isSuccess, true)
-        XCTAssertNotNil(secondResponse?.request?.headers["Authorization"])
+        #expect(firstResponse.result?.isSuccess == true)
+        #expect(secondResponse.result?.isSuccess == true)
+        #expect(secondResponse.request?.headers["Authorization"] != nil)
 
-        XCTAssertEqual(requestA.retryCount, 1)
-        XCTAssertEqual(requestB.retryCount, 0)
+        #expect(requestA.retryCount == 1)
+        #expect(requestB.retryCount == 0)
 
-        XCTAssertEqual(authenticator.applyCount, 3)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
+        #expect(authenticator.applyCount == 3)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
     }
 
-    @MainActor
-    func testThatInterceptorAllowsNewRefreshAfterExternalCredentialUpdateFollowingRetryPathFailure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorAllowsNewRefreshAfterExternalCredentialUpdateFollowingRetryPathFailure() async {
         // Given
         // After a retry-path refresh fails the interceptor enters .failed state, which blocks subsequent retries from
         // triggering another refresh. Setting interceptor.credential externally calls updateCredential(_:), which
@@ -1131,52 +1152,53 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let credential = TestCredential()
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // First, trigger a retry-path refresh that fails, putting interceptor into .failed state.
-        let firstExpect = expectation(description: "first request should complete")
-        var firstResponse: AFDataResponse<Data?>?
+        let firstExpect = Completion("first request should complete")
+        let firstResponse = Capture<AFDataResponse<Data?>?>()
 
         session.request(.status(401), interceptor: interceptor).validate().response {
-            firstResponse = $0
-            firstExpect.fulfill()
+            firstResponse.value = $0
+            firstExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await firstExpect.wait()
 
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(firstResponse?.result.isFailure, true)
+        #expect(authenticator.refreshCount == 1)
+        #expect(firstResponse.result?.isFailure == true)
 
         // When: credential is externally replaced. updateCredential(_:) resets refreshState to .idle.
         interceptor.credential = TestCredential(accessToken: "ext")
 
         // Second, a new 401 should now trigger a fresh refresh rather than immediately failing with the error cached in
         // .failed state.
-        let secondExpect = expectation(description: "second request should complete")
-        var secondResponse: AFDataResponse<Data?>?
+        let secondExpect = Completion("second request should complete")
+        let secondResponse = Capture<AFDataResponse<Data?>?>()
 
         session.request(.status(401), interceptor: interceptor).validate().response {
-            secondResponse = $0
-            secondExpect.fulfill()
+            secondResponse.value = $0
+            secondExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await secondExpect.wait()
 
         // Then: a second refresh was attempted, proving .failed was cleared by updateCredential(_:).
         // The refresh fails again (same authenticator), but crucially refreshCount is 2, not 1.
-        XCTAssertEqual(secondResponse?.request?.headers["Authorization"], "ext")
-        XCTAssertEqual(secondResponse?.result.isFailure, true)
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
+        #expect(secondResponse.request?.headers["Authorization"] == "ext")
+        #expect(secondResponse.result?.isFailure == true)
+        #expect(secondResponse.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(secondResponse.result?.failure?.asAFError?.underlyingError as? TestAuthError == .refreshNetworkFailure)
 
-        XCTAssertEqual(authenticator.applyCount, 2)
-        XCTAssertEqual(authenticator.refreshCount, 2)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 2)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 2)
+        #expect(authenticator.applyCount == 2)
+        #expect(authenticator.refreshCount == 2)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 2)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 2)
     }
 
-    @MainActor
-    func testThatInterceptorAdaptsDirectlyAfterExternalCredentialUpdateFollowingProactiveRefreshFailure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorAdaptsDirectlyAfterExternalCredentialUpdateFollowingProactiveRefreshFailure() async {
         // Given
         // After a proactive (requiresRefresh-triggered) refresh failure the interceptor is in .failed state with the
         // original requiresRefresh: true credential still in place. Setting interceptor.credential to a valid, non-stale
@@ -1185,50 +1207,51 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // First, proactive refresh fails and the deferred request gets an adaptation error.
-        let firstExpect = expectation(description: "first request should complete")
-        var firstResponse: AFDataResponse<Data?>?
+        let firstExpect = Completion("first request should complete")
+        let firstResponse = Capture<AFDataResponse<Data?>?>()
 
         session.request(.status(200), interceptor: interceptor).validate().response {
-            firstResponse = $0
-            firstExpect.fulfill()
+            firstResponse.value = $0
+            firstExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await firstExpect.wait()
 
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(firstResponse?.result.isFailure, true)
-        XCTAssertEqual(firstResponse?.result.failure?.asAFError?.isRequestAdaptationError, true)
+        #expect(authenticator.refreshCount == 1)
+        #expect(firstResponse.result?.isFailure == true)
+        #expect(firstResponse.result?.failure?.asAFError?.isRequestAdaptationError == true)
 
         // When: a working, non-stale credential is set externally.
         interceptor.credential = TestCredential(accessToken: "ext", requiresRefresh: false)
 
         // Phase 2 — new request should adapt immediately with the new credential; no refresh needed.
-        let secondExpect = expectation(description: "second request should complete")
-        var secondResponse: AFDataResponse<Data?>?
+        let secondExpect = Completion("second request should complete")
+        let secondResponse = Capture<AFDataResponse<Data?>?>()
 
         let secondRequest = session.request(.status(200), interceptor: interceptor).validate().response {
-            secondResponse = $0
-            secondExpect.fulfill()
+            secondResponse.value = $0
+            secondExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await secondExpect.wait()
 
         // Then: the new request succeeds using the externally set credential, with no additional refresh.
-        XCTAssertEqual(secondResponse?.request?.headers["Authorization"], "ext")
-        XCTAssertEqual(secondResponse?.result.isSuccess, true)
-        XCTAssertEqual(secondRequest.retryCount, 0)
+        #expect(secondResponse.request?.headers["Authorization"] == "ext")
+        #expect(secondResponse.result?.isSuccess == true)
+        #expect(secondRequest.retryCount == 0)
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnRetryPath() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorDoesNotDeadlockWhenAuthenticatorCallsRefreshCompletionSynchronouslyOnRetryPath() async {
         // Given
         // The refresh(_:for:insideLock:) helper dispatches to a serial queue via queue.async before calling
         // authenticator.refresh(_:for:completion:), ensuring the mutableState write lock is not held when the completion
@@ -1240,33 +1263,34 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
 
         let pathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a1")
-        XCTAssertEqual(response?.result.isSuccess, true)
+        #expect(response.request?.headers["Authorization"] == "a1")
+        #expect(response.result?.isSuccess == true)
 
-        XCTAssertEqual(authenticator.applyCount, 2)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
+        #expect(authenticator.applyCount == 2)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
 
-        XCTAssertEqual(request.retryCount, 1)
+        #expect(request.retryCount == 1)
     }
 
-    @MainActor
-    func testThatExcessiveRefreshTimestampsArePreservedAfterFailedStateIsClearedByAdapt() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func excessiveRefreshTimestampsArePreservedAfterFailedStateIsClearedByAdapt() async {
         // Given
         // The adapt path clears .failed to .idle to allow new requests to trigger a fresh refresh. The refreshTimestamps
         // array must survive this reset because it is the RefreshWindow's authoritative history; clearing it would
@@ -1276,63 +1300,64 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 1))
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // First, one successful refresh consumes the entire budget (maximumAttempts: 1).
-        let firstExpect = expectation(description: "first request should complete")
-        var firstResponse: AFDataResponse<Data?>?
+        let firstExpect = Completion("first request should complete")
+        let firstResponse = Capture<AFDataResponse<Data?>?>()
 
         let firstPathAdapter = PathAdapter(paths: ["/status/401", "/status/200"])
         let firstCompositeInterceptor = Interceptor(adapters: [firstPathAdapter, interceptor], retriers: [interceptor])
 
         session.request(.default, interceptor: firstCompositeInterceptor).validate().response {
-            firstResponse = $0
-            firstExpect.fulfill()
+            firstResponse.value = $0
+            firstExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await firstExpect.wait()
 
-        XCTAssertEqual(firstResponse?.result.isSuccess, true)
-        XCTAssertEqual(authenticator.refreshCount, 1)
+        #expect(firstResponse.result?.isSuccess == true)
+        #expect(authenticator.refreshCount == 1)
 
         // Second, a 401 hits the exhausted window, producing .failed(excessiveRefresh) state.
-        let secondExpect = expectation(description: "second request should complete")
-        var secondResponse: AFDataResponse<Data?>?
+        let secondExpect = Completion("second request should complete")
+        let secondResponse = Capture<AFDataResponse<Data?>?>()
 
         session.request(.status(401), interceptor: interceptor).validate().response {
-            secondResponse = $0
-            secondExpect.fulfill()
+            secondResponse.value = $0
+            secondExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await secondExpect.wait()
 
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
+        #expect(secondResponse.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(secondResponse.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .excessiveRefresh)
 
         // Third, a new request adapts, firing the adapt-clear (.failed to .idle). The request then gets a 401 and attempts
         // another refresh. Despite the state reset, refreshTimestamps is unchanged, so the excessive-refresh guard
         // fires again immediately.
-        let thirdExpect = expectation(description: "third request should complete")
-        var thirdResponse: AFDataResponse<Data?>?
+        let thirdExpect = Completion("third request should complete")
+        let thirdResponse = Capture<AFDataResponse<Data?>?>()
 
         session.request(.status(401), interceptor: interceptor).validate().response {
-            thirdResponse = $0
-            thirdExpect.fulfill()
+            thirdResponse.value = $0
+            thirdExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await thirdExpect.wait()
 
         // Then: It also fails with excessiveRefresh, proving the timestamp survived the adapt-clear.
-        XCTAssertEqual(thirdResponse?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(thirdResponse?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
+        #expect(thirdResponse.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(thirdResponse.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .excessiveRefresh)
 
         // Only one actual authenticator.refresh call ever occurred.
         // Second and third were both blocked before reaching authenticator.refresh.
-        XCTAssertEqual(authenticator.refreshCount, 1)
+        #expect(authenticator.refreshCount == 1)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsMissingCredentialErrorWhenCredentialIsSetToNilAfterBeingValid() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsMissingCredentialErrorWhenCredentialIsSetToNilAfterBeingValid() async {
         // Given
         // Setting interceptor.credential = nil calls updateCredential(nil), which stores nil, increments credentialVersion,
         // and resets refreshState. Subsequent requests must fail immediately with .missingCredential at the adapt stage.
@@ -1340,37 +1365,38 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let credential = TestCredential()
         let authenticator = TestAuthenticator()
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         interceptor.credential = nil
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         let request = session.request(.status(200), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers.count, 0)
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestAdaptationError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .missingCredential)
+        #expect(response.request?.headers.isEmpty == true)
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestAdaptationError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .missingCredential)
 
-        XCTAssertEqual(authenticator.applyCount, 0)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 0)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsExcessiveRefreshErrorImmediatelyWhenMaximumAttemptsIsZero() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsExcessiveRefreshErrorImmediatelyWhenMaximumAttemptsIsZero() async {
         // Given
         // A RefreshWindow with maximumAttempts: 0 makes every refresh attempt immediately excessive: isRefreshExcessive
         // checks refreshAttemptsWithinWindow >= maximumAttempts, and 0 >= 0 is unconditionally true regardless of how
@@ -1380,35 +1406,36 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let interceptor = AuthenticationInterceptor(authenticator: authenticator,
                                                     credential: credential,
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 0))
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "request should complete")
-        var response: AFDataResponse<Data?>?
+        let expect = Completion("request should complete")
+        let response = Capture<AFDataResponse<Data?>?>()
 
         // When
         let request = session.request(.status(401), interceptor: interceptor).validate().response {
-            response = $0
-            expect.fulfill()
+            response.value = $0
+            expect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertEqual(response?.request?.headers["Authorization"], "a0")
-        XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.isRequestRetryError, true)
-        XCTAssertEqual(response?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
+        #expect(response.request?.headers["Authorization"] == "a0")
+        #expect(response.result?.isFailure == true)
+        #expect(response.result?.failure?.asAFError?.isRequestRetryError == true)
+        #expect(response.result?.failure?.asAFError?.underlyingError as? AuthenticationError == .excessiveRefresh)
 
-        XCTAssertEqual(authenticator.applyCount, 1)
-        XCTAssertEqual(authenticator.refreshCount, 0)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 1)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 1)
+        #expect(authenticator.applyCount == 1)
+        #expect(authenticator.refreshCount == 0)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 1)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 1)
 
-        XCTAssertEqual(request.retryCount, 0)
+        #expect(request.retryCount == 0)
     }
 
-    @MainActor
-    func testThatInterceptorThrowsExcessiveRefreshErrorToAllParallelRequestsAfterExceedingRefreshWindow() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorThrowsExcessiveRefreshErrorToAllParallelRequestsAfterExceedingRefreshWindow() async {
         // Given
         // Three parallel requests all get 401, triggering one refresh (a0 → a1). All three retry with a1 and all get
         // 401 again. The second refresh attempt is blocked by the refresh window (maximumAttempts: 1 already exhausted).
@@ -1421,13 +1448,12 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
                                                     refreshWindow: .init(interval: 30, maximumAttempts: 1))
 
         let requestCount = 3
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
-        let expect = expectation(description: "all requests should complete")
-        expect.expectedFulfillmentCount = requestCount
+        let expect = Completion("all requests should complete", expectedCount: requestCount)
 
-        var requests: [Int: Request] = [:]
-        var responses: [Int: AFDataResponse<Data?>] = [:]
+        let requests = Capture<[Int: Request]>([:])
+        let responses = Capture<[Int: AFDataResponse<Data?>]>([:])
 
         // When: Each request hits /status/401 twice: once on the initial attempt (triggering the one allowed refresh),
         // and once after retrying with a1 (triggering the excessive check).
@@ -1436,33 +1462,34 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
             let compositeInterceptor = Interceptor(adapters: [pathAdapter, interceptor], retriers: [interceptor])
 
             let request = session.request(.default, interceptor: compositeInterceptor).validate().response {
-                responses[index] = $0
-                expect.fulfill()
+                responses.value[index] = $0
+                expect.complete()
             }
-            requests[index] = request
+            requests.value[index] = request
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
         for index in 0..<requestCount {
-            XCTAssertEqual(responses[index]?.result.isFailure, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.isRequestRetryError, true)
-            XCTAssertEqual(responses[index]?.result.failure?.asAFError?.underlyingError as? AuthenticationError, .excessiveRefresh)
+            #expect(responses.value[index]?.result.isFailure == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.isRequestRetryError == true)
+            #expect(responses.value[index]?.result.failure?.asAFError?.underlyingError as? AuthenticationError == .excessiveRefresh)
             // retryCount is 1, each request was retried once after the first successful refresh, then rejected by the
             // excessive check without a second actual retry.
-            XCTAssertEqual(requests[index]?.retryCount, 1)
+            #expect(requests.value[index]?.retryCount == 1)
         }
 
         // One successful refresh occurred (first batch). The second was blocked.
-        XCTAssertEqual(authenticator.applyCount, 6)
-        XCTAssertEqual(authenticator.refreshCount, 1)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 6)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 6)
+        #expect(authenticator.applyCount == 6)
+        #expect(authenticator.refreshCount == 1)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 6)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 6)
     }
 
-    @MainActor
-    func testThatInterceptorAllowsProactiveRefreshFromFailedStateUnlikeRetryPath() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func interceptorAllowsProactiveRefreshFromFailedStateUnlikeRetryPath() async {
         // Given
         // After a proactive refresh failure, refreshState is .failed. The retry path has an explicit .failed case that
         // returns .doNotRetryWithError immediately. The proactive adapt path has no such gate. It only checks
@@ -1472,45 +1499,45 @@ final class AuthenticationInterceptorTestCase: BaseTestCase {
         let credential = TestCredential(requiresRefresh: true)
         let authenticator = TestAuthenticator(refreshResult: .failure(TestAuthError.refreshNetworkFailure))
         let interceptor = AuthenticationInterceptor(authenticator: authenticator, credential: credential)
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // Phase 1 — proactive refresh fails, putting interceptor into .failed state.
-        let firstExpect = expectation(description: "first request should complete")
-        var firstResponse: AFDataResponse<Data?>?
+        let firstExpect = Completion("first request should complete")
+        let firstResponse = Capture<AFDataResponse<Data?>?>()
 
         session.request(.status(200), interceptor: interceptor).validate().response {
-            firstResponse = $0
-            firstExpect.fulfill()
+            firstResponse.value = $0
+            firstExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await firstExpect.wait()
 
-        XCTAssertEqual(firstResponse?.result.isFailure, true)
-        XCTAssertEqual(firstResponse?.result.failure?.asAFError?.isRequestAdaptationError, true)
-        XCTAssertEqual(authenticator.refreshCount, 1)
+        #expect(firstResponse.result?.isFailure == true)
+        #expect(firstResponse.result?.failure?.asAFError?.isRequestAdaptationError == true)
+        #expect(authenticator.refreshCount == 1)
 
         // Second, a new request with the same requiresRefresh: true credential adapts. It enters the proactive path,
         // appends to adaptOperations, calls refresh(), overwriting .failed with .refreshing. The retry path's .failed
         // gate is never reached.
-        let secondExpect = expectation(description: "second request should complete")
-        var secondResponse: AFDataResponse<Data?>?
+        let secondExpect = Completion("second request should complete")
+        let secondResponse = Capture<AFDataResponse<Data?>?>()
 
         session.request(.status(200), interceptor: interceptor).validate().response {
-            secondResponse = $0
-            secondExpect.fulfill()
+            secondResponse.value = $0
+            secondExpect.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await secondExpect.wait()
 
         // Then: a second refresh was triggered (refreshCount == 2), proving .failed did not block the proactive adapt
         // path the way it blocks the retry path.
-        XCTAssertEqual(secondResponse?.result.isFailure, true)
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.isRequestAdaptationError, true)
-        XCTAssertEqual(secondResponse?.result.failure?.asAFError?.underlyingError as? TestAuthError, .refreshNetworkFailure)
+        #expect(secondResponse.result?.isFailure == true)
+        #expect(secondResponse.result?.failure?.asAFError?.isRequestAdaptationError == true)
+        #expect(secondResponse.result?.failure?.asAFError?.underlyingError as? TestAuthError == .refreshNetworkFailure)
 
-        XCTAssertEqual(authenticator.applyCount, 0)
-        XCTAssertEqual(authenticator.refreshCount, 2)
-        XCTAssertEqual(authenticator.didRequestFailDueToAuthErrorCount, 0)
-        XCTAssertEqual(authenticator.isRequestAuthenticatedWithCredentialCount, 0)
+        #expect(authenticator.applyCount == 0)
+        #expect(authenticator.refreshCount == 2)
+        #expect(authenticator.didRequestFailDueToAuthErrorCount == 0)
+        #expect(authenticator.isRequestAuthenticatedWithCredentialCount == 0)
     }
 }

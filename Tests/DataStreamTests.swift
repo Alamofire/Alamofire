@@ -938,7 +938,7 @@ struct DataStreamIntegrationTests {
         final class GoodRetry: RequestInterceptor {
             let hasRetried = Protected(false)
 
-            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
                 if hasRetried.read({ $0 }) {
                     completion(.success(Endpoint.bytes(1000).urlRequest))
                 } else {
@@ -946,7 +946,7 @@ struct DataStreamIntegrationTests {
                 }
             }
 
-            func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
+            func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
                 hasRetried.write(true)
                 completion(.retry)
             }
@@ -1298,7 +1298,7 @@ struct DataStreamLifetimeEvents {
                 self.called = called
             }
 
-            func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+            func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
                 called?()
             }
         }

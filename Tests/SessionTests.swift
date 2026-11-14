@@ -44,7 +44,7 @@ struct SessionTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
             adaptedCount.write { $0 += 1 }
 
             let result: Result<URLRequest, any Error> = Result {
@@ -71,7 +71,7 @@ struct SessionTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
             adaptedCount.write { $0 += 1 }
 
             let result: Result<URLRequest, any Error> = Result {
@@ -131,7 +131,7 @@ struct SessionTestCase {
 
         func adapt(_ urlRequest: URLRequest,
                    using state: RequestAdapterState,
-                   completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+                   completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
             let result = mutableState.write { mutableState in
                 mutableState.adaptCalledCount += 1
 
@@ -164,7 +164,7 @@ struct SessionTestCase {
         func retry(_ request: Request,
                    for session: Session,
                    dueTo error: any Error,
-                   completion: @escaping (RetryResult) -> Void) {
+                   completion: @escaping @Sendable (RetryResult) -> Void) {
             let result: RetryResult = mutableState.write { mutableState in
                 mutableState.retryCalledCount += 1
 
@@ -212,7 +212,7 @@ struct SessionTestCase {
 
         func adapt(_ urlRequest: URLRequest,
                    using state: RequestAdapterState,
-                   completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+                   completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
             let result: Result<URLRequest, any Error> = mutableState.write { mutableState in
                 mutableState.adaptCalledCount += 1
 
@@ -231,7 +231,7 @@ struct SessionTestCase {
         func retry(_ request: Request,
                    for session: Session,
                    dueTo error: any Error,
-                   completion: @escaping (RetryResult) -> Void) {
+                   completion: @escaping @Sendable (RetryResult) -> Void) {
             mutableState.write { mutableState in
                 mutableState.retryCalledCount += 1
 
@@ -1717,7 +1717,7 @@ struct SessionTestCase {
         struct InvalidAdapter: RequestInterceptor {
             func adapt(_ urlRequest: URLRequest,
                        for session: Session,
-                       completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+                       completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
                 var request = urlRequest
                 request.httpBody = Data("invalid".utf8)
 
@@ -2007,7 +2007,7 @@ struct SessionMassActionTestCase {
         final class OnceRetrier: RequestInterceptor {
             private let hasRetried = Protected(false)
 
-            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void) {
                 if hasRetried.read({ $0 }) {
                     var request = urlRequest
                     request.url = Endpoint.delay(1).url
@@ -2017,7 +2017,7 @@ struct SessionMassActionTestCase {
                 }
             }
 
-            func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
+            func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
                 completion(hasRetried.read { $0 } ? .doNotRetry : .retry)
                 hasRetried.write(true)
             }
