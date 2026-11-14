@@ -25,9 +25,9 @@
 @testable import Alamofire
 import Foundation
 import Testing
-import XCTest
 
-class BaseRetryPolicyTestCase: BaseTestCase {
+@Suite(.storesInstances)
+struct RetryPolicyTestCase {
     // MARK: Helper Types
 
     final class StubRequest: DataRequest, @unchecked Sendable {
@@ -65,7 +65,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     let nonIdempotentMethods: Set<HTTPMethod> = [.post, .patch, .connect]
     var methods: Set<HTTPMethod> { idempotentMethods.union(nonIdempotentMethods) }
 
-    let session = Session(rootQueue: .main, startRequestsImmediately: false)
+    let session = stored(Session.independent(startRequestsImmediately: false))
 
     let url = Endpoint().url
 
@@ -73,9 +73,9 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     let resourceUnavailable = URLError(.resourceUnavailable)
     let unknown = URLError(.unknown)
 
-    lazy var connectionLostError = AFError.sessionTaskFailed(error: connectionLost)
-    lazy var resourceUnavailableError = AFError.sessionTaskFailed(error: resourceUnavailable)
-    lazy var unknownError = AFError.sessionTaskFailed(error: unknown)
+    var connectionLostError: AFError { AFError.sessionTaskFailed(error: connectionLost) }
+    var resourceUnavailableError: AFError { AFError.sessionTaskFailed(error: resourceUnavailable) }
+    var unknownError: AFError { AFError.sessionTaskFailed(error: unknown) }
 
     let retryableStatusCodes: Set<Int> = [408, 500, 502, 503, 504]
     let statusCodes = Set(100...599)
@@ -149,198 +149,202 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     func urlError(with code: URLError.Code) -> URLError {
         NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
     }
-}
 
-// MARK: -
-
-final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     // MARK: Tests - Retry
 
-    @MainActor
-    func testThatRetryIsNotPerformedOnCancelledRequests() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryIsNotPerformedOnCancelledRequests() async {
         // Given
         let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
             completion(.retry)
         })
-        let session = Session(interceptor: retrier)
-        let didFinish = expectation(description: "didFinish request")
+        let session = stored(Session.independent(interceptor: retrier))
+        let didFinish = Completion("didFinish request")
 
         // When
         let request = session.request(.default)
         request.cancel()
         request.responseDecodable(of: TestResponse.self) { _ in
-            didFinish.fulfill()
+            didFinish.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await didFinish.wait()
 
         // Then
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertEqual(retrier.retryCalledCount, 0)
+        #expect(request.isCancelled)
+        #expect(retrier.retryCalledCount == 0)
     }
 
-    @MainActor
-    func testThatRetryPolicyRetriesRequestsBelowRetryLimit() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryPolicyRetriesRequestsBelowRetryLimit() async {
         // Given
         let retryPolicy = RetryPolicy()
         let request = request(method: .get)
 
-        var results: [Int: RetryResult] = [:]
+        let results = Capture<[Int: RetryResult]>([:])
 
         // When
         for index in 0...2 {
-            let expectation = expectation(description: "retry policy should complete")
+            let expectation = Completion("retry policy should complete")
 
             retryPolicy.retry(request, for: session, dueTo: connectionLostError) { result in
-                results[index] = result
-                expectation.fulfill()
+                results.write { $0[index] = result }
+                expectation.complete()
             }
 
-            waitForExpectations(timeout: timeout)
+            await expectation.wait()
 
-            request.prepareForRetry()
+            // prepareForRetry() must be called on the request's underlying queue, the session's root queue.
+            session.rootQueue.sync { request.prepareForRetry() }
         }
 
         // Then
-        XCTAssertEqual(results.count, 3)
+        #expect(results.count == 3)
 
         if results.count == 3 {
-            XCTAssertEqual(results[0]?.retryRequired, true)
-            XCTAssertEqual(results[0]?.delay, 0.5)
-            XCTAssertNil(results[0]?.error)
+            #expect(results.value[0]?.retryRequired == true)
+            #expect(results.value[0]?.delay == 0.5)
+            #expect(results.value[0]?.error == nil)
 
-            XCTAssertEqual(results[1]?.retryRequired, true)
-            XCTAssertEqual(results[1]?.delay, 1.0)
-            XCTAssertNil(results[1]?.error)
+            #expect(results.value[1]?.retryRequired == true)
+            #expect(results.value[1]?.delay == 1.0)
+            #expect(results.value[1]?.error == nil)
 
-            XCTAssertEqual(results[2]?.retryRequired, false)
-            XCTAssertNil(results[2]?.delay)
-            XCTAssertNil(results[2]?.error)
+            #expect(results.value[2]?.retryRequired == false)
+            #expect(results.value[2]?.delay == nil)
+            #expect(results.value[2]?.error == nil)
         }
     }
 
-    @MainActor
-    func testThatRetryPolicyRetriesIdempotentRequests() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryPolicyRetriesIdempotentRequests() async {
         // Given
         let retryPolicy = RetryPolicy()
-        var results: [HTTPMethod: RetryResult] = [:]
+        let results = Capture<[HTTPMethod: RetryResult]>([:])
 
         // When
         for method in methods {
             let request = request(method: method)
-            let expectation = expectation(description: "retry policy should complete")
+            let expectation = Completion("retry policy should complete")
 
             retryPolicy.retry(request, for: session, dueTo: connectionLostError) { result in
-                results[method] = result
-                expectation.fulfill()
+                results.write { $0[method] = result }
+                expectation.complete()
             }
 
-            waitForExpectations(timeout: timeout)
+            await expectation.wait()
         }
 
         // Then
-        XCTAssertEqual(results.count, methods.count)
+        #expect(results.count == methods.count)
 
-        for (method, result) in results {
-            XCTAssertEqual(result.retryRequired, idempotentMethods.contains(method))
-            XCTAssertEqual(result.delay, result.retryRequired ? 0.5 : nil)
-            XCTAssertNil(result.error)
+        for (method, result) in results.value {
+            #expect(result.retryRequired == idempotentMethods.contains(method))
+            #expect(result.delay == (result.retryRequired ? 0.5 : nil))
+            #expect(result.error == nil)
         }
     }
 
-    @MainActor
-    func testThatRetryPolicyRetriesRequestsWithRetryableStatusCodes() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryPolicyRetriesRequestsWithRetryableStatusCodes() async {
         // Given
         let retryPolicy = RetryPolicy()
-        var results: [Int: RetryResult] = [:]
+        let results = Capture<[Int: RetryResult]>([:])
 
         // When
         for statusCode in statusCodes {
             let request = request(method: .get, statusCode: statusCode)
-            let expectation = expectation(description: "retry policy should complete")
+            let expectation = Completion("retry policy should complete")
 
             retryPolicy.retry(request, for: session, dueTo: unknownError) { result in
-                results[statusCode] = result
-                expectation.fulfill()
+                results.write { $0[statusCode] = result }
+                expectation.complete()
             }
 
-            waitForExpectations(timeout: timeout)
+            await expectation.wait()
         }
 
         // Then
-        XCTAssertEqual(results.count, statusCodes.count)
+        #expect(results.count == statusCodes.count)
 
-        for (statusCode, result) in results {
-            XCTAssertEqual(result.retryRequired, retryableStatusCodes.contains(statusCode))
-            XCTAssertEqual(result.delay, result.retryRequired ? 0.5 : nil)
-            XCTAssertNil(result.error)
+        for (statusCode, result) in results.value {
+            #expect(result.retryRequired == retryableStatusCodes.contains(statusCode))
+            #expect(result.delay == (result.retryRequired ? 0.5 : nil))
+            #expect(result.error == nil)
         }
     }
 
-    @MainActor
-    func testThatRetryPolicyRetriesRequestsWithRetryableErrors() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryPolicyRetriesRequestsWithRetryableErrors() async {
         // Given
         let retryPolicy = RetryPolicy()
-        var results: [URLError.Code: RetryResult] = [:]
+        let results = Capture<[URLError.Code: RetryResult]>([:])
 
         // When
         for code in errorCodes {
             let request = request(method: .get)
             let error = URLError(code)
 
-            let expectation = expectation(description: "retry policy should complete")
+            let expectation = Completion("retry policy should complete")
 
             retryPolicy.retry(request, for: session, dueTo: error) { result in
-                results[code] = result
-                expectation.fulfill()
+                results.write { $0[code] = result }
+                expectation.complete()
             }
 
-            waitForExpectations(timeout: timeout)
+            await expectation.wait()
         }
 
         // Then
-        XCTAssertEqual(results.count, errorCodes.count)
+        #expect(results.count == errorCodes.count)
 
-        for (urlErrorCode, result) in results {
-            XCTAssertEqual(result.retryRequired, retryableErrorCodes.contains(urlErrorCode))
-            XCTAssertEqual(result.delay, result.retryRequired ? 0.5 : nil)
-            XCTAssertNil(result.error)
+        for (urlErrorCode, result) in results.value {
+            #expect(result.retryRequired == retryableErrorCodes.contains(urlErrorCode))
+            #expect(result.delay == (result.retryRequired ? 0.5 : nil))
+            #expect(result.error == nil)
         }
     }
 
-    @MainActor
-    func testThatRetryPolicyRetriesRequestsWithRetryableAFErrors() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryPolicyRetriesRequestsWithRetryableAFErrors() async {
         // Given
         let retryPolicy = RetryPolicy()
-        var results: [URLError.Code: RetryResult] = [:]
+        let results = Capture<[URLError.Code: RetryResult]>([:])
 
         // When
         for code in errorCodes {
             let request = request(method: .get)
             let error = AFError.sessionTaskFailed(error: URLError(code))
 
-            let expectation = expectation(description: "retry policy should complete")
+            let expectation = Completion("retry policy should complete")
 
             retryPolicy.retry(request, for: session, dueTo: error) { result in
-                results[code] = result
-                expectation.fulfill()
+                results.write { $0[code] = result }
+                expectation.complete()
             }
 
-            waitForExpectations(timeout: timeout)
+            await expectation.wait()
         }
 
         // Then
-        XCTAssertEqual(results.count, errorCodes.count)
+        #expect(results.count == errorCodes.count)
 
-        for (urlErrorCode, result) in results {
-            XCTAssertEqual(result.retryRequired, retryableErrorCodes.contains(urlErrorCode))
-            XCTAssertEqual(result.delay, result.retryRequired ? 0.5 : nil)
-            XCTAssertNil(result.error)
+        for (urlErrorCode, result) in results.value {
+            #expect(result.retryRequired == retryableErrorCodes.contains(urlErrorCode))
+            #expect(result.delay == (result.retryRequired ? 0.5 : nil))
+            #expect(result.error == nil)
         }
     }
 
-    @MainActor
-    func testThatRetryPolicyDoesNotRetryErrorsThatAreNotRetryable() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryPolicyDoesNotRetryErrorsThatAreNotRetryable() async {
         // Given
         let retryPolicy = RetryPolicy()
         let request = request(method: .get)
@@ -350,77 +354,79 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
                                    resourceUnavailableError,
                                    unknownError]
 
-        var results: [RetryResult] = []
+        let results = Capture<[RetryResult]>([])
 
         // When
         for error in errors {
-            let expectation = expectation(description: "retry policy should complete")
+            let expectation = Completion("retry policy should complete")
 
             retryPolicy.retry(request, for: session, dueTo: error) { result in
-                results.append(result)
-                expectation.fulfill()
+                results.write { $0.append(result) }
+                expectation.complete()
             }
 
-            waitForExpectations(timeout: timeout)
+            await expectation.wait()
         }
 
         // Then
-        XCTAssertEqual(results.count, errors.count)
+        #expect(results.count == errors.count)
 
-        for result in results {
-            XCTAssertFalse(result.retryRequired)
-            XCTAssertNil(result.delay)
-            XCTAssertNil(result.error)
+        for result in results.value {
+            #expect(!result.retryRequired)
+            #expect(result.delay == nil)
+            #expect(result.error == nil)
         }
     }
 
     // MARK: Tests - Exponential Backoff
 
-    @MainActor
-    func testThatRetryPolicyTimeDelayBacksOffExponentially() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func retryPolicyTimeDelayBacksOffExponentially() async {
         // Given
         let retryPolicy = RetryPolicy(retryLimit: 4)
         let request = request(method: .get)
 
-        var results: [Int: RetryResult] = [:]
+        let results = Capture<[Int: RetryResult]>([:])
 
         // When
         for index in 0...4 {
-            let expectation = expectation(description: "retry policy should complete")
+            let expectation = Completion("retry policy should complete")
 
             retryPolicy.retry(request, for: session, dueTo: connectionLostError) { result in
-                results[index] = result
-                expectation.fulfill()
+                results.write { $0[index] = result }
+                expectation.complete()
             }
 
-            waitForExpectations(timeout: timeout)
+            await expectation.wait()
 
-            request.prepareForRetry()
+            // prepareForRetry() must be called on the request's underlying queue, the session's root queue.
+            session.rootQueue.sync { request.prepareForRetry() }
         }
 
         // Then
-        XCTAssertEqual(results.count, 5)
+        #expect(results.count == 5)
 
         if results.count == 5 {
-            XCTAssertEqual(results[0]?.retryRequired, true)
-            XCTAssertEqual(results[0]?.delay, 0.5)
-            XCTAssertNil(results[0]?.error)
+            #expect(results.value[0]?.retryRequired == true)
+            #expect(results.value[0]?.delay == 0.5)
+            #expect(results.value[0]?.error == nil)
 
-            XCTAssertEqual(results[1]?.retryRequired, true)
-            XCTAssertEqual(results[1]?.delay, 1.0)
-            XCTAssertNil(results[1]?.error)
+            #expect(results.value[1]?.retryRequired == true)
+            #expect(results.value[1]?.delay == 1.0)
+            #expect(results.value[1]?.error == nil)
 
-            XCTAssertEqual(results[2]?.retryRequired, true)
-            XCTAssertEqual(results[2]?.delay, 2.0)
-            XCTAssertNil(results[2]?.error)
+            #expect(results.value[2]?.retryRequired == true)
+            #expect(results.value[2]?.delay == 2.0)
+            #expect(results.value[2]?.error == nil)
 
-            XCTAssertEqual(results[3]?.retryRequired, true)
-            XCTAssertEqual(results[3]?.delay, 4.0)
-            XCTAssertNil(results[3]?.error)
+            #expect(results.value[3]?.retryRequired == true)
+            #expect(results.value[3]?.delay == 4.0)
+            #expect(results.value[3]?.error == nil)
 
-            XCTAssertEqual(results[4]?.retryRequired, false)
-            XCTAssertNil(results[4]?.delay)
-            XCTAssertNil(results[4]?.error)
+            #expect(results.value[4]?.retryRequired == false)
+            #expect(results.value[4]?.delay == nil)
+            #expect(results.value[4]?.error == nil)
         }
     }
 }

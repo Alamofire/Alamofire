@@ -411,8 +411,10 @@ struct CompletionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func waitForCompletionsSharesOneDeadline() async {
         // Given
-        let first = Completion("first", timeout: 0.2)
-        let second = Completion("second", timeout: 0.2)
+        // Long enough timeouts that scheduling delays under parallel load can't blur the difference between one shared
+        // deadline (about 1 second) and consecutive timeouts (2 seconds).
+        let first = Completion("first", timeout: 1)
+        let second = Completion("second", timeout: 1)
         let start = Date()
 
         // When, Then
@@ -421,7 +423,7 @@ struct CompletionTests {
         } matching: { issue in
             issue.description.contains("Timed out")
         }
-        #expect(Date().timeIntervalSince(start) < 0.35)
+        #expect(Date().timeIntervalSince(start) < 1.9)
     }
 
     @Test

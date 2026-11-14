@@ -31,7 +31,7 @@ private struct RetryError: Error {}
 
 // MARK: -
 
-@Suite
+@Suite(.storesInstances)
 struct RetryResultTests {
     @Test
     func retryRequiredProperty() {
@@ -81,35 +81,38 @@ struct RetryResultTests {
 
 // MARK: -
 
-@Suite
+@Suite(.storesInstances)
 struct AdapterTests {
     @Test
-    func thatAdapterCallsAdaptHandler() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatAdapterCallsAdaptHandler() throws {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
-        var adapted = false
+        let session = stored(Session.independent())
+        let adapted = Capture(false)
 
         let adapter = Adapter { request, _, completion in
-            adapted = true
+            adapted.value = true
             completion(.success(request))
         }
 
-        var result: Result<URLRequest, any Error>!
+        let capturedResult = Capture<Result<URLRequest, any Error>?>()
 
         // When
-        adapter.adapt(urlRequest, for: session) { result = $0 }
+        adapter.adapt(urlRequest, for: session) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
-        #expect(adapted)
+        #expect(adapted.value)
         #expect(result.isSuccess)
     }
 
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatAdapterCallsAdaptHandlerWithStateAPI() {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
         let requestID = UUID()
 
         let interceptor = InspectorInterceptor(.adapter { @Sendable request, _, completionHandler in
@@ -131,9 +134,10 @@ struct AdapterTests {
     }
 
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
         let adapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in
@@ -148,10 +152,11 @@ struct AdapterTests {
     }
 
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatAdapterCanBeImplementedAsynchronously() async {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
 
         let adapter = InspectorInterceptor(.adapter { @Sendable request, _, completion in
             DispatchQueue.main.async {
@@ -174,12 +179,13 @@ struct AdapterTests {
 
 // MARK: -
 
-@Suite
+@Suite(.storesInstances)
 struct RetrierTests {
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatRetrierCallsRetryHandler() {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
         let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
@@ -195,10 +201,11 @@ struct RetrierTests {
     }
 
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatRetrierCallsRequestAdapterDefaultImplementationInProtocolExtension() {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
 
         let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
             completion(.retry)
@@ -212,9 +219,10 @@ struct RetrierTests {
     }
 
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatRetrierCanBeImplementedAsynchronously() async {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
         let retrier = InspectorInterceptor(Retrier { _, _, _, completion in
@@ -238,7 +246,7 @@ struct RetrierTests {
 
 // MARK: -
 
-@Suite
+@Suite(.storesInstances)
 struct InterceptorTests {
     @Test
     func adaptHandlerAndRetryHandlerDefaultInitializer() {
@@ -298,16 +306,18 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorCanAdaptRequestWithNoAdapters() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorCanAdaptRequestWithNoAdapters() throws {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
         let interceptor = Interceptor()
 
-        var result: Result<URLRequest, any Error>!
+        let capturedResult = Capture<Result<URLRequest, any Error>?>()
 
         // When
-        interceptor.adapt(urlRequest, for: session) { result = $0 }
+        interceptor.adapt(urlRequest, for: session) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result.isSuccess == true)
@@ -315,18 +325,20 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorCanAdaptRequestWithOneAdapter() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorCanAdaptRequestWithOneAdapter() throws {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
 
         let adapter = Adapter { _, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: Result<URLRequest, any Error>!
+        let capturedResult = Capture<Result<URLRequest, any Error>?>()
 
         // When
-        interceptor.adapt(urlRequest, for: session) { result = $0 }
+        interceptor.adapt(urlRequest, for: session) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result.isFailure)
@@ -334,19 +346,21 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorCanAdaptRequestWithMultipleAdapters() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorCanAdaptRequestWithMultipleAdapters() throws {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
 
         let adapter1 = Adapter { urlRequest, _, completion in completion(.success(urlRequest)) }
         let adapter2 = Adapter { _, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter1, adapter2])
 
-        var result: Result<URLRequest, any Error>!
+        let capturedResult = Capture<Result<URLRequest, any Error>?>()
 
         // When
-        interceptor.adapt(urlRequest, for: session) { result = $0 }
+        interceptor.adapt(urlRequest, for: session) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result.isFailure)
@@ -354,20 +368,22 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorCanAdaptRequestWithMultipleAdaptersUsingStateAPI() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorCanAdaptRequestWithMultipleAdaptersUsingStateAPI() throws {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
 
         let adapter1 = Adapter { urlRequest, _, completion in completion(.success(urlRequest)) }
         let adapter2 = Adapter { _, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter1, adapter2])
         let state = RequestAdapterState(requestID: UUID(), session: session)
 
-        var result: Result<URLRequest, any Error>!
+        let capturedResult = Capture<Result<URLRequest, any Error>?>()
 
         // When
-        interceptor.adapt(urlRequest, using: state) { result = $0 }
+        interceptor.adapt(urlRequest, using: state) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result.isFailure)
@@ -375,10 +391,11 @@ struct InterceptorTests {
     }
 
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatInterceptorCanAdaptRequestAsynchronously() async {
         // Given
         let urlRequest = Endpoint().urlRequest
-        let session = Session()
+        let session = stored(Session.independent())
 
         let adapter = Adapter { _, _, completion in
             DispatchQueue.main.async {
@@ -400,63 +417,70 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorCanRetryRequestWithNoRetriers() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorCanRetryRequestWithNoRetriers() throws {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
         let interceptor = Interceptor()
 
-        var result: RetryResult!
+        let capturedResult = Capture<RetryResult?>()
 
         // When
-        interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        interceptor.retry(request, for: session, dueTo: MockError()) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result == .doNotRetry)
     }
 
     @Test
-    func thatInterceptorCanRetryRequestWithOneRetrier() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorCanRetryRequestWithOneRetrier() throws {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
         let retrier = Retrier { _, _, _, completion in completion(.retry) }
         let interceptor = Interceptor(retriers: [retrier])
 
-        var result: RetryResult!
+        let capturedResult = Capture<RetryResult?>()
 
         // When
-        interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        interceptor.retry(request, for: session, dueTo: MockError()) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result == .retry)
     }
 
     @Test
-    func thatInterceptorCanRetryRequestWithMultipleRetriers() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorCanRetryRequestWithMultipleRetriers() throws {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
         let retrier1 = Retrier { _, _, _, completion in completion(.doNotRetry) }
         let retrier2 = Retrier { _, _, _, completion in completion(.retry) }
         let interceptor = Interceptor(retriers: [retrier1, retrier2])
 
-        var result: RetryResult!
+        let capturedResult = Capture<RetryResult?>()
 
         // When
-        interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        interceptor.retry(request, for: session, dueTo: MockError()) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result == .retry)
     }
 
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatInterceptorCanRetryRequestAsynchronously() async {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
         let retrier = Retrier { _, _, _, completion in
@@ -477,82 +501,89 @@ struct InterceptorTests {
     }
 
     @Test
-    func thatInterceptorStopsIteratingThroughPendingRetriersWithRetryResult() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorStopsIteratingThroughPendingRetriersWithRetryResult() throws {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
-        var retrier2Called = false
+        let retrier2Called = Capture(false)
 
         let retrier1 = Retrier { _, _, _, completion in completion(.retry) }
-        let retrier2 = Retrier { _, _, _, completion in retrier2Called = true; completion(.doNotRetry) }
+        let retrier2 = Retrier { _, _, _, completion in retrier2Called.value = true; completion(.doNotRetry) }
         let interceptor = Interceptor(retriers: [retrier1, retrier2])
 
-        var result: RetryResult!
+        let capturedResult = Capture<RetryResult?>()
 
         // When
-        interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        interceptor.retry(request, for: session, dueTo: MockError()) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result == .retry)
-        #expect(retrier2Called == false)
+        #expect(retrier2Called.value == false)
     }
 
     @Test
-    func thatInterceptorStopsIteratingThroughPendingRetriersWithRetryWithDelayResult() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorStopsIteratingThroughPendingRetriersWithRetryWithDelayResult() throws {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
-        var retrier2Called = false
+        let retrier2Called = Capture(false)
 
         let retrier1 = Retrier { _, _, _, completion in completion(.retryWithDelay(1.0)) }
-        let retrier2 = Retrier { _, _, _, completion in retrier2Called = true; completion(.doNotRetry) }
+        let retrier2 = Retrier { _, _, _, completion in retrier2Called.value = true; completion(.doNotRetry) }
         let interceptor = Interceptor(retriers: [retrier1, retrier2])
 
-        var result: RetryResult!
+        let capturedResult = Capture<RetryResult?>()
 
         // When
-        interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        interceptor.retry(request, for: session, dueTo: MockError()) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result == .retryWithDelay(1.0))
         #expect(result.delay == 1.0)
-        #expect(retrier2Called == false)
+        #expect(retrier2Called.value == false)
     }
 
     @Test
-    func thatInterceptorStopsIteratingThroughPendingRetriersWithDoNotRetryResult() {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func thatInterceptorStopsIteratingThroughPendingRetriersWithDoNotRetryResult() throws {
         // Given
-        let session = Session(startRequestsImmediately: false)
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(.default)
 
-        var retrier2Called = false
+        let retrier2Called = Capture(false)
 
         let retrier1 = Retrier { _, _, _, completion in completion(.doNotRetryWithError(RetryError())) }
-        let retrier2 = Retrier { _, _, _, completion in retrier2Called = true; completion(.doNotRetry) }
+        let retrier2 = Retrier { _, _, _, completion in retrier2Called.value = true; completion(.doNotRetry) }
         let interceptor = Interceptor(retriers: [retrier1, retrier2])
 
-        var result: RetryResult!
+        let capturedResult = Capture<RetryResult?>()
 
         // When
-        interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
+        interceptor.retry(request, for: session, dueTo: MockError()) { capturedResult.value = $0 }
+        let result = try #require(capturedResult.value)
 
         // Then
         #expect(result == RetryResult.doNotRetryWithError(RetryError()))
         #expect(result.error is RetryError)
-        #expect(retrier2Called == false)
+        #expect(retrier2Called.value == false)
     }
 }
 
 // MARK: - Functional Tests
 
-@Suite
+@Suite(.storesInstances)
 struct InterceptorRequestTests {
     @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func thatRetryPolicyRetriesRequestTimeout() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
         let urlRequest = Endpoint.delay(1).modifying(\.timeout, to: 0.01)
 
@@ -577,7 +608,7 @@ extension DataRequest {
 
 // MARK: - Static Accessors
 
-@Suite
+@Suite(.storesInstances)
 struct StaticAccessorTests {
     func consumeRequestAdapter(_ requestAdapter: any RequestAdapter) {
         _ = requestAdapter

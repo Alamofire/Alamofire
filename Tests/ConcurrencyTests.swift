@@ -32,17 +32,16 @@ import Testing
 struct DataRequestConcurrencyTests {
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func dataTaskSerializesResponseUsingSerializer() async throws {
+    func dataTaskSerializesResponseUsingSerializer() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.request(.get)
-            .serializingResponse(using: .data)
-            .value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.request(.get)
+                .serializingResponse(using: .data)
+                .value
+        }
     }
 
     @Test
@@ -79,56 +78,52 @@ struct DataRequestConcurrencyTests {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func status500ResponseCanBeRetried() async throws {
+    func status500ResponseCanBeRetried() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.request(.endpoints(.status(500), .method(.get)), interceptor: .retryPolicy)
-            .serializingResponse(using: .data)
-            .value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.request(.endpoints(.status(500), .method(.get)), interceptor: .retryPolicy)
+                .serializingResponse(using: .data)
+                .value
+        }
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func dataTaskSerializesDecodable() async throws {
+    func dataTaskSerializesDecodable() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.request(.get).serializingDecodable(TestResponse.self).value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.request(.get).serializingDecodable(TestResponse.self).value
+        }
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func dataTaskSerializesString() async throws {
+    func dataTaskSerializesString() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.request(.get).serializingString().value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.request(.get).serializingString().value
+        }
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func dataTaskSerializesData() async throws {
+    func dataTaskSerializesData() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.request(.get).serializingData().value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.request(.get).serializingData().value
+        }
     }
 
     @Test
@@ -146,15 +141,14 @@ struct DataRequestConcurrencyTests {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func dataTaskProducesValue() async throws {
+    func dataTaskProducesValue() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.request(.get).serializingDecodable(TestResponse.self).value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.request(.get).serializingDecodable(TestResponse.self).value
+        }
     }
 
     @Test
@@ -294,69 +288,64 @@ struct DataRequestConcurrencyTests {
 struct DownloadConcurrencyTests {
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func downloadTaskSerializesResponseFromSerializer() async throws {
+    func downloadTaskSerializesResponseFromSerializer() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.download(.get)
-            .serializingDownload(using: .data)
-            .value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.download(.get)
+                .serializingDownload(using: .data)
+                .value
+        }
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func downloadTaskSerializesDecodable() async throws {
+    func downloadTaskSerializesDecodable() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.download(.get).serializingDecodable(TestResponse.self).value
+        }
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func downloadTaskSerializesString() async throws {
+    func downloadTaskSerializesString() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.download(.get).serializingString().value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.download(.get).serializingString().value
+        }
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func downloadTaskSerializesData() async throws {
+    func downloadTaskSerializesData() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.download(.get).serializingData().value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.download(.get).serializingData().value
+        }
     }
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func downloadTaskSerializesURL() async throws {
+    func downloadTaskSerializesURL() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.download(.get).serializingDownloadedFileURL().value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.download(.get).serializingDownloadedFileURL().value
+        }
     }
 
     @Test
@@ -374,15 +363,14 @@ struct DownloadConcurrencyTests {
 
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func downloadTaskProducesValue() async throws {
+    func downloadTaskProducesValue() async {
         // Given
         let session = stored(Session.independent())
 
-        // When
-        let value = try await session.download(.get).serializingDecodable(TestResponse.self).value
-
-        // Then
-        #expect(value != nil)
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await session.download(.get).serializingDecodable(TestResponse.self).value
+        }
     }
 
     @Test
@@ -690,7 +678,9 @@ struct DataStreamConcurrencyTests {
 
         // Then
         #expect(request.isCancelled)
-        #expect(datas.count == 1)
+        // Payloads that arrived before cancellation are still delivered from the stream's buffer, so more than one is
+        // possible when the test is slow to run, but cancellation must end the stream before all of them arrive.
+        #expect(datas.count < expectedPayloads)
     }
 
     @Test
@@ -845,6 +835,14 @@ struct UploadConcurrencyTests {
         }
 
         for _ in 0..<count {
+            // Writing to a full bound stream blocks until the upload reads from it. If the upload stops reading, such
+            // as when the connection is lost, a blocking write would hang the test forever, so only write once there's
+            // space, and stop as soon as a response arrives.
+            while !outputStream.hasSpaceAvailable, response.value == nil {
+                try await Task.sleep(nanoseconds: 1_000_000)
+            }
+            guard response.value == nil else { break }
+
             sendData()
 
             try await Task.sleep(nanoseconds: 3 * 1_000_000) // milliseconds

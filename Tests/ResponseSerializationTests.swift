@@ -25,7 +25,6 @@
 import Alamofire
 import Foundation
 import Testing
-import XCTest
 
 @Suite
 struct DataResponseSerializationTestCase {
@@ -1263,30 +1262,32 @@ struct DownloadResponseSerializationTestCase {
     }
 }
 
-final class CustomResponseSerializerTests: BaseTestCase {
-    @MainActor
-    func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
+@Suite(.storesInstances)
+struct CustomResponseSerializerTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func customResponseSerializersCanBeWrittenWithoutCompilerIssues() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         final class UselessResponseSerializer: ResponseSerializer {
             func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: (any Error)?) throws -> Data? {
                 data
             }
         }
         let serializer = UselessResponseSerializer()
-        let expectation = expectation(description: "request should finish")
-        var data: Data?
+        let expectation = Completion("request should finish")
+        let data = Capture<Data?>()
 
         // When
         session.request(.default).response(responseSerializer: serializer) { response in
-            data = response.data
-            expectation.fulfill()
+            data.value = response.data
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(data)
+        #expect(data.value != nil)
     }
 }
 
