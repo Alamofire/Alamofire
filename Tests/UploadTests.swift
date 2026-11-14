@@ -475,7 +475,7 @@ struct UploadMultipartFormDataTestCase {
                                          multipartFormData.append(frenchData, withName: "french")
                                          multipartFormData.append(japaneseData, withName: "japanese")
                                      },
-                                     to: Endpoint.method(.post),
+                                     to: Endpoint.upload,
                                      usingThreshold: .max)
             .response { resp in
                 response.value = resp
