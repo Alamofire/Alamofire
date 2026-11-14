@@ -31,9 +31,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_27.2"
+            runsOn: xcode-27
+            name: "macOS 27, Xcode 27.2, Swift 6.4.2"
           - xcode: "Xcode_27.0"
             runsOn: xcode-27
-            name: "macOS 26, Xcode 27.0, Swift 6.4.0"
+            name: "macOS 27, Xcode 27.0, Swift 6.4.0"
           - xcode: "Xcode_26.6"
             runsOn: macos-26
             name: "macOS 26, Xcode 26.6, Swift 6.3.3"
@@ -55,7 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && ulimit -n 10240 && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan macOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
@@ -74,6 +77,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_27.2"
+            name: "Catalyst 27.2"
+            runsOn: xcode-27
           - xcode: "Xcode_27.0"
             name: "Catalyst 27.0"
             runsOn: xcode-27
@@ -98,7 +104,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && ulimit -n 10240 && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" -testPlan iOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
@@ -117,10 +123,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=iPhone 17 Pro"
-          #   name: "iOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: xcode-27
+          - destination: "OS=27.2,name=iPhone 17 Pro"
+            name: "iOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - destination: "OS=27.0,name=iPhone 17 Pro"
+            name: "iOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: xcode-27
           - destination: "OS=26.5,name=iPhone 17 Pro"
             name: "iOS 26.5"
             xcode: "Xcode_26.6"
@@ -148,7 +158,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && ulimit -n 10240 && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -destination-timeout 120 -testPlan iOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
@@ -167,10 +177,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=Apple TV 4K (3rd generation)"
-          #   name: "tvOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: self-xcode270
+          - destination: "OS=27.2,name=Apple TV 4K (3rd generation)"
+            name: "tvOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - destination: "OS=27.0,name=Apple TV 4K (3rd generation)"
+            name: "tvOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: self-xcode270
           - destination: "OS=26.5,name=Apple TV"
             name: "tvOS 26.5"
             xcode: "Xcode_26.6"
@@ -194,7 +208,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && ulimit -n 10240 && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -destination-timeout 120 -testPlan tvOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
@@ -213,10 +227,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=Apple Vision Pro"
-          #   name: "visionOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: self-xcode270
+          - destination: "OS=27.2,name=Apple Vision Pro"
+            name: "visionOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - destination: "OS=27.0,name=Apple Vision Pro"
+            name: "visionOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: self-xcode270
           - destination: "OS=26.5,name=Apple Vision Pro"
             name: "visionOS 26.5"
             xcode: "Xcode_26.6"
@@ -240,7 +258,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && ulimit -n 10240 && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire visionOS" -destination "${{ matrix.destination }}" -destination-timeout 120 -testPlan visionOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
@@ -259,10 +277,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=Apple Watch Series 11 (46mm)"
-          #   name: "watchOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: self-xcode270
+          - destination: "OS=27.2,name=Apple Watch Series 11 (46mm)"
+            name: "watchOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - destination: "OS=27.0,name=Apple Watch Series 11 (46mm)"
+            name: "watchOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: self-xcode270
           - destination: "OS=26.5,name=Apple Watch Series 11 (46mm)"
             name: "watchOS 26.5"
             xcode: "Xcode_26.6"
@@ -286,7 +308,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
-        run: brew update && brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+        run: brew update && brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && ulimit -n 10240 && firewalk &
       - name: ${{ matrix.name }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -destination-timeout 120 -testPlan watchOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
       - name: Upload Result File
@@ -305,9 +327,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_27.2"
+            runsOn: xcode-27
+            name: "macOS 27, SPM 6.4.2 Test"
           - xcode: "Xcode_27.0"
             runsOn: xcode-27
-            name: "macOS 26, SPM 6.4.0 Test"
+            name: "macOS 27, SPM 6.4.0 Test"
           - xcode: "Xcode_26.6"
             runsOn: macos-26
             name: "macOS 26, SPM 6.3.3 Test"
@@ -329,7 +354,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
+        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && ulimit -n 10240 && firewalk &
       - name: Test SPM
         run: set -o pipefail && swift test -c debug 2>&1 | xcbeautify --renderer github-actions
   Linux:
