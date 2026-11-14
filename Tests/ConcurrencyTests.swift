@@ -25,8 +25,8 @@
 #if canImport(_Concurrency)
 
 import Alamofire
+import Foundation
 import Testing
-import XCTest
 
 @Suite(.storesInstances)
 struct DataRequestConcurrencyTests {
@@ -517,11 +517,13 @@ struct DownloadConcurrencyTests {
     }
 }
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class DataStreamConcurrencyTests: BaseTestCase {
-    func testThatDataStreamTaskCanStreamData() async {
+@Suite(.storesInstances)
+struct DataStreamConcurrencyTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamTaskCanStreamData() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let task = session.streamRequest(.payloads(2)).streamTask()
@@ -532,16 +534,18 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertEqual(datas.count, 2)
+        #expect(datas.count == 2)
     }
 
     #if canImport(Darwin)
-    func testThatDataStreamHasAsyncOnHTTPResponse() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamHasAsyncOnHTTPResponse() async {
         // Given
-        let session = stored(Session())
-        let functionCalled = expectation(description: "doNothing called")
+        let session = stored(Session.independent())
+        let functionCalled = Completion("doNothing called")
         @Sendable @MainActor func fulfill() async {
-            functionCalled.fulfill()
+            functionCalled.complete()
         }
 
         // When
@@ -556,18 +560,20 @@ final class DataStreamConcurrencyTests: BaseTestCase {
             datas.append(data)
         }
 
-        await fulfillment(of: [functionCalled], timeout: timeout)
+        await functionCalled.wait()
 
         // Then
-        XCTAssertEqual(datas.count, 2)
+        #expect(datas.count == 2)
     }
 
-    func testThatDataOnHTTPResponseCanAllow() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataOnHTTPResponseCanAllow() async {
         // Given
-        let session = stored(Session())
-        let functionCalled = expectation(description: "doNothing called")
+        let session = stored(Session.independent())
+        let functionCalled = Completion("doNothing called")
         @Sendable @MainActor func fulfill() async {
-            functionCalled.fulfill()
+            functionCalled.complete()
         }
 
         // When
@@ -583,19 +589,21 @@ final class DataStreamConcurrencyTests: BaseTestCase {
             datas.append(data)
         }
 
-        await fulfillment(of: [functionCalled], timeout: timeout)
+        await functionCalled.wait()
 
         // Then
-        XCTAssertEqual(datas.count, 2)
+        #expect(datas.count == 2)
     }
 
-    func testThatDataOnHTTPResponseCanCancel() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataOnHTTPResponseCanCancel() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         var receivedCompletion: DataStreamRequest.Completion?
-        let functionCalled = expectation(description: "doNothing called")
+        let functionCalled = Completion("doNothing called")
         @Sendable @MainActor func fulfill() async {
-            functionCalled.fulfill()
+            functionCalled.complete()
         }
 
         // When
@@ -609,24 +617,26 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         for await stream in task.streamingResponses(serializedUsing: .passthrough) {
             switch stream.event {
             case .stream:
-                XCTFail("cancelled stream should receive no data")
+                Issue.record("cancelled stream should receive no data")
             case let .complete(completion):
                 receivedCompletion = completion
             }
         }
 
-        await fulfillment(of: [functionCalled], timeout: timeout)
+        await functionCalled.wait()
 
         // Then
-        XCTAssertEqual(receivedCompletion?.response?.statusCode, 200)
-        XCTAssertTrue(request.isCancelled, "onHTTPResponse cancelled request isCancelled should be true")
-        XCTAssertTrue(request.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled request error should be explicitly cancelled")
+        #expect(receivedCompletion?.response?.statusCode == 200)
+        #expect(request.isCancelled, "onHTTPResponse cancelled request isCancelled should be true")
+        #expect(request.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled request error should be explicitly cancelled")
     }
     #endif
 
-    func testThatDataStreamTaskCanStreamStrings() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamTaskCanStreamStrings() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let task = session.streamRequest(.payloads(2)).streamTask()
@@ -637,12 +647,14 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertEqual(strings.count, 2)
+        #expect(strings.count == 2)
     }
 
-    func testThatDataStreamTaskCanStreamDecodable() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamTaskCanStreamDecodable() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let task = session.streamRequest(.payloads(2)).streamTask()
@@ -654,12 +666,14 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertEqual(responses.count, 2)
+        #expect(responses.count == 2)
     }
 
-    func testThatDataStreamTaskCanBeDirectlyCancelled() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamTaskCanBeDirectlyCancelled() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let expectedPayloads = 10
@@ -675,13 +689,15 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertTrue(datas.count == 1)
+        #expect(request.isCancelled)
+        #expect(datas.count == 1)
     }
 
-    func testThatDataStreamTaskIsCancelledByCancellingIteration() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamTaskIsCancelledByCancellingIteration() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let expectedPayloads = 10
@@ -697,13 +713,15 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertTrue(datas.count == 1)
+        #expect(request.isCancelled)
+        #expect(datas.count == 1)
     }
 
-    func testThatDataStreamTaskCanBeImplicitlyCancelled() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamTaskCanBeImplicitlyCancelled() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let expectedPayloads = 10
@@ -721,13 +739,15 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let datas: [Data] = await task.value
 
         // Then
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertTrue(datas.isEmpty)
+        #expect(request.isCancelled)
+        #expect(datas.isEmpty)
     }
 
-    func testThatDataStreamTaskCanBeCancelledAfterStreamTurnsOffAutomaticCancellation() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamTaskCanBeCancelledAfterStreamTurnsOffAutomaticCancellation() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let expectedPayloads = 10
@@ -751,48 +771,55 @@ final class DataStreamConcurrencyTests: BaseTestCase {
         let datas: [Data] = await task.value
 
         // Then
-        XCTAssertTrue(request.isCancelled)
-        XCTAssertTrue(datas.count == 2)
+        #expect(request.isCancelled)
+        #expect(datas.count == 2)
     }
 }
 
 // Avoid when using swift-corelibs-foundation.
-// Only Xcode 14.3+ has async fulfillment.
 #if !canImport(FoundationNetworking)
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class UploadConcurrencyTests: BaseTestCase {
-    func testThatDelayedUploadStreamResultsInMultipleProgressValues() async throws {
+@Suite(.storesInstances)
+struct UploadConcurrencyTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func delayedUploadStreamResultsInMultipleProgressValues() async throws {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let count = 75
         let baseString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         let baseData = Data(baseString.utf8)
         var request = Endpoint.upload.urlRequest
         request.headers.add(name: "Content-Length", value: "\(baseData.count * count)")
-        let expectation = expectation(description: "Bytes upload progress should be reported: \(request.url!)")
+        let expectation = Completion("Bytes upload progress should be reported: \(request.url!)")
 
-        var uploadProgressValues: [Double] = []
-        var downloadProgressValues: [Double] = []
+        let uploadProgressValues = Capture<[Double]>([])
+        let downloadProgressValues = Capture<[Double]>([])
 
-        var response: DataResponse<UploadResponse, AFError>?
+        let response = Capture<DataResponse<UploadResponse, AFError>?>()
 
-        var inputStream: InputStream!
-        var outputStream: OutputStream!
-        Stream.getBoundStreams(withBufferSize: baseData.count, inputStream: &inputStream, outputStream: &outputStream)
+        var boundInputStream: InputStream?
+        var boundOutputStream: OutputStream?
+        Stream.getBoundStreams(withBufferSize: baseData.count,
+                               inputStream: &boundInputStream,
+                               outputStream: &boundOutputStream)
+        // Streams aren't Sendable. The output stream is scheduled on the main queue and the input stream is only closed
+        // once the response has been received.
+        nonisolated(unsafe) let inputStream = boundInputStream!
+        nonisolated(unsafe) let outputStream = boundOutputStream!
         CFWriteStreamSetDispatchQueue(outputStream, .main)
         outputStream.open()
 
         // When
         session.upload(inputStream, with: request)
             .uploadProgress(queue: session.rootQueue) { progress in
-                uploadProgressValues.append(progress.fractionCompleted)
+                uploadProgressValues.write { $0.append(progress.fractionCompleted) }
             }
             .downloadProgress(queue: session.rootQueue) { progress in
-                downloadProgressValues.append(progress.fractionCompleted)
+                downloadProgressValues.write { $0.append(progress.fractionCompleted) }
             }
             .responseDecodable(of: UploadResponse.self) { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
                 inputStream.close()
             }
 
@@ -804,15 +831,15 @@ final class UploadConcurrencyTests: BaseTestCase {
                     // Successfully sent.
                     break
                 case 0:
-                    XCTFail("outputStream somehow reached end")
+                    Issue.record("outputStream somehow reached end")
                 case -1:
                     if let streamError = outputStream.streamError {
-                        XCTFail("outputStream.write failed with error: \(streamError)")
+                        Issue.record("outputStream.write failed with error: \(streamError)")
                     } else {
-                        XCTFail("outputStream.write failed with unknown error")
+                        Issue.record("outputStream.write failed with unknown error")
                     }
                 default:
-                    XCTFail("outputStream failed to send \(baseData.count) bytes, sent \(bytesStreamed) instead.")
+                    Issue.record("outputStream failed to send \(baseData.count) bytes, sent \(bytesStreamed) instead.")
                 }
             }
         }
@@ -825,26 +852,26 @@ final class UploadConcurrencyTests: BaseTestCase {
 
         outputStream.close()
 
-        await fulfillment(of: [expectation], timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        for (progress, nextProgress) in zip(uploadProgressValues, uploadProgressValues.dropFirst()) {
-            XCTAssertGreaterThanOrEqual(nextProgress, progress)
+        for (progress, nextProgress) in zip(uploadProgressValues.value, uploadProgressValues.value.dropFirst()) {
+            #expect(nextProgress >= progress)
         }
 
-        XCTAssertGreaterThan(uploadProgressValues.count, 1, "there should more than 1 uploadProgressValues")
+        #expect(uploadProgressValues.count > 1, "there should more than 1 uploadProgressValues")
 
-        for (progress, nextProgress) in zip(downloadProgressValues, downloadProgressValues.dropFirst()) {
-            XCTAssertGreaterThanOrEqual(nextProgress, progress)
+        for (progress, nextProgress) in zip(downloadProgressValues.value, downloadProgressValues.value.dropFirst()) {
+            #expect(nextProgress >= progress)
         }
 
-        XCTAssertEqual(downloadProgressValues.last, 1.0, "last item in downloadProgressValues should equal 1.0")
-        XCTAssertEqual(response?.value?.bytes, baseData.count * count)
+        #expect(downloadProgressValues.last == 1.0, "last item in downloadProgressValues should equal 1.0")
+        #expect(response.value?.value?.bytes == baseData.count * count)
     }
 }
 #endif
@@ -852,33 +879,36 @@ final class UploadConcurrencyTests: BaseTestCase {
 #if canImport(Darwin) && !canImport(FoundationNetworking)
 @_spi(WebSocket) import Alamofire
 
-@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-final class WebSocketConcurrencyTests: BaseTestCase {
-    func testThatMessageEventsCanBeStreamed() async {
+@Suite(.storesInstances)
+struct WebSocketConcurrencyTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func messageEventsCanBeStreamed() async {
         // Given
-        let session = stored(Session())
-        let receivedEvent = expectation(description: "receivedEvent")
-        receivedEvent.expectedFulfillmentCount = 4
+        let session = stored(Session.independent())
+        let receivedEvent = Completion("receivedEvent", expectedCount: 4)
 
         // When
         for await _ in session.webSocketRequest(.websocket()).webSocketTask().streamingMessageEvents() {
-            receivedEvent.fulfill()
+            receivedEvent.complete()
         }
 
-        await fulfillment(of: [receivedEvent], timeout: timeout)
+        await receivedEvent.wait()
 
         // Then
     }
 
-    func testThatMessagesCanBeStreamed() async {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func messagesCanBeStreamed() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
 
         // When
         let messages = await session.webSocketRequest(.websocket()).webSocketTask().streamingMessages().collect()
 
         // Then
-        XCTAssertTrue(messages.count == 1)
+        #expect(messages.count == 1)
     }
 }
 #endif
