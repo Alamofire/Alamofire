@@ -42,6 +42,8 @@ final class Completion: @unchecked Sendable {
     private let sourceLocation: SourceLocation
     private let lock = NSLock()
     private var count = 0
+    /// When `expectedCount` was reached, relative to every other `Completion`, for `wait(for:enforceOrder:)`.
+    private var completionOrder: UInt64?
     private var waiter: CheckedContinuation<Bool, Never>?
     private var timeoutTask: Task<Void, Never>?
 
@@ -51,18 +53,19 @@ final class Completion: @unchecked Sendable {
     ///   - description:    What's being waited for, used in recorded issues.
     ///   - expectedCount:  The number of `complete()` calls needed. `1` by default.
     ///   - timeout:        How long `wait()` waits, in seconds. `10` by default, matching `BaseTestCase.timeout`.
-    ///   - sourceLocation: Where issues for extra `complete()` calls are recorded. The call site by default.
+    ///   - fileID:         With `filePath`, `line`, and `column`, where issues for extra `complete()` calls are
+    ///                     recorded. The call site by default.
     init(_ description: String,
          expectedCount: Int = 1,
          timeout: TimeInterval = 10,
-         sourceLocation: SourceLocation = SourceLocation(fileID: #fileID,
-                                                         filePath: #filePath,
-                                                         line: #line,
-                                                         column: #column)) {
+         fileID: String = #fileID,
+         filePath: String = #filePath,
+         line: Int = #line,
+         column: Int = #column) {
         self.description = description
         self.expectedCount = expectedCount
         self.timeout = timeout
-        self.sourceLocation = sourceLocation
+        sourceLocation = SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column)
     }
 
     /// Records one completion, resuming `wait()` once `expectedCount` is reached. Safe to call from any thread.
@@ -74,6 +77,7 @@ final class Completion: @unchecked Sendable {
             guard count <= expectedCount else { return (nil, true) }
             guard count == expectedCount else { return (nil, false) }
 
+            completionOrder = CompletionOrder.shared.next()
             timeoutTask?.cancel()
             timeoutTask = nil
             defer { waiter = nil }
@@ -91,13 +95,20 @@ final class Completion: @unchecked Sendable {
     /// Suspends until `expectedCount` completions have happened, or records an issue after `timeout` seconds.
     ///
     /// Returns immediately if the completions already happened.
-    func wait(sourceLocation: SourceLocation = SourceLocation(fileID: #fileID,
-                                                              filePath: #filePath,
-                                                              line: #line,
-                                                              column: #column)) async {
+    ///
+    /// Magic identifiers are separate parameters, rather than one `SourceLocation` default, because they're only
+    /// evaluated at the call site when they're the whole default argument.
+    func wait(fileID: String = #fileID, filePath: String = #filePath, line: Int = #line, column: Int = #column) async {
+        await wait(timeout: timeout,
+                   sourceLocation: SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column))
+    }
+
+    /// Waits up to `timeout` seconds, recording an issue on timeout. Returns whether the completion happened.
+    @discardableResult
+    fileprivate func wait(timeout: TimeInterval, sourceLocation: SourceLocation) async -> Bool {
         guard withLock({ waiter == nil }) else {
             Issue.record("wait() was called on \(description) while another wait() was in progress.", sourceLocation: sourceLocation)
-            return
+            return false
         }
 
         let isCompleted = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
@@ -120,11 +131,13 @@ final class Completion: @unchecked Sendable {
             if isAlreadyCompleted { continuation.resume(returning: true) }
         }
 
-        guard !isCompleted else { return }
+        guard !isCompleted else { return true }
 
         let completedCount = withLock { count }
         Issue.record("Timed out after \(timeout) seconds waiting for \(description) (\(completedCount) of \(expectedCount) completions).",
                      sourceLocation: sourceLocation)
+
+        return false
     }
 
     private func timeOut() {
@@ -140,11 +153,66 @@ final class Completion: @unchecked Sendable {
         continuation?.resume(returning: false)
     }
 
+    fileprivate var order: UInt64? {
+        withLock { completionOrder }
+    }
+
     private func withLock<T>(_ body: () -> T) -> T {
         lock.lock()
         defer { lock.unlock() }
 
         return body()
+    }
+}
+
+/// Waits for every completion in `completions`, like `XCTestCase.wait(for:timeout:enforceOrder:)`.
+///
+/// The completions share one deadline, the longest of their `timeout`s from when waiting starts, and each one that
+/// isn't completed by then records an issue. With `enforceOrder`, an issue is also recorded unless the completions
+/// reached their expected counts in the order given.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+func wait(for completions: [Completion],
+          enforceOrder: Bool = false,
+          fileID: String = #fileID,
+          filePath: String = #filePath,
+          line: Int = #line,
+          column: Int = #column) async {
+    let sourceLocation = SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column)
+    let timeout = completions.map(\.timeout).max() ?? 0
+    let deadline = Date().addingTimeInterval(timeout)
+    var allCompleted = true
+    for completion in completions {
+        let remaining = max(0, deadline.timeIntervalSinceNow)
+        let isCompleted = await completion.wait(timeout: remaining, sourceLocation: sourceLocation)
+        allCompleted = allCompleted && isCompleted
+    }
+
+    // Order is only meaningful once everything completed; timeouts were already recorded.
+    guard enforceOrder, allCompleted else { return }
+
+    let completedInOrder = completions.sorted { ($0.order ?? 0) < ($1.order ?? 0) }
+    guard completedInOrder.map(ObjectIdentifier.init) != completions.map(ObjectIdentifier.init) else { return }
+
+    Issue.record("""
+    Completions weren't completed in the expected order.
+    Expected: \(completions.map(\.description).joined(separator: ", "))
+    Actual: \(completedInOrder.map(\.description).joined(separator: ", "))
+    """, sourceLocation: sourceLocation)
+}
+
+/// Orders completions across all tests, so `wait(for:enforceOrder:)` can compare when they completed.
+private final class CompletionOrder: @unchecked Sendable {
+    static let shared = CompletionOrder()
+
+    private let lock = NSLock()
+    private var last: UInt64 = 0
+
+    func next() -> UInt64 {
+        lock.lock()
+        defer { lock.unlock() }
+
+        last += 1
+        return last
     }
 }
 
@@ -201,10 +269,13 @@ struct CompletionTests {
         completion.complete()
 
         // When, Then
+        let waitLine = #line + 2
         await withKnownIssue {
             await completion.wait()
         } matching: { issue in
+            // Recorded at the call to wait(), not inside Completion.
             issue.description.contains("Timed out after 0.1 seconds waiting for never completed (1 of 2 completions).")
+                && issue.sourceLocation?.line == waitLine
         }
     }
 
@@ -222,5 +293,62 @@ struct CompletionTests {
             issue.description.contains("completed twice was completed more than 1 time(s).")
         }
         await completion.wait()
+    }
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func waitForCompletionsInOrder() async {
+        // Given
+        let first = Completion("first")
+        let second = Completion("second", expectedCount: 2)
+        let third = Completion("third")
+
+        // When
+        DispatchQueue.global().async {
+            first.complete()
+            second.complete()
+            second.complete()
+            third.complete()
+        }
+
+        // Then
+        await wait(for: [first, second, third], enforceOrder: true)
+    }
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func waitForCompletionsOutOfOrderRecordsIssue() async {
+        // Given
+        let first = Completion("first")
+        let second = Completion("second")
+
+        // When
+        second.complete()
+        first.complete()
+
+        // Then
+        await withKnownIssue {
+            await wait(for: [first, second], enforceOrder: true)
+        } matching: { issue in
+            issue.description.contains("Expected: first, second") && issue.description.contains("Actual: second, first")
+        }
+        await wait(for: [first, second])
+    }
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func waitForCompletionsSharesOneDeadline() async {
+        // Given
+        let first = Completion("first", timeout: 0.2)
+        let second = Completion("second", timeout: 0.2)
+        let start = Date()
+
+        // When, Then
+        await withKnownIssue {
+            await wait(for: [first, second])
+        } matching: { issue in
+            issue.description.contains("Timed out")
+        }
+        #expect(Date().timeIntervalSince(start) < 0.35)
     }
 }

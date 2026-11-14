@@ -75,14 +75,15 @@ extension Trait where Self == StoresInstancesTrait {
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 @discardableResult
 func stored<T: AnyObject>(_ object: T,
-                          sourceLocation: SourceLocation = SourceLocation(fileID: #fileID,
-                                                                          filePath: #filePath,
-                                                                          line: #line,
-                                                                          column: #column)) -> T {
+                          fileID: String = #fileID,
+                          filePath: String = #filePath,
+                          line: Int = #line,
+                          column: Int = #column) -> T {
     if let storage = TestLifetimeStorage.current {
         storage.store(object)
     } else {
-        Issue.record("stored(_:) needs the .storesInstances trait on the test or its suite.", sourceLocation: sourceLocation)
+        Issue.record("stored(_:) needs the .storesInstances trait on the test or its suite.",
+                     sourceLocation: SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column))
     }
 
     return object

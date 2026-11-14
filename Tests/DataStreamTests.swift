@@ -22,74 +22,78 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
-import XCTest
+@testable import Alamofire
+import Foundation
+import Testing
 
-final class DataStreamTests: BaseTestCase {
-    @MainActor
-    func testThatDataCanBeStreamedOnMainQueue() {
+@Suite(.storesInstances)
+struct DataStreamTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataCanBeStreamedOnMainQueue() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 5
-        var accumulatedData = Data()
-        var initialResponse: HTTPURLResponse?
-        var response: HTTPURLResponse?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didReceiveResponse = expectation(description: "stream should receive response once")
-        let didReceive = expectation(description: "stream should receive once")
-        let didComplete = expectation(description: "stream should complete")
+        let accumulatedData = Capture(Data())
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let response = Capture<HTTPURLResponse?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let didReceiveResponse = Completion("stream should receive response once")
+        let didReceive = Completion("stream should receive once")
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
             }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        accumulatedData.append(data)
+                        accumulatedData.write { $0.append(data) }
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(initialResponse, response)
-        XCTAssertEqual(accumulatedData.count, expectedSize)
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
+        #expect(response.statusCode == 200)
+        #expect(initialResponse.value == response.value)
+        #expect(accumulatedData.count == expectedSize)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
     }
 
-    @MainActor
-    func testThatDataCanBeStreamedOnArbitraryQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataCanBeStreamedOnArbitraryQueue() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 5
-        var accumulatedData = Data()
-        var initialResponse: HTTPURLResponse?
-        var response: HTTPURLResponse?
+        let accumulatedData = Capture(Data())
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let response = Capture<HTTPURLResponse?>()
         let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
-        let didReceiveResponse = expectation(description: "stream should receive response once")
-        let didReceive = expectation(description: "stream should receive once")
-        let didComplete = expectation(description: "stream should complete")
+        let didReceiveResponse = Completion("stream should receive response once")
+        let didReceive = Completion("stream should receive once")
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
             }
             .responseStream(on: streamQueue) { stream in
                 dispatchPrecondition(condition: .onQueue(streamQueue))
@@ -97,647 +101,650 @@ final class DataStreamTests: BaseTestCase {
                 case let .stream(result):
                     switch result {
                     case let .success(data):
-                        accumulatedData.append(data)
+                        accumulatedData.write { $0.append(data) }
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    response = completion.response
-                    didComplete.fulfill()
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(initialResponse, response)
-        XCTAssertEqual(accumulatedData.count, expectedSize)
+        #expect(response.statusCode == 200)
+        #expect(initialResponse.value == response.value)
+        #expect(accumulatedData.count == expectedSize)
     }
 
-    @MainActor
-    func testThatDataCanBeStreamedByByte() throws {
-        guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
-            throw XCTSkip("Older OSes don't return individual bytes.")
-        }
-
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataCanBeStreamedByByte() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 5
-        var accumulatedData = Data()
-        var initialResponse: HTTPURLResponse?
-        var response: HTTPURLResponse?
-        var streamOnMain = false
-        var completeOnMain = false
-        var streamCalled = 0
-        let didReceiveResponse = expectation(description: "stream should receive response once")
-        let didReceive = expectation(description: "stream should receive once")
-        didReceive.expectedFulfillmentCount = expectedSize
-        let didComplete = expectation(description: "stream should complete")
+        let accumulatedData = Capture(Data())
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let response = Capture<HTTPURLResponse?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let streamCalled = Capture(0)
+        let didReceiveResponse = Completion("stream should receive response once")
+        let didReceive = Completion("stream should receive once", expectedCount: expectedSize)
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.chunked(expectedSize))
             .onHTTPResponse { response in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
             }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        accumulatedData.append(data)
+                        accumulatedData.write { $0.append(data) }
                     }
-                    streamCalled += 1
-                    didReceive.fulfill()
+                    streamCalled.write { $0 += 1 }
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(streamCalled, expectedSize)
-        XCTAssertEqual(initialResponse, response)
-        XCTAssertEqual(accumulatedData.count, expectedSize)
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
+        #expect(response.statusCode == 200)
+        #expect(streamCalled.value == expectedSize)
+        #expect(initialResponse.value == response.value)
+        #expect(accumulatedData.count == expectedSize)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
     }
 
-    @MainActor
-    func testThatDataCanBeStreamedAsMultipleJSONPayloads() throws {
-        guard #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) else {
-            throw XCTSkip("Older OSes do not separate chunked payloads in callbacks.")
-        }
-
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataCanBeStreamedAsMultipleJSONPayloads() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 5
-        var responses: [TestResponse] = []
-        var initialResponse: HTTPURLResponse?
-        var response: HTTPURLResponse?
-        var streamOnMain = false
-        var completeOnMain = false
-        var streamCalled = 0
-        let didReceiveResponse = expectation(description: "stream should receive response once")
-        let didReceive = expectation(description: "stream should receive once")
-        didReceive.expectedFulfillmentCount = expectedSize
-        let didComplete = expectation(description: "stream should complete")
+        let responses = Capture<[TestResponse]>([])
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let response = Capture<HTTPURLResponse?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let streamCalled = Capture(0)
+        let didReceiveResponse = Completion("stream should receive response once")
+        let didReceive = Completion("stream should receive once", expectedCount: expectedSize)
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.payloads(expectedSize))
             .onHTTPResponse { response in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
             }
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        responses.append(value)
+                        responses.write { $0.append(value) }
                     case let .failure(error):
-                        XCTFail("JSON stream failed due to error: \(error.localizedDescription)")
+                        Issue.record("JSON stream failed due to error: \(error.localizedDescription)")
                     }
-                    streamCalled += 1
-                    didReceive.fulfill()
+                    streamCalled.write { $0 += 1 }
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(streamCalled, expectedSize)
-        XCTAssertEqual(responses.count, expectedSize)
-        XCTAssertEqual(initialResponse, response)
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
+        #expect(response.statusCode == 200)
+        #expect(streamCalled.value == expectedSize)
+        #expect(responses.count == expectedSize)
+        #expect(initialResponse.value == response.value)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
     }
 
-    @MainActor
-    func testThatDataCanBeStreamedFromURL() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataCanBeStreamedFromURL() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 1
-        var accumulatedData = Data()
-        var initialResponse: HTTPURLResponse?
-        var response: HTTPURLResponse?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didReceiveResponse = expectation(description: "stream should receive response once")
-        let didReceive = expectation(description: "stream should receive")
-        let didComplete = expectation(description: "stream should complete")
+        let accumulatedData = Capture(Data())
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let response = Capture<HTTPURLResponse?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let didReceiveResponse = Completion("stream should receive response once")
+        let didReceive = Completion("stream should receive")
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
             }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        accumulatedData.append(data)
+                        accumulatedData.write { $0.append(data) }
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(accumulatedData.count, expectedSize)
-        XCTAssertEqual(initialResponse, response)
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
+        #expect(response.statusCode == 200)
+        #expect(accumulatedData.count == expectedSize)
+        #expect(initialResponse.value == response.value)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
     }
 
-    @MainActor
-    func testThatDataCanBeStreamedManyTimes() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataCanBeStreamedManyTimes() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 1
-        var initialResponse: HTTPURLResponse?
-        let onHTTPResponse = expectation(description: "onHTTPResponse should be called")
-        var firstAccumulatedData = Data()
-        var firstResponse: HTTPURLResponse?
-        var firstStreamOnMain = false
-        var firstCompleteOnMain = false
-        let firstReceive = expectation(description: "first stream should receive")
-        let firstCompletion = expectation(description: "first stream should complete")
-        var secondAccumulatedData = Data()
-        var secondResponse: HTTPURLResponse?
-        var secondStreamOnMain = false
-        var secondCompleteOnMain = false
-        let secondReceive = expectation(description: "second stream should receive")
-        let secondCompletion = expectation(description: "second stream should complete")
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let onHTTPResponse = Completion("onHTTPResponse should be called")
+        let firstAccumulatedData = Capture(Data())
+        let firstResponse = Capture<HTTPURLResponse?>()
+        let firstStreamOnMain = Capture(false)
+        let firstCompleteOnMain = Capture(false)
+        let firstReceive = Completion("first stream should receive")
+        let firstCompletion = Completion("first stream should complete")
+        let secondAccumulatedData = Capture(Data())
+        let secondResponse = Capture<HTTPURLResponse?>()
+        let secondStreamOnMain = Capture(false)
+        let secondCompleteOnMain = Capture(false)
+        let secondReceive = Completion("second stream should receive")
+        let secondCompletion = Completion("second stream should complete")
 
         // When
         session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response in
-                initialResponse = response
-                onHTTPResponse.fulfill()
+                initialResponse.value = response
+                onHTTPResponse.complete()
             }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    firstStreamOnMain = Thread.isMainThread
+                    firstStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        firstAccumulatedData.append(data)
+                        firstAccumulatedData.write { $0.append(data) }
                     }
-                    firstReceive.fulfill()
+                    firstReceive.complete()
                 case let .complete(completion):
-                    firstCompleteOnMain = Thread.isMainThread
-                    firstResponse = completion.response
-                    firstCompletion.fulfill()
+                    firstCompleteOnMain.value = Thread.isMainThread
+                    firstResponse.value = completion.response
+                    firstCompletion.complete()
                 }
             }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    secondStreamOnMain = Thread.isMainThread
+                    secondStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        secondAccumulatedData.append(data)
+                        secondAccumulatedData.write { $0.append(data) }
                     }
-                    secondReceive.fulfill()
+                    secondReceive.complete()
                 case let .complete(completion):
-                    secondCompleteOnMain = Thread.isMainThread
-                    secondResponse = completion.response
-                    secondCompletion.fulfill()
+                    secondCompleteOnMain.value = Thread.isMainThread
+                    secondResponse.value = completion.response
+                    secondCompletion.complete()
                 }
             }
 
-        wait(for: [onHTTPResponse, firstReceive, firstCompletion], timeout: timeout, enforceOrder: true)
-        wait(for: [secondReceive, secondCompletion], timeout: timeout, enforceOrder: true)
+        await wait(for: [onHTTPResponse, firstReceive, firstCompletion], enforceOrder: true)
+        await wait(for: [secondReceive, secondCompletion], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(initialResponse, firstResponse)
-        XCTAssertEqual(initialResponse, secondResponse)
-        XCTAssertTrue(firstStreamOnMain)
-        XCTAssertTrue(firstCompleteOnMain)
-        XCTAssertEqual(firstResponse?.statusCode, 200)
-        XCTAssertEqual(firstAccumulatedData.count, expectedSize)
-        XCTAssertTrue(secondStreamOnMain)
-        XCTAssertTrue(secondCompleteOnMain)
-        XCTAssertEqual(secondResponse?.statusCode, 200)
-        XCTAssertEqual(secondAccumulatedData.count, expectedSize)
+        #expect(initialResponse.value == firstResponse.value)
+        #expect(initialResponse.value == secondResponse.value)
+        #expect(firstStreamOnMain.value)
+        #expect(firstCompleteOnMain.value)
+        #expect(firstResponse.statusCode == 200)
+        #expect(firstAccumulatedData.count == expectedSize)
+        #expect(secondStreamOnMain.value)
+        #expect(secondCompleteOnMain.value)
+        #expect(secondResponse.statusCode == 200)
+        #expect(secondAccumulatedData.count == expectedSize)
     }
 
-    @MainActor
-    func testThatDataCanBeStreamedAndDecodedAtTheSameTime() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataCanBeStreamedAndDecodedAtTheSameTime() async {
         // Given
-        let session = stored(Session())
-        var initialResponse: HTTPURLResponse?
-        let onHTTPResponse = expectation(description: "onHTTPResponse should be called")
-        var firstAccumulatedData = Data()
-        var firstResponse: HTTPURLResponse?
-        var firstStreamOnMain = false
-        var firstCompleteOnMain = false
-        let firstReceive = expectation(description: "first stream should receive")
-        let firstCompletion = expectation(description: "first stream should complete")
-        var decodedResponse: TestResponse?
-        var decodingError: AFError?
-        var secondResponse: HTTPURLResponse?
-        var secondStreamOnMain = false
-        var secondCompleteOnMain = false
-        let secondReceive = expectation(description: "second stream should receive")
-        let secondCompletion = expectation(description: "second stream should complete")
+        let session = stored(Session.independent())
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let onHTTPResponse = Completion("onHTTPResponse should be called")
+        let firstAccumulatedData = Capture(Data())
+        let firstResponse = Capture<HTTPURLResponse?>()
+        let firstStreamOnMain = Capture(false)
+        let firstCompleteOnMain = Capture(false)
+        let firstReceive = Completion("first stream should receive")
+        let firstCompletion = Completion("first stream should complete")
+        let decodedResponse = Capture<TestResponse?>()
+        let decodingError = Capture<AFError?>()
+        let secondResponse = Capture<HTTPURLResponse?>()
+        let secondStreamOnMain = Capture(false)
+        let secondCompleteOnMain = Capture(false)
+        let secondReceive = Completion("second stream should receive")
+        let secondCompletion = Completion("second stream should complete")
 
         // When
         session.streamRequest(.stream(1))
             .onHTTPResponse { response in
-                initialResponse = response
-                onHTTPResponse.fulfill()
+                initialResponse.value = response
+                onHTTPResponse.complete()
             }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    firstStreamOnMain = Thread.isMainThread
+                    firstStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        firstAccumulatedData.append(data)
+                        firstAccumulatedData.write { $0.append(data) }
                     }
-                    firstReceive.fulfill()
+                    firstReceive.complete()
                 case let .complete(completion):
-                    firstCompleteOnMain = Thread.isMainThread
-                    firstResponse = completion.response
-                    firstCompletion.fulfill()
+                    firstCompleteOnMain.value = Thread.isMainThread
+                    firstResponse.value = completion.response
+                    firstCompletion.complete()
                 }
             }
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    secondStreamOnMain = Thread.isMainThread
+                    secondStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        decodedResponse = value
+                        decodedResponse.value = value
                     case let .failure(error):
-                        decodingError = error
+                        decodingError.value = error
                     }
-                    secondReceive.fulfill()
+                    secondReceive.complete()
                 case let .complete(completion):
-                    secondCompleteOnMain = Thread.isMainThread
-                    secondResponse = completion.response
-                    secondCompletion.fulfill()
+                    secondCompleteOnMain.value = Thread.isMainThread
+                    secondResponse.value = completion.response
+                    secondCompletion.complete()
                 }
             }
 
-        wait(for: [onHTTPResponse, firstReceive, firstCompletion], timeout: timeout, enforceOrder: true)
-        wait(for: [secondReceive, secondCompletion], timeout: timeout, enforceOrder: true)
+        await wait(for: [onHTTPResponse, firstReceive, firstCompletion], enforceOrder: true)
+        await wait(for: [secondReceive, secondCompletion], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(initialResponse, firstResponse)
-        XCTAssertEqual(initialResponse, secondResponse)
-        XCTAssertTrue(firstStreamOnMain)
-        XCTAssertTrue(firstCompleteOnMain)
-        XCTAssertEqual(firstResponse?.statusCode, 200)
-        XCTAssertTrue(!firstAccumulatedData.isEmpty)
-        XCTAssertTrue(secondStreamOnMain)
-        XCTAssertTrue(secondCompleteOnMain)
-        XCTAssertEqual(secondResponse?.statusCode, 200)
-        XCTAssertNotNil(decodedResponse)
-        XCTAssertNil(decodingError)
+        #expect(initialResponse.value == firstResponse.value)
+        #expect(initialResponse.value == secondResponse.value)
+        #expect(firstStreamOnMain.value)
+        #expect(firstCompleteOnMain.value)
+        #expect(firstResponse.statusCode == 200)
+        #expect(!firstAccumulatedData.isEmpty)
+        #expect(secondStreamOnMain.value)
+        #expect(secondCompleteOnMain.value)
+        #expect(secondResponse.statusCode == 200)
+        #expect(decodedResponse.value != nil)
+        #expect(decodingError.value == nil)
     }
 
     #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
-    @MainActor
-    func testThatDataStreamRequestProducesWorkingInputStream() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestProducesWorkingInputStream() async {
         // Given
-        let session = stored(Session())
-        let expect = expectation(description: "stream complete")
+        let session = stored(Session.independent())
+        let expect = Completion("stream complete")
 
         // When
         let stream = session.streamRequest(.xml)
             .responseStream { stream in
                 switch stream.event {
                 case .complete:
-                    expect.fulfill()
+                    expect.complete()
                 default: break
                 }
             }
             .asInputStream()
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
         let parser = XMLParser(stream: stream!)
         let parsed = parser.parse()
-        XCTAssertTrue(parsed)
-        XCTAssertNil(parser.parserError)
+        #expect(parsed)
+        #expect(parser.parserError == nil)
     }
     #endif
 
-    @MainActor
-    func testThatDataStreamCanBeManuallyResumed() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamCanBeManuallyResumed() async {
         // Given
-        let session = Session(startRequestsImmediately: false)
-        var response: HTTPURLResponse?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let session = Session.independent(startRequestsImmediately: false)
+        let response = Capture<HTTPURLResponse?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let didReceive = Completion("stream did receive")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.stream(1))
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
-                    streamOnMain = Thread.isMainThread
-                    didReceive.fulfill()
+                    streamOnMain.value = Thread.isMainThread
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }.resume()
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertEqual(response?.statusCode, 200)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(response.statusCode == 200)
     }
 
-    @MainActor
-    func testThatDataStreamIsAutomaticallyCanceledOnStreamErrorWhenEnabled() {
-        let session = stored(Session())
-        var response: HTTPURLResponse?
-        var complete: DataStreamRequest.Completion?
-        let didComplete = expectation(description: "stream complete")
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamIsAutomaticallyCanceledOnStreamErrorWhenEnabled() async {
+        let session = stored(Session.independent())
+        let response = Capture<HTTPURLResponse?>()
+        let complete = Capture<DataStreamRequest.Completion?>()
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.bytes(50), automaticallyCancelOnStreamError: true)
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .complete(completion):
-                    complete = completion
-                    response = completion.response
-                    didComplete.fulfill()
+                    complete.value = completion
+                    response.value = completion.response
+                    didComplete.complete()
                 default: break
                 }
             }
 
-        waitForExpectations(timeout: timeout)
+        await didComplete.wait()
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertTrue(complete?.error?.isExplicitlyCancelledError == true,
-                      "error is not explicitly cancelled but \(complete?.error?.localizedDescription ?? "None")")
+        #expect(response.statusCode == 200)
+        #expect(complete.error?.isExplicitlyCancelledError == true, "error is not explicitly cancelled but \(complete.error?.localizedDescription ?? "None")")
     }
 
-    @MainActor
-    func testThatDataStreamIsAutomaticallyCanceledOnStreamClosureError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamIsAutomaticallyCanceledOnStreamClosureError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         enum LocalError: Error { case failed }
 
-        var response: HTTPURLResponse?
-        var complete: DataStreamRequest.Completion?
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let response = Capture<HTTPURLResponse?>()
+        let complete = Capture<DataStreamRequest.Completion?>()
+        let didReceive = Completion("stream did receive")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.bytes(50))
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
-                    didReceive.fulfill()
+                    didReceive.complete()
                     throw LocalError.failed
                 case let .complete(completion):
-                    complete = completion
-                    response = completion.response
-                    didComplete.fulfill()
+                    complete.value = completion
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertTrue(complete?.error?.isExplicitlyCancelledError == false)
+        #expect(response.statusCode == 200)
+        #expect(complete.error?.isExplicitlyCancelledError == false)
     }
 
-    @MainActor
-    func testThatDataStreamCanBeCancelledInClosure() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamCanBeCancelledInClosure() async {
         // Given
-        // Use .main so that completion can't beat cancellation.
-        let session = Session(rootQueue: .main)
-        var completion: DataStreamRequest.Completion?
-        let didReceive = expectation(description: "stream should receive")
-        let didComplete = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let completion = Capture<DataStreamRequest.Completion?>()
+        let didReceive = Completion("stream should receive")
+        let didComplete = Completion("stream should complete")
 
         // When
-        session.streamRequest(.bytes(1)).responseStream { stream in
+        // The 250 ms pause after the first chunk keeps the request running until the stream cancels it.
+        session.streamRequest(.chunked(2, delay: 250)).responseStream { stream in
             switch stream.event {
             case .stream:
-                didReceive.fulfill()
+                didReceive.complete()
                 stream.cancel()
             case .complete:
-                completion = stream.completion
-                didComplete.fulfill()
+                completion.value = stream.completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(completion?.error?.isExplicitlyCancelledError == true,
-                      """
-                      error is not explicitly cancelled, instead: \(completion?.error?.localizedDescription ?? "none").
-                      response is: \(completion?.response?.description ?? "none").
-                      """)
+        #expect(completion.error?.isExplicitlyCancelledError == true, """
+        error is not explicitly cancelled, instead: \(completion.error?.localizedDescription ?? "none").
+        response is: \(completion.response?.description ?? "none").
+        """)
     }
 
-    @MainActor
-    func testThatDataStreamCanBeCancelledByToken() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamCanBeCancelledByToken() async {
         // Given
-        // Use .main so that completion can't beat cancellation.
-        let session = Session(rootQueue: .main)
-        var completion: DataStreamRequest.Completion?
-        let didReceive = expectation(description: "stream should receive")
-        let didComplete = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let completion = Capture<DataStreamRequest.Completion?>()
+        let didReceive = Completion("stream should receive")
+        let didComplete = Completion("stream should complete")
 
         // When
-        session.streamRequest(.bytes(1)).responseStream { stream in
+        // The 250 ms pause after the first chunk keeps the request running until the stream cancels it.
+        session.streamRequest(.chunked(2, delay: 250)).responseStream { stream in
             switch stream.event {
             case .stream:
-                didReceive.fulfill()
+                didReceive.complete()
                 stream.token.cancel()
             case .complete:
-                completion = stream.completion
-                didComplete.fulfill()
+                completion.value = stream.completion
+                didComplete.complete()
             }
         }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(completion?.error?.isExplicitlyCancelledError == true,
-                      """
-                      error is not explicitly cancelled, instead: \(completion?.error?.localizedDescription ?? "none").
-                      response is: \(completion?.response?.description ?? "none").
-                      """)
+        #expect(completion.error?.isExplicitlyCancelledError == true, """
+        error is not explicitly cancelled, instead: \(completion.error?.localizedDescription ?? "none").
+        response is: \(completion.response?.description ?? "none").
+        """)
     }
 
-    @MainActor
-    func testThatOnHTTPResponseCanContinueStream() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func onHTTPResponseCanContinueStream() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 5
-        var accumulatedData = Data()
-        var initialResponse: HTTPURLResponse?
-        var response: HTTPURLResponse?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didReceiveResponse = expectation(description: "stream should receive response once")
-        let didReceive = expectation(description: "stream should receive once")
-        let didComplete = expectation(description: "stream should complete")
+        let accumulatedData = Capture(Data())
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let response = Capture<HTTPURLResponse?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let didReceiveResponse = Completion("stream should receive response once")
+        let didReceive = Completion("stream should receive once")
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response, completionHandler in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
                 completionHandler(.allow)
             }
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        accumulatedData.append(data)
+                        accumulatedData.write { $0.append(data) }
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceiveResponse, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(initialResponse, response)
-        XCTAssertEqual(accumulatedData.count, expectedSize)
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
+        #expect(response.statusCode == 200)
+        #expect(initialResponse.value == response.value)
+        #expect(accumulatedData.count == expectedSize)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
     }
 
-    @MainActor
-    func testThatOnHTTPResponseCanCancelStream() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func onHTTPResponseCanCancelStream() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let expectedSize = 5
-        var initialResponse: HTTPURLResponse?
-        var response: HTTPURLResponse?
-        var completion: DataStreamRequest.Completion?
-        var didCompleteOnMain = false
-        let didReceiveResponse = expectation(description: "stream should receive response once")
-        let didComplete = expectation(description: "stream should complete")
+        let initialResponse = Capture<HTTPURLResponse?>()
+        let response = Capture<HTTPURLResponse?>()
+        let completion = Capture<DataStreamRequest.Completion?>()
+        let didCompleteOnMain = Capture(false)
+        let didReceiveResponse = Completion("stream should receive response once")
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.bytes(expectedSize))
             .onHTTPResponse { response, completionHandler in
-                initialResponse = response
-                didReceiveResponse.fulfill()
+                initialResponse.value = response
+                didReceiveResponse.complete()
                 completionHandler(.cancel)
             }
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
-                    XCTFail("should never receive stream in a cancelled request")
+                    Issue.record("should never receive stream in a cancelled request")
                 case let .complete(comp):
-                    didCompleteOnMain = Thread.isMainThread
-                    completion = comp
-                    response = comp.response
-                    didComplete.fulfill()
+                    didCompleteOnMain.value = Thread.isMainThread
+                    completion.value = comp
+                    response.value = comp.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceiveResponse, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceiveResponse, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertEqual(initialResponse, response)
-        XCTAssertTrue(didCompleteOnMain)
-        XCTAssertTrue(completion?.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled stream should be explicitly cancelled")
+        #expect(response.statusCode == 200)
+        #expect(initialResponse.value == response.value)
+        #expect(didCompleteOnMain.value)
+        #expect(completion.error?.isExplicitlyCancelledError == true, "onHTTPResponse cancelled stream should be explicitly cancelled")
     }
 }
 
 // MARK: - Serialization Tests
 
-final class DataStreamSerializationTests: BaseTestCase {
-    @MainActor
-    func testThatDataStreamsCanBeAString() {
+@Suite(.storesInstances)
+struct DataStreamSerializationTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamsCanBeAString() async {
         // Given
-        let session = stored(Session())
-        var responseString: String?
-        var streamOnMain = false
-        var completeOnMain = false
-        var response: HTTPURLResponse?
-        let didStream = expectation(description: "did stream")
-        let didComplete = expectation(description: "stream complete")
+        let session = stored(Session.independent())
+        let responseString = Capture<String?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let response = Capture<HTTPURLResponse?>()
+        let didStream = Completion("did stream")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.stream(1))
             .responseStreamString { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(string):
-                        responseString = string
+                        responseString.value = string
                     }
-                    didStream.fulfill()
+                    didStream.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didStream, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didStream, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertNotNil(responseString)
-        XCTAssertEqual(response?.statusCode, 200)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(responseString.value != nil)
+        #expect(response.statusCode == 200)
     }
 
-    @MainActor
-    func testThatDataStreamsCanBeAStringOnAnArbitraryQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamsCanBeAStringOnAnArbitraryQueue() async {
         // Given
-        let session = stored(Session())
-        var responseString: String?
-        var response: HTTPURLResponse?
+        let session = stored(Session.independent())
+        let responseString = Capture<String?>()
+        let response = Capture<HTTPURLResponse?>()
         let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
-        let didStream = expectation(description: "did stream")
-        let didComplete = expectation(description: "stream complete")
+        let didStream = Completion("did stream")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.stream(1))
@@ -747,74 +754,76 @@ final class DataStreamSerializationTests: BaseTestCase {
                 case let .stream(result):
                     switch result {
                     case let .success(string):
-                        responseString = string
+                        responseString.value = string
                     }
-                    didStream.fulfill()
+                    didStream.complete()
                 case let .complete(completion):
-                    response = completion.response
-                    didComplete.fulfill()
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didStream, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didStream, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNotNil(responseString)
-        XCTAssertEqual(response?.statusCode, 200)
+        #expect(responseString.value != nil)
+        #expect(response.statusCode == 200)
     }
 
-    @MainActor
-    func testThatDataStreamsCanBeDecoded() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamsCanBeDecoded() async {
         // Given
-        let session = stored(Session())
-        var response: TestResponse?
-        var httpResponse: HTTPURLResponse?
-        var decodingError: AFError?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let session = stored(Session.independent())
+        let response = Capture<TestResponse?>()
+        let httpResponse = Capture<HTTPURLResponse?>()
+        let decodingError = Capture<AFError?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let didReceive = Completion("stream did receive")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        response = value
+                        response.value = value
                     case let .failure(error):
-                        decodingError = error
+                        decodingError.value = error
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    httpResponse = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    httpResponse.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertNotNil(response)
-        XCTAssertEqual(httpResponse?.statusCode, 200)
-        XCTAssertNil(decodingError)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(response.value != nil)
+        #expect(httpResponse.statusCode == 200)
+        #expect(decodingError.value == nil)
     }
 
-    @MainActor
-    func testThatDataStreamsCanBeDecodedOnAnArbitraryQueue() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamsCanBeDecodedOnAnArbitraryQueue() async {
         // Given
-        let session = stored(Session())
-        var response: TestResponse?
-        var httpResponse: HTTPURLResponse?
-        var decodingError: AFError?
+        let session = stored(Session.independent())
+        let response = Capture<TestResponse?>()
+        let httpResponse = Capture<HTTPURLResponse?>()
+        let decodingError = Capture<AFError?>()
         let streamQueue = DispatchQueue(label: "com.alamofire.tests.ArbitraryQueue")
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let didReceive = Completion("stream did receive")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.stream(1))
@@ -824,79 +833,82 @@ final class DataStreamSerializationTests: BaseTestCase {
                 case let .stream(result):
                     switch result {
                     case let .success(value):
-                        response = value
+                        response.value = value
                     case let .failure(error):
-                        decodingError = error
+                        decodingError.value = error
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    httpResponse = completion.response
-                    didComplete.fulfill()
+                    httpResponse.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertNotNil(response)
-        XCTAssertEqual(httpResponse?.statusCode, 200)
-        XCTAssertNil(decodingError)
+        #expect(response.value != nil)
+        #expect(httpResponse.statusCode == 200)
+        #expect(decodingError.value == nil)
     }
 
-    @MainActor
-    func testThatDataStreamSerializerCanBeUsedDirectly() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamSerializerCanBeUsedDirectly() async {
         // Given
-        let session = stored(Session())
-        var response: HTTPURLResponse?
-        var decodedResponse: TestResponse?
-        var decodingError: AFError?
-        var streamOnMain = false
-        var completeOnMain = false
+        let session = stored(Session.independent())
+        let response = Capture<HTTPURLResponse?>()
+        let decodedResponse = Capture<TestResponse?>()
+        let decodingError = Capture<AFError?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
         let serializer = DecodableStreamSerializer<TestResponse>()
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let didReceive = Completion("stream did receive")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.stream(1))
             .responseStream(using: serializer) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        decodedResponse = value
+                        decodedResponse.value = value
                     case let .failure(error):
-                        decodingError = error
+                        decodingError.value = error
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertNotNil(decodedResponse)
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertNil(decodingError)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(decodedResponse.value != nil)
+        #expect(response.statusCode == 200)
+        #expect(decodingError.value == nil)
     }
 }
 
 // MARK: - Integration Tests
 
-final class DataStreamIntegrationTests: BaseTestCase {
-    @MainActor
-    func testThatDataStreamCanFailValidation() {
+@Suite(.storesInstances)
+struct DataStreamIntegrationTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamCanFailValidation() async {
         // Given
-        let session = stored(Session())
-        var dataSeen = false
-        var error: AFError?
-        let didComplete = expectation(description: "stream should complete")
+        let session = stored(Session.independent())
+        let dataSeen = Capture(false)
+        let error = Capture<AFError?>()
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.status(401))
@@ -904,29 +916,30 @@ final class DataStreamIntegrationTests: BaseTestCase {
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
-                    dataSeen = true
+                    dataSeen.value = true
                 case let .complete(completion):
-                    error = completion.error
-                    didComplete.fulfill()
+                    error.value = completion.error
+                    didComplete.complete()
                 }
             }
 
-        waitForExpectations(timeout: timeout)
+        await didComplete.wait()
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertTrue(error?.isResponseValidationError == true, "error should be response validation error")
-        XCTAssertFalse(dataSeen, "no data should be seen")
+        #expect(error.value != nil, "error should not be nil")
+        #expect(error.isResponseValidationError == true, "error should be response validation error")
+        #expect(!dataSeen.value, "no data should be seen")
     }
 
-    @MainActor
-    func testThatDataStreamsCanBeRetried() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamsCanBeRetried() async {
         // Given
         final class GoodRetry: RequestInterceptor {
-            var hasRetried = false
+            let hasRetried = Protected(false)
 
             func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
-                if hasRetried {
+                if hasRetried.read({ $0 }) {
                     completion(.success(Endpoint.bytes(1000).urlRequest))
                 } else {
                     completion(.success(urlRequest))
@@ -934,18 +947,18 @@ final class DataStreamIntegrationTests: BaseTestCase {
             }
 
             func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
-                hasRetried = true
+                hasRetried.write(true)
                 completion(.retry)
             }
         }
 
-        let session = Session(interceptor: GoodRetry())
-        var accumulatedData = Data()
-        var streamOnMain = false
-        var completeOnMain = false
-        var response: HTTPURLResponse?
-        let didReceive = expectation(description: "stream should receive")
-        let didComplete = expectation(description: "stream should complete")
+        let session = Session.independent(interceptor: GoodRetry())
+        let accumulatedData = Capture(Data())
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let response = Capture<HTTPURLResponse?>()
+        let didReceive = Completion("stream should receive")
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.status(401))
@@ -953,44 +966,45 @@ final class DataStreamIntegrationTests: BaseTestCase {
             .responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(data):
-                        accumulatedData.append(data)
+                        accumulatedData.write { $0.append(data) }
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertEqual(accumulatedData.count, 1000)
-        XCTAssertEqual(response?.statusCode, 200)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(accumulatedData.count == 1000)
+        #expect(response.statusCode == 200)
     }
 
-    @MainActor
-    func testThatDataStreamCanBeRedirected() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamCanBeRedirected() async {
         // Given
-        let session = stored(Session())
-        var response: HTTPURLResponse?
-        var decodedResponse: TestResponse?
-        var decodingError: AFError?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didRedirect = expectation(description: "stream redirected")
+        let session = stored(Session.independent())
+        let response = Capture<HTTPURLResponse?>()
+        let decodedResponse = Capture<TestResponse?>()
+        let decodingError = Capture<AFError?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let didRedirect = Completion("stream redirected")
         let redirector = Redirector(behavior: .modify { _, _, _ in
-            didRedirect.fulfill()
+            didRedirect.complete()
             return Endpoint.stream(1).urlRequest
         })
-        let didReceive = expectation(description: "stream should receive")
-        let didComplete = expectation(description: "stream should complete")
+        let didReceive = Completion("stream should receive")
+        let didComplete = Completion("stream should complete")
 
         // When
         session.streamRequest(.status(301))
@@ -998,47 +1012,48 @@ final class DataStreamIntegrationTests: BaseTestCase {
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        decodedResponse = value
+                        decodedResponse.value = value
                     case let .failure(error):
-                        decodingError = error
+                        decodingError.value = error
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didRedirect, didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didRedirect, didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertNotNil(decodedResponse)
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertNil(decodingError)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(decodedResponse.value != nil)
+        #expect(response.statusCode == 200)
+        #expect(decodingError.value == nil)
     }
 
-    @MainActor
-    func testThatDataStreamCallsCachedResponseHandler() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamCallsCachedResponseHandler() async {
         // Given
-        let session = stored(Session())
-        var response: HTTPURLResponse?
-        var decodedResponse: TestResponse?
-        var decodingError: AFError?
-        var streamOnMain = false
-        var completeOnMain = false
-        let cached = expectation(description: "stream called cacher")
+        let session = stored(Session.independent())
+        let response = Capture<HTTPURLResponse?>()
+        let decodedResponse = Capture<TestResponse?>()
+        let decodingError = Capture<AFError?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let cached = Completion("stream called cacher")
         let cacher = ResponseCacher(behavior: .modify { _, _ in
-            cached.fulfill()
+            cached.complete()
             return nil
         })
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let didReceive = Completion("stream did receive")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.stream(1))
@@ -1046,202 +1061,205 @@ final class DataStreamIntegrationTests: BaseTestCase {
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    streamOnMain = Thread.isMainThread
+                    streamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        decodedResponse = value
+                        decodedResponse.value = value
                     case let .failure(error):
-                        decodingError = error
+                        decodingError.value = error
                     }
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
         // willCacheResponse called after receiving all Data, so may be called before or after the asynchronous stream
         // handlers.
-        wait(for: [cached], timeout: timeout)
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [cached])
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertNotNil(decodedResponse)
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertNil(decodingError)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(decodedResponse.value != nil)
+        #expect(response.statusCode == 200)
+        #expect(decodingError.value == nil)
     }
 
-    @MainActor
-    func testThatDataStreamWorksCorrectlyWithMultipleSerialQueues() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamWorksCorrectlyWithMultipleSerialQueues() async {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         // Require manual start so both serializers can be added before the stream starts.
-        let session = Session(startRequestsImmediately: false,
-                              requestQueue: requestQueue,
-                              serializationQueue: serializationQueue)
-        var firstResponse: HTTPURLResponse?
-        var firstDecodedResponse: TestResponse?
-        var firstDecodingError: AFError?
-        var firstStreamOnMain = false
-        var firstCompleteOnMain = false
-        let firstStream = expectation(description: "first stream")
-        let firstDidReceive = expectation(description: "first stream did receive")
-        let firstDidComplete = expectation(description: "first stream complete")
-        var secondResponse: HTTPURLResponse?
-        var secondDecodedResponse: TestResponse?
-        var secondDecodingError: AFError?
-        var secondStreamOnMain = false
-        var secondCompleteOnMain = false
-        let secondStream = expectation(description: "second stream")
-        let secondDidReceive = expectation(description: "second stream did receive")
-        let secondDidComplete = expectation(description: "second stream complete")
+        let session = Session.independent(startRequestsImmediately: false,
+                                          requestQueue: requestQueue,
+                                          serializationQueue: serializationQueue)
+        let firstResponse = Capture<HTTPURLResponse?>()
+        let firstDecodedResponse = Capture<TestResponse?>()
+        let firstDecodingError = Capture<AFError?>()
+        let firstStreamOnMain = Capture(false)
+        let firstCompleteOnMain = Capture(false)
+        let firstStream = Completion("first stream")
+        let firstDidReceive = Completion("first stream did receive")
+        let firstDidComplete = Completion("first stream complete")
+        let secondResponse = Capture<HTTPURLResponse?>()
+        let secondDecodedResponse = Capture<TestResponse?>()
+        let secondDecodingError = Capture<AFError?>()
+        let secondStreamOnMain = Capture(false)
+        let secondCompleteOnMain = Capture(false)
+        let secondStream = Completion("second stream")
+        let secondDidReceive = Completion("second stream did receive")
+        let secondDidComplete = Completion("second stream complete")
 
         // When
         session.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    firstStreamOnMain = Thread.isMainThread
+                    firstStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        firstDecodedResponse = value
+                        firstDecodedResponse.value = value
                     case let .failure(error):
-                        firstDecodingError = error
+                        firstDecodingError.value = error
                     }
-                    firstStream.fulfill()
-                    firstDidReceive.fulfill()
+                    firstStream.complete()
+                    firstDidReceive.complete()
                 case let .complete(completion):
-                    firstCompleteOnMain = Thread.isMainThread
-                    firstResponse = completion.response
-                    firstDidComplete.fulfill()
+                    firstCompleteOnMain.value = Thread.isMainThread
+                    firstResponse.value = completion.response
+                    firstDidComplete.complete()
                 }
             }
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    secondStreamOnMain = Thread.isMainThread
+                    secondStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        secondDecodedResponse = value
+                        secondDecodedResponse.value = value
                     case let .failure(error):
-                        secondDecodingError = error
+                        secondDecodingError.value = error
                     }
-                    secondStream.fulfill()
-                    secondDidReceive.fulfill()
+                    secondStream.complete()
+                    secondDidReceive.complete()
                 case let .complete(completion):
-                    secondCompleteOnMain = Thread.isMainThread
-                    secondResponse = completion.response
-                    secondDidComplete.fulfill()
+                    secondCompleteOnMain.value = Thread.isMainThread
+                    secondResponse.value = completion.response
+                    secondDidComplete.complete()
                 }
             }
             .resume()
 
-        wait(for: [firstStream, secondStream], timeout: timeout, enforceOrder: true)
+        await wait(for: [firstStream, secondStream], enforceOrder: true)
         // Cannot test order of completion events, as one may have been enqueued while the other executed directly.
-        wait(for: [firstDidReceive, firstDidComplete], timeout: timeout, enforceOrder: true)
-        wait(for: [secondDidReceive, secondDidComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [firstDidReceive, firstDidComplete], enforceOrder: true)
+        await wait(for: [secondDidReceive, secondDidComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(firstStreamOnMain)
-        XCTAssertTrue(firstCompleteOnMain)
-        XCTAssertNotNil(firstDecodedResponse)
-        XCTAssertEqual(firstResponse?.statusCode, 200)
-        XCTAssertNil(firstDecodingError)
-        XCTAssertTrue(secondStreamOnMain)
-        XCTAssertTrue(secondCompleteOnMain)
-        XCTAssertNotNil(secondDecodedResponse)
-        XCTAssertEqual(secondResponse?.statusCode, 200)
-        XCTAssertNil(secondDecodingError)
+        #expect(firstStreamOnMain.value)
+        #expect(firstCompleteOnMain.value)
+        #expect(firstDecodedResponse.value != nil)
+        #expect(firstResponse.statusCode == 200)
+        #expect(firstDecodingError.value == nil)
+        #expect(secondStreamOnMain.value)
+        #expect(secondCompleteOnMain.value)
+        #expect(secondDecodedResponse.value != nil)
+        #expect(secondResponse.statusCode == 200)
+        #expect(secondDecodingError.value == nil)
     }
 
-    @MainActor
-    func testThatDataStreamWorksCorrectlyWithMultipleConcurrentQueues() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamWorksCorrectlyWithMultipleConcurrentQueues() async {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
-        let session = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
-        var firstResponse: HTTPURLResponse?
-        var firstDecodedResponse: TestResponse?
-        var firstDecodingError: AFError?
-        var firstStreamOnMain = false
-        var firstCompleteOnMain = false
-        let firstDidReceive = expectation(description: "first stream did receive")
-        let firstDidComplete = expectation(description: "first stream complete")
-        var secondResponse: HTTPURLResponse?
-        var secondDecodedResponse: TestResponse?
-        var secondDecodingError: AFError?
-        var secondStreamOnMain = false
-        var secondCompleteOnMain = false
-        let secondDidReceive = expectation(description: "second stream did receive")
-        let secondDidComplete = expectation(description: "second stream complete")
+        let session = Session.independent(requestQueue: requestQueue, serializationQueue: serializationQueue)
+        let firstResponse = Capture<HTTPURLResponse?>()
+        let firstDecodedResponse = Capture<TestResponse?>()
+        let firstDecodingError = Capture<AFError?>()
+        let firstStreamOnMain = Capture(false)
+        let firstCompleteOnMain = Capture(false)
+        let firstDidReceive = Completion("first stream did receive")
+        let firstDidComplete = Completion("first stream complete")
+        let secondResponse = Capture<HTTPURLResponse?>()
+        let secondDecodedResponse = Capture<TestResponse?>()
+        let secondDecodingError = Capture<AFError?>()
+        let secondStreamOnMain = Capture(false)
+        let secondCompleteOnMain = Capture(false)
+        let secondDidReceive = Completion("second stream did receive")
+        let secondDidComplete = Completion("second stream complete")
 
         // When
         session.streamRequest(.stream(1))
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    firstStreamOnMain = Thread.isMainThread
+                    firstStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        firstDecodedResponse = value
+                        firstDecodedResponse.value = value
                     case let .failure(error):
-                        firstDecodingError = error
+                        firstDecodingError.value = error
                     }
-                    firstDidReceive.fulfill()
+                    firstDidReceive.complete()
                 case let .complete(completion):
-                    firstCompleteOnMain = Thread.isMainThread
-                    firstResponse = completion.response
-                    firstDidComplete.fulfill()
+                    firstCompleteOnMain.value = Thread.isMainThread
+                    firstResponse.value = completion.response
+                    firstDidComplete.complete()
                 }
             }
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case let .stream(result):
-                    secondStreamOnMain = Thread.isMainThread
+                    secondStreamOnMain.value = Thread.isMainThread
                     switch result {
                     case let .success(value):
-                        secondDecodedResponse = value
+                        secondDecodedResponse.value = value
                     case let .failure(error):
-                        secondDecodingError = error
+                        secondDecodingError.value = error
                     }
-                    secondDidReceive.fulfill()
+                    secondDidReceive.complete()
                 case let .complete(completion):
-                    secondCompleteOnMain = Thread.isMainThread
-                    secondResponse = completion.response
-                    secondDidComplete.fulfill()
+                    secondCompleteOnMain.value = Thread.isMainThread
+                    secondResponse.value = completion.response
+                    secondDidComplete.complete()
                 }
             }
 
-        wait(for: [firstDidReceive, firstDidComplete], timeout: timeout, enforceOrder: true)
-        wait(for: [secondDidReceive, secondDidComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [firstDidReceive, firstDidComplete], enforceOrder: true)
+        await wait(for: [secondDidReceive, secondDidComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(firstStreamOnMain)
-        XCTAssertTrue(firstCompleteOnMain)
-        XCTAssertNotNil(firstDecodedResponse)
-        XCTAssertEqual(firstResponse?.statusCode, 200)
-        XCTAssertNil(firstDecodingError)
-        XCTAssertTrue(secondStreamOnMain)
-        XCTAssertTrue(secondCompleteOnMain)
-        XCTAssertNotNil(secondDecodedResponse)
-        XCTAssertEqual(secondResponse?.statusCode, 200)
-        XCTAssertNil(secondDecodingError)
+        #expect(firstStreamOnMain.value)
+        #expect(firstCompleteOnMain.value)
+        #expect(firstDecodedResponse.value != nil)
+        #expect(firstResponse.statusCode == 200)
+        #expect(firstDecodingError.value == nil)
+        #expect(secondStreamOnMain.value)
+        #expect(secondCompleteOnMain.value)
+        #expect(secondDecodedResponse.value != nil)
+        #expect(secondResponse.statusCode == 200)
+        #expect(secondDecodingError.value == nil)
     }
 
-    @MainActor
-    func testThatDataStreamCanAuthenticate() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamCanAuthenticate() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let user = "userstream", password = "password"
-        var response: HTTPURLResponse?
-        var streamOnMain = false
-        var completeOnMain = false
-        let didReceive = expectation(description: "stream did receive")
-        let didComplete = expectation(description: "stream complete")
+        let response = Capture<HTTPURLResponse?>()
+        let streamOnMain = Capture(false)
+        let completeOnMain = Capture(false)
+        let didReceive = Completion("stream did receive")
+        let didComplete = Completion("stream complete")
 
         // When
         session.streamRequest(.basicAuth(forUser: user, password: password))
@@ -1249,27 +1267,29 @@ final class DataStreamIntegrationTests: BaseTestCase {
             .responseStream { stream in
                 switch stream.event {
                 case .stream:
-                    streamOnMain = Thread.isMainThread
-                    didReceive.fulfill()
+                    streamOnMain.value = Thread.isMainThread
+                    didReceive.complete()
                 case let .complete(completion):
-                    completeOnMain = Thread.isMainThread
-                    response = completion.response
-                    didComplete.fulfill()
+                    completeOnMain.value = Thread.isMainThread
+                    response.value = completion.response
+                    didComplete.complete()
                 }
             }
 
-        wait(for: [didReceive, didComplete], timeout: timeout, enforceOrder: true)
+        await wait(for: [didReceive, didComplete], enforceOrder: true)
 
         // Then
-        XCTAssertTrue(streamOnMain)
-        XCTAssertTrue(completeOnMain)
-        XCTAssertEqual(response?.statusCode, 200)
+        #expect(streamOnMain.value)
+        #expect(completeOnMain.value)
+        #expect(response.statusCode == 200)
     }
 }
 
-final class DataStreamLifetimeEvents: BaseTestCase {
-    @MainActor
-    func testThatDataStreamRequestHasAppropriateLifetimeEvents() {
+@Suite(.storesInstances)
+struct DataStreamLifetimeEvents {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func dataStreamRequestHasAppropriateLifetimeEvents() async {
         // Given
         final class Monitor: EventMonitor {
             private let called: (@Sendable () -> Void)?
@@ -1284,45 +1304,44 @@ final class DataStreamLifetimeEvents: BaseTestCase {
         }
         let eventMonitor = ClosureEventMonitor()
         // Disable event test until Firewalk supports HTTPS.
-        //  let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
-        let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
-        let didReceiveData = expectation(description: "didReceiveData should fire")
-        let willCacheResponse = expectation(description: "willCacheResponse should fire")
-        let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
-        let didCreateTask = expectation(description: "didCreateTask should fire")
-        let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
-        let didComplete = expectation(description: "didComplete should fire")
-        let didFinish = expectation(description: "didFinish should fire")
-        let didResume = expectation(description: "didResume should fire")
-        let didResumeTask = expectation(description: "didResumeTask should fire")
-        let didValidate = expectation(description: "didValidateRequest should fire")
-        didValidate.expectedFulfillmentCount = 2
-        let didParse = expectation(description: "streamDidParse should fire")
-        let didReceive = expectation(description: "stream should receive")
-        let didCompleteStream = expectation(description: "stream should complete")
+        //  let didReceiveChallenge = Completion("didReceiveChallenge should fire")
+        let taskDidFinishCollecting = Completion("taskDidFinishCollecting should fire")
+        let didReceiveData = Completion("didReceiveData should fire")
+        let willCacheResponse = Completion("willCacheResponse should fire")
+        let didCreateURLRequest = Completion("didCreateInitialURLRequest should fire")
+        let didCreateTask = Completion("didCreateTask should fire")
+        let didGatherMetrics = Completion("didGatherMetrics should fire")
+        let didComplete = Completion("didComplete should fire")
+        let didFinish = Completion("didFinish should fire")
+        let didResume = Completion("didResume should fire")
+        let didResumeTask = Completion("didResumeTask should fire")
+        let didValidate = Completion("didValidateRequest should fire", expectedCount: 2)
+        let didParse = Completion("streamDidParse should fire")
+        let didReceive = Completion("stream should receive")
+        let didCompleteStream = Completion("stream should complete")
 
-        var dataReceived = false
+        let dataReceived = Capture(false)
 
         // Disable event test until Firewalk supports HTTPS.
-        //  eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
-        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        //  eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.complete() }
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.complete() }
         eventMonitor.dataTaskDidReceiveData = { _, _, _ in
-            guard !dataReceived else { return }
+            guard !dataReceived.value else { return }
             // Data may be received many times, fulfill only once.
-            dataReceived = true
-            didReceiveData.fulfill()
+            dataReceived.value = true
+            didReceiveData.complete()
         }
-        eventMonitor.dataTaskWillCacheResponse = { _, _, _ in willCacheResponse.fulfill() }
-        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.fulfill() }
-        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
-        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
-        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
-        eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.fulfill() }
-        eventMonitor.requestDidValidateRequestResponseWithResult = { _, _, _, _ in didValidate.fulfill() }
+        eventMonitor.dataTaskWillCacheResponse = { _, _, _ in willCacheResponse.complete() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.complete() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.complete() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.complete() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.complete() }
+        eventMonitor.requestDidFinish = { _ in didFinish.complete() }
+        eventMonitor.requestDidResume = { _ in didResume.complete() }
+        eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.complete() }
+        eventMonitor.requestDidValidateRequestResponseWithResult = { _, _, _, _ in didValidate.complete() }
 
-        let session = Session(eventMonitors: [eventMonitor, Monitor { didParse.fulfill() }])
+        let session = Session.independent(eventMonitors: [eventMonitor, Monitor { didParse.complete() }])
 
         // When
         let request = session.streamRequest(.stream(1))
@@ -1330,15 +1349,15 @@ final class DataStreamLifetimeEvents: BaseTestCase {
             .responseStreamDecodable(of: TestResponse.self) { stream in
                 switch stream.event {
                 case .stream:
-                    didReceive.fulfill()
+                    didReceive.complete()
                 case .complete:
-                    didCompleteStream.fulfill()
+                    didCompleteStream.complete()
                 }
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [taskDidFinishCollecting, didReceiveData, willCacheResponse, didCreateURLRequest, didCreateTask, didGatherMetrics, didComplete, didFinish, didResume, didResumeTask, didValidate, didParse, didReceive, didCompleteStream])
 
         // Then
-        XCTAssertEqual(request.state, .finished)
+        #expect(request.state == .finished)
     }
 }

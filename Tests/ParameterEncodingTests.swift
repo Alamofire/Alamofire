@@ -48,7 +48,7 @@ struct URLParameterEncodingTestCase {
     @Test
     func urlParameterEncodeEmptyDictionaryParameter() throws {
         // Given
-        let parameters: [String: Any] = [:]
+        let parameters: Parameters = [:]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -161,7 +161,7 @@ struct URLParameterEncodingTestCase {
     @Test
     func urlParameterEncodeStringKeyArrayValueParameter() throws {
         // Given
-        let parameters = ["foo": ["a", 1, true]]
+        let parameters: Parameters = ["foo": ["a", 1, true] as [any Sendable]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -174,7 +174,7 @@ struct URLParameterEncodingTestCase {
     func urlParameterEncodeArrayNestedDictionaryValueParameterWithIndex() throws {
         // Given
         let encoding = URLEncoding(arrayEncoding: .indexInBrackets)
-        let parameters = ["foo": ["a", 1, true, ["bar": 2], ["qux": 3], ["quy": ["quz": 3]]]]
+        let parameters: Parameters = ["foo": ["a", 1, true, ["bar": 2], ["qux": 3], ["quy": ["quz": 3]]] as [any Sendable]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -187,7 +187,7 @@ struct URLParameterEncodingTestCase {
     func urlParameterEncodeStringKeyArrayValueParameterWithoutBrackets() throws {
         // Given
         let encoding = URLEncoding(arrayEncoding: .noBrackets)
-        let parameters = ["foo": ["a", 1, true]]
+        let parameters: Parameters = ["foo": ["a", 1, true] as [any Sendable]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -202,7 +202,7 @@ struct URLParameterEncodingTestCase {
         let encoding = URLEncoding(arrayEncoding: .custom { key, index in
             "\(key).\(index + 1)"
         })
-        let parameters = ["foo": ["a", 1, true]]
+        let parameters: Parameters = ["foo": ["a", 1, true] as [any Sendable]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -238,7 +238,7 @@ struct URLParameterEncodingTestCase {
     @Test
     func urlParameterEncodeStringKeyNestedDictionaryArrayValueParameter() throws {
         // Given
-        let parameters = ["foo": ["bar": ["baz": ["a", 1, true]]]]
+        let parameters: Parameters = ["foo": ["bar": ["baz": ["a", 1, true] as [any Sendable]]]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -252,7 +252,7 @@ struct URLParameterEncodingTestCase {
     func urlParameterEncodeStringKeyNestedDictionaryArrayValueParameterWithoutBrackets() throws {
         // Given
         let encoding = URLEncoding(arrayEncoding: .noBrackets)
-        let parameters = ["foo": ["bar": ["baz": ["a", 1, true]]]]
+        let parameters: Parameters = ["foo": ["bar": ["baz": ["a", 1, true] as [any Sendable]]]]
 
         // When
         let urlRequest = try encoding.encode(urlRequest, with: parameters)
@@ -266,7 +266,7 @@ struct URLParameterEncodingTestCase {
     func urlParameterLiteralBoolEncodingWorksAndDoesNotAffectNumbers() throws {
         // Given
         let encoding = URLEncoding(boolEncoding: .literal)
-        let parameters: [String: Any] = [ // Must still encode to numbers
+        let parameters: Parameters = [ // Must still encode to numbers
             "a": 1,
             "b": 0,
             "c": 1.0,
@@ -587,11 +587,11 @@ struct JSONParameterEncodingTestCase {
     @Test
     func jsonParameterEncodeComplexParameters() throws {
         // Given
-        let parameters: [String: Any] = ["foo": "bar",
-                                         "baz": ["a", 1, true],
-                                         "qux": ["a": 1,
-                                                 "b": [2, 2],
-                                                 "c": [3, 3, 3]]]
+        let parameters: Parameters = ["foo": "bar",
+                                      "baz": ["a", 1, true] as [any Sendable],
+                                      "qux": ["a": 1,
+                                              "b": [2, 2],
+                                              "c": [3, 3, 3]] as [String: any Sendable]]
 
         // When
         let request = try encoding.encode(urlRequest, with: parameters)
