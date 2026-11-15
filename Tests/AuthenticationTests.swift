@@ -156,7 +156,7 @@ struct BasicAuthenticationTestCase {
 
 @Suite(.storesInstances)
 struct HTTPDigestAuthenticationTestCase {
-    @Test(.disabled("Disabled due to HTTPBin flakiness."))
+    @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func httpDigestAuthenticationWithInvalidCredentials() async {
         // Given
@@ -184,7 +184,7 @@ struct HTTPDigestAuthenticationTestCase {
         #expect(response.error == nil)
     }
 
-    @Test(.disabled("Disabled due to HTTPBin flakiness."))
+    @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func httpDigestAuthenticationWithValidCredentials() async {
         // Given

@@ -128,22 +128,22 @@
 		31181E792794FF9600E88600 /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
 		31181E7A2794FF9600E88600 /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
 		31181E7B2794FF9600E88600 /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
-		31181E7C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E7D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E7E2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E7F2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E802794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E812794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E822794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E832794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E842794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E852794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E862794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E872794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E882794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
-		31181E892794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
-		31181E8A2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
-		31181E8B2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
+		31181E7C2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E7D2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E7E2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E7F2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E802794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E812794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E822794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E832794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E842794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E852794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E862794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E872794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E882794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
+		31181E892794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
+		31181E8A2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
+		31181E8B2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
 		311A89BF23185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
 		311A89C023185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
 		311A89C123185BC0003BB714 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
@@ -329,10 +329,10 @@
 		3173392D2A43BEAC00D4EA0A /* multiple-dns-names.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E282794FF9600E88600 /* multiple-dns-names.cer */; };
 		3173392E2A43BEAC00D4EA0A /* expired.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E292794FF9600E88600 /* expired.cer */; };
 		3173392F2A43BEAC00D4EA0A /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
-		317339302A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		317339312A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		317339322A43BEAC00D4EA0A /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		317339332A43BEAC00D4EA0A /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
+		317339302A43BEAC00D4EA0A /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		317339312A43BEAC00D4EA0A /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		317339322A43BEAC00D4EA0A /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		317339332A43BEAC00D4EA0A /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
 		317339342A43BEAC00D4EA0A /* certPEM.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E172794FF9600E88600 /* certPEM.cer */; };
 		317339352A43BEAC00D4EA0A /* randomGibberish.crt in Resources */ = {isa = PBXBuildFile; fileRef = 31181E182794FF9600E88600 /* randomGibberish.crt */; };
 		317339362A43BEAC00D4EA0A /* certDER.der in Resources */ = {isa = PBXBuildFile; fileRef = 31181E192794FF9600E88600 /* certDER.der */; };
@@ -700,10 +700,10 @@
 		31181E282794FF9600E88600 /* multiple-dns-names.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "multiple-dns-names.cer"; sourceTree = "<group>"; };
 		31181E292794FF9600E88600 /* expired.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = expired.cer; sourceTree = "<group>"; };
 		31181E2A2794FF9600E88600 /* valid-dns-name.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "valid-dns-name.cer"; sourceTree = "<group>"; };
-		31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-intermediate-ca-1.cer"; sourceTree = "<group>"; };
-		31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-intermediate-ca-2.cer"; sourceTree = "<group>"; };
-		31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-root-ca.cer"; sourceTree = "<group>"; };
-		31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-leaf.cer"; sourceTree = "<group>"; };
+		31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-intermediate1.cer"; sourceTree = "<group>"; };
+		31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-intermediate2.cer"; sourceTree = "<group>"; };
+		31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-root.cer"; sourceTree = "<group>"; };
+		31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-leaf.cer"; sourceTree = "<group>"; };
 		311B198F20B0D3B40036823B /* MultipartUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartUpload.swift; sourceTree = "<group>"; };
 		31293065263E17D600473CEA /* Alamofire watchOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire watchOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
@@ -947,15 +947,15 @@
 			path = "alamofire-org";
 			sourceTree = "<group>";
 		};
-		31181E2B2794FF9600E88600 /* expired-badssl-com */ = {
+		31181E2B2794FF9600E88600 /* firewalk-expired */ = {
 			isa = PBXGroup;
 			children = (
-				31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */,
-				31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */,
-				31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */,
-				31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */,
+				31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */,
+				31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */,
+				31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */,
+				31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */,
 			);
-			path = "expired-badssl-com";
+			path = "firewalk-expired";
 			sourceTree = "<group>";
 		};
 		319ECE9E25EC96E8001C38CA /* .github */ = {
@@ -1131,7 +1131,7 @@
 			isa = PBXGroup;
 			children = (
 				31181E1E2794FF9600E88600 /* alamofire-org */,
-				31181E2B2794FF9600E88600 /* expired-badssl-com */,
+				31181E2B2794FF9600E88600 /* firewalk-expired */,
 				31181E162794FF9600E88600 /* selfSignedAndMalformedCerts */,
 			);
 			name = Certificates;
@@ -1583,13 +1583,13 @@
 				31181E5F2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				312930AF263E187800473CEA /* empty_string.txt in Resources */,
 				31181E6F2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7F2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E832794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7F2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E832794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E4B2794FF9600E88600 /* certDER.crt in Resources */,
 				31181E372794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E532794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E7B2794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E8B2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E8B2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3F2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E5B2794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				312930AB263E187200473CEA /* rainbow.jpg in Resources */,
@@ -1597,7 +1597,7 @@
 				312930B0263E187800473CEA /* utf8_string.txt in Resources */,
 				31181E6B2794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E572794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E872794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E872794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				312930AC263E187500473CEA /* empty_data.json in Resources */,
 				31181E732794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E472794FF9600E88600 /* certPEM.crt in Resources */,
@@ -1629,10 +1629,10 @@
 				3173392D2A43BEAC00D4EA0A /* multiple-dns-names.cer in Resources */,
 				3173392E2A43BEAC00D4EA0A /* expired.cer in Resources */,
 				3173392F2A43BEAC00D4EA0A /* valid-dns-name.cer in Resources */,
-				317339302A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				317339312A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
-				317339322A43BEAC00D4EA0A /* expired.badssl.com-root-ca.cer in Resources */,
-				317339332A43BEAC00D4EA0A /* expired.badssl.com-leaf.cer in Resources */,
+				317339302A43BEAC00D4EA0A /* firewalk-expired-intermediate1.cer in Resources */,
+				317339312A43BEAC00D4EA0A /* firewalk-expired-intermediate2.cer in Resources */,
+				317339322A43BEAC00D4EA0A /* firewalk-expired-root.cer in Resources */,
+				317339332A43BEAC00D4EA0A /* firewalk-expired-leaf.cer in Resources */,
 				317339342A43BEAC00D4EA0A /* certPEM.cer in Resources */,
 				317339352A43BEAC00D4EA0A /* randomGibberish.crt in Resources */,
 				317339362A43BEAC00D4EA0A /* certDER.der in Resources */,
@@ -1675,13 +1675,13 @@
 				31181E5E2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				4CFB030F1D7D2FA20056F249 /* utf8_string.txt in Resources */,
 				31181E6E2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7E2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E822794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7E2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E822794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E4A2794FF9600E88600 /* certDER.crt in Resources */,
 				31181E362794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E522794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E7A2794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E8A2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E8A2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3E2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E5A2794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				4CF627351BA7CC300011A099 /* unicorn.png in Resources */,
@@ -1689,7 +1689,7 @@
 				4CFB02FA1D7D2FA20056F249 /* invalid_data.json in Resources */,
 				31181E6A2794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E562794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E862794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E862794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				4CFB02F71D7D2FA20056F249 /* empty_data.json in Resources */,
 				31181E722794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E462794FF9600E88600 /* certPEM.crt in Resources */,
@@ -1737,13 +1737,13 @@
 				31181E5C2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				4CFB030D1D7D2FA20056F249 /* utf8_string.txt in Resources */,
 				31181E6C2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E802794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7C2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E802794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E482794FF9600E88600 /* certDER.crt in Resources */,
 				31181E342794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E502794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E782794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E882794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E882794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3C2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E582794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */,
@@ -1751,7 +1751,7 @@
 				4CFB02F81D7D2FA20056F249 /* invalid_data.json in Resources */,
 				31181E682794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E542794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E842794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E842794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				4CFB02F51D7D2FA20056F249 /* empty_data.json in Resources */,
 				31181E702794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E442794FF9600E88600 /* certPEM.crt in Resources */,
@@ -1775,13 +1775,13 @@
 				31181E5D2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				4CFB030E1D7D2FA20056F249 /* utf8_string.txt in Resources */,
 				31181E6D2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E812794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7D2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E812794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E492794FF9600E88600 /* certDER.crt in Resources */,
 				31181E352794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E512794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E792794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E892794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E892794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3D2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E592794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				4C33A13A1B5207DB00873DFF /* rainbow.jpg in Resources */,
@@ -1789,7 +1789,7 @@
 				4CFB02F91D7D2FA20056F249 /* invalid_data.json in Resources */,
 				31181E692794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E552794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E852794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E852794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				4CFB02F61D7D2FA20056F249 /* empty_data.json in Resources */,
 				31181E712794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E452794FF9600E88600 /* certPEM.crt in Resources */,

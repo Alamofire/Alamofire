@@ -404,7 +404,7 @@ struct SessionTestCase {
 
     // MARK: Tests - Supported Accept-Encodings
 
-    @Test(.disabled("Disabled due to HTTPBin flakiness."))
+    @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func defaultAcceptEncodingSupportsAppropriateEncodingsOnAppropriateSystems() async {
         // Given

@@ -30,10 +30,10 @@ import Foundation
 import Testing
 
 private enum TestCertificates {
-    static let rootCA = TestCertificates.certificate(filename: "expired.badssl.com-root-ca")
-    static let intermediateCA1 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-1")
-    static let intermediateCA2 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-2")
-    static let leaf = TestCertificates.certificate(filename: "expired.badssl.com-leaf")
+    static let rootCA = TestCertificates.certificate(filename: "firewalk-expired-root")
+    static let intermediateCA1 = TestCertificates.certificate(filename: "firewalk-expired-intermediate1")
+    static let intermediateCA2 = TestCertificates.certificate(filename: "firewalk-expired-intermediate2")
+    static let leaf = TestCertificates.certificate(filename: "firewalk-expired-leaf")
 
     static func certificate(filename: String) -> SecCertificate {
         let filePath = Bundle.test.path(forResource: filename, ofType: "cer")!
@@ -46,8 +46,10 @@ private enum TestCertificates {
 
 @Suite(.storesInstances, .serialized)
 struct TLSEvaluationExpiredLeafCertificateTestCase {
-    private let expiredURLString = "https://expired.badssl.com/"
-    private let expiredHost = "expired.badssl.com"
+    /// Firewalk's server with an expired leaf certificate, issued through two intermediate CAs by a root CA nothing
+    /// trusts, like expired.badssl.com.
+    private let expiredURLString = "https://127.0.0.1:8444/get"
+    private let expiredHost = "127.0.0.1"
 
     private let revokedURLString = "https://revoked.badssl.com"
     private let revokedHost = "revoked.badssl.com"
@@ -57,7 +59,7 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.urlCache = nil
         configuration.urlCredentialStorage = nil
-        // badssl.com sometimes stalls a connection. Time out quickly so the request can be retried.
+        // revoked.badssl.com sometimes stalls a connection. Time out quickly so the request can be retried.
         configuration.timeoutIntervalForRequest = 5
 
         return configuration
@@ -69,8 +71,8 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func expiredCertificateRequestFailsWithNoServerTrustPolicy() async {
         // Given
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
-        let manager = stored(Session.independent(configuration: configuration, interceptor: DroppedConnectionRetrier()))
+        let expectation = Completion("\(expiredURLString)")
+        let manager = stored(Session.independent(configuration: configuration))
         let error = Capture<AFError?>()
 
         // When
@@ -126,10 +128,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         // Given
         let evaluators = [expiredHost: DefaultTrustEvaluator(validateHost: true)]
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<AFError?>()
 
         // When
@@ -194,10 +195,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: policy]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<AFError?>()
 
         // When
@@ -268,10 +268,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<AFError?>()
 
         // When
@@ -306,10 +305,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<AFError?>()
 
         // When
@@ -340,10 +338,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<(any Error)?>()
 
         // When
@@ -367,10 +364,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<(any Error)?>()
 
         // When
@@ -394,10 +390,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<(any Error)?>()
 
         // When
@@ -423,10 +418,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<AFError?>()
 
         // When
@@ -457,10 +451,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<(any Error)?>()
 
         // When
@@ -484,10 +477,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<(any Error)?>()
 
         // When
@@ -511,10 +503,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<(any Error)?>()
 
         // When
@@ -527,7 +518,7 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         await expectation.wait()
 
         // Then
-        #expect(error.value != nil, "error should not be nil")
+        #expect(error.value == nil, "error should be nil")
     }
 
     // MARK: Server Trust Policy - Disabling Evaluation Tests
@@ -538,10 +529,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         // Given
         let evaluators = [expiredHost: DisabledTrustEvaluator()]
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let expectation = Completion("\(expiredURLString)")
         let error = Capture<(any Error)?>()
 
         // When
@@ -558,8 +548,8 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
     }
 }
 
-/// Retries requests whose connection badssl.com drops during the TLS handshake or stalls, which it does to a few percent
-/// of CI requests.
+/// Retries requests whose connection revoked.badssl.com drops during the TLS handshake or stalls, which it does to a few
+/// percent of CI requests.
 ///
 /// A dropped handshake fails with `secureConnectionFailed` and an underlying `errSSLClosedNoNotify` (`-9816`), and a
 /// stalled one with `timedOut`. Neither says anything about the behavior under test: evaluator failures are

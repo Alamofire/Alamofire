@@ -39,6 +39,9 @@ final class Completion: @unchecked Sendable {
     /// How long `wait()` waits, in seconds, before recording an issue.
     let timeout: TimeInterval
 
+    /// Longer than tests need on a Mac, because CI simulators can stall the test process for more than 10 seconds.
+    static let defaultTimeout: TimeInterval = 30
+
     private let sourceLocation: SourceLocation
     private let lock = NSLock()
     private var count = 0
@@ -60,12 +63,12 @@ final class Completion: @unchecked Sendable {
     /// - Parameters:
     ///   - description:    What's being waited for, used in recorded issues.
     ///   - expectedCount:  The number of `complete()` calls needed. `1` by default.
-    ///   - timeout:        How long `wait()` waits, in seconds. `10` by default.
+    ///   - timeout:        How long `wait()` waits, in seconds. `defaultTimeout` by default.
     ///   - fileID:         With `filePath`, `line`, and `column`, where issues for extra `complete()` calls are
     ///                     recorded. The call site by default.
     init(_ description: String,
          expectedCount: Int = 1,
-         timeout: TimeInterval = 10,
+         timeout: TimeInterval = Completion.defaultTimeout,
          fileID: String = #fileID,
          filePath: String = #filePath,
          line: Int = #line,
@@ -109,12 +112,12 @@ final class Completion: @unchecked Sendable {
     ///   - name:    The notification name to observe.
     ///   - object:  The object whose notifications to observe, or `nil` for any object.
     ///   - center:  The `NotificationCenter` to observe. `.default` by default.
-    ///   - timeout: How long `wait()` waits, in seconds. `10` by default.
+    ///   - timeout: How long `wait()` waits, in seconds. `defaultTimeout` by default.
     ///   - handler: Returns whether a notification completes the completion. Accepts every notification by default.
     static func notification(_ name: Notification.Name,
                              object: AnyObject? = nil,
                              center: NotificationCenter = .default,
-                             timeout: TimeInterval = 10,
+                             timeout: TimeInterval = Completion.defaultTimeout,
                              fileID: String = #fileID,
                              filePath: String = #filePath,
                              line: Int = #line,

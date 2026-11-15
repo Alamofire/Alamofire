@@ -580,7 +580,8 @@ struct WebSocketTests {
         let didReceiveMessage = Completion("didReceiveMessage", expectedCount: 2)
         let didDisconnect = Completion("didDisconnect", expectedCount: 2)
         let didComplete = Completion("didComplete", expectedCount: 2)
-        let session = stored(Session.independent())
+        // Started only once both handlers are added, since a handler added later misses the events before it.
+        let session = stored(Session.independent(startRequestsImmediately: false))
 
         let firstConnectedProtocol = Capture<String?>()
         let firstMessage = Capture<URLSessionWebSocketTask.Message?>()
@@ -628,6 +629,7 @@ struct WebSocketTests {
                 didComplete.complete()
             }
         }
+        .resume()
 
         await wait(for: [didConnect, didReceiveMessage, didDisconnect, didComplete], enforceOrder: true)
 

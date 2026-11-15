@@ -9,7 +9,8 @@
 #   ARGS    Extra arguments for xcodebuild or swift test, such as -only-testing:"Alamofire iOS Tests/RequestTests".
 #   ALAMOFIRE_TEST_CONCURRENCY  The most tests to run at once. Unlimited by default. CI sets it for its smaller machines.
 #   CI      When `true`, as GitHub Actions sets it, simulator tasks shut down every simulator before and after testing.
-# The simulator tasks also take OS and DEVICE as arguments. Test tasks start Firewalk first if it isn't running.
+# The simulator tasks also take OS and DEVICE as arguments, and boot the simulator while building for testing. Test tasks
+# start Firewalk first if it isn't running, and stop it when they finish.
 #
 # Examples:
 #   mise run test:ios
@@ -19,7 +20,7 @@
 [tools]
 xcbeautify = "3.2.1"
 # Firewalk's release has a single universal macOS binary, so name the asset.
-"github:Alamofire/Firewalk" = { version = "0.15.0", asset_pattern = "firewalk.zip" }
+"github:Alamofire/Firewalk" = { version = "0.16.0", asset_pattern = "firewalk.zip" }
 
 [settings]
 # Otherwise mise expands `$NAME` references in [vars] when it loads this file, before the shell code there runs.
@@ -32,43 +33,36 @@ NSUnbufferedIO = "YES"
 # bash 3.2, which macOS ships, treats an empty array as unset.
 
 [tasks.firewalk]
-description = "Start Firewalk unless it's already running, and wait until it answers."
-shell = "bash -eo pipefail -c"
-quiet = true
-run = '''
-url=http://localhost:8080/get
-if curl -sf --max-time 2 -o /dev/null "$url"; then echo "Firewalk is already running."; exit 0; fi
-mkdir -p .build
-# Parallel tests open hundreds of connections at once, more than the default open file limit allows.
-ulimit -n 10240 2> /dev/null || ulimit -n "$(ulimit -Hn)"
-nohup firewalk > .build/firewalk.log 2>&1 &
-for _ in $(seq 1 30); do curl -sf --max-time 2 -o /dev/null "$url" && exit 0; sleep 1; done
-echo "Firewalk didn't start. Its log:" >&2; cat .build/firewalk.log >&2; exit 1
-'''
-
-[tasks."test:macos"]
-description = "Test on macOS."
-depends = ["firewalk"]
+description = "Start Firewalk unless it's already running, wait until it answers, and leave it running."
 shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 {{vars.functions}}
+start_firewalk keep
+'''
+
+[tasks."test:macos"]
+description = "Test on macOS."
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+{{vars.functions}}
+start_firewalk
 run_xcodebuild "Alamofire macOS" macOS "platform=macOS" macOS test
 '''
 
 [tasks."test:catalyst"]
 description = "Test on Mac Catalyst."
-depends = ["firewalk"]
 shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 {{vars.functions}}
+start_firewalk
 run_xcodebuild "Alamofire iOS" iOS "platform=macOS,variant=Mac Catalyst" Catalyst test
 '''
 
 [tasks."test:ios"]
 description = "Test on an iOS simulator."
-depends = ["firewalk"]
 usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"iPhone 18 Pro\"" default=""
@@ -77,12 +71,12 @@ shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 {{vars.functions}}
+start_firewalk
 test_on_simulator iOS iPhone "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
 '''
 
 [tasks."test:tvos"]
 description = "Test on a tvOS simulator."
-depends = ["firewalk"]
 usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"Apple TV 4K (4th generation)\"" default=""
@@ -91,12 +85,12 @@ shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 {{vars.functions}}
+start_firewalk
 test_on_simulator tvOS "Apple TV" "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
 '''
 
 [tasks."test:visionos"]
 description = "Test on a visionOS simulator."
-depends = ["firewalk"]
 usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"Apple Vision Pro\"" default=""
@@ -105,12 +99,12 @@ shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 {{vars.functions}}
+start_firewalk
 test_on_simulator visionOS "Apple Vision" "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
 '''
 
 [tasks."test:watchos"]
 description = "Test on a watchOS simulator."
-depends = ["firewalk"]
 usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"Apple Watch Series 12 (46mm)\"" default=""
@@ -119,16 +113,17 @@ shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 {{vars.functions}}
+start_firewalk
 test_on_simulator watchOS "Apple Watch" "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
 '''
 
 [tasks."test:spm"]
 description = "Test with SwiftPM."
-depends = ["firewalk"]
 shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 {{vars.functions}}
+start_firewalk
 eval "args=(${ARGS:-})"
 swift test -c debug "${args[@]}" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
 '''
@@ -155,6 +150,29 @@ if [ -n "${XCODE:-}" ]; then
 fi
 # xcodebuild passes TEST_RUNNER_ variables on to the tests, without the prefix.
 if [ -n "${ALAMOFIRE_TEST_CONCURRENCY:-}" ]; then export TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY="$ALAMOFIRE_TEST_CONCURRENCY"; fi
+
+# Commands to run when the task ends, however it ends, newest first.
+cleanup=()
+run_cleanup() {
+    local command
+    for command in "${cleanup[@]}"; do eval "$command"; done
+}
+trap run_cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+# start_firewalk [keep]
+# Starts Firewalk unless it's already running and waits until it answers. Stops it when the task ends, unless `keep`.
+start_firewalk() {
+    local url=http://localhost:8080/get
+    if curl -sf --max-time 2 -o /dev/null "$url"; then echo "Firewalk is already running."; return; fi
+    mkdir -p .build
+    # Parallel tests open hundreds of connections at once, more than the default open file limit allows.
+    (ulimit -n 10240 2> /dev/null || ulimit -n "$(ulimit -Hn)"; exec nohup firewalk > .build/firewalk.log 2>&1) &
+    if [ "${1:-}" != keep ]; then cleanup=("kill $! > /dev/null 2>&1 || true" "${cleanup[@]}"); fi
+    for _ in $(seq 1 30); do curl -sf --max-time 2 -o /dev/null "$url" && return; sleep 1; done
+    echo "Firewalk didn't start. Its log:" >&2; cat .build/firewalk.log >&2; return 1
+}
 
 # run_xcodebuild SCHEME PLAN DESTINATION NAME ACTION [SIMULATOR_ID]
 run_xcodebuild() {
@@ -183,19 +201,29 @@ run_xcodebuild() {
 
     # Simulators left running slow down whatever runs next, so shut down when the task ends, however it ends: every
     # simulator in CI, otherwise this one unless it was already running.
-    local was_booted shutdown=""
+    local was_booted
     was_booted=$(xcrun simctl list devices -j | jq -r --arg id "$simulator" '[.devices[][] | select(.udid == $id and .state == "Booted")] | length')
     if [ "${CI:-}" = true ]; then
-        shutdown="xcrun simctl shutdown all"
+        cleanup=("xcrun simctl shutdown all > /dev/null 2>&1 || true" "${cleanup[@]}")
     elif [ "$was_booted" = 0 ]; then
-        shutdown="xcrun simctl shutdown $simulator"
+        cleanup=("xcrun simctl shutdown $simulator > /dev/null 2>&1 || true" "${cleanup[@]}")
     fi
-    if [ -n "$shutdown" ]; then
-        trap "$shutdown > /dev/null 2>&1 || true" EXIT
-        trap 'exit 130' INT
-        trap 'exit 143' TERM
+
+    # A simulator's first boot keeps it busy long after xcodebuild would start testing, enough to stall tests past their
+    # timeouts, so boot while building and test only once booting finishes.
+    local boot_log=".build/boot-$simulator.log" boot
+    mkdir -p .build
+    xcrun simctl bootstatus "$simulator" -b > "$boot_log" 2>&1 &
+    boot=$!
+    cleanup=("kill $boot > /dev/null 2>&1 || true" "${cleanup[@]}")
+
+    xcodebuild_step "${args[@]}" clean build-for-testing
+    echo "Waiting for the simulator to finish booting."
+    if ! wait "$boot"; then
+        echo "Booting the simulator failed, so leaving it to xcodebuild. simctl's output:"
+        cat "$boot_log"
     fi
-    xcodebuild_step -resultBundlePath "$result" "${args[@]}" clean "$action"
+    xcodebuild_step -resultBundlePath "$result" "${args[@]}" test-without-building
 }
 
 # test_on_simulator PLATFORM FAMILY OS DEVICE
@@ -234,7 +262,7 @@ test_on_simulator() {
         destination="id=$id"
         echo "Testing on $name, $platform $version"
         if [ "$last_used" = never ]; then
-            echo "This simulator hasn't booted before. Its one-time setup on first boot can slow this run enough for tests to time out."
+            echo "This simulator hasn't booted before, so its one-time setup runs while the project builds."
         fi
     elif [ -n "${device:-$name}" ]; then
         destination="platform=$platform Simulator,OS=${os:-latest},name=${device:-$name}"
