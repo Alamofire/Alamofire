@@ -318,7 +318,7 @@ jobs:
             xcode: "Xcode_27.2"
             runsOn: self-xcode272
           - os: "27.0"
-            device: "Apple Watch Series 11 (46mm)"
+            device: "Apple Watch Series 12 (46mm)"
             name: "watchOS 27.0"
             xcode: "Xcode_27.0"
             runsOn: self-xcode270
