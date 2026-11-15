@@ -622,6 +622,49 @@ struct SessionTestCase {
         #expect(session == nil, "manager should be nil")
     }
 
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func invalidatingSessionDoesNotFinishCompletedCancelledRequestAgain() async {
+        // Given
+        let session = stored(Session.independent())
+        let didRespond = Completion("response handler should be called")
+        let request = session.request(.delay(10)).response { _ in didRespond.complete() }
+        request.cancel()
+        await didRespond.wait()
+
+        // When
+        // A request calls its completion handlers just before it's removed from the session's active requests. Put it
+        // back to invalidate the session in that window, as Session.deinit can.
+        session.rootQueue.sync {
+            session.mutableState.write { _ = $0.activeRequests.insert(request) }
+            session.cancelRequestsForSessionInvalidation(with: nil)
+        }
+
+        // Then
+        // Finishing the request again would replace its error.
+        #expect(request.error?.isExplicitlyCancelledError == true, "error should be explicitly cancelled, not \(String(describing: request.error))")
+    }
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func cancelledRequestIsCompleteButNotFinishedAfterItsResponse() async {
+        // Given
+        let session = stored(Session.independent())
+        let didRespond = Completion("response handler should be called")
+
+        // When
+        let request = session.request(.delay(10)).response { _ in didRespond.complete() }
+        #expect(!request.isComplete)
+        request.cancel()
+
+        await didRespond.wait()
+
+        // Then
+        #expect(request.isCancelled)
+        #expect(!request.isFinished)
+        #expect(request.isComplete)
+    }
+
     // MARK: Tests - Bad Requests
 
     @Test

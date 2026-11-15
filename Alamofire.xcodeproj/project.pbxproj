@@ -2396,7 +2396,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -2425,7 +2425,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-watchOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -2477,6 +2477,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = xros;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -2488,6 +2489,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = xros;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -2540,6 +2542,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_VERSION = 6.0;
 				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
@@ -2557,6 +2560,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_VERSION = 6.0;
 				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Release;
@@ -2853,6 +2857,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -2873,6 +2878,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -2891,6 +2897,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -2909,6 +2916,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};

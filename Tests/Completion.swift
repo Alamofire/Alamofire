@@ -309,7 +309,7 @@ struct CompletionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func waitReturnsWhenCompletedWhileWaiting() async {
         // Given
-        let completion = Completion("completed while waiting")
+        let completion = Completion("completed while waiting", timeout: .scheduling)
 
         // When
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) { completion.complete() }
@@ -322,7 +322,7 @@ struct CompletionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func waitReturnsOnlyAfterExpectedCountCompletions() async {
         // Given
-        let completion = Completion("three completions", expectedCount: 3)
+        let completion = Completion("three completions", expectedCount: 3, timeout: .scheduling)
 
         // When
         for _ in 0..<3 {
@@ -371,9 +371,9 @@ struct CompletionTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func waitForCompletionsInOrder() async {
         // Given
-        let first = Completion("first")
-        let second = Completion("second", expectedCount: 2)
-        let third = Completion("third")
+        let first = Completion("first", timeout: .scheduling)
+        let second = Completion("second", expectedCount: 2, timeout: .scheduling)
+        let third = Completion("third", timeout: .scheduling)
 
         // When
         DispatchQueue.global().async {
@@ -413,7 +413,7 @@ struct CompletionTests {
         // Given
         let center = NotificationCenter()
         let name = Notification.Name("org.alamofire.tests.completion")
-        let completion = Completion.notification(name, center: center) { notification in
+        let completion = Completion.notification(name, center: center, timeout: .scheduling) { notification in
             notification.userInfo?["accept"] as? Bool == true
         }
 
@@ -443,4 +443,10 @@ struct CompletionTests {
         // Then
         await completion.wait()
     }
+}
+
+extension TimeInterval {
+    /// A timeout for tests that only wait for other queues to run, long enough to outlast a starved CI machine. A newly
+    /// booted simulator has delayed `DispatchQueue.global()` work by over a minute on hosted runners.
+    fileprivate static let scheduling: TimeInterval = 120
 }

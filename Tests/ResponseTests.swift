@@ -209,11 +209,11 @@ struct ResponseJSONTestCase {
         let session = stored(Session.independent())
         let expectation = Completion("request should succeed")
 
-        let response = Capture<DataResponse<Any, AFError>?>()
+        let response = Capture<JSONResponseSummary?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
-            response.value = resp
+            response.value = JSONResponseSummary(resp)
             expectation.complete()
         }
 
@@ -224,7 +224,7 @@ struct ResponseJSONTestCase {
         #expect(response.response != nil)
         #expect(response.data != nil)
         #expect(response.data != nil)
-        #expect(response.result?.isSuccess == true)
+        #expect(response.isSuccess == true)
         #expect(response.metrics != nil)
     }
 
@@ -237,11 +237,11 @@ struct ResponseJSONTestCase {
         let urlString = String.invalidURL
         let expectation = Completion("request should fail")
 
-        let response = Capture<DataResponse<Any, AFError>?>()
+        let response = Capture<JSONResponseSummary?>()
 
         // When
         session.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
-            response.value = resp
+            response.value = JSONResponseSummary(resp)
             expectation.complete()
         }
 
@@ -251,7 +251,7 @@ struct ResponseJSONTestCase {
         #expect(response.request != nil)
         #expect(response.response == nil)
         #expect(response.data == nil)
-        #expect(response.result?.isFailure == true)
+        #expect(response.isFailure == true)
         #expect(response.error?.isSessionTaskError == true)
         #expect(response.metrics != nil)
     }
@@ -264,11 +264,11 @@ struct ResponseJSONTestCase {
         let session = stored(Session.independent())
         let expectation = Completion("request should succeed")
 
-        let response = Capture<DataResponse<Any, AFError>?>()
+        let response = Capture<JSONResponseSummary?>()
 
         // When
         session.request(.default, parameters: ["foo": "bar"]).responseJSON { resp in
-            response.value = resp
+            response.value = JSONResponseSummary(resp)
             expectation.complete()
         }
 
@@ -279,12 +279,10 @@ struct ResponseJSONTestCase {
         #expect(response.response != nil)
         #expect(response.data != nil)
         #expect(response.data != nil)
-        #expect(response.result?.isSuccess == true)
+        #expect(response.isSuccess == true)
         #expect(response.metrics != nil)
 
-        if
-            let responseDictionary = response.result?.success as? [String: Any],
-            let args = responseDictionary["args"] as? [String: String] {
+        if let args = response.stringDictionaries?["args"] {
             #expect(args == ["foo": "bar"], "args should match parameters")
         } else {
             Issue.record("args should not be nil")
@@ -299,11 +297,11 @@ struct ResponseJSONTestCase {
         let session = stored(Session.independent())
         let expectation = Completion("request should succeed")
 
-        let response = Capture<DataResponse<Any, AFError>?>()
+        let response = Capture<JSONResponseSummary?>()
 
         // When
         session.request(.method(.post), parameters: ["foo": "bar"]).responseJSON { resp in
-            response.value = resp
+            response.value = JSONResponseSummary(resp)
             expectation.complete()
         }
 
@@ -314,12 +312,10 @@ struct ResponseJSONTestCase {
         #expect(response.response != nil)
         #expect(response.data != nil)
         #expect(response.data != nil)
-        #expect(response.result?.isSuccess == true)
+        #expect(response.isSuccess == true)
         #expect(response.metrics != nil)
 
-        if
-            let responseDictionary = response.result?.success as? [String: Any],
-            let form = responseDictionary["form"] as? [String: String] {
+        if let form = response.stringDictionaries?["form"] {
             #expect(form == ["foo": "bar"], "form should match parameters")
         } else {
             Issue.record("form should not be nil")
@@ -729,5 +725,54 @@ struct ResponseTryMapErrorTestCase {
         #expect(response.data == nil)
         #expect(response.result?.isFailure == true)
         #expect(response.metrics != nil)
+    }
+}
+
+/// What the `responseJSON` tests check about a response.
+///
+/// In Swift 6 mode, code can't use a `DataResponse<Any, AFError>`, since `DataResponse` requires a `Sendable` value. So
+/// the handlers pass the response along as `Any`, and `DataResponse`'s generic conformance to
+/// `JSONResponseSummarizing` copies these parts out of it.
+private struct JSONResponseSummary: Sendable {
+    let request: URLRequest?
+    let response: HTTPURLResponse?
+    let data: Data?
+    let metrics: URLSessionTaskMetrics?
+    let isSuccess: Bool
+    let isFailure: Bool
+    let error: AFError?
+    /// The top-level values of a JSON object that are string dictionaries, such as Firewalk's "args" and "form".
+    let stringDictionaries: [String: [String: String]]?
+
+    /// Summarizes `response`, a `DataResponse` from `responseJSON`, or returns `nil` for anything else.
+    init?(_ response: Any) {
+        guard let summary = (response as? any JSONResponseSummarizing)?.jsonSummary else { return nil }
+
+        self = summary
+    }
+
+    init(request: URLRequest?,
+         response: HTTPURLResponse?,
+         data: Data?,
+         metrics: URLSessionTaskMetrics?,
+         result: Result<Any, AFError>) {
+        self.request = request
+        self.response = response
+        self.data = data
+        self.metrics = metrics
+        isSuccess = result.isSuccess
+        isFailure = result.isFailure
+        error = result.failure
+        stringDictionaries = (result.success as? [String: Any])?.compactMapValues { $0 as? [String: String] }
+    }
+}
+
+private protocol JSONResponseSummarizing {
+    var jsonSummary: JSONResponseSummary { get }
+}
+
+extension DataResponse: JSONResponseSummarizing where Failure == AFError {
+    fileprivate var jsonSummary: JSONResponseSummary {
+        JSONResponseSummary(request: request, response: response, data: data, metrics: metrics, result: result.map { $0 as Any })
     }
 }

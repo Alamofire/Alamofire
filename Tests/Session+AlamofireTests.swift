@@ -45,18 +45,23 @@ extension Session {
                             redirectHandler: (any RedirectHandler)? = nil,
                             cachedResponseHandler: (any CachedResponseHandler)? = nil,
                             eventMonitors: [any EventMonitor] = [AlamofireNotifications()]) -> Session {
-        Session(configuration: configuration.withIndependentStorage(),
-                delegate: delegate,
-                rootQueue: rootQueue,
-                startRequestsImmediately: startRequestsImmediately,
-                requestSetup: requestSetup,
-                requestQueue: requestQueue,
-                serializationQueue: serializationQueue,
-                interceptor: interceptor,
-                serverTrustManager: serverTrustManager,
-                redirectHandler: redirectHandler,
-                cachedResponseHandler: cachedResponseHandler,
-                eventMonitors: eventMonitors)
+        var eventMonitors = eventMonitors
+        if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *), let monitor = NetworkFailureMonitor.current {
+            eventMonitors.append(monitor)
+        }
+
+        return Session(configuration: configuration.withIndependentStorage(),
+                       delegate: delegate,
+                       rootQueue: rootQueue,
+                       startRequestsImmediately: startRequestsImmediately,
+                       requestSetup: requestSetup,
+                       requestQueue: requestQueue,
+                       serializationQueue: serializationQueue,
+                       interceptor: interceptor,
+                       serverTrustManager: serverTrustManager,
+                       redirectHandler: redirectHandler,
+                       cachedResponseHandler: cachedResponseHandler,
+                       eventMonitors: eventMonitors)
     }
 }
 
@@ -101,6 +106,94 @@ extension URLCredentialStorage {
     static func independent() -> URLCredentialStorage {
         URLSessionConfiguration.ephemeral.urlCredentialStorage!
     }
+}
+
+// MARK: - External Services
+
+/// Records whether a request failed because of the network rather than the server or TLS, for `ExternalServiceTrait`.
+final class NetworkFailureMonitor: EventMonitor, @unchecked Sendable {
+    /// URL errors that come from network trouble. TLS failures, such as `.secureConnectionFailed`, aren't included.
+    private static let networkErrorCodes: Set<URLError.Code> = [.timedOut,
+                                                                .cannotConnectToHost,
+                                                                .networkConnectionLost,
+                                                                .notConnectedToInternet,
+                                                                .dataNotAllowed]
+
+    let queue = DispatchQueue(label: "org.alamofire.tests.networkFailureMonitor")
+
+    private let lock = NSLock()
+    private var sawNetworkFailure = false
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
+        guard let error = error as? URLError, Self.networkErrorCodes.contains(error.code) else { return }
+
+        markNetworkFailure()
+    }
+
+    /// Whether `issue` could come from the network: a request in the test failed with a network error, or a wait timed
+    /// out, which a request that never gets a response causes. Issues after either are excused too, since they follow
+    /// from the missing response.
+    func excuses(_ issue: Issue) -> Bool {
+        if issue.description.contains("Timed out after") {
+            markNetworkFailure()
+        }
+
+        // Alamofire queues events for monitors before it finishes the request, so this sees every completed request.
+        queue.sync {}
+
+        lock.lock()
+        defer { lock.unlock() }
+
+        return sawNetworkFailure
+    }
+
+    private func markNetworkFailure() {
+        lock.lock()
+        defer { lock.unlock() }
+
+        sawNetworkFailure = true
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension NetworkFailureMonitor {
+    /// The monitor for the running test, added to every `Session.independent` it creates.
+    @TaskLocal static var current: NetworkFailureMonitor?
+}
+
+/// In CI, treats failures caused by the network in tests of an external service, such as badssl.com, as known issues.
+/// Any other failure, including a TLS error, still fails the test. Outside CI, the tests run normally.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+struct ExternalServiceTrait: TestTrait, SuiteTrait, TestScoping {
+    /// GitHub Actions sets `CI`. Set it for `xcodebuild` as `TEST_RUNNER_CI`.
+    static let isEnabled = ProcessInfo.processInfo.environment["CI"] == "true"
+
+    let service: String
+
+    var isRecursive: Bool { true }
+
+    func scopeProvider(for test: Test, testCase: Test.Case?) -> Self? {
+        Self.isEnabled && testCase != nil ? self : nil
+    }
+
+    func provideScope(for test: Test,
+                      testCase: Test.Case?,
+                      performing function: @Sendable () async throws -> Void) async throws {
+        let monitor = NetworkFailureMonitor()
+        try await withKnownIssue("\(service) wasn't reachable", isIntermittent: true) {
+            try await NetworkFailureMonitor.$current.withValue(monitor) {
+                try await function()
+            }
+        } matching: { issue in
+            monitor.excuses(issue)
+        }
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Trait where Self == ExternalServiceTrait {
+    /// Excuses network failures reaching `service` in CI. See `ExternalServiceTrait`.
+    static func dependsOnExternalService(_ service: String) -> Self { Self(service: service) }
 }
 
 // MARK: - Tests
@@ -178,5 +271,77 @@ struct IndependentSessionTests {
         #expect(credentialStorage.defaultCredential(for: protectionSpace)?.user == "user")
         #expect(URLCredentialStorage.independent().defaultCredential(for: protectionSpace) == nil)
         #expect(URLCredentialStorage.shared.defaultCredential(for: protectionSpace) == nil)
+    }
+}
+
+@Suite(.storesInstances)
+struct ExternalServiceTraitTests {
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @Test
+    func requestFailingFromTheNetworkIsExcused() async throws {
+        try await runInTrait {
+            // Given
+            // Nothing listens on port 1, so the connection is refused.
+            let session = stored(Session.independent())
+
+            // When
+            let response = await session.request("http://127.0.0.1:1/").serializingData().response
+
+            // Then
+            #expect(response.error == nil)
+        }
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @Test
+    func issuesAfterATimeoutAreExcused() async throws {
+        try await runInTrait {
+            // Given
+            let completion = Completion("never completes", timeout: 0.1)
+
+            // When
+            await completion.wait()
+
+            // Then
+            Issue.record("Follows from the missing response.")
+        }
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @Test
+    func tlsFailureIsNotExcused() async {
+        await withKnownIssue {
+            try await runInTrait {
+                // When
+                completeTask(with: URLError(.secureConnectionFailed))
+
+                // Then
+                Issue.record("TLS failures still fail the test.")
+            }
+        }
+    }
+
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    @Test
+    func failureWithoutANetworkErrorIsNotExcused() async {
+        await withKnownIssue {
+            try await runInTrait {
+                Issue.record("Other failures still fail the test.")
+            }
+        }
+    }
+
+    /// Runs `body` in the trait's scope, as Swift Testing would in CI.
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    private func runInTrait(_ body: @Sendable () async throws -> Void) async throws {
+        let test = try #require(Test.current)
+        try await ExternalServiceTrait(service: "test").provideScope(for: test, testCase: Test.Case.current, performing: body)
+    }
+
+    /// Reports a task completing with `error` to the running test's `NetworkFailureMonitor`.
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    private func completeTask(with error: URLError) {
+        let task = URLSession.shared.dataTask(with: Endpoint().url)
+        NetworkFailureMonitor.current?.urlSession(.shared, task: task, didCompleteWithError: error)
     }
 }

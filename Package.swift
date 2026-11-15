@@ -48,5 +48,6 @@ let package = Package(name: "Alamofire",
                                             dependencies: ["Alamofire"],
                                             path: "Tests",
                                             exclude: ["Info.plist", "Test Plans"],
-                                            resources: [.process("Resources")])],
+                                            resources: [.process("Resources")],
+                                            swiftSettings: [.swiftLanguageMode(.v6)])],
                       swiftLanguageModes: [.v5])

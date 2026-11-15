@@ -44,7 +44,7 @@ private enum TestCertificates {
 
 // MARK: -
 
-@Suite(.storesInstances, .serialized)
+@Suite(.storesInstances, .serialized, .dependsOnExternalService("badssl.com"))
 struct TLSEvaluationExpiredLeafCertificateTestCase {
     private let expiredURLString = "https://expired.badssl.com/"
     private let expiredHost = "expired.badssl.com"

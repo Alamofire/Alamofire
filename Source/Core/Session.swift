@@ -235,7 +235,7 @@ open class Session: @unchecked Sendable {
     deinit {
         let requests = mutableState.read(\.activeRequests)
         delegate.sessionInvalidationCleanup.write {
-            for request in requests where !request.isFinished {
+            for request in requests where !request.isComplete {
                 request.finish(error: .sessionDeinitialized)
             }
         }
@@ -1434,7 +1434,7 @@ extension Session: SessionStateProvider {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
         let requests = mutableState.read(\.activeRequests)
-        for request in requests where !request.isFinished {
+        for request in requests where !request.isComplete {
             request.finish(error: .sessionInvalidated(error: error))
         }
     }
