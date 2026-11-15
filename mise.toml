@@ -180,11 +180,16 @@ if [ -z "${SIMULATOR_ID:-}" ] || [ "$ACTION" != test ]; then
     exit
 fi
 
-# A newly booted simulator keeps a small CI machine busy for its first minute or two, enough to starve tests started
-# right away, and xcodebuild only boots it once the build is done. Boot it while building instead, and test once it's up.
-xcrun simctl bootstatus "$SIMULATOR_ID" -b > /dev/null 2>&1 &
-boot=$!
 xcodebuild "${args[@]}" clean build-for-testing
-wait $boot || echo "Booting simulator $SIMULATOR_ID failed. Testing anyway." >&2
+
+# A newly booted simulator keeps a small CI machine's CPUs busy for a minute or two, enough to starve tests started
+# right away. Booting during the build slowed the build as badly, so boot afterwards and wait for the CPUs to settle.
+xcrun simctl bootstatus "$SIMULATOR_ID" -b > /dev/null 2>&1 || echo "Booting simulator $SIMULATOR_ID failed. Testing anyway." >&2
+for waited in $(seq 0 10 120); do
+    idle=$(top -l 2 -s 2 -n 0 | awk '/CPU usage/ { idle = $7 } END { print int(idle) }')
+    [ "$idle" -ge 50 ] && break
+    sleep 8
+done
+echo "Simulator booted. Waited about ${waited}s for the CPUs to settle, ${idle}% idle."
 xcodebuild -resultBundlePath "$result" "${args[@]}" test-without-building
 '''

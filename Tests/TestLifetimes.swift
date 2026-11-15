@@ -25,7 +25,7 @@
 import Foundation
 import Testing
 
-/// Objects kept alive by `stored(_:)`, the Swift Testing counterpart of `BaseTestCase.stored(_:)`.
+/// Objects kept alive by `stored(_:)`.
 final class TestLifetimeStorage: @unchecked Sendable {
     private let lock = NSLock()
     private var objects: [AnyObject] = []

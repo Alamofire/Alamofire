@@ -30,14 +30,18 @@ extension Bundle {
         #if SWIFT_PACKAGE
         bundle = Bundle.module
         #else
-        bundle = Bundle(for: BaseTestCase.self)
+        bundle = Bundle(for: BundleToken.self)
         #endif
 
         return bundle
     }
 }
 
-/// The URL of a resource in the test bundle, for Swift Testing suites that don't inherit `BaseTestCase.url(forResource:withExtension:)`.
+#if !SWIFT_PACKAGE
+private final class BundleToken {}
+#endif
+
+/// The URL of a resource in the test bundle.
 func url(forResource fileName: String, withExtension ext: String) -> URL {
     Bundle.test.url(forResource: fileName, withExtension: ext)!
 }

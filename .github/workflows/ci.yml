@@ -128,7 +128,7 @@ jobs:
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
       RESULT: "${{ matrix.name }}.xcresult"
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -191,7 +191,7 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
       RESULT: "${{ matrix.name }}.xcresult"
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -249,7 +249,7 @@ jobs:
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
       RESULT: "${{ matrix.name }}.xcresult"
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -307,7 +307,7 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
       RESULT: "${{ matrix.name }}.xcresult"
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -423,9 +423,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - name: "Fix @MainActor in Tests"
-        # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
-        run: sed -i'' 's;@MainActor;;g' Tests/*.swift
       - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
   Android:
@@ -436,9 +433,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v7
-      - name: "Fix @MainActor in Tests"
-        # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
-        run: sed -i'' 's;@MainActor;;g' Tests/*.swift
       - name: "Build for Android"
         uses: skiptools/swift-android-action@v2
         with:

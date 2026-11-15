@@ -60,7 +60,7 @@ final class Completion: @unchecked Sendable {
     /// - Parameters:
     ///   - description:    What's being waited for, used in recorded issues.
     ///   - expectedCount:  The number of `complete()` calls needed. `1` by default.
-    ///   - timeout:        How long `wait()` waits, in seconds. `10` by default, matching `BaseTestCase.timeout`.
+    ///   - timeout:        How long `wait()` waits, in seconds. `10` by default.
     ///   - fileID:         With `filePath`, `line`, and `column`, where issues for extra `complete()` calls are
     ///                     recorded. The call site by default.
     init(_ description: String,

@@ -34,7 +34,7 @@ extension DispatchQueue {
     }
 }
 
-/// Runs `assertions` on `queue` and waits for them, the Swift Testing counterpart of `BaseTestCase.assert(on:assertions:)`.
+/// Runs `assertions` on `queue` and waits for them.
 ///
 /// Running synchronously keeps the assertions in the calling test's task, so any issues they record belong to that test.
 func assert(on queue: DispatchQueue, assertions: () -> Void) {

@@ -66,24 +66,6 @@ extension FileManager {
     static func removeItem(at url: URL) -> Bool {
         removeItem(atPath: url.path)
     }
-
-    @discardableResult
-    static func removeAllItemsInsideDirectory(atPath path: String) -> Bool {
-        let enumerator = FileManager.default.enumerator(atPath: path)
-        var result = true
-
-        while let fileName = enumerator?.nextObject() as? String {
-            let success = removeItem(atPath: path + "/\(fileName)")
-            if !success { result = false }
-        }
-
-        return result
-    }
-
-    @discardableResult
-    static func removeAllItemsInsideDirectory(at url: URL) -> Bool {
-        removeAllItemsInsideDirectory(atPath: url.path)
-    }
 }
 
 /// A directory for one Swift Testing test's files, removed when the suite instance running the test is deinitialized.
