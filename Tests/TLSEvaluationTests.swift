@@ -57,6 +57,8 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.urlCache = nil
         configuration.urlCredentialStorage = nil
+        // badssl.com sometimes stalls a connection. Time out quickly so the request can be retried.
+        configuration.timeoutIntervalForRequest = 5
 
         return configuration
     }()
@@ -67,8 +69,8 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func expiredCertificateRequestFailsWithNoServerTrustPolicy() async {
         // Given
-        let expectation = Completion("\(expiredURLString)")
-        let manager = stored(Session.independent(configuration: configuration, interceptor: HandshakeDropRetrier()))
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
+        let manager = stored(Session.independent(configuration: configuration, interceptor: DroppedConnectionRetrier()))
         let error = Capture<AFError?>()
 
         // When
@@ -97,8 +99,8 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
 
         // Given
-        let expectation = Completion("\(revokedURLString)")
-        let manager = stored(Session.independent(configuration: configuration, interceptor: HandshakeDropRetrier()))
+        let expectation = Completion("\(revokedURLString)", timeout: .retriedRequest)
+        let manager = stored(Session.independent(configuration: configuration, interceptor: DroppedConnectionRetrier()))
 
         let error = Capture<(any Error)?>()
 
@@ -124,10 +126,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         // Given
         let evaluators = [expiredHost: DefaultTrustEvaluator(validateHost: true)]
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<AFError?>()
 
         // When
@@ -161,10 +163,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [revokedHost: defaultPolicy]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(revokedURLString)")
+        let expectation = Completion("\(revokedURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -192,10 +194,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: policy]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<AFError?>()
 
         // When
@@ -229,10 +231,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [revokedHost: policy]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(revokedURLString)")
+        let expectation = Completion("\(revokedURLString)", timeout: .retriedRequest)
         let error = Capture<AFError?>()
 
         // When
@@ -266,10 +268,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<AFError?>()
 
         // When
@@ -304,10 +306,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<AFError?>()
 
         // When
@@ -338,10 +340,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -365,10 +367,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -392,10 +394,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -421,10 +423,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<AFError?>()
 
         // When
@@ -455,10 +457,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -482,10 +484,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -509,10 +511,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
 
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -536,10 +538,10 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         // Given
         let evaluators = [expiredHost: DisabledTrustEvaluator()]
         let manager = stored(Session.independent(configuration: configuration,
-                                                 interceptor: HandshakeDropRetrier(),
+                                                 interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
-        let expectation = Completion("\(expiredURLString)")
+        let expectation = Completion("\(expiredURLString)", timeout: .retriedRequest)
         let error = Capture<(any Error)?>()
 
         // When
@@ -556,33 +558,49 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
     }
 }
 
-/// Retries requests that badssl.com drops during the TLS handshake, which it does to a few percent of CI requests.
+/// Retries requests whose connection badssl.com drops during the TLS handshake or stalls, which it does to a few percent
+/// of CI requests.
 ///
-/// A dropped handshake fails with `secureConnectionFailed` and an underlying `errSSLClosedNoNotify` (`-9816`) before any
-/// trust evaluation runs, so it says nothing about the behavior under test: evaluator failures are
+/// A dropped handshake fails with `secureConnectionFailed` and an underlying `errSSLClosedNoNotify` (`-9816`), and a
+/// stalled one with `timedOut`. Neither says anything about the behavior under test: evaluator failures are
 /// `serverTrustEvaluationFailed`, and default evaluation of an untrusted certificate is `serverCertificateUntrusted`.
-struct HandshakeDropRetrier: RequestInterceptor {
+struct DroppedConnectionRetrier: RequestInterceptor {
     var maximumRetries = 2
 
     func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
-        completion(request.retryCount < maximumRetries && Self.isHandshakeDrop(error) ? .retry : .doNotRetry)
+        completion(request.retryCount < maximumRetries && Self.isDroppedConnection(error) ? .retry : .doNotRetry)
     }
 
-    static func isHandshakeDrop(_ error: any Error) -> Bool {
-        guard let error = (error.asAFError?.underlyingError ?? error) as NSError?,
-              error.domain == NSURLErrorDomain,
-              error.code == URLError.secureConnectionFailed.rawValue else { return false }
+    static func isDroppedConnection(_ error: any Error) -> Bool {
+        guard let error = (error.asAFError?.underlyingError ?? error) as NSError?, error.domain == NSURLErrorDomain else {
+            return false
+        }
 
-        return error.userInfo["_kCFStreamErrorCodeKey"] as? Int == -9816
+        switch URLError.Code(rawValue: error.code) {
+        case .timedOut:
+            return true
+        case .secureConnectionFailed:
+            return error.userInfo["_kCFStreamErrorCodeKey"] as? Int == -9816
+        default:
+            return false
+        }
     }
 }
 
 @Suite(.storesInstances)
-struct HandshakeDropRetrierTests {
+struct DroppedConnectionRetrierTests {
     @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func handshakeDropIsRetried() async {
         let result = await retryResult(for: URLError(.secureConnectionFailed, userInfo: ["_kCFStreamErrorCodeKey": -9816]))
+
+        #expect(result == .retry)
+    }
+
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func stalledConnectionIsRetried() async {
+        let result = await retryResult(for: URLError(.timedOut))
 
         #expect(result == .retry)
     }
@@ -601,13 +619,13 @@ struct HandshakeDropRetrierTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func handshakeDropIsNotRetriedPastTheMaximum() async {
         let result = await retryResult(for: URLError(.secureConnectionFailed, userInfo: ["_kCFStreamErrorCodeKey": -9816]),
-                                       retrier: HandshakeDropRetrier(maximumRetries: 0))
+                                       retrier: DroppedConnectionRetrier(maximumRetries: 0))
 
         #expect(result == .doNotRetry)
     }
 
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    private func retryResult(for error: URLError, retrier: HandshakeDropRetrier = HandshakeDropRetrier()) async -> RetryResult {
+    private func retryResult(for error: URLError, retrier: DroppedConnectionRetrier = DroppedConnectionRetrier()) async -> RetryResult {
         let session = stored(Session.independent(startRequestsImmediately: false))
         let request = session.request(Endpoint())
 
@@ -615,6 +633,11 @@ struct HandshakeDropRetrierTests {
             retrier.retry(request, for: session, dueTo: AFError.sessionTaskFailed(error: error)) { continuation.resume(returning: $0) }
         }
     }
+}
+
+extension TimeInterval {
+    /// Long enough for a request that's retried twice after timing out.
+    fileprivate static let retriedRequest: TimeInterval = 30
 }
 
 #endif
