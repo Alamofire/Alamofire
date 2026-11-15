@@ -163,7 +163,6 @@ run = '''
 if [ -n "${XCODE:-}" ]; then export DEVELOPER_DIR="/Applications/$XCODE.app/Contents/Developer"; fi
 # xcodebuild passes TEST_RUNNER_ variables on to the tests, without the prefix.
 if [ -n "${ALAMOFIRE_TEST_CONCURRENCY:-}" ]; then export TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY="$ALAMOFIRE_TEST_CONCURRENCY"; fi
-if [ -n "${CI:-}" ]; then export TEST_RUNNER_CI="$CI"; fi
 result="${RESULT:-.build/results/$NAME.xcresult}"
 mkdir -p .build/results
 rm -rf "$result"
