@@ -565,7 +565,7 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
 /// stalled one with `timedOut`. Neither says anything about the behavior under test: evaluator failures are
 /// `serverTrustEvaluationFailed`, and default evaluation of an untrusted certificate is `serverCertificateUntrusted`.
 struct DroppedConnectionRetrier: RequestInterceptor {
-    var maximumRetries = 3
+    var maximumRetries = 5
 
     func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
         guard request.retryCount < maximumRetries, Self.isDroppedConnection(error) else {
@@ -573,8 +573,8 @@ struct DroppedConnectionRetrier: RequestInterceptor {
             return
         }
 
-        // badssl.com drops connections in bursts, so retrying right away tends to fail too.
-        completion(.retryWithDelay(TimeInterval(request.retryCount + 1)))
+        // badssl.com drops connections in bursts that can last tens of seconds, so back off until one ends.
+        completion(.retryWithDelay(pow(2, TimeInterval(request.retryCount))))
     }
 
     static func isDroppedConnection(_ error: any Error) -> Bool {
@@ -643,7 +643,7 @@ struct DroppedConnectionRetrierTests {
 
 extension TimeInterval {
     /// Long enough for a request that times out every time it's tried, plus the delays between retries.
-    fileprivate static let retriedRequest: TimeInterval = 40
+    fileprivate static let retriedRequest: TimeInterval = 75
 }
 
 #endif
