@@ -8,6 +8,7 @@
 #   RESULT  Result bundle path. Defaults to .build/results/<platform>.xcresult.
 #   ARGS    Extra arguments for xcodebuild or swift test, such as -only-testing:"Alamofire iOS Tests/RequestTests".
 #   ALAMOFIRE_TEST_CONCURRENCY  The most tests to run at once. Unlimited by default. CI sets it for its smaller machines.
+#   CI      When `true`, as GitHub Actions sets it, simulator tasks shut down every simulator before and after testing.
 # The simulator tasks also take OS and DEVICE as arguments. Test tasks start Firewalk first if it isn't running.
 #
 # Examples:
@@ -36,12 +37,12 @@ shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
 url=http://localhost:8080/get
-if curl -sf -o /dev/null $url; then echo "Firewalk is already running."; exit 0; fi
+if curl -sf --max-time 2 -o /dev/null "$url"; then echo "Firewalk is already running."; exit 0; fi
 mkdir -p .build
 # Parallel tests open hundreds of connections at once, more than the default open file limit allows.
-ulimit -n 10240
+ulimit -n 10240 2> /dev/null || ulimit -n "$(ulimit -Hn)"
 nohup firewalk > .build/firewalk.log 2>&1 &
-for _ in $(seq 1 30); do curl -sf -o /dev/null $url && exit 0; sleep 1; done
+for _ in $(seq 1 30); do curl -sf --max-time 2 -o /dev/null "$url" && exit 0; sleep 1; done
 echo "Firewalk didn't start. Its log:" >&2; cat .build/firewalk.log >&2; exit 1
 '''
 
@@ -127,6 +128,7 @@ depends = ["firewalk"]
 shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
+{{vars.functions}}
 eval "args=(${ARGS:-})"
 swift test -c debug "${args[@]}" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
 '''
@@ -144,21 +146,34 @@ run_xcodebuild "Alamofire macOS" "" "platform=macOS" build-macOS build
 # renders this as a template, so it can't contain `{#`, `{{`, or `{%`.
 [vars]
 functions = '''
+if [ -n "${XCODE:-}" ]; then
+    if [ ! -d "/Applications/$XCODE.app" ]; then
+        echo "XCODE is $XCODE, but /Applications/$XCODE.app doesn't exist." >&2
+        exit 1
+    fi
+    export DEVELOPER_DIR="/Applications/$XCODE.app/Contents/Developer"
+fi
+# xcodebuild passes TEST_RUNNER_ variables on to the tests, without the prefix.
+if [ -n "${ALAMOFIRE_TEST_CONCURRENCY:-}" ]; then export TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY="$ALAMOFIRE_TEST_CONCURRENCY"; fi
+
 # run_xcodebuild SCHEME PLAN DESTINATION NAME ACTION [SIMULATOR_ID]
 run_xcodebuild() {
     local scheme=$1 plan=$2 destination=$3 name=$4 action=$5 simulator=${6:-}
-    if [ -n "${XCODE:-}" ]; then export DEVELOPER_DIR="/Applications/$XCODE.app/Contents/Developer"; fi
-    # xcodebuild passes TEST_RUNNER_ variables on to the tests, without the prefix.
-    if [ -n "${ALAMOFIRE_TEST_CONCURRENCY:-}" ]; then export TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY="$ALAMOFIRE_TEST_CONCURRENCY"; fi
     local result="${RESULT:-.build/results/$name.xcresult}"
-    mkdir -p .build/results
+    case "$result" in
+        *.xcresult) ;;
+        *) echo "RESULT is $result, but it must end in .xcresult." >&2; return 1 ;;
+    esac
+    mkdir -p "$(dirname "$result")"
     rm -rf "$result"
     # ARGS is shell text, so evaluate it to keep quoted arguments together.
     eval "local args=(${ARGS:-})"
+    local plan_args=()
+    if [ -n "$plan" ]; then plan_args=(-testPlan "$plan"); fi
     xcodebuild_step() {
         # Busy CI machines can take a while to boot a simulator.
         xcodebuild -project Alamofire.xcodeproj -scheme "$scheme" -destination "$destination" -destination-timeout 120 \
-            ${plan:+-testPlan "$plan"} "$@" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
+            "${plan_args[@]}" "$@" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
     }
 
     if [ -z "$simulator" ]; then
@@ -166,13 +181,21 @@ run_xcodebuild() {
         return
     fi
 
-    # Self-hosted Macs run one job after another, and simulators left running slow down the jobs that follow. So shut down
-    # the simulator afterwards, unless it was already running.
-    local was_booted status=0
+    # Simulators left running slow down whatever runs next, so shut down when the task ends, however it ends: every
+    # simulator in CI, otherwise this one unless it was already running.
+    local was_booted shutdown=""
     was_booted=$(xcrun simctl list devices -j | jq -r --arg id "$simulator" '[.devices[][] | select(.udid == $id and .state == "Booted")] | length')
-    xcodebuild_step -resultBundlePath "$result" "${args[@]}" clean "$action" || status=$?
-    if [ "$was_booted" = 0 ]; then xcrun simctl shutdown "$simulator" > /dev/null 2>&1 || true; fi
-    return $status
+    if [ "${CI:-}" = true ]; then
+        shutdown="xcrun simctl shutdown all"
+    elif [ "$was_booted" = 0 ]; then
+        shutdown="xcrun simctl shutdown $simulator"
+    fi
+    if [ -n "$shutdown" ]; then
+        trap "$shutdown > /dev/null 2>&1 || true" EXIT
+        trap 'exit 130' INT
+        trap 'exit 143' TERM
+    fi
+    xcodebuild_step -resultBundlePath "$result" "${args[@]}" clean "$action"
 }
 
 # test_on_simulator PLATFORM FAMILY OS DEVICE
@@ -182,19 +205,20 @@ test_on_simulator() {
     local platform=$1 family=$2 os=$3 device=$4
     local runtime_platform="$platform"
     [ "$platform" = visionOS ] && runtime_platform=xrOS
-    # simctl lists runtimes oldest first. Prints the device's ID, name, OS, and how many runtimes share its runtime
-    # identifier.
-    local picked id name version shared
+    # Newest runtime first and, among runtimes of the same version, the most general one, rather than one made for a
+    # single device like the iPhone Duo. Prints the device's ID, name, OS, how many runtimes share its runtime
+    # identifier, and when it was last used.
+    local picked id name version shared last_used
     picked=$(jq -nr --argjson runtimes "$(xcrun simctl list runtimes available -j)" \
         --argjson devices "$(xcrun simctl list devices available -j)" \
         --arg platform "$runtime_platform" --arg os "$os" --arg device "$device" --arg family "$family" '
-        ($runtimes.runtimes | map(select(.platform == $platform))) as $all
+        ($runtimes.runtimes | map(select(.platform == $platform)) | sort_by([(.version | split(".") | map(tonumber)), (.supportedDeviceTypes | length)])) as $all
         | [$all | map(select($os == "" or .version == $os)) | reverse[] as $runtime
             | ($devices.devices[$runtime.identifier] // [])[]
             | select(if $device == "" then (.name | startswith($family)) else .name == $device end)
-            | "\(.udid)|\(.name)|\($runtime.version)|\([$all[] | select(.identifier == $runtime.identifier)] | length)"]
+            | "\(.udid)|\(.name)|\($runtime.version)|\([$all[] | select(.identifier == $runtime.identifier)] | length)|\(.lastUsedAt // "never")"]
         | first // empty')
-    IFS="|" read -r id name version shared <<< "$picked"
+    IFS="|" read -r id name version shared last_used <<< "$picked"
 
     if [ -n "$id" ] && [ -n "$os" ] && [ "$shared" -gt 1 ]; then
         # Runtimes that share an identifier, like iOS 26.4 and 26.4.1, share their devices too, so simctl can't say
@@ -209,14 +233,19 @@ test_on_simulator() {
     if [ -n "$id" ]; then
         destination="id=$id"
         echo "Testing on $name, $platform $version"
+        if [ "$last_used" = never ]; then
+            echo "This simulator hasn't booted before. Its one-time setup on first boot can slow this run enough for tests to time out."
+        fi
     elif [ -n "${device:-$name}" ]; then
-        # Let xcodebuild report the missing destination.
         destination="platform=$platform Simulator,OS=${os:-latest},name=${device:-$name}"
-        echo "Testing on ${device:-$name}, $platform ${os:-latest}"
+        echo "Couldn't find ${device:-$name} on $platform ${os:-latest} with simctl, so leaving it to xcodebuild."
     else
         echo "No available $family simulator for $platform $os." >&2
         return 1
     fi
+
+    # CI machines run one job after another, and a job that was killed can leave simulators running.
+    if [ "${CI:-}" = true ]; then xcrun simctl shutdown all; fi
 
     run_xcodebuild "Alamofire $platform" "$platform" "$destination" "$platform" test "$id"
 }
