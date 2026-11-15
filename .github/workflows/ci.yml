@@ -137,12 +137,12 @@ jobs:
             device: "iPhone 18 Pro"
             name: "iOS 27.2"
             xcode: "Xcode_27.2"
-            runsOn: xcode-27
+            runsOn: self-xcode272
           - os: "27.0"
             device: "iPhone 18 Pro"
             name: "iOS 27.0"
             xcode: "Xcode_27.0"
-            runsOn: xcode-27
+            runsOn: self-xcode270
           - os: "26.5"
             device: "iPhone 17 Pro"
             name: "iOS 26.5"
@@ -205,7 +205,7 @@ jobs:
             device: "Apple TV 4K (3rd generation)"
             name: "tvOS 27.0"
             xcode: "Xcode_27.0"
-            runsOn: xcode-27
+            runsOn: self-xcode270
           - os: "26.5"
             device: "Apple TV"
             name: "tvOS 26.5"
@@ -263,22 +263,22 @@ jobs:
             device: "Apple Vision Pro"
             name: "visionOS 27.0"
             xcode: "Xcode_27.0"
-            runsOn: xcode-27
+            runsOn: self-xcode270
           - os: "26.5"
             device: "Apple Vision Pro"
             name: "visionOS 26.5"
             xcode: "Xcode_26.6"
-            runsOn: macos-26
-          - os: "26.4.1"
+            runsOn: self-xcode266
+          - os: "26.4"
             device: "Apple Vision Pro"
-            name: "visionOS 26.4.1"
+            name: "visionOS 26.4"
             xcode: "Xcode_26.4"
-            runsOn: macos-26
+            runsOn: self-xcode264
           - os: "26.2"
             device: "Apple Vision Pro"
             name: "visionOS 26.2"
             xcode: "Xcode_26.2"
-            runsOn: macos-26
+            runsOn: self-xcode262
           - os: "26.1"
             device: "Apple Vision Pro"
             name: "visionOS 26.1"

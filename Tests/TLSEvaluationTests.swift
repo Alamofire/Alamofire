@@ -565,10 +565,16 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
 /// stalled one with `timedOut`. Neither says anything about the behavior under test: evaluator failures are
 /// `serverTrustEvaluationFailed`, and default evaluation of an untrusted certificate is `serverCertificateUntrusted`.
 struct DroppedConnectionRetrier: RequestInterceptor {
-    var maximumRetries = 2
+    var maximumRetries = 3
 
     func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping @Sendable (RetryResult) -> Void) {
-        completion(request.retryCount < maximumRetries && Self.isDroppedConnection(error) ? .retry : .doNotRetry)
+        guard request.retryCount < maximumRetries, Self.isDroppedConnection(error) else {
+            completion(.doNotRetry)
+            return
+        }
+
+        // badssl.com drops connections in bursts, so retrying right away tends to fail too.
+        completion(.retryWithDelay(TimeInterval(request.retryCount + 1)))
     }
 
     static func isDroppedConnection(_ error: any Error) -> Bool {
@@ -594,7 +600,7 @@ struct DroppedConnectionRetrierTests {
     func handshakeDropIsRetried() async {
         let result = await retryResult(for: URLError(.secureConnectionFailed, userInfo: ["_kCFStreamErrorCodeKey": -9816]))
 
-        #expect(result == .retry)
+        #expect(result == .retryWithDelay(1))
     }
 
     @Test
@@ -602,7 +608,7 @@ struct DroppedConnectionRetrierTests {
     func stalledConnectionIsRetried() async {
         let result = await retryResult(for: URLError(.timedOut))
 
-        #expect(result == .retry)
+        #expect(result == .retryWithDelay(1))
     }
 
     @Test
@@ -636,8 +642,8 @@ struct DroppedConnectionRetrierTests {
 }
 
 extension TimeInterval {
-    /// Long enough for a request that's retried twice after timing out.
-    fileprivate static let retriedRequest: TimeInterval = 30
+    /// Long enough for a request that times out every time it's tried, plus the delays between retries.
+    fileprivate static let retriedRequest: TimeInterval = 40
 }
 
 #endif

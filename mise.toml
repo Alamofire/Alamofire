@@ -20,6 +20,10 @@ xcbeautify = "3.2.1"
 # Firewalk's release has a single universal macOS binary, so name the asset.
 "github:Alamofire/Firewalk" = { version = "0.15.0", asset_pattern = "firewalk.zip" }
 
+[settings]
+# Otherwise mise expands `$NAME` references in [vars] when it loads this file, before the shell code there runs.
+env_shell_expand = false
+
 [env]
 NSUnbufferedIO = "YES"
 
@@ -44,16 +48,22 @@ echo "Firewalk didn't start. Its log:" >&2; cat .build/firewalk.log >&2; exit 1
 [tasks."test:macos"]
 description = "Test on macOS."
 depends = ["firewalk"]
-env = { SCHEME = "Alamofire macOS", PLAN = "macOS", DESTINATION = "platform=macOS", NAME = "macOS", ACTION = "test" }
-run = "mise run xcodebuild"
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+{{vars.functions}}
+run_xcodebuild "Alamofire macOS" macOS "platform=macOS" macOS test
+'''
 
 [tasks."test:catalyst"]
 description = "Test on Mac Catalyst."
 depends = ["firewalk"]
-env = { SCHEME = "Alamofire iOS", PLAN = "iOS", DESTINATION = "platform=macOS,variant=Mac Catalyst", NAME = "Catalyst", ACTION = "test" }
-run = "mise run xcodebuild"
-
-# mise doesn't pass a task's arguments on to the tasks it runs, so the simulator tasks pass them as environment variables.
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+{{vars.functions}}
+run_xcodebuild "Alamofire iOS" iOS "platform=macOS,variant=Mac Catalyst" Catalyst test
+'''
 
 [tasks."test:ios"]
 description = "Test on an iOS simulator."
@@ -62,8 +72,12 @@ usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"iPhone 18 Pro\"" default=""
 '''
-env = { PLATFORM = "iOS", FAMILY = "iPhone" }
-run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+{{vars.functions}}
+test_on_simulator iOS iPhone "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
+'''
 
 [tasks."test:tvos"]
 description = "Test on a tvOS simulator."
@@ -72,8 +86,12 @@ usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"Apple TV 4K (4th generation)\"" default=""
 '''
-env = { PLATFORM = "tvOS", FAMILY = "Apple TV" }
-run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+{{vars.functions}}
+test_on_simulator tvOS "Apple TV" "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
+'''
 
 [tasks."test:visionos"]
 description = "Test on a visionOS simulator."
@@ -82,8 +100,12 @@ usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"Apple Vision Pro\"" default=""
 '''
-env = { PLATFORM = "visionOS", FAMILY = "Apple Vision" }
-run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+{{vars.functions}}
+test_on_simulator visionOS "Apple Vision" "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
+'''
 
 [tasks."test:watchos"]
 description = "Test on a watchOS simulator."
@@ -92,8 +114,12 @@ usage = '''
 arg "[os]" help="Simulator OS version, such as 27.2" default=""
 arg "[device]" help="Simulator name, such as \"Apple Watch Series 12 (46mm)\"" default=""
 '''
-env = { PLATFORM = "watchOS", FAMILY = "Apple Watch" }
-run = 'OS="${usage_os:-$OS}" DEVICE="${usage_device:-$DEVICE}" mise run simulator'
+shell = "bash -eo pipefail -c"
+quiet = true
+run = '''
+{{vars.functions}}
+test_on_simulator watchOS "Apple Watch" "${usage_os:-${OS:-}}" "${usage_device:-${DEVICE:-}}"
+'''
 
 [tasks."test:spm"]
 description = "Test with SwiftPM."
@@ -107,88 +133,91 @@ swift test -c debug "${args[@]}" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer 
 
 [tasks."build:macos"]
 description = "Build for macOS without testing, as CodeQL does."
-env = { SCHEME = "Alamofire macOS", PLAN = "", DESTINATION = "platform=macOS", NAME = "build-macOS", ACTION = "build" }
-run = "mise run xcodebuild"
-
-# Finds the simulator in simctl, preferring DEVICE on OS. Without DEVICE, picks the first FAMILY device on OS, or on the
-# newest runtime that has one. The xcodebuild task boots it while building.
-[tasks.simulator]
-hide = true
 shell = "bash -eo pipefail -c"
 quiet = true
 run = '''
-runtime_platform="$PLATFORM"
-[ "$PLATFORM" = visionOS ] && runtime_platform=xrOS
-# simctl lists runtimes oldest first. Prints the device's ID, name, OS, and how many runtimes share its runtime identifier.
-picked=$(jq -nr --argjson runtimes "$(xcrun simctl list runtimes available -j)" \
-    --argjson devices "$(xcrun simctl list devices available -j)" \
-    --arg platform "$runtime_platform" --arg os "$OS" --arg device "$DEVICE" --arg family "$FAMILY" '
-    ($runtimes.runtimes | map(select(.platform == $platform))) as $all
-    | [$all | map(select($os == "" or .version == $os)) | reverse[] as $runtime
-        | ($devices.devices[$runtime.identifier] // [])[]
-        | select(if $device == "" then (.name | startswith($family)) else .name == $device end)
-        | "\(.udid)|\(.name)|\($runtime.version)|\([$all[] | select(.identifier == $runtime.identifier)] | length)"]
-    | first // empty')
-IFS="|" read -r id name version shared <<< "$picked"
-
-if [ -n "$id" ] && [ -n "$OS" ] && [ "$shared" -gt 1 ]; then
-    # Runtimes that share an identifier, like iOS 26.4 and 26.4.1, share their devices too, so simctl can't say which
-    # one a device runs. Ask xcodebuild, which is slower but matches destinations exactly.
-    id=$(xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire $PLATFORM" -showdestinations 2>/dev/null \
-        | awk -v platform="$PLATFORM Simulator" -v os="$OS" -v name="$name" '
-            index($0, "platform:" platform ",") && index($0, "OS:" os ",") && index($0, ", name:" name " }") {
-                match($0, /id:[^,]+/); print substr($0, RSTART + 3, RLENGTH - 3); exit }')
-fi
-
-if [ -n "$id" ]; then
-    destination="id=$id"
-    echo "Testing on $name, $PLATFORM $version"
-elif [ -n "${DEVICE:-$name}" ]; then
-    # Let xcodebuild report the missing destination.
-    destination="platform=$PLATFORM Simulator,OS=${OS:-latest},name=${DEVICE:-$name}"
-    echo "Testing on ${DEVICE:-$name}, $PLATFORM ${OS:-latest}"
-else
-    echo "No available $FAMILY simulator for $PLATFORM $OS." >&2
-    exit 1
-fi
-SIMULATOR_ID="$id" SCHEME="Alamofire $PLATFORM" PLAN="$PLATFORM" DESTINATION="$destination" NAME="$PLATFORM" ACTION=test \
-    mise run xcodebuild
+{{vars.functions}}
+run_xcodebuild "Alamofire macOS" "" "platform=macOS" build-macOS build
 '''
 
-[tasks.xcodebuild]
-hide = true
-shell = "bash -eo pipefail -c"
-quiet = true
-run = '''
-if [ -n "${XCODE:-}" ]; then export DEVELOPER_DIR="/Applications/$XCODE.app/Contents/Developer"; fi
-# xcodebuild passes TEST_RUNNER_ variables on to the tests, without the prefix.
-if [ -n "${ALAMOFIRE_TEST_CONCURRENCY:-}" ]; then export TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY="$ALAMOFIRE_TEST_CONCURRENCY"; fi
-result="${RESULT:-.build/results/$NAME.xcresult}"
-mkdir -p .build/results
-rm -rf "$result"
-# ARGS is shell text, so evaluate it to keep quoted arguments together.
-eval "args=(${ARGS:-})"
-xcodebuild() {
-    # Busy CI machines can take a while to boot a simulator.
-    command xcodebuild -project Alamofire.xcodeproj -scheme "$SCHEME" -destination "$DESTINATION" -destination-timeout 120 \
-        ${PLAN:+-testPlan "$PLAN"} "$@" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
+# Shared by the tasks above, so each runs in one shell and only the task that was asked for reports a failure. mise
+# renders this as a template, so it can't contain `{#`, `{{`, or `{%`.
+[vars]
+functions = '''
+# run_xcodebuild SCHEME PLAN DESTINATION NAME ACTION [SIMULATOR_ID]
+run_xcodebuild() {
+    local scheme=$1 plan=$2 destination=$3 name=$4 action=$5 simulator=${6:-}
+    if [ -n "${XCODE:-}" ]; then export DEVELOPER_DIR="/Applications/$XCODE.app/Contents/Developer"; fi
+    # xcodebuild passes TEST_RUNNER_ variables on to the tests, without the prefix.
+    if [ -n "${ALAMOFIRE_TEST_CONCURRENCY:-}" ]; then export TEST_RUNNER_ALAMOFIRE_TEST_CONCURRENCY="$ALAMOFIRE_TEST_CONCURRENCY"; fi
+    local result="${RESULT:-.build/results/$name.xcresult}"
+    mkdir -p .build/results
+    rm -rf "$result"
+    # ARGS is shell text, so evaluate it to keep quoted arguments together.
+    eval "local args=(${ARGS:-})"
+    xcodebuild_step() {
+        # Busy CI machines can take a while to boot a simulator.
+        xcodebuild -project Alamofire.xcodeproj -scheme "$scheme" -destination "$destination" -destination-timeout 120 \
+            ${plan:+-testPlan "$plan"} "$@" 2>&1 | xcbeautify ${GITHUB_ACTIONS:+--renderer github-actions}
+    }
+
+    if [ -z "$simulator" ]; then
+        xcodebuild_step -resultBundlePath "$result" "${args[@]}" clean "$action"
+        return
+    fi
+
+    # Self-hosted Macs run one job after another, and simulators left running slow down the jobs that follow. So shut down
+    # the simulator afterwards, unless it was already running.
+    local was_booted status=0
+    was_booted=$(xcrun simctl list devices -j | jq -r --arg id "$simulator" '[.devices[][] | select(.udid == $id and .state == "Booted")] | length')
+    xcodebuild_step -resultBundlePath "$result" "${args[@]}" clean "$action" || status=$?
+    if [ "$was_booted" = 0 ]; then xcrun simctl shutdown "$simulator" > /dev/null 2>&1 || true; fi
+    return $status
 }
 
-if [ -z "${SIMULATOR_ID:-}" ] || [ "$ACTION" != test ]; then
-    xcodebuild -resultBundlePath "$result" "${args[@]}" clean "$ACTION"
-    exit
-fi
+# test_on_simulator PLATFORM FAMILY OS DEVICE
+# Finds the simulator in simctl, preferring DEVICE on OS. Without DEVICE, picks the first FAMILY device on OS, or on the
+# newest runtime that has one.
+test_on_simulator() {
+    local platform=$1 family=$2 os=$3 device=$4
+    local runtime_platform="$platform"
+    [ "$platform" = visionOS ] && runtime_platform=xrOS
+    # simctl lists runtimes oldest first. Prints the device's ID, name, OS, and how many runtimes share its runtime
+    # identifier.
+    local picked id name version shared
+    picked=$(jq -nr --argjson runtimes "$(xcrun simctl list runtimes available -j)" \
+        --argjson devices "$(xcrun simctl list devices available -j)" \
+        --arg platform "$runtime_platform" --arg os "$os" --arg device "$device" --arg family "$family" '
+        ($runtimes.runtimes | map(select(.platform == $platform))) as $all
+        | [$all | map(select($os == "" or .version == $os)) | reverse[] as $runtime
+            | ($devices.devices[$runtime.identifier] // [])[]
+            | select(if $device == "" then (.name | startswith($family)) else .name == $device end)
+            | "\(.udid)|\(.name)|\($runtime.version)|\([$all[] | select(.identifier == $runtime.identifier)] | length)"]
+        | first // empty')
+    IFS="|" read -r id name version shared <<< "$picked"
 
-xcodebuild "${args[@]}" clean build-for-testing
+    if [ -n "$id" ] && [ -n "$os" ] && [ "$shared" -gt 1 ]; then
+        # Runtimes that share an identifier, like iOS 26.4 and 26.4.1, share their devices too, so simctl can't say
+        # which one a device runs. Ask xcodebuild, which is slower but matches destinations exactly.
+        id=$(xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire $platform" -showdestinations 2>/dev/null \
+            | awk -v platform="$platform Simulator" -v os="$os" -v name="$name" '
+                index($0, "platform:" platform ",") && index($0, "OS:" os ",") && index($0, ", name:" name " }") {
+                    match($0, /id:[^,]+/); print substr($0, RSTART + 3, RLENGTH - 3); exit }')
+    fi
 
-# A newly booted simulator keeps a small CI machine's CPUs busy for a minute or two, enough to starve tests started
-# right away. Booting during the build slowed the build as badly, so boot afterwards and wait for the CPUs to settle.
-xcrun simctl bootstatus "$SIMULATOR_ID" -b > /dev/null 2>&1 || echo "Booting simulator $SIMULATOR_ID failed. Testing anyway." >&2
-for waited in $(seq 0 10 120); do
-    idle=$(top -l 2 -s 2 -n 0 | awk '/CPU usage/ { idle = $7 } END { print int(idle) }')
-    [ "$idle" -ge 50 ] && break
-    sleep 8
-done
-echo "Simulator booted. Waited about ${waited}s for the CPUs to settle, ${idle}% idle."
-xcodebuild -resultBundlePath "$result" "${args[@]}" test-without-building
+    local destination
+    if [ -n "$id" ]; then
+        destination="id=$id"
+        echo "Testing on $name, $platform $version"
+    elif [ -n "${device:-$name}" ]; then
+        # Let xcodebuild report the missing destination.
+        destination="platform=$platform Simulator,OS=${os:-latest},name=${device:-$name}"
+        echo "Testing on ${device:-$name}, $platform ${os:-latest}"
+    else
+        echo "No available $family simulator for $platform $os." >&2
+        return 1
+    fi
+
+    run_xcodebuild "Alamofire $platform" "$platform" "$destination" "$platform" test "$id"
+}
 '''
