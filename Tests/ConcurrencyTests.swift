@@ -744,7 +744,8 @@ struct DataStreamConcurrencyTests {
         let session = stored(Session.independent())
 
         // When
-        let expectedPayloads = 10
+        // A long stream, so it's still running when the test cancels it.
+        let expectedPayloads = 100
         let request = session.streamRequest(.payloads(expectedPayloads))
         let task = Task<[Data], Never> {
             var datas: [Data] = []
@@ -760,7 +761,9 @@ struct DataStreamConcurrencyTests {
 
         // Then
         #expect(request.isCancelled)
-        #expect(datas.isEmpty)
+        // The request starts before the task iterating it runs, so a payload can arrive and be delivered from the
+        // stream's buffer before the cancellation lands, but cancellation must end the stream before all of them arrive.
+        #expect(datas.count < expectedPayloads)
     }
 
     @Test

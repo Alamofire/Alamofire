@@ -128,6 +128,8 @@ jobs:
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
       RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -191,6 +193,8 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
       RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -249,6 +253,8 @@ jobs:
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
       RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -307,6 +313,8 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
       RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
