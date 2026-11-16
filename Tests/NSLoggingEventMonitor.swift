@@ -104,7 +104,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request) didCreateInitialURLRequest: \(urlRequest)")
     }
 
-    public func request(_ request: Request, didFailToCreateURLRequestWithError error: any Error) {
+    public func request(_ request: Request, didFailToCreateURLRequestWithError error: AFError) {
         NSLog("%@", "Request: \(request) didFailToCreateURLRequestWithError: \(error)")
     }
 
@@ -112,7 +112,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request) didAdaptInitialRequest \(initialRequest) to \(adaptedRequest)")
     }
 
-    public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: any Error) {
+    public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: AFError) {
         NSLog("%@", "Request: \(request) didFailToAdaptURLRequest \(initialRequest) withError \(error)")
     }
 
@@ -128,11 +128,11 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request) didGatherMetrics \(metrics)")
     }
 
-    public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: any Error) {
+    public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError) {
         NSLog("%@", "Request: \(request) didFailTask \(task) earlyWithError \(error)")
     }
 
-    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: (any Error)?) {
+    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: AFError?) {
         NSLog("%@", "Request: \(request) didCompleteTask \(task) withError: \(error?.localizedDescription ?? "None")")
     }
 
@@ -168,7 +168,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request), didParseResponse: \(response)")
     }
 
-    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
         NSLog("%@", "Request: \(request), didParseResponse: \(response)")
     }
 
@@ -176,11 +176,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Download: \(request), didParseResponse: \(response)")
     }
 
-    public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Data?, AFError>) {
-        NSLog("%@", "Download: \(request), didParseResponse: \(response)")
-    }
-
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
         NSLog("%@", "Download: \(request), didParseResponse: \(response)")
     }
 
@@ -196,7 +192,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request), didValidateRequestWithResult: \(result)")
     }
 
-    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+    public func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
         NSLog("%@", "Request: \(request), didParseStreamWithResult: \(result)")
     }
 
@@ -204,7 +200,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request), didCreateUploadable: \(uploadable)")
     }
 
-    public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: any Error) {
+    public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {
         NSLog("%@", "Request: \(request), didFailToCreateUploadableWithError: \(error)")
     }
 
@@ -212,7 +208,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("%@", "Request: \(request), didProvideInputStream: \(stream)")
     }
 
-    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, any Error>) {
+    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, AFError>) {
         NSLog("%@", "Request: \(request), didFinishDownloadingUsing: \(task), withResult: \(result)")
     }
 

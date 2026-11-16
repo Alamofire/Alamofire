@@ -23,10 +23,13 @@
 //
 
 import Alamofire
-import XCTest
+import Foundation
+import Testing
 
-final class JSONParameterEncoderTests: BaseTestCase {
-    func testThatDataIsProperlyEncodedAndProperContentTypeIsSet() throws {
+@Suite
+struct JSONParameterEncoderTests {
+    @Test
+    func dataIsProperlyEncodedAndProperContentTypeIsSet() throws {
         // Given
         let encoder = JSONParameterEncoder()
         let request = Endpoint().urlRequest
@@ -35,11 +38,12 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.headers["Content-Type"], "application/json")
-        XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
+        #expect(newRequest.headers["Content-Type"] == "application/json")
+        #expect(newRequest.httpBody?.asString == "{\"property\":\"property\"}")
     }
 
-    func testThatDataIsProperlyEncodedButContentTypeIsNotSetIfRequestAlreadyHasAContentType() throws {
+    @Test
+    func dataIsProperlyEncodedButContentTypeIsNotSetIfRequestAlreadyHasAContentType() throws {
         // Given
         let encoder = JSONParameterEncoder()
         var request = Endpoint().urlRequest
@@ -49,11 +53,12 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.headers["Content-Type"], "type")
-        XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
+        #expect(newRequest.headers["Content-Type"] == "type")
+        #expect(newRequest.httpBody?.asString == "{\"property\":\"property\"}")
     }
 
-    func testThatJSONEncoderCanBeCustomized() throws {
+    @Test
+    func jsonEncoderCanBeCustomized() throws {
         // Given
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .prettyPrinted
@@ -69,10 +74,11 @@ final class JSONParameterEncoderTests: BaseTestCase {
           "property" : "property"
         }
         """
-        XCTAssertEqual(newRequest.httpBody?.asString, expected)
+        #expect(newRequest.httpBody?.asString == expected)
     }
 
-    func testThatJSONEncoderDefaultWorks() throws {
+    @Test
+    func jsonEncoderDefaultWorks() throws {
         // Given
         let encoder = JSONParameterEncoder.default
         let request = Endpoint().urlRequest
@@ -84,10 +90,11 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let expected = """
         {"property":"property"}
         """
-        XCTAssertEqual(encoded.httpBody?.asString, expected)
+        #expect(encoded.httpBody?.asString == expected)
     }
 
-    func testThatJSONEncoderPrettyPrintedPrintsPretty() throws {
+    @Test
+    func jsonEncoderPrettyPrintedPrintsPretty() throws {
         // Given
         let encoder = JSONParameterEncoder.prettyPrinted
         let request = Endpoint().urlRequest
@@ -101,12 +108,14 @@ final class JSONParameterEncoderTests: BaseTestCase {
           "property" : "property"
         }
         """
-        XCTAssertEqual(encoded.httpBody?.asString, expected)
+        #expect(encoded.httpBody?.asString == expected)
     }
 }
 
-final class SortedKeysJSONParameterEncoderTests: BaseTestCase {
-    func testTestJSONEncoderSortedKeysHasSortedKeys() throws {
+@Suite
+struct SortedKeysJSONParameterEncoderTests {
+    @Test
+    func jsonEncoderSortedKeysHasSortedKeys() throws {
         guard #available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *) else { return }
         // Given
         let encoder = JSONParameterEncoder.sortedKeys
@@ -119,12 +128,14 @@ final class SortedKeysJSONParameterEncoderTests: BaseTestCase {
         let expected = """
         {"a":"a","p":"p","z":"z"}
         """
-        XCTAssertEqual(encoded.httpBody?.asString, expected)
+        #expect(encoded.httpBody?.asString == expected)
     }
 }
 
-final class URLEncodedFormParameterEncoderTests: BaseTestCase {
-    func testThatQueryIsBodyEncodedAndProperContentTypeIsSetForPOSTRequest() throws {
+@Suite
+struct URLEncodedFormParameterEncoderTests {
+    @Test
+    func queryIsBodyEncodedAndProperContentTypeIsSetForPOSTRequest() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
         let request = Endpoint(method: .post).urlRequest
@@ -133,11 +144,12 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.headers["Content-Type"], "application/x-www-form-urlencoded; charset=utf-8")
-        XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
+        #expect(newRequest.headers["Content-Type"] == "application/x-www-form-urlencoded; charset=utf-8")
+        #expect(newRequest.httpBody?.asString == "property=property")
     }
 
-    func testThatQueryIsBodyEncodedButContentTypeIsNotSetWhenRequestAlreadyHasContentType() throws {
+    @Test
+    func queryIsBodyEncodedButContentTypeIsNotSetWhenRequestAlreadyHasContentType() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
         var request = Endpoint(method: .post).urlRequest
@@ -147,11 +159,12 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         let newRequest = try encoder.encode(TestParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.headers["Content-Type"], "type")
-        XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
+        #expect(newRequest.headers["Content-Type"] == "type")
+        #expect(newRequest.httpBody?.asString == "property=property")
     }
 
-    func testThatEncoderCanBeCustomized() throws {
+    @Test
+    func encoderCanBeCustomized() throws {
         // Given
         let urlEncoder = URLEncodedFormEncoder(boolEncoding: .literal)
         let encoder = URLEncodedFormParameterEncoder(encoder: urlEncoder)
@@ -162,10 +175,11 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
 
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
-        XCTAssertEqual(components?.percentEncodedQuery, "bool=true")
+        #expect(components?.percentEncodedQuery == "bool=true")
     }
 
-    func testThatQueryIsInURLWhenDestinationIsURLAndMethodIsPOST() throws {
+    @Test
+    func queryIsInURLWhenDestinationIsURLAndMethodIsPOST() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder(destination: .queryString)
         let request = Endpoint(method: .post).urlRequest
@@ -175,10 +189,11 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
 
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
-        XCTAssertEqual(components?.percentEncodedQuery, "property=property")
+        #expect(components?.percentEncodedQuery == "property=property")
     }
 
-    func testThatQueryIsNilWhenEncodableResultsInAnEmptyString() throws {
+    @Test
+    func queryIsNilWhenEncodableResultsInAnEmptyString() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder(destination: .queryString)
         let request = Endpoint().urlRequest
@@ -188,12 +203,14 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
 
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
-        XCTAssertNil(components?.percentEncodedQuery)
+        #expect(components?.percentEncodedQuery == nil)
     }
 }
 
-final class URLEncodedFormEncoderTests: BaseTestCase {
-    func testEncoderCanEncodeDictionary() {
+@Suite
+struct URLEncodedFormEncoderTests {
+    @Test
+    func encoderCanEncodeDictionary() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["a": "a"]
@@ -202,10 +219,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=a")
+        #expect(result.success == "a=a")
     }
 
-    func testEncoderCanEncodeDecimal() {
+    @Test
+    func encoderCanEncodeDecimal() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let decimal: Decimal = 1.0
@@ -215,10 +233,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeDecimalWithHighPrecision() {
+    @Test
+    func encoderCanEncodeDecimalWithHighPrecision() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let decimal: Decimal = 1.123456
@@ -228,10 +247,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1.123456")
+        #expect(result.success == "a=1.123456")
     }
 
-    func testEncoderCanEncodeDouble() {
+    @Test
+    func encoderCanEncodeDouble() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["a": 1.0]
@@ -240,10 +260,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1.0")
+        #expect(result.success == "a=1.0")
     }
 
-    func testEncoderCanEncodeFloat() {
+    @Test
+    func encoderCanEncodeFloat() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Float] = ["a": 1.0]
@@ -252,10 +273,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1.0")
+        #expect(result.success == "a=1.0")
     }
 
-    func testEncoderCanEncodeInt8() {
+    @Test
+    func encoderCanEncodeInt8() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int8] = ["a": 1]
@@ -264,10 +286,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeInt16() {
+    @Test
+    func encoderCanEncodeInt16() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int16] = ["a": 1]
@@ -276,10 +299,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeInt32() {
+    @Test
+    func encoderCanEncodeInt32() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int32] = ["a": 1]
@@ -288,10 +312,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeInt64() {
+    @Test
+    func encoderCanEncodeInt64() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int64] = ["a": 1]
@@ -300,10 +325,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeUInt() {
+    @Test
+    func encoderCanEncodeUInt() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt] = ["a": 1]
@@ -312,10 +338,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeUInt8() {
+    @Test
+    func encoderCanEncodeUInt8() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt8] = ["a": 1]
@@ -324,10 +351,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeUInt16() {
+    @Test
+    func encoderCanEncodeUInt16() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt16] = ["a": 1]
@@ -336,10 +364,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeUInt32() {
+    @Test
+    func encoderCanEncodeUInt32() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt32] = ["a": 1]
@@ -348,10 +377,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testEncoderCanEncodeUInt64() {
+    @Test
+    func encoderCanEncodeUInt64() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt64] = ["a": 1]
@@ -360,10 +390,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=1")
+        #expect(result.success == "a=1")
     }
 
-    func testThatNestedDictionariesCanHaveBracketKeyPathsByDefault() {
+    @Test
+    func nestedDictionariesCanHaveBracketKeyPathsByDefault() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["a": ["b": "b"]]
@@ -372,10 +403,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a%5Bb%5D=b")
+        #expect(result.success == "a%5Bb%5D=b")
     }
 
-    func testThatNestedDictionariesCanHaveExplicitBracketKeyPaths() {
+    @Test
+    func nestedDictionariesCanHaveExplicitBracketKeyPaths() {
         // Given
         let encoder = URLEncodedFormEncoder(keyPathEncoding: .brackets)
         let parameters = ["a": ["b": "b"]]
@@ -384,10 +416,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a%5Bb%5D=b")
+        #expect(result.success == "a%5Bb%5D=b")
     }
 
-    func testThatNestedDictionariesCanHaveDottedKeyPaths() {
+    @Test
+    func nestedDictionariesCanHaveDottedKeyPaths() {
         // Given
         let encoder = URLEncodedFormEncoder(keyPathEncoding: .dots)
         let parameters = ["a": ["b": "b"]]
@@ -396,10 +429,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a.b=b")
+        #expect(result.success == "a.b=b")
     }
 
-    func testThatNestedDictionariesCanHaveCustomKeyPaths() {
+    @Test
+    func nestedDictionariesCanHaveCustomKeyPaths() {
         // Given
         let encoder = URLEncodedFormEncoder(keyPathEncoding: .init { "-\($0)" })
         let parameters = ["a": ["b": "b"]]
@@ -408,10 +442,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a-b=b")
+        #expect(result.success == "a-b=b")
     }
 
-    func testThatEncodableStructCanBeEncoded() {
+    @Test
+    func encodableStructCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = EncodableStruct()
@@ -421,10 +456,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "five%5Ba%5D=a&four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&one=one&seven%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&three=1&two=2"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatManuallyEncodableStructCanBeEncoded() {
+    @Test
+    func manuallyEncodableStructCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ManuallyEncodableStruct()
@@ -434,10 +470,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "root%5B%5D%5B%5D%5B%5D=1&root%5B%5D%5B%5D%5B%5D=2&root%5B%5D%5B%5D%5B%5D=3&root%5B%5D%5B%5D=1&root%5B%5D%5B%5D=2&root%5B%5D%5B%5D=3&root%5B%5D%5Ba%5D%5Bstring%5D=string"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatEncodableClassWithNoInheritanceCanBeEncoded() {
+    @Test
+    func encodableClassWithNoInheritanceCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = EncodableSuperclass()
@@ -446,10 +483,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "one=one&three=1&two=2")
+        #expect(result.success == "one=one&three=1&two=2")
     }
 
-    func testThatEncodableSubclassCanBeEncoded() {
+    @Test
+    func encodableSubclassCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = EncodableSubclass()
@@ -459,10 +497,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&one=one&three=1&two=2"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatEncodableSubclassCanBeEncodedInImplementationOrderWhenAlphabetizeKeysIsFalse() {
+    @Test
+    func encodableSubclassCanBeEncodedInImplementationOrderWhenAlphabetizeKeysIsFalse() {
         // Given
         let encoder = URLEncodedFormEncoder(alphabetizeKeyValuePairs: false)
         let parameters = EncodableStruct()
@@ -472,10 +511,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "one=one&two=2&three=1&four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&five%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&seven%5Ba%5D=a"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatManuallyEncodableSubclassCanBeEncoded() {
+    @Test
+    func manuallyEncodableSubclassCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ManuallyEncodableSubclass()
@@ -485,10 +525,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5Bfive%5D=2&four%5Bfour%5D=one"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatARootArrayCannotBeEncoded() {
+    @Test
+    func aRootArrayCannotBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = [1]
@@ -497,10 +538,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertFalse(result.isSuccess)
+        #expect(!result.isSuccess)
     }
 
-    func testThatARootValueCannotBeEncoded() {
+    @Test
+    func aRootValueCannotBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = "string"
@@ -509,10 +551,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertFalse(result.isSuccess)
+        #expect(!result.isSuccess)
     }
 
-    func testThatEncodableSuperclassCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func encodableSuperclassCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = ["foo": [EncodableSuperclass()]]
@@ -521,10 +564,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "foo%5B0%5D%5Bone%5D=one&foo%5B0%5D%5Bthree%5D=1&foo%5B0%5D%5Btwo%5D=2")
+        #expect(result.success == "foo%5B0%5D%5Bone%5D=one&foo%5B0%5D%5Bthree%5D=1&foo%5B0%5D%5Btwo%5D=2")
     }
 
-    func testThatEncodableSubclassCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func encodableSubclassCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = EncodableSubclass()
@@ -534,10 +578,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5B0%5D=1&four%5B1%5D=2&four%5B2%5D=3&one=one&three=1&two=2"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatManuallyEncodableSubclassCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func manuallyEncodableSubclassCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = ManuallyEncodableSubclass()
@@ -547,10 +592,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5Bfive%5D=2&four%5Bfour%5D=one"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatEncodableStructCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func encodableStructCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = EncodableStruct()
@@ -560,10 +606,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "five%5Ba%5D=a&four%5B0%5D=1&four%5B1%5D=2&four%5B2%5D=3&one=one&seven%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&three=1&two=2"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatManuallyEncodableStructCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func manuallyEncodableStructCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = ManuallyEncodableStruct()
@@ -573,10 +620,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // then
         let expected = "root%5B0%5D%5B0%5D=1&root%5B0%5D%5B1%5D=2&root%5B0%5D%5B2%5D=3&root%5B1%5D%5Ba%5D%5Bstring%5D=string&root%5B2%5D%5B0%5D%5B0%5D=1&root%5B2%5D%5B0%5D%5B1%5D=2&root%5B2%5D%5B0%5D%5B2%5D=3"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatArrayNestedDictionaryIntValueCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func arrayNestedDictionaryIntValueCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = ["foo": [["bar": 2], ["qux": 3], ["quy": 4]]]
@@ -585,10 +633,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "foo%5B0%5D%5Bbar%5D=2&foo%5B1%5D%5Bqux%5D=3&foo%5B2%5D%5Bquy%5D=4")
+        #expect(result.success == "foo%5B0%5D%5Bbar%5D=2&foo%5B1%5D%5Bqux%5D=3&foo%5B2%5D%5Bquy%5D=4")
     }
 
-    func testThatArrayNestedDictionaryStringValueCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func arrayNestedDictionaryStringValueCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = ["foo": [["bar": "2"], ["qux": "3"], ["quy": "4"]]]
@@ -597,10 +646,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "foo%5B0%5D%5Bbar%5D=2&foo%5B1%5D%5Bqux%5D=3&foo%5B2%5D%5Bquy%5D=4")
+        #expect(result.success == "foo%5B0%5D%5Bbar%5D=2&foo%5B1%5D%5Bqux%5D=3&foo%5B2%5D%5Bquy%5D=4")
     }
 
-    func testThatArrayNestedDictionaryBoolValueCanBeEncodedWithIndexInBrackets() {
+    @Test
+    func arrayNestedDictionaryBoolValueCanBeEncodedWithIndexInBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .indexInBrackets)
         let parameters = ["foo": [["bar": true], ["qux": false], ["quy": true]]]
@@ -609,10 +659,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "foo%5B0%5D%5Bbar%5D=1&foo%5B1%5D%5Bqux%5D=0&foo%5B2%5D%5Bquy%5D=1")
+        #expect(result.success == "foo%5B0%5D%5Bbar%5D=1&foo%5B1%5D%5Bqux%5D=0&foo%5B2%5D%5Bquy%5D=1")
     }
 
-    func testThatArraysCanBeEncodedWithoutBrackets() {
+    @Test
+    func arraysCanBeEncodedWithoutBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .noBrackets)
         let parameters = ["array": [1, 2]]
@@ -621,10 +672,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "array=1&array=2")
+        #expect(result.success == "array=1&array=2")
     }
 
-    func testThatArraysCanBeEncodedWithCustomClosure() {
+    @Test
+    func arraysCanBeEncodedWithCustomClosure() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .custom { key, index in
             "\(key).\(index + 1)"
@@ -635,10 +687,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "array.1=1&array.2=2")
+        #expect(result.success == "array.1=1&array.2=2")
     }
 
-    func testThatBoolsCanBeLiteralEncoded() {
+    @Test
+    func boolsCanBeLiteralEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder(boolEncoding: .literal)
         let parameters = ["bool": true]
@@ -647,10 +700,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "bool=true")
+        #expect(result.success == "bool=true")
     }
 
-    func testThatDataCanBeEncoded() {
+    @Test
+    func dataCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["data": Data("data".utf8)]
@@ -659,10 +713,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "data=ZGF0YQ%3D%3D")
+        #expect(result.success == "data=ZGF0YQ%3D%3D")
     }
 
-    func testThatCustomDataEncodingFailsWhenErrorIsThrown() {
+    @Test
+    func customDataEncodingFailsWhenErrorIsThrown() {
         // Given
         struct DataEncodingError: Error {}
 
@@ -673,11 +728,12 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.failure is DataEncodingError)
+        #expect(result.isFailure)
+        #expect(result.failure is DataEncodingError)
     }
 
-    func testThatDatesCanBeEncoded() {
+    @Test
+    func datesCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder(dateEncoding: .deferredToDate)
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
@@ -686,10 +742,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "date=123.456")
+        #expect(result.success == "date=123.456")
     }
 
-    func testThatDatesCanBeEncodedAsSecondsSince1970() {
+    @Test
+    func datesCanBeEncodedAsSecondsSince1970() {
         // Given
         let encoder = URLEncodedFormEncoder(dateEncoding: .secondsSince1970)
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
@@ -698,10 +755,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "date=978307323.456")
+        #expect(result.success == "date=978307323.456")
     }
 
-    func testThatDatesCanBeEncodedAsMillisecondsSince1970() {
+    @Test
+    func datesCanBeEncodedAsMillisecondsSince1970() {
         // Given
         let encoder = URLEncodedFormEncoder(dateEncoding: .millisecondsSince1970)
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
@@ -710,10 +768,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "date=978307323456.0")
+        #expect(result.success == "date=978307323456.0")
     }
 
-    func testThatDatesCanBeEncodedAsISO8601Formatted() {
+    @Test
+    func datesCanBeEncodedAsISO8601Formatted() {
         // Given
         let encoder = URLEncodedFormEncoder(dateEncoding: .iso8601)
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
@@ -722,10 +781,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "date=2001-01-01T00%3A02%3A03Z")
+        #expect(result.success == "date=2001-01-01T00%3A02%3A03Z")
     }
 
-    func testThatDatesCanBeEncodedAsFormatted() {
+    @Test
+    func datesCanBeEncodedAsFormatted() {
         // Given
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS"
@@ -739,10 +799,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "date=2001-01-01%2000%3A02%3A03.4560")
+        #expect(result.success == "date=2001-01-01%2000%3A02%3A03.4560")
     }
 
-    func testThatDatesCanBeEncodedAsCustomFormatted() {
+    @Test
+    func datesCanBeEncodedAsCustomFormatted() {
         // Given
         let encoder = URLEncodedFormEncoder(dateEncoding: .custom { "\($0.timeIntervalSinceReferenceDate)" })
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
@@ -751,10 +812,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "date=123.456")
+        #expect(result.success == "date=123.456")
     }
 
-    func testEncoderThrowsErrorWhenCustomDateEncodingFails() {
+    @Test
+    func encoderThrowsErrorWhenCustomDateEncodingFails() {
         // Given
         struct DateEncodingError: Error {}
 
@@ -765,11 +827,12 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.failure is DateEncodingError)
+        #expect(result.isFailure)
+        #expect(result.failure is DateEncodingError)
     }
 
-    func testThatKeysCanBeEncodedIntoSnakeCase() {
+    @Test
+    func keysCanBeEncodedIntoSnakeCase() {
         // Given
         let encoder = URLEncodedFormEncoder(keyEncoding: .convertToSnakeCase)
         let parameters = ["oneTwoThree": "oneTwoThree"]
@@ -778,10 +841,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "one_two_three=oneTwoThree")
+        #expect(result.success == "one_two_three=oneTwoThree")
     }
 
-    func testThatKeysCanBeEncodedIntoKebabCase() {
+    @Test
+    func keysCanBeEncodedIntoKebabCase() {
         // Given
         let encoder = URLEncodedFormEncoder(keyEncoding: .convertToKebabCase)
         let parameters = ["oneTwoThree": "oneTwoThree"]
@@ -790,10 +854,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "one-two-three=oneTwoThree")
+        #expect(result.success == "one-two-three=oneTwoThree")
     }
 
-    func testThatKeysCanBeEncodedIntoACapitalizedString() {
+    @Test
+    func keysCanBeEncodedIntoACapitalizedString() {
         // Given
         let encoder = URLEncodedFormEncoder(keyEncoding: .capitalized)
         let parameters = ["oneTwoThree": "oneTwoThree"]
@@ -802,10 +867,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "OneTwoThree=oneTwoThree")
+        #expect(result.success == "OneTwoThree=oneTwoThree")
     }
 
-    func testThatKeysCanBeEncodedIntoALowercasedString() {
+    @Test
+    func keysCanBeEncodedIntoALowercasedString() {
         // Given
         let encoder = URLEncodedFormEncoder(keyEncoding: .lowercased)
         let parameters = ["oneTwoThree": "oneTwoThree"]
@@ -814,10 +880,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "onetwothree=oneTwoThree")
+        #expect(result.success == "onetwothree=oneTwoThree")
     }
 
-    func testThatKeysCanBeEncodedIntoAnUppercasedString() {
+    @Test
+    func keysCanBeEncodedIntoAnUppercasedString() {
         // Given
         let encoder = URLEncodedFormEncoder(keyEncoding: .uppercased)
         let parameters = ["oneTwoThree": "oneTwoThree"]
@@ -826,10 +893,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "ONETWOTHREE=oneTwoThree")
+        #expect(result.success == "ONETWOTHREE=oneTwoThree")
     }
 
-    func testThatKeysCanBeCustomEncoded() {
+    @Test
+    func keysCanBeCustomEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder(keyEncoding: .custom { _ in "A" })
         let parameters = ["oneTwoThree": "oneTwoThree"]
@@ -838,10 +906,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "A=oneTwoThree")
+        #expect(result.success == "A=oneTwoThree")
     }
 
-    func testThatNilCanBeEncodedByDroppingTheKeyByDefault() {
+    @Test
+    func nilCanBeEncodedByDroppingTheKeyByDefault() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: String?] = ["a": nil]
@@ -850,10 +919,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "")
+        #expect(result.success == "")
     }
 
-    func testThatNilCanBeEncodedInSynthesizedEncodableByDroppingTheKeyByDefault() {
+    @Test
+    func nilCanBeEncodedInSynthesizedEncodableByDroppingTheKeyByDefault() {
         // Given
         let encoder = URLEncodedFormEncoder()
 
@@ -861,10 +931,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(OptionalEncodableStruct()) }
 
         // Then
-        XCTAssertEqual(result.success, "one=one")
+        #expect(result.success == "one=one")
     }
 
-    func testThatNilCanBeEncodedAsNull() {
+    @Test
+    func nilCanBeEncodedAsNull() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .null)
         let parameters: [String: String?] = ["a": nil]
@@ -873,10 +944,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=null")
+        #expect(result.success == "a=null")
     }
 
-    func testThatNilCanBeEncodedInSynthesizedEncodableAsNull() {
+    @Test
+    func nilCanBeEncodedInSynthesizedEncodableAsNull() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .null)
 
@@ -884,10 +956,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(OptionalEncodableStruct()) }
 
         // Then
-        XCTAssertEqual(result.success, "one=one&two=null")
+        #expect(result.success == "one=one&two=null")
     }
 
-    func testThatNilCanBeEncodedByDroppingTheKey() {
+    @Test
+    func nilCanBeEncodedByDroppingTheKey() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .dropKey)
         let parameters: [String: String?] = ["a": nil]
@@ -896,10 +969,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "")
+        #expect(result.success == "")
     }
 
-    func testThatNilCanBeEncodedInSynthesizedEncodableByDroppingTheKey() {
+    @Test
+    func nilCanBeEncodedInSynthesizedEncodableByDroppingTheKey() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .dropKey)
 
@@ -907,10 +981,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(OptionalEncodableStruct()) }
 
         // Then
-        XCTAssertEqual(result.success, "one=one")
+        #expect(result.success == "one=one")
     }
 
-    func testThatNilCanBeEncodedByDroppingTheValue() {
+    @Test
+    func nilCanBeEncodedByDroppingTheValue() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .dropValue)
         let parameters: [String: String?] = ["a": nil]
@@ -919,10 +994,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "a=")
+        #expect(result.success == "a=")
     }
 
-    func testThatNilCanBeEncodedInSynthesizedEncodableByDroppingTheValue() {
+    @Test
+    func nilCanBeEncodedInSynthesizedEncodableByDroppingTheValue() {
         // Given
         let encoder = URLEncodedFormEncoder(nilEncoding: .dropValue)
 
@@ -930,10 +1006,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(OptionalEncodableStruct()) }
 
         // Then
-        XCTAssertEqual(result.success, "one=one&two=")
+        #expect(result.success == "one=one&two=")
     }
 
-    func testThatSpacesCanBeEncodedAsPluses() {
+    @Test
+    func spacesCanBeEncodedAsPluses() {
         // Given
         let encoder = URLEncodedFormEncoder(spaceEncoding: .plusReplaced)
         let parameters = ["spaces": "replace with spaces"]
@@ -942,10 +1019,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "spaces=replace+with+spaces")
+        #expect(result.success == "spaces=replace+with+spaces")
     }
 
-    func testThatEscapedCharactersCanBeCustomized() {
+    @Test
+    func escapedCharactersCanBeCustomized() {
         // Given
         var allowed = CharacterSet.afURLQueryAllowed
         allowed.remove(charactersIn: "?/")
@@ -956,10 +1034,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "allowed=%3F%2F")
+        #expect(result.success == "allowed=%3F%2F")
     }
 
-    func testThatUnreservedCharactersAreNotPercentEscaped() {
+    @Test
+    func unreservedCharactersAreNotPercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["lowercase": "abcdefghijklmnopqrstuvwxyz",
@@ -971,10 +1050,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "lowercase=abcdefghijklmnopqrstuvwxyz&numbers=0123456789&uppercase=ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 
-    func testThatReservedCharactersArePercentEscaped() {
+    @Test
+    func reservedCharactersArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let generalDelimiters = ":#[]@"
@@ -985,10 +1065,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "reserved=%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")
+        #expect(result.success == "reserved=%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")
     }
 
-    func testThatIllegalASCIICharactersArePercentEscaped() {
+    @Test
+    func illegalASCIICharactersArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["illegal": " \"#%<>[]\\^`{}|"]
@@ -997,10 +1078,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "illegal=%20%22%23%25%3C%3E%5B%5D%5C%5E%60%7B%7D%7C")
+        #expect(result.success == "illegal=%20%22%23%25%3C%3E%5B%5D%5C%5E%60%7B%7D%7C")
     }
 
-    func testThatAmpersandsInKeysAndValuesArePercentEscaped() {
+    @Test
+    func ampersandsInKeysAndValuesArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["foo&bar": "baz&qux", "foobar": "bazqux"]
@@ -1009,10 +1091,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "foo%26bar=baz%26qux&foobar=bazqux")
+        #expect(result.success == "foo%26bar=baz%26qux&foobar=bazqux")
     }
 
-    func testThatQuestionMarksInKeysAndValuesAreNotPercentEscaped() {
+    @Test
+    func questionMarksInKeysAndValuesAreNotPercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["?foo?": "?bar?"]
@@ -1021,10 +1104,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "?foo?=?bar?")
+        #expect(result.success == "?foo?=?bar?")
     }
 
-    func testThatSlashesInKeysAndValuesAreNotPercentEscaped() {
+    @Test
+    func slashesInKeysAndValuesAreNotPercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["foo": "/bar/baz/qux"]
@@ -1033,10 +1117,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "foo=/bar/baz/qux")
+        #expect(result.success == "foo=/bar/baz/qux")
     }
 
-    func testThatSpacesInKeysAndValuesArePercentEscaped() {
+    @Test
+    func spacesInKeysAndValuesArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = [" foo ": " bar "]
@@ -1045,10 +1130,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "%20foo%20=%20bar%20")
+        #expect(result.success == "%20foo%20=%20bar%20")
     }
 
-    func testThatPlusesInKeysAndValuesArePercentEscaped() {
+    @Test
+    func plusesInKeysAndValuesArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["+foo+": "+bar+"]
@@ -1057,10 +1143,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "%2Bfoo%2B=%2Bbar%2B")
+        #expect(result.success == "%2Bfoo%2B=%2Bbar%2B")
     }
 
-    func testThatPercentsInKeysAndValuesArePercentEscaped() {
+    @Test
+    func percentsInKeysAndValuesArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["percent%": "%25"]
@@ -1069,10 +1156,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String, any Error> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.success, "percent%25=%2525")
+        #expect(result.success == "percent%25=%2525")
     }
 
-    func testThatNonLatinCharactersArePercentEscaped() {
+    @Test
+    func nonLatinCharactersArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["french": "français",
@@ -1088,10 +1176,11 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
                                        "emoji=%F0%9F%98%83",
                                        "french=fran%C3%A7ais",
                                        "japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E"].joined(separator: "&")
-        XCTAssertEqual(result.success, expectedParameterValues)
+        #expect(result.success == expectedParameterValues)
     }
 
-    func testStringWithThousandsOfChineseCharactersIsPercentEscaped() {
+    @Test
+    func stringWithThousandsOfChineseCharactersIsPercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let repeatedCount = 2000
@@ -1104,21 +1193,24 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let escaped = String(repeating: "%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E5%85%AD%E4%B8%83%E5%85%AB%E4%B9%9D%E5%8D%81",
                              count: repeatedCount)
         let expected = "chinese=\(escaped)"
-        XCTAssertEqual(result.success, expected)
+        #expect(result.success == expected)
     }
 }
 
-final class StaticParameterEncoderInstanceTests: BaseTestCase {
+@Suite
+struct StaticParameterEncoderInstanceTests {
     func takeParameterEncoder(_ parameterEncoder: any ParameterEncoder) {
         _ = parameterEncoder
     }
 
-    func testThatJSONParameterEncoderCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func jsonParameterEncoderCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeParameterEncoder(.json())
     }
 
-    func testThatURLEncodedFormParameterEncoderCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func urlEncodedFormParameterEncoderCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeParameterEncoder(.urlEncodedForm())
     }

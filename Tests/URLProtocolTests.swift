@@ -24,7 +24,7 @@
 
 import Alamofire
 import Foundation
-import XCTest
+import Testing
 
 class ProxyURLProtocol: URLProtocol {
     // MARK: Properties
@@ -41,7 +41,7 @@ class ProxyURLProtocol: URLProtocol {
             return configuration
         }()
 
-        return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        return URLSession(configuration: configuration, delegate: ForwardingDelegate(proxy: self), delegateQueue: nil)
     }()
 
     weak var activeTask: URLSessionTask?
@@ -98,36 +98,53 @@ class ProxyURLProtocol: URLProtocol {
 
 // MARK: -
 
-extension ProxyURLProtocol: URLSessionDataDelegate {
-    // MARK: NSURLSessionDelegate
+extension ProxyURLProtocol {
+    /// Forwards the proxy session's events to the protocol. `URLSessionDataDelegate` requires `Sendable`, which
+    /// `URLProtocol` explicitly isn't, so the protocol can't be the session's delegate itself.
+    final class ForwardingDelegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+        private weak var proxy: ProxyURLProtocol?
 
-    func urlSession(_ session: URLSession,
-                    dataTask: URLSessionDataTask,
-                    didReceive response: URLResponse) async -> URLSession.ResponseDisposition {
-        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        init(proxy: ProxyURLProtocol) {
+            self.proxy = proxy
+        }
 
-        return .allow
-    }
+        // MARK: NSURLSessionDelegate
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        client?.urlProtocol(self, didLoad: data)
-    }
+        func urlSession(_ session: URLSession,
+                        dataTask: URLSessionDataTask,
+                        didReceive response: URLResponse) async -> URLSession.ResponseDisposition {
+            guard let proxy else { return .cancel }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
-        client?.urlProtocolDidFinishLoading(self)
+            proxy.client?.urlProtocol(proxy, didReceive: response, cacheStoragePolicy: .notAllowed)
+
+            return .allow
+        }
+
+        func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+            guard let proxy else { return }
+
+            proxy.client?.urlProtocol(proxy, didLoad: data)
+        }
+
+        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
+            guard let proxy else { return }
+
+            proxy.client?.urlProtocolDidFinishLoading(proxy)
+        }
     }
 }
 
 // MARK: -
 
-class URLProtocolTestCase: BaseTestCase {
-    var manager: Session!
+@Suite(.storesInstances)
+struct URLProtocolTestCase {
+    let manager: Session
 
     // MARK: Setup and Teardown
 
-    override func setUp() {
-        super.setUp()
-
+    /// Replaces `setUp()`.
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    init() {
         manager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
@@ -137,36 +154,37 @@ class URLProtocolTestCase: BaseTestCase {
                 return configuration
             }()
 
-            return Session(configuration: configuration)
+            return stored(Session.independent(configuration: configuration))
         }()
     }
 
     // MARK: Tests
 
-    @MainActor
-    func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func urlProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() async {
         // Given
         let endpoint = Endpoint.responseHeaders.modifying(\.headers, to: ["Request-Header": "foobar"])
 
-        let expectation = expectation(description: "GET request should succeed")
+        let expectation = Completion("GET request should succeed")
 
-        var response: DataResponse<Data?, AFError>?
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         manager.request(endpoint)
             .response { resp in
-                response = resp
-                expectation.fulfill()
+                response.value = resp
+                expectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
-        XCTAssertEqual(response?.response?.headers["Request-Header"], "foobar")
-        XCTAssertEqual(response?.response?.headers["Session-Configuration-Header"], "foo")
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
+        #expect(response.response?.headers["Request-Header"] == "foobar")
+        #expect(response.response?.headers["Session-Configuration-Header"] == "foo")
     }
 }

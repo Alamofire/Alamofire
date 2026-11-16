@@ -24,10 +24,13 @@
 
 @testable
 import Alamofire
-import XCTest
+import Foundation
+import Testing
 
-final class ProtectedTests: BaseTestCase {
-    func testThatProtectedValuesAreAccessedSafely() {
+@Suite
+struct ProtectedTests {
+    @Test
+    func protectedValuesAreAccessedSafely() {
         // Given
         let initialValue = "value"
         let protected = Protected<String>(initialValue)
@@ -39,10 +42,11 @@ final class ProtectedTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertNotEqual(protected.read { $0 }, initialValue)
+        #expect(protected.read { $0 } != initialValue)
     }
 
-    func testThatProtectedAPIIsSafe() {
+    @Test
+    func protectedAPIIsSafe() {
         // Given
         let initialValue = "value"
         let protected = Protected<String>(initialValue)
@@ -54,20 +58,16 @@ final class ProtectedTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertNotEqual(protected.read { $0 }, initialValue)
+        #expect(protected.read { $0 } != initialValue)
     }
 }
 
-final class ProtectedWrapperTests: BaseTestCase {
+@Suite
+struct ProtectedWrapperTests {
     let value = Protected("value")
 
-    override func setUp() {
-        super.setUp()
-
-        value.write("value")
-    }
-
-    func testThatWrappedValuesAreAccessedSafely() {
+    @Test
+    func wrappedValuesAreAccessedSafely() {
         // Given
         let initialValue = value.read { $0 }
 
@@ -78,11 +78,12 @@ final class ProtectedWrapperTests: BaseTestCase {
         }
 
         // Then
-        XCTAssertNotEqual(value.read { $0 }, initialValue)
+        #expect(value.read { $0 } != initialValue)
     }
 }
 
-final class ProtectedHighContentionTests: BaseTestCase {
+@Suite(.storesInstances)
+struct ProtectedHighContentionTests {
     final class StringContainer {
         var totalStrings: Int = 10
         var stringArray = ["this", "is", "a", "simple", "set", "of", "test", "strings", "to", "use"]
@@ -110,55 +111,57 @@ final class ProtectedHighContentionTests: BaseTestCase {
     let stringContainerWrite = Protected(StringContainerWriteState())
     let stringContainerRead = Protected(StringContainerReadState())
 
-    func testConcurrentReadWriteBlocks() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func concurrentReadWriteBlocks() async {
         // Given
         let totalWrites = 4000
         let totalReads = 10_000
 
-        let writeExpectation = expectation(description: "all parallel writes should complete before timeout")
-        let readExpectation = expectation(description: "all parallel reads should complete before timeout")
+        let writeExpectation = Completion("all parallel writes should complete before timeout")
+        let readExpectation = Completion("all parallel reads should complete before timeout")
 
-        var writerQueueResults: [Int] = []
-        var completedWritesCount = 0
+        let writerQueueResults = Capture<[Int]>([])
+        let completedWritesCount = Capture(0)
 
-        var readerQueueResults1: [Int] = []
-        var readerQueueResults2: [Int] = []
+        let readerQueueResults1 = Capture<[Int]>([])
+        let readerQueueResults2 = Capture<[Int]>([])
 
         // When
         executeWriteOperationsInParallel(totalOperationsToExecute: totalWrites) { results, completedOperationCount in
-            writerQueueResults = results
-            completedWritesCount = completedOperationCount
-            writeExpectation.fulfill()
+            writerQueueResults.value = results
+            completedWritesCount.value = completedOperationCount
+            writeExpectation.complete()
         }
 
         executeReadOperationsInParallel(totalOperationsToExecute: totalReads) { results1, results2 in
-            readerQueueResults1 = results1
-            readerQueueResults2 = results2
-            readExpectation.fulfill()
+            readerQueueResults1.value = results1
+            readerQueueResults2.value = results2
+            readExpectation.complete()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        await wait(for: [writeExpectation, readExpectation])
 
         // Then
-        XCTAssertEqual(readerQueueResults1.count, totalReads)
-        XCTAssertEqual(readerQueueResults2.count, totalReads)
-        XCTAssertEqual(writerQueueResults.count, totalWrites)
-        XCTAssertEqual(completedWritesCount, totalWrites)
+        #expect(readerQueueResults1.count == totalReads)
+        #expect(readerQueueResults2.count == totalReads)
+        #expect(writerQueueResults.count == totalWrites)
+        #expect(completedWritesCount.value == totalWrites)
 
-        readerQueueResults1.forEach { XCTAssertEqual($0, 10) }
-        readerQueueResults2.forEach { XCTAssertEqual($0, 10) }
-        writerQueueResults.forEach { XCTAssertEqual($0, 10) }
+        readerQueueResults1.value.forEach { #expect($0 == 10) }
+        readerQueueResults2.value.forEach { #expect($0 == 10) }
+        writerQueueResults.value.forEach { #expect($0 == 10) }
     }
 
     private func executeWriteOperationsInParallel(totalOperationsToExecute totalOperations: Int,
-                                                  completion: @escaping ([Int], Int) -> Void) {
+                                                  completion: @escaping @Sendable ([Int], Int) -> Void) {
         let queue1 = DispatchQueue(label: "com.alamofire.testWriterQueue1")
         let queue2 = DispatchQueue(label: "com.alamofire.testWriterQueue2")
 
         for _ in 1...totalOperations {
             queue1.async {
                 // Moves the last string element to the beginning of the string array
-                let result: Int = self.stringContainer.write { stringContainer in
+                let result: Int = stringContainer.write { stringContainer in
                     let lastElement = stringContainer.stringArray.removeLast()
                     stringContainer.totalStrings = stringContainer.stringArray.count
 
@@ -168,7 +171,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
                     return stringContainer.totalStrings
                 }
 
-                self.stringContainerWrite.write { mutableState in
+                stringContainerWrite.write { mutableState in
                     mutableState.results.append(result)
 
                     if mutableState.results.count == totalOperations {
@@ -183,7 +186,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
 
             queue2.async {
                 // Moves the first string element to the end of the string array
-                self.stringContainer.write { stringContainer in
+                stringContainer.write { stringContainer in
                     let firstElement = stringContainer.stringArray.remove(at: 0)
                     stringContainer.totalStrings = stringContainer.stringArray.count
 
@@ -191,7 +194,7 @@ final class ProtectedHighContentionTests: BaseTestCase {
                     stringContainer.totalStrings = stringContainer.stringArray.count
                 }
 
-                self.stringContainerWrite.write { mutableState in
+                stringContainerWrite.write { mutableState in
                     mutableState.completedWrites += 1
 
                     if mutableState.completedWrites == totalOperations {
@@ -207,15 +210,15 @@ final class ProtectedHighContentionTests: BaseTestCase {
     }
 
     private func executeReadOperationsInParallel(totalOperationsToExecute totalOperations: Int,
-                                                 completion: @escaping ([Int], [Int]) -> Void) {
+                                                 completion: @escaping @Sendable ([Int], [Int]) -> Void) {
         let queue1 = DispatchQueue(label: "com.alamofire.testReaderQueue1")
         let queue2 = DispatchQueue(label: "com.alamofire.testReaderQueue1")
 
         for _ in 1...totalOperations {
             queue1.async {
-                let result = self.stringContainer.read(\.totalStrings)
+                let result = stringContainer.read(\.totalStrings)
 
-                self.stringContainerRead.write {
+                stringContainerRead.write {
                     $0.results1.append(result)
 
                     if $0.results1.count == totalOperations {
@@ -229,9 +232,9 @@ final class ProtectedHighContentionTests: BaseTestCase {
             }
 
             queue2.async {
-                let result = self.stringContainer.read(\.totalStrings)
+                let result = stringContainer.read(\.totalStrings)
 
-                self.stringContainerRead.write {
+                stringContainerRead.write {
                     $0.results2.append(result)
 
                     if $0.results2.count == totalOperations {

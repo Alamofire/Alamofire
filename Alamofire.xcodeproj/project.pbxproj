@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		13302D2E3E4C4201A794943B /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
 		3106FB6123F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
 		3106FB6223F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
 		3106FB6323F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
@@ -127,22 +128,22 @@
 		31181E792794FF9600E88600 /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
 		31181E7A2794FF9600E88600 /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
 		31181E7B2794FF9600E88600 /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
-		31181E7C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E7D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E7E2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E7F2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		31181E802794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E812794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E822794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E832794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		31181E842794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E852794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E862794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E872794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		31181E882794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
-		31181E892794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
-		31181E8A2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
-		31181E8B2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
+		31181E7C2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E7D2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E7E2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E7F2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		31181E802794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E812794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E822794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E832794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		31181E842794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E852794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E862794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E872794FF9600E88600 /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		31181E882794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
+		31181E892794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
+		31181E8A2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
+		31181E8B2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
 		311A89BF23185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
 		311A89C023185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
 		311A89C123185BC0003BB714 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
@@ -154,7 +155,6 @@
 		311B199520B0ED980036823B /* UploadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5F19A9674D0040E7D1 /* UploadTests.swift */; };
 		311B199620B0ED990036823B /* UploadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5F19A9674D0040E7D1 /* UploadTests.swift */; };
 		3129306A263E17D600473CEA /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4202FE01B667AA100C997FB /* Alamofire.framework */; };
-		31293070263E183500473CEA /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		31293071263E183800473CEA /* LeaksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31762DC9247738FA0025C704 /* LeaksTests.swift */; };
 		31293072263E183800473CEA /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727421218BB9A50039FFCC /* TestHelpers.swift */; };
 		31293073263E183800473CEA /* NSLoggingEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */; };
@@ -280,7 +280,6 @@
 		317338EE2A43A51100D4EA0A /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
 		317338EF2A43A51100D4EA0A /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C421AF89F0900BABAE5 /* Validation.swift */; };
 		317338F82A43BE5F00D4EA0A /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 317338C42A43A4FA00D4EA0A /* Alamofire.framework */; };
-		317338FE2A43BE9000D4EA0A /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		317338FF2A43BE9000D4EA0A /* LeaksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31762DC9247738FA0025C704 /* LeaksTests.swift */; };
 		317339002A43BE9000D4EA0A /* NSLoggingEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */; };
 		317339012A43BE9000D4EA0A /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727421218BB9A50039FFCC /* TestHelpers.swift */; };
@@ -330,10 +329,10 @@
 		3173392D2A43BEAC00D4EA0A /* multiple-dns-names.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E282794FF9600E88600 /* multiple-dns-names.cer */; };
 		3173392E2A43BEAC00D4EA0A /* expired.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E292794FF9600E88600 /* expired.cer */; };
 		3173392F2A43BEAC00D4EA0A /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2A2794FF9600E88600 /* valid-dns-name.cer */; };
-		317339302A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */; };
-		317339312A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */; };
-		317339322A43BEAC00D4EA0A /* expired.badssl.com-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */; };
-		317339332A43BEAC00D4EA0A /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */; };
+		317339302A43BEAC00D4EA0A /* firewalk-expired-intermediate1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */; };
+		317339312A43BEAC00D4EA0A /* firewalk-expired-intermediate2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */; };
+		317339322A43BEAC00D4EA0A /* firewalk-expired-root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */; };
+		317339332A43BEAC00D4EA0A /* firewalk-expired-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */; };
 		317339342A43BEAC00D4EA0A /* certPEM.cer in Resources */ = {isa = PBXBuildFile; fileRef = 31181E172794FF9600E88600 /* certPEM.cer */; };
 		317339352A43BEAC00D4EA0A /* randomGibberish.crt in Resources */ = {isa = PBXBuildFile; fileRef = 31181E182794FF9600E88600 /* randomGibberish.crt */; };
 		317339362A43BEAC00D4EA0A /* certDER.der in Resources */ = {isa = PBXBuildFile; fileRef = 31181E192794FF9600E88600 /* certDER.der */; };
@@ -490,6 +489,7 @@
 		31FEC68C26225A54009D17DB /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
 		31FEC68D26225A54009D17DB /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
 		31FEC68E26225A54009D17DB /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEC68B26225A54009D17DB /* WebSocketTests.swift */; };
+		39915DC8E38A4AE2B6E76C2D /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
 		4196936222FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */; };
 		4196936322FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */; };
 		4196936422FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */; };
@@ -520,8 +520,6 @@
 		4C256A1B21F1449C00AD5D87 /* RetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1921F1449C00AD5D87 /* RetryPolicy.swift */; };
 		4C256A1C21F1449C00AD5D87 /* RetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1921F1449C00AD5D87 /* RetryPolicy.swift */; };
 		4C256A1D21F1449C00AD5D87 /* RetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1921F1449C00AD5D87 /* RetryPolicy.swift */; };
-		4C256A531B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
-		4C256A541B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
 		4C33A13A1B5207DB00873DFF /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
 		4C33A13B1B5207DB00873DFF /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1241B5207DB00873DFF /* unicorn.png */; };
@@ -556,6 +554,7 @@
 		4CBD2180220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */; };
 		4CBD2181220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */; };
 		4CBD2182220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */; };
+		4CD2EC8BE4F44EF29B0B6433 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
 		4CDE2C431AF89F0900BABAE5 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C421AF89F0900BABAE5 /* Validation.swift */; };
 		4CDE2C441AF89F0900BABAE5 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C421AF89F0900BABAE5 /* Validation.swift */; };
 		4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */; };
@@ -572,7 +571,6 @@
 		4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */; };
 		4CF627101BA7CBF60011A099 /* ServerTrustEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */; };
 		4CF627131BA7CBF60011A099 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C421AF89F0900BABAE5 /* Validation.swift */; };
-		4CF627141BA7CC240011A099 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4CF627171BA7CC240011A099 /* ParameterEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */; };
 		4CF627181BA7CC240011A099 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5D19A9674D0040E7D1 /* RequestTests.swift */; };
 		4CF627341BA7CC300011A099 /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
@@ -598,25 +596,42 @@
 		4CFB030D1D7D2FA20056F249 /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
 		4CFB030E1D7D2FA20056F249 /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
 		4CFB030F1D7D2FA20056F249 /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
+		4D68BE6CC1CF4C7EA7F300C2 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
+		56794B8350A142AA8E0E0C95 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
 		5FC199BD2D92145E0002EF38 /* OfflineRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC199BC2D9214580002EF38 /* OfflineRetrier.swift */; };
 		5FC199BE2D92145E0002EF38 /* OfflineRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC199BC2D9214580002EF38 /* OfflineRetrier.swift */; };
 		5FC199BF2D92145E0002EF38 /* OfflineRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC199BC2D9214580002EF38 /* OfflineRetrier.swift */; };
 		5FC199C02D92145E0002EF38 /* OfflineRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC199BC2D9214580002EF38 /* OfflineRetrier.swift */; };
 		5FC199C12D92145E0002EF38 /* OfflineRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC199BC2D9214580002EF38 /* OfflineRetrier.swift */; };
+		726C8066756E4A2EB9057727 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
 		8035DB621BAB492500466CB3 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; };
+		841DFFCBA29143428D71C29C /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
+		864FF480423C4172A8CB61F2 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
+		904E8169FDD04C06BC97CC32 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
+		931DF85BD8EF4FA0B72DD5F9 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
+		A35B6BB28DBE4E4C95D7EE42 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
+		BBD32E4DB70646C2A2EA6349 /* Session+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */; };
+		CD57FCA3469948C195305052 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		D92546FC9C1B4BACBBD16A1A /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		E2DBC5EE352A4305A36696FF /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
 		E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
 		E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */; };
 		E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */; };
 		E4202FD61B667AA100C997FB /* ServerTrustEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */; };
 		E4202FD81B667AA100C997FB /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C421AF89F0900BABAE5 /* Validation.swift */; };
+		E663243C677D404BBBA6A427 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		EA4C1A63E41D455592436B24 /* TestLifetimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */; };
+		F3961A04AECC417F80796880 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
+		F4671C718A9143918A7E683C /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D784F12365E49248CDDC344 /* Completion.swift */; };
 		F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */; };
 		F829C6B81A7A94F100A2CD59 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */; };
 		F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */; };
 		F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5D19A9674D0040E7D1 /* RequestTests.swift */; };
 		F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5D19A9674D0040E7D1 /* RequestTests.swift */; };
 		F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
+		FC78E0E412704D54B56E98B8 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD35F23AE314951847FFC8E /* Capture.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -659,6 +674,8 @@
 
 /* Begin PBXFileReference section */
 		0AEC95C92AF5419400CD241A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLifetimes.swift; sourceTree = "<group>"; };
+		2D784F12365E49248CDDC344 /* Completion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
 		3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedTests.swift; sourceTree = "<group>"; };
 		3106FB6423F8D9E0007FAB43 /* DataStreamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStreamTests.swift; sourceTree = "<group>"; };
 		3111CE8720A77843008315E2 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
@@ -683,10 +700,10 @@
 		31181E282794FF9600E88600 /* multiple-dns-names.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "multiple-dns-names.cer"; sourceTree = "<group>"; };
 		31181E292794FF9600E88600 /* expired.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = expired.cer; sourceTree = "<group>"; };
 		31181E2A2794FF9600E88600 /* valid-dns-name.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "valid-dns-name.cer"; sourceTree = "<group>"; };
-		31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-intermediate-ca-1.cer"; sourceTree = "<group>"; };
-		31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-intermediate-ca-2.cer"; sourceTree = "<group>"; };
-		31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-root-ca.cer"; sourceTree = "<group>"; };
-		31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-leaf.cer"; sourceTree = "<group>"; };
+		31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-intermediate1.cer"; sourceTree = "<group>"; };
+		31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-intermediate2.cer"; sourceTree = "<group>"; };
+		31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-root.cer"; sourceTree = "<group>"; };
+		31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "firewalk-expired-leaf.cer"; sourceTree = "<group>"; };
 		311B198F20B0D3B40036823B /* MultipartUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartUpload.swift; sourceTree = "<group>"; };
 		31293065263E17D600473CEA /* Alamofire watchOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire watchOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
@@ -748,6 +765,7 @@
 		31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSLoggingEventMonitor.swift; sourceTree = "<group>"; };
 		31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedFormEncoder.swift; sourceTree = "<group>"; };
 		31FEC68B26225A54009D17DB /* WebSocketTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketTests.swift; sourceTree = "<group>"; };
+		3DD35F23AE314951847FFC8E /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
 		4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Alamofire.swift"; sourceTree = "<group>"; };
 		4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerializationTests.swift; sourceTree = "<group>"; };
 		4C0CB630220BC70300604EDC /* RequestInterceptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptorTests.swift; sourceTree = "<group>"; };
@@ -758,7 +776,6 @@
 		4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
 		4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptor.swift; sourceTree = "<group>"; };
 		4C256A1921F1449C00AD5D87 /* RetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryPolicy.swift; sourceTree = "<group>"; };
-		4C256A501B096C2C0065714F /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormDataTests.swift; sourceTree = "<group>"; };
 		4C33A1231B5207DB00873DFF /* rainbow.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = rainbow.jpg; sourceTree = "<group>"; };
 		4C33A1241B5207DB00873DFF /* unicorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unicorn.png; sourceTree = "<group>"; };
@@ -799,6 +816,7 @@
 		4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedResponseHandlerTests.swift; sourceTree = "<group>"; };
 		4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FC199BC2D9214580002EF38 /* OfflineRetrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRetrier.swift; sourceTree = "<group>"; };
+		7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Session+AlamofireTests.swift"; sourceTree = "<group>"; };
 		E4202FE01B667AA100C997FB /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3319A95C8B0040E7D1 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3719A95C8B0040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -929,15 +947,15 @@
 			path = "alamofire-org";
 			sourceTree = "<group>";
 		};
-		31181E2B2794FF9600E88600 /* expired-badssl-com */ = {
+		31181E2B2794FF9600E88600 /* firewalk-expired */ = {
 			isa = PBXGroup;
 			children = (
-				31181E2C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer */,
-				31181E2D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer */,
-				31181E2E2794FF9600E88600 /* expired.badssl.com-root-ca.cer */,
-				31181E2F2794FF9600E88600 /* expired.badssl.com-leaf.cer */,
+				31181E2C2794FF9600E88600 /* firewalk-expired-intermediate1.cer */,
+				31181E2D2794FF9600E88600 /* firewalk-expired-intermediate2.cer */,
+				31181E2E2794FF9600E88600 /* firewalk-expired-root.cer */,
+				31181E2F2794FF9600E88600 /* firewalk-expired-leaf.cer */,
 			);
-			path = "expired-badssl-com";
+			path = "firewalk-expired";
 			sourceTree = "<group>";
 		};
 		319ECE9E25EC96E8001C38CA /* .github */ = {
@@ -1113,7 +1131,7 @@
 			isa = PBXGroup;
 			children = (
 				31181E1E2794FF9600E88600 /* alamofire-org */,
-				31181E2B2794FF9600E88600 /* expired-badssl-com */,
+				31181E2B2794FF9600E88600 /* firewalk-expired */,
 				31181E162794FF9600E88600 /* selfSignedAndMalformedCerts */,
 			);
 			name = Certificates;
@@ -1135,6 +1153,10 @@
 			children = (
 				31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */,
 				31181E112794FE5400E88600 /* Bundle+AlamofireTests.swift */,
+				7D4E9CDE0757445EAAE27B95 /* Session+AlamofireTests.swift */,
+				3DD35F23AE314951847FFC8E /* Capture.swift */,
+				2D784F12365E49248CDDC344 /* Completion.swift */,
+				28A7E9DDAF2E485587E93A30 /* TestLifetimes.swift */,
 				31303CC22EF64B2A00EEB257 /* DispatchQueue+AlamofireTests.swift */,
 				4CFB028F1D7CF28F0056F249 /* FileManager+AlamofireTests.swift */,
 				314998E927A6560600ABB856 /* Request+AlamofireTests.swift */,
@@ -1264,7 +1286,6 @@
 		F8111E3F19A95C8B0040E7D1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				4C256A501B096C2C0065714F /* BaseTestCase.swift */,
 				31913E8A2EEA2ED800EEB257 /* InspectorEventMonitor.swift */,
 				312FC4FE2CB079E400E48EAB /* InternalHelpers.swift */,
 				31762DC9247738FA0025C704 /* LeaksTests.swift */,
@@ -1475,7 +1496,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 2700;
+				LastUpgradeCheck = 2730;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					31293064263E17D600473CEA = {
@@ -1562,13 +1583,13 @@
 				31181E5F2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				312930AF263E187800473CEA /* empty_string.txt in Resources */,
 				31181E6F2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7F2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E832794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7F2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E832794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E4B2794FF9600E88600 /* certDER.crt in Resources */,
 				31181E372794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E532794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E7B2794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E8B2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E8B2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3F2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E5B2794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				312930AB263E187200473CEA /* rainbow.jpg in Resources */,
@@ -1576,7 +1597,7 @@
 				312930B0263E187800473CEA /* utf8_string.txt in Resources */,
 				31181E6B2794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E572794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E872794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E872794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				312930AC263E187500473CEA /* empty_data.json in Resources */,
 				31181E732794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E472794FF9600E88600 /* certPEM.crt in Resources */,
@@ -1608,10 +1629,10 @@
 				3173392D2A43BEAC00D4EA0A /* multiple-dns-names.cer in Resources */,
 				3173392E2A43BEAC00D4EA0A /* expired.cer in Resources */,
 				3173392F2A43BEAC00D4EA0A /* valid-dns-name.cer in Resources */,
-				317339302A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				317339312A43BEAC00D4EA0A /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
-				317339322A43BEAC00D4EA0A /* expired.badssl.com-root-ca.cer in Resources */,
-				317339332A43BEAC00D4EA0A /* expired.badssl.com-leaf.cer in Resources */,
+				317339302A43BEAC00D4EA0A /* firewalk-expired-intermediate1.cer in Resources */,
+				317339312A43BEAC00D4EA0A /* firewalk-expired-intermediate2.cer in Resources */,
+				317339322A43BEAC00D4EA0A /* firewalk-expired-root.cer in Resources */,
+				317339332A43BEAC00D4EA0A /* firewalk-expired-leaf.cer in Resources */,
 				317339342A43BEAC00D4EA0A /* certPEM.cer in Resources */,
 				317339352A43BEAC00D4EA0A /* randomGibberish.crt in Resources */,
 				317339362A43BEAC00D4EA0A /* certDER.der in Resources */,
@@ -1654,13 +1675,13 @@
 				31181E5E2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				4CFB030F1D7D2FA20056F249 /* utf8_string.txt in Resources */,
 				31181E6E2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7E2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E822794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7E2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E822794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E4A2794FF9600E88600 /* certDER.crt in Resources */,
 				31181E362794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E522794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E7A2794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E8A2794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E8A2794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3E2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E5A2794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				4CF627351BA7CC300011A099 /* unicorn.png in Resources */,
@@ -1668,7 +1689,7 @@
 				4CFB02FA1D7D2FA20056F249 /* invalid_data.json in Resources */,
 				31181E6A2794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E562794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E862794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E862794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				4CFB02F71D7D2FA20056F249 /* empty_data.json in Resources */,
 				31181E722794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E462794FF9600E88600 /* certPEM.crt in Resources */,
@@ -1716,13 +1737,13 @@
 				31181E5C2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				4CFB030D1D7D2FA20056F249 /* utf8_string.txt in Resources */,
 				31181E6C2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7C2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E802794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7C2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E802794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E482794FF9600E88600 /* certDER.crt in Resources */,
 				31181E342794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E502794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E782794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E882794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E882794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3C2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E582794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */,
@@ -1730,7 +1751,7 @@
 				4CFB02F81D7D2FA20056F249 /* invalid_data.json in Resources */,
 				31181E682794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E542794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E842794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E842794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				4CFB02F51D7D2FA20056F249 /* empty_data.json in Resources */,
 				31181E702794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E442794FF9600E88600 /* certPEM.crt in Resources */,
@@ -1754,13 +1775,13 @@
 				31181E5D2794FF9600E88600 /* missing-dns-name-and-uri.cer in Resources */,
 				4CFB030E1D7D2FA20056F249 /* utf8_string.txt in Resources */,
 				31181E6D2794FF9600E88600 /* valid-uri.cer in Resources */,
-				31181E7D2794FF9600E88600 /* expired.badssl.com-intermediate-ca-1.cer in Resources */,
-				31181E812794FF9600E88600 /* expired.badssl.com-intermediate-ca-2.cer in Resources */,
+				31181E7D2794FF9600E88600 /* firewalk-expired-intermediate1.cer in Resources */,
+				31181E812794FF9600E88600 /* firewalk-expired-intermediate2.cer in Resources */,
 				31181E492794FF9600E88600 /* certDER.crt in Resources */,
 				31181E352794FF9600E88600 /* randomGibberish.crt in Resources */,
 				31181E512794FF9600E88600 /* alamofire-signing-ca1.cer in Resources */,
 				31181E792794FF9600E88600 /* valid-dns-name.cer in Resources */,
-				31181E892794FF9600E88600 /* expired.badssl.com-leaf.cer in Resources */,
+				31181E892794FF9600E88600 /* firewalk-expired-leaf.cer in Resources */,
 				31181E3D2794FF9600E88600 /* keyDER.der in Resources */,
 				31181E592794FF9600E88600 /* signed-by-ca1.cer in Resources */,
 				4C33A13A1B5207DB00873DFF /* rainbow.jpg in Resources */,
@@ -1768,7 +1789,7 @@
 				4CFB02F91D7D2FA20056F249 /* invalid_data.json in Resources */,
 				31181E692794FF9600E88600 /* alamofire-root-ca.cer in Resources */,
 				31181E552794FF9600E88600 /* signed-by-ca2.cer in Resources */,
-				31181E852794FF9600E88600 /* expired.badssl.com-root-ca.cer in Resources */,
+				31181E852794FF9600E88600 /* firewalk-expired-root.cer in Resources */,
 				4CFB02F61D7D2FA20056F249 /* empty_data.json in Resources */,
 				31181E712794FF9600E88600 /* multiple-dns-names.cer in Resources */,
 				31181E452794FF9600E88600 /* certPEM.crt in Resources */,
@@ -1823,9 +1844,12 @@
 				3129308F263E184500473CEA /* MultipartFormDataTests.swift in Sources */,
 				31293078263E183C00473CEA /* SessionTests.swift in Sources */,
 				31181E152794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				13302D2E3E4C4201A794943B /* Session+AlamofireTests.swift in Sources */,
+				E2DBC5EE352A4305A36696FF /* Capture.swift in Sources */,
+				D92546FC9C1B4BACBBD16A1A /* Completion.swift in Sources */,
+				A35B6BB28DBE4E4C95D7EE42 /* TestLifetimes.swift in Sources */,
 				31293088263E184500473CEA /* RequestInterceptorTests.swift in Sources */,
 				31293082263E184500473CEA /* ProtectedTests.swift in Sources */,
-				31293070263E183500473CEA /* BaseTestCase.swift in Sources */,
 				31293072263E183800473CEA /* TestHelpers.swift in Sources */,
 				31293092263E184900473CEA /* Result+AlamofireTests.swift in Sources */,
 			);
@@ -1887,7 +1911,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				312FC5022CB079E800E48EAB /* InternalHelpers.swift in Sources */,
-				317338FE2A43BE9000D4EA0A /* BaseTestCase.swift in Sources */,
 				317338FF2A43BE9000D4EA0A /* LeaksTests.swift in Sources */,
 				312EDCF12FA4FF8000EEB257 /* MIMETypeTests.swift in Sources */,
 				317339002A43BE9000D4EA0A /* NSLoggingEventMonitor.swift in Sources */,
@@ -1909,6 +1932,10 @@
 				3173390D2A43BE9000D4EA0A /* UploadTests.swift in Sources */,
 				3173390E2A43BE9000D4EA0A /* AFError+AlamofireTests.swift in Sources */,
 				3173390F2A43BE9000D4EA0A /* Bundle+AlamofireTests.swift in Sources */,
+				931DF85BD8EF4FA0B72DD5F9 /* Session+AlamofireTests.swift in Sources */,
+				39915DC8E38A4AE2B6E76C2D /* Capture.swift in Sources */,
+				E663243C677D404BBBA6A427 /* Completion.swift in Sources */,
+				4CD2EC8BE4F44EF29B0B6433 /* TestLifetimes.swift in Sources */,
 				317339102A43BE9000D4EA0A /* FileManager+AlamofireTests.swift in Sources */,
 				317339112A43BE9000D4EA0A /* Request+AlamofireTests.swift in Sources */,
 				317339122A43BE9000D4EA0A /* Result+AlamofireTests.swift in Sources */,
@@ -2005,7 +2032,6 @@
 				4C0CB64D220CA8D600604EDC /* RedirectHandlerTests.swift in Sources */,
 				3107EA3A20A11F9700445260 /* ResponseTests.swift in Sources */,
 				4CFB02921D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
-				4CF627141BA7CC240011A099 /* BaseTestCase.swift in Sources */,
 				4C7DD7ED224C627300249836 /* Result+AlamofireTests.swift in Sources */,
 				314998EC27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */,
 				3106FB6323F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
@@ -2025,6 +2051,10 @@
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E142794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				56794B8350A142AA8E0E0C95 /* Session+AlamofireTests.swift in Sources */,
+				841DFFCBA29143428D71C29C /* Capture.swift in Sources */,
+				F4671C718A9143918A7E683C /* Completion.swift in Sources */,
+				864FF480423C4172A8CB61F2 /* TestLifetimes.swift in Sources */,
 				31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
@@ -2210,7 +2240,6 @@
 				4C0CB64B220CA8D600604EDC /* RedirectHandlerTests.swift in Sources */,
 				3107EA3820A11F9600445260 /* ResponseTests.swift in Sources */,
 				F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */,
-				4C256A531B096C770065714F /* BaseTestCase.swift in Sources */,
 				4C7DD7EB224C627300249836 /* Result+AlamofireTests.swift in Sources */,
 				314998EA27A6560600ABB856 /* Request+AlamofireTests.swift in Sources */,
 				3106FB6123F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
@@ -2230,6 +2259,10 @@
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E122794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				BBD32E4DB70646C2A2EA6349 /* Session+AlamofireTests.swift in Sources */,
+				4D68BE6CC1CF4C7EA7F300C2 /* Capture.swift in Sources */,
+				CD57FCA3469948C195305052 /* Completion.swift in Sources */,
+				904E8169FDD04C06BC97CC32 /* TestLifetimes.swift in Sources */,
 				31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
@@ -2282,6 +2315,10 @@
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				31181E132794FE5400E88600 /* Bundle+AlamofireTests.swift in Sources */,
+				726C8066756E4A2EB9057727 /* Session+AlamofireTests.swift in Sources */,
+				FC78E0E412704D54B56E98B8 /* Capture.swift in Sources */,
+				F3961A04AECC417F80796880 /* Completion.swift in Sources */,
+				EA4C1A63E41D455592436B24 /* TestLifetimes.swift in Sources */,
 				31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
@@ -2290,7 +2327,6 @@
 				31B3DE5025C120D800760641 /* ConcurrencyTests.swift in Sources */,
 				31762DCB247738FA0025C704 /* LeaksTests.swift in Sources */,
 				31425AC2241F098000EE3CCC /* InternalRequestTests.swift in Sources */,
-				4C256A541B096C770065714F /* BaseTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2348,7 +2384,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -2377,7 +2413,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-watchOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -2429,6 +2465,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = xros;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -2440,6 +2477,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = xros;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -2492,6 +2530,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_VERSION = 6.0;
 				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
@@ -2509,6 +2548,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_VERSION = 6.0;
 				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Release;
@@ -2644,11 +2684,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				IPHONEOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_XCODE_1600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2700 = 12.0;
 				MARKETING_VERSION = 5.12.2;
@@ -2665,12 +2703,10 @@
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = "$(TVOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				TVOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				WATCHOS_DEPLOYMENT_TARGET = "$(WATCHOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				WATCHOS_DEPLOYMENT_TARGET_XCODE_1600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2700 = 9.0;
 				XROS_DEPLOYMENT_TARGET = 1.0;
@@ -2725,11 +2761,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				IPHONEOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				IPHONEOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_XCODE_1600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2600 = 10.12;
 				MACOSX_DEPLOYMENT_TARGET_XCODE_2700 = 12.0;
 				MARKETING_VERSION = 5.12.2;
@@ -2745,13 +2779,11 @@
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = "$(TVOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				TVOS_DEPLOYMENT_TARGET_XCODE_1600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2600 = 10.0;
 				TVOS_DEPLOYMENT_TARGET_XCODE_2700 = 15.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				WATCHOS_DEPLOYMENT_TARGET = "$(WATCHOS_DEPLOYMENT_TARGET_XCODE_$(XCODE_VERSION_MAJOR))";
-				WATCHOS_DEPLOYMENT_TARGET_XCODE_1600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2600 = 3.0;
 				WATCHOS_DEPLOYMENT_TARGET_XCODE_2700 = 9.0;
 				XROS_DEPLOYMENT_TARGET = 1.0;
@@ -2813,6 +2845,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -2833,6 +2866,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -2851,6 +2885,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -2869,6 +2904,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};

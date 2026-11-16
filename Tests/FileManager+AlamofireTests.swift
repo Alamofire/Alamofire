@@ -66,22 +66,22 @@ extension FileManager {
     static func removeItem(at url: URL) -> Bool {
         removeItem(atPath: url.path)
     }
+}
 
-    @discardableResult
-    static func removeAllItemsInsideDirectory(atPath path: String) -> Bool {
-        let enumerator = FileManager.default.enumerator(atPath: path)
-        var result = true
+/// A directory for one Swift Testing test's files, removed when the suite instance running the test is deinitialized.
+final class TemporaryDirectory: Sendable {
+    let url = FileManager.temporaryDirectoryURL
+        .appendingPathComponent("org.alamofire.tests")
+        .appendingPathComponent(UUID().uuidString)
 
-        while let fileName = enumerator?.nextObject() as? String {
-            let success = removeItem(atPath: path + "/\(fileName)")
-            if !success { result = false }
-        }
+    /// A new, unique file URL inside the directory.
+    var fileURL: URL { url.appendingPathComponent(UUID().uuidString) }
 
-        return result
+    init() {
+        FileManager.createDirectory(at: url)
     }
 
-    @discardableResult
-    static func removeAllItemsInsideDirectory(at url: URL) -> Bool {
-        removeAllItemsInsideDirectory(atPath: url.path)
+    deinit {
+        FileManager.removeItem(at: url)
     }
 }
