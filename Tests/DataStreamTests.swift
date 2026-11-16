@@ -273,7 +273,8 @@ struct DataStreamTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataCanBeStreamedManyTimes() async {
         // Given
-        let session = stored(Session.independent())
+        // Require manual start so both serializers can be added before the stream starts.
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let expectedSize = 1
         let initialResponse = Capture<HTTPURLResponse?>()
         let onHTTPResponse = Completion("onHTTPResponse should be called")
@@ -326,6 +327,7 @@ struct DataStreamTests {
                     secondCompletion.complete()
                 }
             }
+            .resume()
 
         await wait(for: [onHTTPResponse, firstReceive, firstCompletion], enforceOrder: true)
         await wait(for: [secondReceive, secondCompletion], enforceOrder: true)
@@ -347,7 +349,8 @@ struct DataStreamTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataCanBeStreamedAndDecodedAtTheSameTime() async {
         // Given
-        let session = stored(Session.independent())
+        // Require manual start so both serializers can be added before the stream starts.
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let initialResponse = Capture<HTTPURLResponse?>()
         let onHTTPResponse = Completion("onHTTPResponse should be called")
         let firstAccumulatedData = Capture(Data())
@@ -402,6 +405,7 @@ struct DataStreamTests {
                     secondCompletion.complete()
                 }
             }
+            .resume()
 
         await wait(for: [onHTTPResponse, firstReceive, firstCompletion], enforceOrder: true)
         await wait(for: [secondReceive, secondCompletion], enforceOrder: true)
@@ -1192,7 +1196,10 @@ struct DataStreamIntegrationTests {
         // Given
         let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue", attributes: .concurrent)
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue", attributes: .concurrent)
-        let session = stored(Session.independent(requestQueue: requestQueue, serializationQueue: serializationQueue))
+        // Require manual start so both serializers can be added before the stream starts.
+        let session = stored(Session.independent(startRequestsImmediately: false,
+                                                 requestQueue: requestQueue,
+                                                 serializationQueue: serializationQueue))
         let firstResponse = Capture<HTTPURLResponse?>()
         let firstDecodedResponse = Capture<TestResponse?>()
         let firstDecodingError = Capture<AFError?>()
@@ -1244,6 +1251,7 @@ struct DataStreamIntegrationTests {
                     secondDidComplete.complete()
                 }
             }
+            .resume()
 
         await wait(for: [firstDidReceive, firstDidComplete], enforceOrder: true)
         await wait(for: [secondDidReceive, secondDidComplete], enforceOrder: true)

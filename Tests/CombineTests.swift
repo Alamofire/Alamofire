@@ -625,7 +625,8 @@ struct DataStreamRequestCombineTests {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func dataStreamRequestCanBePublishedWithMultipleHandlers() async {
         // Given
-        let session = stored(Session.independent())
+        // Require manual start so both serializers can be added before the stream starts. Subscribing starts it.
+        let session = stored(Session.independent(startRequestsImmediately: false))
         let handlerResponseReceived = Completion("handler response should be received")
         let publishedResponseReceived = Completion("response should be received")
         let completionReceived = Completion("stream should complete")
