@@ -211,19 +211,57 @@ run_xcodebuild() {
 
     # A simulator's first boot keeps it busy long after xcodebuild would start testing, enough to stall tests past their
     # timeouts, so boot while building and test only once booting finishes.
-    local boot_log=".build/boot-$simulator.log" boot
+    local boot_log=".build/boot-$simulator.log"
     mkdir -p .build
-    xcrun simctl bootstatus "$simulator" -b > "$boot_log" 2>&1 &
-    boot=$!
-    cleanup=("kill $boot > /dev/null 2>&1 || true" "${cleanup[@]}")
+    boot_simulator "$simulator" "$boot_log"
 
     xcodebuild_step "${args[@]}" clean build-for-testing
     echo "Waiting for the simulator to finish booting."
-    if ! wait "$boot"; then
-        echo "Booting the simulator failed, so leaving it to xcodebuild. simctl's output:"
-        cat "$boot_log"
+    # Booting occasionally hangs, and nothing else would stop it before the job times out.
+    if ! wait_for_boot 120; then
+        echo "The simulator didn't finish booting, so restarting it."
+        boot_diagnostics "$simulator" "$boot_log"
+        xcrun simctl shutdown "$simulator" > /dev/null 2>&1 || true
+        boot_simulator "$simulator" "$boot_log"
+        if ! wait_for_boot 240; then
+            echo "The simulator didn't finish booting after restarting either." >&2
+            boot_diagnostics "$simulator" "$boot_log" >&2
+            return 1
+        fi
     fi
     xcodebuild_step -resultBundlePath "$result" "${args[@]}" test-without-building
+}
+
+# boot_simulator ID LOG
+# Boots the simulator in the background, writing simctl's progress to LOG, and sets boot_pid.
+boot_simulator() {
+    xcrun simctl bootstatus "$1" -b > "$2" 2>&1 &
+    boot_pid=$!
+    cleanup=("kill $boot_pid > /dev/null 2>&1 || true" "${cleanup[@]}")
+}
+
+# wait_for_boot SECONDS
+# Waits up to SECONDS for boot_simulator to finish. Fails if booting failed or is still going.
+wait_for_boot() {
+    local waited=0
+    while kill -0 "$boot_pid" 2> /dev/null; do
+        if [ "$waited" -ge "$1" ]; then
+            kill "$boot_pid" 2> /dev/null || true
+            wait "$boot_pid" 2> /dev/null || true
+            return 1
+        fi
+        sleep 1
+        waited=$((waited + 1))
+    done
+    wait "$boot_pid"
+}
+
+# boot_diagnostics ID LOG
+boot_diagnostics() {
+    echo "The simulator's state:"
+    xcrun simctl list devices | grep "$1" || true
+    echo "simctl's output:"
+    cat "$2"
 }
 
 # test_on_simulator PLATFORM FAMILY OS DEVICE
