@@ -47,23 +47,28 @@ private enum TestCertificates {
 @Suite(.storesInstances, .serialized)
 struct TLSEvaluationExpiredLeafCertificateTestCase {
     /// Firewalk's server with an expired leaf certificate, issued through two intermediate CAs by a root CA nothing
-    /// trusts, like expired.badssl.com.
+    /// trusts.
     private let expiredURLString = "https://127.0.0.1:8444/get"
     private let expiredHost = "127.0.0.1"
 
     private let revokedURLString = "https://revoked.badssl.com"
     private let revokedHost = "revoked.badssl.com"
 
-    /// Replaces `setUp()`.
-    private let configuration: URLSessionConfiguration = {
+    private var configuration: URLSessionConfiguration {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.urlCache = nil
         configuration.urlCredentialStorage = nil
+
+        return configuration
+    }
+
+    private var revokedConfiguration: URLSessionConfiguration {
+        let configuration = configuration
         // revoked.badssl.com sometimes stalls a connection. Time out quickly so the request can be retried.
         configuration.timeoutIntervalForRequest = 5
 
         return configuration
-    }()
+    }
 
     // MARK: Default Behavior Tests
 
@@ -97,12 +102,9 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
     @Test(.disabled("Revocation behavior of default evaluation is unstable across platforms; left for debugging only."))
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func revokedCertificateRequestBehaviorWithNoServerTrustPolicy() async {
-        // Disabled due to the instability of due revocation testing of default evaluation from all platforms. This
-        // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
-
         // Given
         let expectation = Completion("\(revokedURLString)", timeout: .retriedRequest)
-        let manager = stored(Session.independent(configuration: configuration, interceptor: DroppedConnectionRetrier()))
+        let manager = stored(Session.independent(configuration: revokedConfiguration, interceptor: DroppedConnectionRetrier()))
 
         let error = Capture<(any Error)?>()
 
@@ -116,8 +118,7 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         await expectation.wait()
 
         // Then
-            // Apple appears to have started revocation tests as part of default evaluation in 10.1
-            #expect(error.value != nil)
+        #expect(error.value != nil)
     }
 
     // MARK: Server Trust Policy - Perform Default Tests
@@ -156,14 +157,11 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
     @Test(.disabled("Revocation behavior of default evaluation is unstable across platforms; left for debugging only."))
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func revokedCertificateRequestBehaviorWithDefaultServerTrustPolicy() async {
-        // Disabled due to the instability of due revocation testing of default evaluation from all platforms. This
-        // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
-
         // Given
         let defaultPolicy = DefaultTrustEvaluator()
         let evaluators = [revokedHost: defaultPolicy]
 
-        let manager = stored(Session.independent(configuration: configuration,
+        let manager = stored(Session.independent(configuration: revokedConfiguration,
                                                  interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
@@ -180,8 +178,7 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
         await expectation.wait()
 
         // Then
-            // Apple appears to have started revocation tests as part of default evaluation in 10.1
-            #expect(error.value != nil)
+        #expect(error.value != nil)
     }
 
     // MARK: Server Trust Policy - Perform Revoked Tests
@@ -230,7 +227,7 @@ struct TLSEvaluationExpiredLeafCertificateTestCase {
 
         let evaluators = [revokedHost: policy]
 
-        let manager = stored(Session.independent(configuration: configuration,
+        let manager = stored(Session.independent(configuration: revokedConfiguration,
                                                  interceptor: DroppedConnectionRetrier(),
                                                  serverTrustManager: ServerTrustManager(evaluators: evaluators)))
 
