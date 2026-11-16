@@ -507,7 +507,10 @@ struct SessionTestCase {
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     func setStartRequestsImmediatelyToFalseAndResumeThenCancelRequestHasCorrectOutput() async {
         // Given
-        let session = stored(Session.independent(startRequestsImmediately: false))
+        let taskCompleted = Completion("task should complete")
+        let monitor = ClosureEventMonitor()
+        monitor.requestDidCompleteTaskWithError = { _, _, _ in taskCompleted.complete() }
+        let session = stored(Session.independent(startRequestsImmediately: false, eventMonitors: [monitor]))
 
         let url = Endpoint.delay(10).url
         let urlRequest = URLRequest(url: url)
@@ -526,6 +529,10 @@ struct SessionTestCase {
             .cancel()
 
         await expectation.wait()
+        // A cancelled task can report it's running until URLSession completes it.
+        if request.task != nil {
+            await taskCompleted.wait()
+        }
 
         // Then
         #expect(response.value != nil, "response should not be nil")
