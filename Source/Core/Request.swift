@@ -127,7 +127,7 @@ public class Request: @unchecked Sendable {
         /// All `URLSessionTask`s created by Alamofire on behalf of the `Request`.
         var tasks: [URLSessionTask] = []
         /// All `URLSessionTaskMetrics` values gathered by Alamofire on behalf of the `Request`. Should correspond
-        /// exactly the the `tasks` created.
+        /// exactly the `tasks` created.
         var metrics: [URLSessionTaskMetrics] = []
         /// Number of times any retriers provided retried the `Request`.
         var retryCount = 0

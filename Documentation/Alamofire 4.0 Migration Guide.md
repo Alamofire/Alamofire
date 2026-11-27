@@ -587,7 +587,7 @@ Alamofire.request(urlString, parameters: parameters, encoding: PropertyListEncod
 
 #### Custom Encoding
 
-Creating a custom custom `ParameterEncoding` is now as simple as implementing the protocol. For more examples on how to do this, please refer to the README.
+Creating a custom `ParameterEncoding` is now as simple as implementing the protocol. For more examples on how to do this, please refer to the README.
 
 > See [PR-1465](https://github.com/Alamofire/Alamofire/pull/1465) for more info.
 
