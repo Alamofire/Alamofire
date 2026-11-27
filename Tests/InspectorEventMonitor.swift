@@ -132,7 +132,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request(_ request: Request, didFailToCreateURLRequestWithError error: any Error) {
+    func request(_ request: Request, didFailToCreateURLRequestWithError error: AFError) {
         append("\(#function)")
     }
 
@@ -140,7 +140,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: any Error) {
+    func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: AFError) {
         append("\(#function)")
     }
 
@@ -156,11 +156,11 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: any Error) {
+    func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError) {
         append("\(#function)")
     }
 
-    func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: (any Error)?) {
+    func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: AFError?) {
         append("\(#function)")
     }
 
@@ -196,7 +196,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
+    func request<Value: Sendable>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
         append("\(#function)")
     }
 
@@ -204,11 +204,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Data?, AFError>) {
-        append("\(#function)")
-    }
-
-    func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
+    func request<Value: Sendable>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {
         append("\(#function)")
     }
 
@@ -224,7 +220,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+    func request<Value: Sendable>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
         append("\(#function)")
     }
 
@@ -232,7 +228,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: any Error) {
+    func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {
         append("\(#function)")
     }
 
@@ -240,7 +236,7 @@ final class InspectorEventMonitor: EventMonitor {
         append("\(#function)")
     }
 
-    func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, any Error>) {
+    func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, AFError>) {
         append("\(#function)")
     }
 

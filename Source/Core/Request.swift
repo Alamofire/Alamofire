@@ -155,6 +155,11 @@ public class Request: @unchecked Sendable {
     public var isCancelled: Bool { state == .cancelled }
     /// Returns whether `state` is `.finished`.
     public var isFinished: Bool { state == .finished }
+    /// Whether the instance is done: it finished, possibly by being cancelled, and all of its response serializers
+    /// have run. Unlike `isFinished`, this is also `true` for a cancelled request, whose state stays `.cancelled`.
+    var isComplete: Bool {
+        mutableState.read { $0.responseSerializerProcessingFinished && $0.responseSerializers.isEmpty }
+    }
 
     // MARK: Progress
 

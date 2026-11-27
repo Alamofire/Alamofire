@@ -24,7 +24,7 @@
 
 import Alamofire
 import Foundation
-import XCTest
+import Testing
 
 /// This test case tests all implemented cache policies against various `Cache-Control` header values. These tests
 /// are meant to cover the main cases of `Cache-Control` header usage, but are by no means exhaustive.
@@ -40,7 +40,8 @@ import XCTest
 ///     - This is determined by whether the cached response timestamp matches the new response timestamp
 ///
 /// For information about `Cache-Control` HTTP headers, please refer to RFC 2616 - Section 14.9.
-final class CacheTestCase: BaseTestCase {
+@Suite(.storesInstances)
+final class CacheTestCase {
     // MARK: -
 
     enum CacheControl: String, CaseIterable {
@@ -54,17 +55,21 @@ final class CacheTestCase: BaseTestCase {
 
     // MARK: - Properties
 
-    var urlCache: URLCache!
-    var manager: Session!
+    let urlCache: URLCache
+    let manager: Session
 
-    var requests: [CacheControl: URLRequest] = [:]
-    var timestamps: [CacheControl: String] = [:]
+    let requests: [CacheControl: URLRequest]
+    let timestamps: [CacheControl: String]
+
+    /// Makes this instance's `Cache-Control` values unique. Firewalk ages the first response for each `Cache-Control`
+    /// value it sees and toggles that state with every request, so tests running in parallel need their own values.
+    let testID = UUID().uuidString
 
     // MARK: - Setup and Teardown
 
-    override func setUp() {
-        super.setUp()
-
+    /// Sets up a new `URLCache` and `Session` for each test and primes the cache, replacing `setUp()`.
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    init() async {
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
             #if targetEnvironment(macCatalyst)
@@ -76,7 +81,7 @@ final class CacheTestCase: BaseTestCase {
             #endif
         }()
 
-        manager = {
+        manager = { [urlCache] in
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
                 configuration.headers = HTTPHeaders.default
@@ -86,18 +91,15 @@ final class CacheTestCase: BaseTestCase {
                 return configuration
             }()
 
-            return Session(configuration: configuration)
+            // Independent keeps the provided cache and replaces only the shared cookie and credential storage.
+            return stored(Session.independent(configuration: configuration))
         }()
 
-        primeCachedResponses()
+        (requests, timestamps) = await Self.primeCachedResponses(using: manager, testID: testID)
     }
 
-    override func tearDown() {
-        super.tearDown()
-
-        requests.removeAll()
-        timestamps.removeAll()
-
+    /// Replaces `tearDown()`.
+    deinit {
         urlCache.removeAllCachedResponses()
     }
 
@@ -105,45 +107,69 @@ final class CacheTestCase: BaseTestCase {
 
     /// Executes a request for all `Cache-Control` header values to load the response into the `URLCache`.
     ///
-    /// - Note: This implementation leverages dispatch groups to execute all the requests. This ensures the cache
-    ///         contains responses for all requests, properly aged from Firewalk. This allows the tests to distinguish
-    ///         whether the subsequent responses come from the cache or the network based on the timestamp of the
-    ///         response.
-    private func primeCachedResponses() {
-        let dispatchGroup = DispatchGroup()
+    /// - Note: This implementation waits for all the requests to complete. This ensures the cache contains responses
+    ///         for all requests, properly aged from Firewalk. This allows the tests to distinguish whether the
+    ///         subsequent responses come from the cache or the network based on the timestamp of the response.
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    private static func primeCachedResponses(using manager: Session,
+                                             testID: String) async -> ([CacheControl: URLRequest], [CacheControl: String]) {
+        let allRequestsFinished = Completion("all cache priming requests should finish",
+                                             expectedCount: CacheControl.allCases.count)
         let serialQueue = DispatchQueue(label: "org.alamofire.cache-tests")
+        let timestamps = Capture<[CacheControl: String]>([:])
+        var requests: [CacheControl: URLRequest] = [:]
 
         for cacheControl in CacheControl.allCases {
-            dispatchGroup.enter()
-
             let request = startRequest(cacheControl: cacheControl,
+                                       using: manager,
+                                       testID: testID,
                                        queue: serialQueue,
                                        completion: { _, response in
-                                           let timestamp = response!.headers["Date"]
-                                           self.timestamps[cacheControl] = timestamp
+                                           // A failed priming request has no response. The tests then fail on their
+                                           // own assertions, where force unwrapping would crash the whole test run.
+                                           let timestamp = response?.headers["Date"]
+                                           timestamps.write { $0[cacheControl] = timestamp }
 
-                                           dispatchGroup.leave()
+                                           allRequestsFinished.complete()
                                        })
 
             requests[cacheControl] = request
         }
 
         // Wait for all requests to complete
-        _ = dispatchGroup.wait(timeout: .now() + timeout)
+        await allRequestsFinished.wait()
+
+        return (requests, timestamps.value)
     }
 
     // MARK: - Request Helper Methods
 
-    @preconcurrency
     @discardableResult
     private func startRequest(cacheControl: CacheControl,
                               cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
                               queue: DispatchQueue = .main,
                               completion: @escaping @Sendable (URLRequest?, HTTPURLResponse?) -> Void)
         -> URLRequest {
+        Self.startRequest(cacheControl: cacheControl,
+                          cachePolicy: cachePolicy,
+                          using: manager,
+                          testID: testID,
+                          queue: queue,
+                          completion: completion)
+    }
+
+    @discardableResult
+    private static func startRequest(cacheControl: CacheControl,
+                                     cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
+                                     using manager: Session,
+                                     testID: String,
+                                     queue: DispatchQueue = .main,
+                                     completion: @escaping @Sendable (URLRequest?, HTTPURLResponse?) -> Void)
+        -> URLRequest {
         let urlRequest = Endpoint(path: .cache,
                                   timeout: 30,
-                                  queryItems: [.init(name: "Cache-Control", value: cacheControl.rawValue)],
+                                  // Caches ignore unknown Cache-Control extensions, so the ID doesn't change caching.
+                                  queryItems: [.init(name: "Cache-Control", value: "\(cacheControl.rawValue), x-alamofire-test-id=\(testID)")],
                                   cachePolicy: cachePolicy).urlRequest
         let request = manager.request(urlRequest)
 
@@ -156,46 +182,48 @@ final class CacheTestCase: BaseTestCase {
 
     // MARK: - Test Execution and Verification
 
-    @MainActor
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
     private func executeTest(cachePolicy: URLRequest.CachePolicy,
                              cacheControl: CacheControl,
-                             shouldReturnCachedResponse: Bool) {
+                             shouldReturnCachedResponse: Bool) async {
         // Given
-        let requestDidFinish = expectation(description: "cache test request did finish")
-        var response: HTTPURLResponse?
+        let requestDidFinish = Completion("cache test request did finish")
+        let response = Capture<HTTPURLResponse?>()
 
         // When
         startRequest(cacheControl: cacheControl, cachePolicy: cachePolicy) { _, responseResponse in
-            response = responseResponse
-            requestDidFinish.fulfill()
+            response.value = responseResponse
+            requestDidFinish.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await requestDidFinish.wait()
 
         // Then
-        verifyResponse(response, forCacheControl: cacheControl, isCachedResponse: shouldReturnCachedResponse)
+        verifyResponse(response.value, forCacheControl: cacheControl, isCachedResponse: shouldReturnCachedResponse)
     }
 
     private func verifyResponse(_ response: HTTPURLResponse?, forCacheControl cacheControl: CacheControl, isCachedResponse: Bool) {
         guard let cachedResponseTimestamp = timestamps[cacheControl] else {
-            XCTFail("cached response timestamp should not be nil")
+            Issue.record("cached response timestamp should not be nil")
             return
         }
 
         if let response, let timestamp = response.headers["Date"] {
             if isCachedResponse {
-                XCTAssertEqual(timestamp, cachedResponseTimestamp, "timestamps should be equal")
+                #expect(timestamp == cachedResponseTimestamp, "timestamps should be equal")
             } else {
-                XCTAssertNotEqual(timestamp, cachedResponseTimestamp, "timestamps should not be equal")
+                #expect(timestamp != cachedResponseTimestamp, "timestamps should not be equal")
             }
         } else {
-            XCTFail("response should not be nil")
+            Issue.record("response should not be nil")
         }
     }
 
     // MARK: - Tests
 
-    func testURLCacheContainsCachedResponsesForAllRequests() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func urlCacheContainsCachedResponsesForAllRequests() {
         // Given
         let publicRequest = requests[.publicControl]!
         let privateRequest = requests[.privateControl]!
@@ -213,73 +241,77 @@ final class CacheTestCase: BaseTestCase {
         let noStoreResponse = urlCache.cachedResponse(for: noStoreRequest)
 
         // Then
-        XCTAssertNotNil(publicResponse, "\(CacheControl.publicControl) response should not be nil")
-        XCTAssertNotNil(privateResponse, "\(CacheControl.privateControl) response should not be nil")
-        XCTAssertNotNil(maxAgeNonExpiredResponse, "\(CacheControl.maxAgeNonExpired) response should not be nil")
-        XCTAssertNotNil(maxAgeExpiredResponse, "\(CacheControl.maxAgeExpired) response should not be nil")
-        XCTAssertNotNil(noCacheResponse, "\(CacheControl.noCache) response should not be nil")
-        XCTAssertNil(noStoreResponse, "\(CacheControl.noStore) response should be nil")
+        #expect(publicResponse != nil, "\(CacheControl.publicControl) response should not be nil")
+        #expect(privateResponse != nil, "\(CacheControl.privateControl) response should not be nil")
+        #expect(maxAgeNonExpiredResponse != nil, "\(CacheControl.maxAgeNonExpired) response should not be nil")
+        #expect(maxAgeExpiredResponse != nil, "\(CacheControl.maxAgeExpired) response should not be nil")
+        #expect(noCacheResponse != nil, "\(CacheControl.noCache) response should not be nil")
+        #expect(noStoreResponse == nil, "\(CacheControl.noStore) response should be nil")
     }
 
-    @MainActor
-    func testDefaultCachePolicy() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func defaultCachePolicy() async {
         let cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
 
-        executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
     }
 
-    @MainActor
-    func testIgnoreLocalCacheDataPolicy() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func ignoreLocalCacheDataPolicy() async {
         let cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData
 
-        executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: false)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
     }
 
-    @MainActor
-    func testUseLocalCacheDataIfExistsOtherwiseLoadFromNetworkPolicy() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func useLocalCacheDataIfExistsOtherwiseLoadFromNetworkPolicy() async {
         let cachePolicy: URLRequest.CachePolicy = .returnCacheDataElseLoad
 
-        executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .noStore, shouldReturnCachedResponse: false)
     }
 
-    @MainActor
-    func testUseLocalCacheDataAndDontLoadFromNetworkPolicy() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func useLocalCacheDataAndDontLoadFromNetworkPolicy() async {
         let cachePolicy: URLRequest.CachePolicy = .returnCacheDataDontLoad
 
-        executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .publicControl, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .privateControl, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeNonExpired, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .maxAgeExpired, shouldReturnCachedResponse: true)
+        await executeTest(cachePolicy: cachePolicy, cacheControl: .noCache, shouldReturnCachedResponse: true)
 
         // Given
-        let requestDidFinish = expectation(description: "don't load from network request finished")
-        var response: HTTPURLResponse?
+        let requestDidFinish = Completion("don't load from network request finished")
+        let response = Capture<HTTPURLResponse?>()
 
         // When
         startRequest(cacheControl: .noStore, cachePolicy: cachePolicy) { _, responseResponse in
-            response = responseResponse
-            requestDidFinish.fulfill()
+            response.value = responseResponse
+            requestDidFinish.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await requestDidFinish.wait()
 
         // Then
-        XCTAssertNil(response, "response should be nil")
+        #expect(response.value == nil, "response should be nil")
     }
 }

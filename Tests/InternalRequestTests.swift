@@ -23,35 +23,42 @@
 //
 
 @testable import Alamofire
-import XCTest
+import Foundation
+import Testing
 
-final class InternalRequestTests: BaseTestCase {
-    @MainActor
-    func testThatMultipleFinishInvocationsDoNotCallSerializersMoreThanOnce() {
+@Suite(.storesInstances)
+struct InternalRequestTests {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func multipleFinishInvocationsDoNotCallSerializersMoreThanOnce() async {
         // Given
-        let session = Session(rootQueue: .main, startRequestsImmediately: false)
-        let expect = expectation(description: "request complete")
-        var response: DataResponse<Data?, AFError>?
+        let session = stored(Session.independent(startRequestsImmediately: false))
+        let expect = Completion("request complete")
+        let response = Capture<DataResponse<Data?, AFError>?>()
 
         // When
         let request = session.request(.get).response { resp in
-            response = resp
-            expect.fulfill()
+            response.value = resp
+            expect.complete()
         }
 
-        for _ in 0..<100 {
-            request.finish()
+        // finish() must be called on the request's underlying queue, which is the session's rootQueue.
+        session.rootQueue.sync {
+            for _ in 0..<100 {
+                request.finish()
+            }
         }
 
-        waitForExpectations(timeout: timeout)
+        await expect.wait()
 
         // Then
-        XCTAssertNotNil(response)
+        #expect(response.value != nil)
     }
 
     #if canImport(zlib) && !os(Android) // Match RequestCompression support.
+    @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func testThatRequestCompressorProperlyCalculatesAdler32() {
+    func requestCompressorProperlyCalculatesAdler32() {
         // Given
         let compressor = DeflateRequestCompressor()
 
@@ -60,11 +67,12 @@ final class InternalRequestTests: BaseTestCase {
 
         // Then
         // From https://en.wikipedia.org/wiki/Adler-32
-        XCTAssertEqual(checksum, 300_286_872)
+        #expect(checksum == 300_286_872)
     }
 
+    @Test
     @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    func testThatRequestCompressorDeflatesDataCorrectly() throws {
+    func requestCompressorDeflatesDataCorrectly() throws {
         // Given
         let compressor = DeflateRequestCompressor()
 
@@ -72,7 +80,7 @@ final class InternalRequestTests: BaseTestCase {
         let compressedData = try compressor.deflate(Data([0]))
 
         // Then
-        XCTAssertEqual(compressedData, Data([0x78, 0x5E, 0x63, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01]))
+        #expect(compressedData == Data([0x78, 0x5E, 0x63, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01]))
     }
     #endif
 }

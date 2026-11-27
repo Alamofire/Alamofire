@@ -29,7 +29,7 @@ extension DataRequest {
     ///
     /// - Parameter closure: Closure to perform before validation.
     /// - Returns:           The `DataRequest`.
-    func validate(performing closure: @escaping () -> Void) -> Self {
+    func validate(performing closure: @escaping @Sendable () -> Void) -> Self {
         validate { _, _, _ in
             closure()
 

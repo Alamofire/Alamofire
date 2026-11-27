@@ -24,9 +24,10 @@
 
 import Alamofire
 import Foundation
-import XCTest
+import Testing
 
-final class RedirectHandlerTestCase: BaseTestCase {
+@Suite(.storesInstances)
+struct RedirectHandlerTestCase {
     // MARK: - Properties
 
     private var redirectEndpoint: Endpoint { .get }
@@ -34,215 +35,226 @@ final class RedirectHandlerTestCase: BaseTestCase {
 
     // MARK: - Tests - Per Request
 
-    @MainActor
-    func testThatRequestRedirectHandlerCanFollowRedirects() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestRedirectHandlerCanFollowRedirects() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should redirect to /get")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should redirect to /get")
 
         // When
         session.request(endpoint).redirect(using: Redirector.follow).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url, redirectEndpoint.url)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.response?.url == redirectEndpoint.url)
+        #expect(response.response?.statusCode == 200)
     }
 
-    @MainActor
-    func testThatRequestRedirectHandlerCanNotFollowRedirects() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestRedirectHandlerCanNotFollowRedirects() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should NOT redirect to /get")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should NOT redirect to /get")
 
         // When
         session.request(endpoint).redirect(using: Redirector.doNotFollow).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data == nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url, endpoint.url)
-        XCTAssertEqual(response?.response?.statusCode, 302)
+        #expect(response.response?.url == endpoint.url)
+        #expect(response.response?.statusCode == 302)
     }
 
-    @MainActor
-    func testThatRequestRedirectHandlerCanModifyRedirects() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestRedirectHandlerCanModifyRedirects() async {
         // Given
-        let session = Session()
+        let session = stored(Session.independent())
         let customRedirectEndpoint = Endpoint.method(.patch)
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should redirect to /patch")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should redirect to /patch")
 
         // When
         let redirector = Redirector(behavior: .modify { _, _, _ in customRedirectEndpoint.urlRequest })
 
         session.request(endpoint).redirect(using: redirector).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url, customRedirectEndpoint.url)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.response?.url == customRedirectEndpoint.url)
+        #expect(response.response?.statusCode == 200)
     }
 
     // MARK: - Tests - Per Session
 
-    @MainActor
-    func testThatSessionRedirectHandlerCanFollowRedirects() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func sessionRedirectHandlerCanFollowRedirects() async {
         // Given
-        let session = Session(redirectHandler: Redirector.follow)
+        let session = stored(Session.independent(redirectHandler: Redirector.follow))
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should redirect to /get")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should redirect to /get")
 
         // When
         session.request(endpoint).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url, redirectEndpoint.url)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.response?.url == redirectEndpoint.url)
+        #expect(response.response?.statusCode == 200)
     }
 
-    @MainActor
-    func testThatSessionRedirectHandlerCanNotFollowRedirects() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func sessionRedirectHandlerCanNotFollowRedirects() async {
         // Given
-        let session = Session(redirectHandler: Redirector.doNotFollow)
+        let session = stored(Session.independent(redirectHandler: Redirector.doNotFollow))
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should NOT redirect to /get")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should NOT redirect to /get")
 
         // When
         session.request(endpoint).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data == nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url, endpoint.url)
-        XCTAssertEqual(response?.response?.statusCode, 302)
+        #expect(response.response?.url == endpoint.url)
+        #expect(response.response?.statusCode == 302)
     }
 
-    @MainActor
-    func testThatSessionRedirectHandlerCanModifyRedirects() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func sessionRedirectHandlerCanModifyRedirects() async {
         // Given
         let customRedirectEndpoint = Endpoint.method(.patch)
 
         let redirector = Redirector(behavior: .modify { _, _, _ in customRedirectEndpoint.urlRequest })
-        let session = Session(redirectHandler: redirector)
+        let session = stored(Session.independent(redirectHandler: redirector))
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should redirect to /patch")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should redirect to /patch")
 
         // When
         session.request(endpoint).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url, customRedirectEndpoint.url)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.response?.url == customRedirectEndpoint.url)
+        #expect(response.response?.statusCode == 200)
     }
 
     // MARK: - Tests - Per Request Prioritization
 
-    @MainActor
-    func testThatRequestRedirectHandlerIsPrioritizedOverSessionRedirectHandler() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func requestRedirectHandlerIsPrioritizedOverSessionRedirectHandler() async {
         // Given
-        let session = Session(redirectHandler: Redirector.doNotFollow)
+        let session = stored(Session.independent(redirectHandler: Redirector.doNotFollow))
 
-        var response: DataResponse<Data?, AFError>?
-        let expectation = expectation(description: "Request should redirect to /get")
+        let response = Capture<DataResponse<Data?, AFError>?>()
+        let expectation = Completion("Request should redirect to /get")
 
         // When
         session.request(endpoint).redirect(using: Redirector.follow).response { resp in
-            response = resp
-            expectation.fulfill()
+            response.value = resp
+            expectation.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await expectation.wait()
 
         // Then
-        XCTAssertNotNil(response?.request)
-        XCTAssertNotNil(response?.response)
-        XCTAssertNotNil(response?.data)
-        XCTAssertNil(response?.error)
+        #expect(response.request != nil)
+        #expect(response.response != nil)
+        #expect(response.data != nil)
+        #expect(response.error == nil)
 
-        XCTAssertEqual(response?.response?.url, redirectEndpoint.url)
-        XCTAssertEqual(response?.response?.statusCode, 200)
+        #expect(response.response?.url == redirectEndpoint.url)
+        #expect(response.response?.statusCode == 200)
     }
 }
 
-final class StaticRedirectHandlerTests: BaseTestCase {
+@Suite
+struct StaticRedirectHandlerTests {
     func takeRedirectHandler(_ handler: any RedirectHandler) {
         _ = handler
     }
 
-    func testThatFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func followRedirectorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeRedirectHandler(.follow)
     }
 
-    func testThatDoNotFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func doNotFollowRedirectorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeRedirectHandler(.doNotFollow)
     }
 
-    func testThatModifyRedirectorCanBeCreatedStaticallyFromProtocol() {
+    @Test
+    func modifyRedirectorCanBeCreatedStaticallyFromProtocol() {
         // Given, When, Then
         takeRedirectHandler(.modify { _, _, _ in nil })
     }

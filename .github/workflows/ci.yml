@@ -8,32 +8,43 @@ on:
     paths:
       - ".github/workflows/**"
       - "Package.swift"
+      - "mise.toml"
       - "Source/**"
       - "Tests/**"
   pull_request:
     paths:
       - ".github/workflows/**"
       - "Package.swift"
+      - "mise.toml"
       - "Source/**"
       - "Tests/**"
 
 concurrency:
   group: ${{ github.ref_name }}
   cancel-in-progress: true
+
+env:
+  # Running every test at once starves the test process on hosted runners, especially with a simulator, until timers
+  # and requests time out. Tests/TestLifetimes.swift reads this limit.
+  ALAMOFIRE_TEST_CONCURRENCY: 4
 jobs:
   macOS:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
+      RESULT: "${{ matrix.name }}.xcresult"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_27.2"
+            runsOn: xcode-27
+            name: "macOS 27, Xcode 27.2, Swift 6.4.2"
           - xcode: "Xcode_27.0"
             runsOn: xcode-27
-            name: "macOS 26, Xcode 27.0, Swift 6.4.0"
+            name: "macOS 27, Xcode 27.0, Swift 6.4.0"
           - xcode: "Xcode_26.6"
             runsOn: macos-26
             name: "macOS 26, Xcode 26.6, Swift 6.3.3"
@@ -52,27 +63,12 @@ jobs:
           - xcode: "Xcode_26.0"
             runsOn: macos-26
             name: "macOS 26, Xcode 26.0, Swift 6.2.0"
-          - xcode: "Xcode_16.4"
-            runsOn: macos-15
-            name: "macOS 15, Xcode 16.4, Swift 6.1.2"
-          - xcode: "Xcode_16.3"
-            runsOn: macos-15
-            name: "macOS 15, Xcode 16.3, Swift 6.1.0"
-          - xcode: "Xcode_16.2"
-            runsOn: macos-15
-            name: "macOS 15, Xcode 16.2, Swift 6.0.3"
-          - xcode: "Xcode_16.1"
-            runsOn: macos-15
-            name: "macOS 15, Xcode 16.1, Swift 6.0.2"
-          - xcode: "Xcode_16.0"
-            runsOn: macos-15
-            name: "macOS 15, Xcode 16.0, Swift 6.0"
     steps:
       - uses: actions/checkout@v7
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+      # Installs mise and the tools in mise.toml. The test tasks start Firewalk themselves.
+      - uses: jdx/mise-action@v5
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" -testPlan macOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: mise run test:macos
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -84,53 +80,42 @@ jobs:
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
+      RESULT: "${{ matrix.name }}.xcresult"
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_27.2"
+            name: "Catalyst 27.2"
+            runsOn: xcode-27
           - xcode: "Xcode_27.0"
             name: "Catalyst 27.0"
             runsOn: xcode-27
           - xcode: "Xcode_26.6"
             name: "Catalyst 26.6"
-            runsOn: self-xcode266
+            runsOn: macos-26
           - xcode: "Xcode_26.4"
             name: "Catalyst 26.4"
-            runsOn: self-xcode264
+            runsOn: macos-26
           - xcode: "Xcode_26.3"
             name: "Catalyst 26.3"
-            runsOn: macOS-26
+            runsOn: macos-26
           - xcode: "Xcode_26.2"
             name: "Catalyst 26.2"
-            runsOn: macOS-26
+            runsOn: macos-26
           - xcode: "Xcode_26.1"
             name: "Catalyst 26.1"
-            runsOn: macOS-26
+            runsOn: macos-26
           - xcode: "Xcode_26.0"
-            name: "Catalyst 26.0 on macOS 15"
-            runsOn: [self-macos15, self-xcode260]
-          - xcode: "Xcode_16.4"
-            name: "Catalyst 16.4"
-            runsOn: macOS-15
-          - xcode: "Xcode_16.3"
-            name: "Catalyst 16.3"
-            runsOn: macOS-15
-          - xcode: "Xcode_16.2"
-            name: "Catalyst 16.2"
-            runsOn: macOS-15
-          - xcode: "Xcode_16.1"
-            name: "Catalyst 16.1"
-            runsOn: macOS-15
-          - xcode: "Xcode_16.0"
-            name: "Catalyst 16.0"
-            runsOn: macOS-15
+            name: "Catalyst 26.0"
+            runsOn: macos-26
     steps:
       - uses: actions/checkout@v7
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+      # Installs mise and the tools in mise.toml. The test tasks start Firewalk themselves.
+      - uses: jdx/mise-action@v5
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" -testPlan iOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: mise run test:catalyst
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -142,73 +127,60 @@ jobs:
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
-    timeout-minutes: 10
+      RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=iPhone 17 Pro"
-          #   name: "iOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: xcode-27
-          - destination: "OS=26.5,name=iPhone 17 Pro"
+          - os: "27.2"
+            device: "iPhone 18 Pro"
+            name: "iOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - os: "27.0"
+            device: "iPhone 18 Pro"
+            name: "iOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: self-xcode270
+          - os: "26.5"
+            device: "iPhone 17 Pro"
             name: "iOS 26.5"
             xcode: "Xcode_26.6"
-            runsOn: self-xcode266
-          - destination: "OS=26.4,name=iPhone 17 Pro"
-            name: "iOS 26.4"
+            runsOn: macos-26
+          - os: "26.4.1"
+            device: "iPhone 17 Pro"
+            name: "iOS 26.4.1"
             xcode: "Xcode_26.4"
-            runsOn: self-xcode264
-          - destination: "OS=26.3.1,name=iPhone 17 Pro"
+            runsOn: macos-26
+          - os: "26.3.1"
+            device: "iPhone 17 Pro"
             name: "iOS 26.3.1"
             xcode: "Xcode_26.3"
             runsOn: self-xcode263
-          - destination: "OS=26.2,name=iPhone 17 Pro"
+          - os: "26.2"
+            device: "iPhone 17 Pro"
             name: "iOS 26.2"
             xcode: "Xcode_26.2"
-            runsOn: macos-26 # Run on GH since hosted runners can't find it.
-          - destination: "OS=26.1,name=iPhone 17 Pro"
+            runsOn: macos-26
+          - os: "26.1"
+            device: "iPhone 17 Pro"
             name: "iOS 26.1"
             xcode: "Xcode_26.1"
             runsOn: self-xcode261
-          - destination: "OS=26.0.1,name=iPhone 17 Pro"
+          - os: "26.0.1"
+            device: "iPhone 17 Pro"
             name: "iOS 26.0"
             xcode: "Xcode_26.1"
             runsOn: self-xcode260
-          - destination: "OS=18.6,name=iPhone 16 Pro"
-            name: "iOS 18.6"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=18.5,name=iPhone 16 Pro"
-            name: "iOS 18.5"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=18.4,name=iPhone 16 Pro"
-            name: "iOS 18.4"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=18.3.1,name=iPhone 16 Pro"
-            name: "iOS 18.3.1"
-            xcode: "Xcode_16.3"
-            runsOn: self-xcode163
-          - destination: "OS=18.2,name=iPhone 16 Pro"
-            name: "iOS 18.2"
-            xcode: "Xcode_16.2"
-            runsOn: self-xcode162
-          - destination: "OS=18.1,name=iPhone 16 Pro"
-            name: "iOS 18.1"
-            xcode: "Xcode_16.1"
-            runsOn: self-xcode161
-          - destination: "OS=18.0,name=iPhone 16 Pro"
-            name: "iOS 18.0"
-            xcode: "Xcode_16.0"
-            runsOn: self-xcode160
     steps:
       - uses: actions/checkout@v7
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+      # Installs mise and the tools in mise.toml. The test tasks start Firewalk themselves.
+      - uses: jdx/mise-action@v5
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan iOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: mise run test:ios "${{ matrix.os }}" "${{ matrix.device }}"
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -220,57 +192,55 @@ jobs:
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
-    timeout-minutes: 10
+      RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=Apple TV 4K (3rd generation)"
-          #   name: "tvOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: self-xcode270
-          - destination: "OS=26.5,name=Apple TV"
+          - os: "27.2"
+            device: "Apple TV 4K (4th generation)"
+            name: "tvOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - os: "27.0"
+            device: "Apple TV 4K (3rd generation)"
+            name: "tvOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: self-xcode270
+          - os: "26.5"
+            device: "Apple TV"
             name: "tvOS 26.5"
             xcode: "Xcode_26.6"
-            runsOn: self-xcode266
-          - destination: "OS=26.4,name=Apple TV"
+            runsOn: macos-26
+          - os: "26.4"
+            device: "Apple TV"
             name: "tvOS 26.4"
             xcode: "Xcode_26.4"
-            runsOn: self-xcode264
-          - destination: "OS=26.2,name=Apple TV"
+            runsOn: macos-26
+          - os: "26.2"
+            device: "Apple TV"
             name: "tvOS 26.2"
             xcode: "Xcode_26.2"
             runsOn: macos-26
-          - destination: "OS=26.1,name=Apple TV"
+          - os: "26.1"
+            device: "Apple TV"
             name: "tvOS 26.1"
             xcode: "Xcode_26.1"
             runsOn: self-xcode261
-          - destination: "OS=26.0,name=Apple TV"
+          - os: "26.0"
+            device: "Apple TV"
             name: "tvOS 26.0"
             xcode: "Xcode_26.0"
             runsOn: self-xcode260
-          - destination: "OS=18.5,name=Apple TV"
-            name: "tvOS 18.5"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=18.2,name=Apple TV"
-            name: "tvOS 18.2"
-            xcode: "Xcode_16.2"
-            runsOn: self-xcode162
-          - destination: "OS=18.1,name=Apple TV"
-            name: "tvOS 18.1"
-            xcode: "Xcode_16.1"
-            runsOn: self-xcode161
-          - destination: "OS=18.0,name=Apple TV"
-            name: "tvOS 18.0"
-            xcode: "Xcode_16.0"
-            runsOn: self-xcode160
     steps:
       - uses: actions/checkout@v7
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+      # Installs mise and the tools in mise.toml. The test tasks start Firewalk themselves.
+      - uses: jdx/mise-action@v5
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan tvOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: mise run test:tvos "${{ matrix.os }}" "${{ matrix.device }}"
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -282,61 +252,55 @@ jobs:
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
-    timeout-minutes: 10
+      RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=Apple Vision Pro"
-          #   name: "visionOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: self-xcode270
-          - destination: "OS=26.5,name=Apple Vision Pro"
+          - os: "27.2"
+            device: "Apple Vision Pro"
+            name: "visionOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - os: "27.0"
+            device: "Apple Vision Pro"
+            name: "visionOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: self-xcode270
+          - os: "26.5"
+            device: "Apple Vision Pro"
             name: "visionOS 26.5"
             xcode: "Xcode_26.6"
             runsOn: self-xcode266
-          - destination: "OS=26.4,name=Apple Vision Pro"
+          - os: "26.4"
+            device: "Apple Vision Pro"
             name: "visionOS 26.4"
             xcode: "Xcode_26.4"
             runsOn: self-xcode264
-          - destination: "OS=26.2,name=Apple Vision Pro"
+          - os: "26.2"
+            device: "Apple Vision Pro"
             name: "visionOS 26.2"
             xcode: "Xcode_26.2"
             runsOn: self-xcode262
-          - destination: "OS=26.1,name=Apple Vision Pro"
+          - os: "26.1"
+            device: "Apple Vision Pro"
             name: "visionOS 26.1"
             xcode: "Xcode_26.1"
             runsOn: self-xcode261
-          - destination: "OS=26.0,name=Apple Vision Pro"
+          - os: "26.0"
+            device: "Apple Vision Pro"
             name: "visionOS 26.0"
             xcode: "Xcode_26.0"
             runsOn: self-xcode260
-          - destination: "OS=2.5,name=Apple Vision Pro"
-            name: "visionOS 2.5"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=2.4,name=Apple Vision Pro"
-            name: "visionOS 2.4"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=2.3,name=Apple Vision Pro"
-            name: "visionOS 2.3"
-            xcode: "Xcode_16.3"
-            runsOn: self-xcode163
-          - destination: "OS=2.1,name=Apple Vision Pro"
-            name: "visionOS 2.1"
-            xcode: "Xcode_16.1"
-            runsOn: self-xcode161
-          - destination: "OS=2.0,name=Apple Vision Pro"
-            name: "visionOS 2.0"
-            xcode: "Xcode_16.0"
-            runsOn: self-xcode160
     steps:
       - uses: actions/checkout@v7
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+      # Installs mise and the tools in mise.toml. The test tasks start Firewalk themselves.
+      - uses: jdx/mise-action@v5
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire visionOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan visionOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: mise run test:visionos "${{ matrix.os }}" "${{ matrix.device }}"
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -348,61 +312,55 @@ jobs:
     runs-on: ${{ matrix.runsOn }}
     env:
       DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
-    timeout-minutes: 10
+      RESULT: "${{ matrix.name }}.xcresult"
+      # Hosted simulators starve the test process more easily than the self-hosted Macs.
+      ALAMOFIRE_TEST_CONCURRENCY: ${{ startsWith(matrix.runsOn, 'self-') && '4' || '2' }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         include:
-          # - destination: "OS=27.0,name=Apple Watch Series 11 (46mm)"
-          #   name: "watchOS 27.0"
-          #   xcode: "Xcode_27.0"
-          #   runsOn: self-xcode270
-          - destination: "OS=26.5,name=Apple Watch Series 11 (46mm)"
+          - os: "27.2"
+            device: "Apple Watch Series 12 (46mm)"
+            name: "watchOS 27.2"
+            xcode: "Xcode_27.2"
+            runsOn: self-xcode272
+          - os: "27.0"
+            device: "Apple Watch Series 12 (46mm)"
+            name: "watchOS 27.0"
+            xcode: "Xcode_27.0"
+            runsOn: self-xcode270
+          - os: "26.5"
+            device: "Apple Watch Series 11 (46mm)"
             name: "watchOS 26.5"
             xcode: "Xcode_26.6"
-            runsOn: self-xcode266
-          - destination: "OS=26.4,name=Apple Watch Series 11 (46mm)"
+            runsOn: macos-26
+          - os: "26.4"
+            device: "Apple Watch Series 11 (46mm)"
             name: "watchOS 26.4"
             xcode: "Xcode_26.4"
-            runsOn: self-xcode264
-          - destination: "OS=26.2,name=Apple Watch Series 11 (46mm)"
+            runsOn: macos-26
+          - os: "26.2"
+            device: "Apple Watch Series 11 (46mm)"
             name: "watchOS 26.2"
             xcode: "Xcode_26.2"
             runsOn: macos-26
-          - destination: "OS=26.1,name=Apple Watch Series 11 (46mm)"
+          - os: "26.1"
+            device: "Apple Watch Series 11 (46mm)"
             name: "watchOS 26.1"
             xcode: "Xcode_26.1"
             runsOn: self-xcode261
-          - destination: "OS=26.0,name=Apple Watch Series 11 (46mm)"
+          - os: "26.0"
+            device: "Apple Watch Series 11 (46mm)"
             name: "watchOS 26.0"
             xcode: "Xcode_26.0"
             runsOn: self-xcode260
-          - destination: "OS=11.5,name=Apple Watch Series 10 (46mm)"
-            name: "watchOS 11.5"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=11.4,name=Apple Watch Series 10 (46mm)"
-            name: "watchOS 11.4"
-            xcode: "Xcode_16.4"
-            runsOn: self-xcode164
-          - destination: "OS=11.2,name=Apple Watch Series 10 (46mm)"
-            name: "watchOS 11.2"
-            xcode: "Xcode_16.2"
-            runsOn: self-xcode162
-          - destination: "OS=11.1,name=Apple Watch Series 10 (46mm)"
-            name: "watchOS 11.1"
-            xcode: "Xcode_16.1"
-            runsOn: self-xcode161
-          - destination: "OS=11.0,name=Apple Watch Series 10 (46mm)"
-            name: "watchOS 11.0"
-            xcode: "Xcode_16.0"
-            runsOn: self-xcode160
     steps:
       - uses: actions/checkout@v7
-      - name: Install Firewalk
-        run: brew update && brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk && firewalk &
+      # Installs mise and the tools in mise.toml. The test tasks start Firewalk themselves.
+      - uses: jdx/mise-action@v5
       - name: ${{ matrix.name }}
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" -destination-timeout 60 -testPlan watchOS -resultBundlePath "${{ matrix.name }}.xcresult" clean test 2>&1 | xcbeautify --renderer github-actions
+        run: mise run test:watchos "${{ matrix.os }}" "${{ matrix.device }}"
       - name: Upload Result File
         uses: actions/upload-artifact@v7
         if: ${{ failure() }}
@@ -419,9 +377,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - xcode: "Xcode_27.2"
+            runsOn: xcode-27
+            name: "macOS 27, SPM 6.4.2 Test"
           - xcode: "Xcode_27.0"
             runsOn: xcode-27
-            name: "macOS 26, SPM 6.4.0 Test"
+            name: "macOS 27, SPM 6.4.0 Test"
           - xcode: "Xcode_26.6"
             runsOn: macos-26
             name: "macOS 26, SPM 6.3.3 Test"
@@ -429,38 +390,23 @@ jobs:
             runsOn: macos-26
             name: "macOS 26, SPM 6.3.0 Test"
           - xcode: "Xcode_26.3"
-            runsOn: macOS-26
+            runsOn: macos-26
             name: "macOS 26, SPM 6.2.4 Test"
           - xcode: "Xcode_26.2"
-            runsOn: macOS-26
+            runsOn: macos-26
             name: "macOS 26, SPM 6.2.3 Test"
           - xcode: "Xcode_26.1"
-            runsOn: macOS-26
+            runsOn: macos-26
             name: "macOS 26, SPM 6.2.1 Test"
           - xcode: "Xcode_26.0"
-            runsOn: macOS-26
+            runsOn: macos-26
             name: "macOS 26, SPM 6.2.0 Test"
-          - xcode: "Xcode_16.4"
-            runsOn: macOS-15
-            name: "macOS 15, SPM 6.1.2 Test"
-          - xcode: "Xcode_16.3"
-            runsOn: macOS-15
-            name: "macOS 15, SPM 6.1.0 Test"
-          - xcode: "Xcode_16.2"
-            runsOn: macOS-15
-            name: "macOS 15, Xcode 16.2, SPM 6.0.2 Test"
-          - xcode: "Xcode_16.1"
-            runsOn: macOS-15
-            name: "macOS 15, SPM 6.0.2 Test"
-          - xcode: "Xcode_16.0"
-            runsOn: macOS-15
-            name: "macOS 15, SPM 6.0 Test"
     steps:
       - uses: actions/checkout@v7
-      - name: Install Firewalk
-        run: brew install alamofire/alamofire/firewalk || brew upgrade alamofire/alamofire/firewalk xcbeautify && firewalk &
+      # Installs mise and the tools in mise.toml. The test tasks start Firewalk themselves.
+      - uses: jdx/mise-action@v5
       - name: Test SPM
-        run: set -o pipefail && swift test -c debug 2>&1 | xcbeautify --renderer github-actions
+        run: mise run test:spm
   Linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -468,30 +414,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: swift:6.0-focal
-          - image: swift:6.0-jammy
-          - image: swift:6.0-rhel-ubi9
-          - image: swift:6.1-focal
-          - image: swift:6.1-jammy
-          - image: swift:6.1-rhel-ubi9
-          - image: swift:6.2-bookworm
-          - image: swift:6.2-jammy
-          - image: swift:6.2-noble
-          - image: swift:6.2-rhel-ubi9
           - image: swift:6.3-bookworm
           - image: swift:6.3-jammy
           - image: swift:6.3-noble
           - image: swift:6.3-rhel-ubi9
-          - image: swiftlang/swift:nightly-focal
+          - image: swift:6.4-bookworm
+          - image: swift:6.4-jammy
+          - image: swift:6.4-noble
+          - image: swift:6.4-resolute
+          - image: swift:6.4-rhel-ubi9
           - image: swiftlang/swift:nightly-jammy
+          - image: swiftlang/swift:nightly-noble
+          - image: swiftlang/swift:nightly-ubuntu-resolute
     container:
       image: ${{ matrix.image }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - name: "Fix @MainActor in Tests"
-        # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
-        run: sed -i'' 's;@MainActor;;g' Tests/*.swift
       - name: ${{ matrix.image }}
         run: swift build --build-tests -c debug
   Android:
@@ -502,9 +441,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v7
-      - name: "Fix @MainActor in Tests"
-        # cannot build tests with @MainActor (added in https://github.com/Alamofire/Alamofire/pull/3920) due to https://github.com/swiftlang/swift-package-manager/pull/5525
-        run: sed -i'' 's;@MainActor;;g' Tests/*.swift
       - name: "Build for Android"
         uses: skiptools/swift-android-action@v2
         with:
@@ -518,24 +454,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # - branch: swift-6.4-release
+          #   tag: 6.4-RELEASE
+          #   name: Windows Swift 6.4
           - branch: swift-6.3-release
             tag: 6.3-RELEASE
             name: Windows Swift 6.3
           - branch: swift-6.2-release
             tag: 6.2-RELEASE
             name: Windows Swift 6.2
-          - branch: swift-6.1-release
-            tag: 6.1-RELEASE
-            name: Windows Swift 6.1
-          # - branch: swift-6.0-release
-          #   tag: 6.0-RELEASE
-          #   name: Windows Swift 6.0
     steps:
       - name: Setup
         uses: compnerd/gha-setup-swift@main
         with:
-          branch: ${{ matrix.branch }}
-          tag: ${{ matrix.tag }}
+          swift-version: ${{ matrix.branch }}
+          swift-build: ${{ matrix.tag }}
       - name: Clone
         uses: actions/checkout@v7
       - name: SPM ${{ matrix.name }}
@@ -550,12 +483,13 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v7
+      - uses: jdx/mise-action@v5
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: swift
       - name: Build macOS
-        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean build | xcbeautify --renderer github-actions
+        run: mise run build:macos
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:

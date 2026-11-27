@@ -23,10 +23,13 @@
 //
 
 import Alamofire
-import XCTest
+import Foundation
+import Testing
 
-class HTTPHeadersTests: BaseTestCase {
-    func testHeadersAreStoreUniquelyByCaseInsensitiveName() {
+@Suite
+struct HTTPHeadersTests {
+    @Test
+    func headersAreStoreUniquelyByCaseInsensitiveName() {
         // Given
         let headersFromDictionaryLiteral: HTTPHeaders = ["key": "", "Key": "", "KEY": ""]
         let headersFromDictionary = HTTPHeaders(["key": "", "Key": "", "KEY": ""])
@@ -42,14 +45,15 @@ class HTTPHeadersTests: BaseTestCase {
         headersCreatedManually.update(name: "KEY", value: "")
 
         // When, Then
-        XCTAssertEqual(headersFromDictionaryLiteral.count, 1)
-        XCTAssertEqual(headersFromDictionary.count, 1)
-        XCTAssertEqual(headersFromArrayLiteral.count, 1)
-        XCTAssertEqual(headersFromArray.count, 1)
-        XCTAssertEqual(headersCreatedManually.count, 1)
+        #expect(headersFromDictionaryLiteral.count == 1)
+        #expect(headersFromDictionary.count == 1)
+        #expect(headersFromArrayLiteral.count == 1)
+        #expect(headersFromArray.count == 1)
+        #expect(headersCreatedManually.count == 1)
     }
 
-    func testHeadersPreserveOrderOfInsertion() {
+    @Test
+    func headersPreserveOrderOfInsertion() {
         // Given
         let headersFromDictionaryLiteral: HTTPHeaders = ["c": "", "a": "", "b": ""]
         // Dictionary initializer can't preserve order.
@@ -71,13 +75,14 @@ class HTTPHeadersTests: BaseTestCase {
         let manualNames = headersCreatedManually.map(\.name)
 
         // Then
-        XCTAssertEqual(dictionaryLiteralNames, ["c", "a", "b"])
-        XCTAssertEqual(arrayLiteralNames, ["b", "a", "c"])
-        XCTAssertEqual(arrayNames, ["b", "a", "c"])
-        XCTAssertEqual(manualNames, ["c", "b", "a"])
+        #expect(dictionaryLiteralNames == ["c", "a", "b"])
+        #expect(arrayLiteralNames == ["b", "a", "c"])
+        #expect(arrayNames == ["b", "a", "c"])
+        #expect(manualNames == ["c", "b", "a"])
     }
 
-    func testHeadersCanBeProperlySortedByName() {
+    @Test
+    func headersCanBeProperlySortedByName() {
         // Given
         let headers: HTTPHeaders = ["c": "", "a": "", "b": ""]
 
@@ -85,11 +90,12 @@ class HTTPHeadersTests: BaseTestCase {
         let sortedHeaders = headers.sorted()
 
         // Then
-        XCTAssertEqual(headers.map(\.name), ["c", "a", "b"])
-        XCTAssertEqual(sortedHeaders.map(\.name), ["a", "b", "c"])
+        #expect(headers.map(\.name) == ["c", "a", "b"])
+        #expect(sortedHeaders.map(\.name) == ["a", "b", "c"])
     }
 
-    func testHeadersCanInsensitivelyGetAndSetThroughSubscript() {
+    @Test
+    func headersCanInsensitivelyGetAndSetThroughSubscript() {
         // Given
         var headers: HTTPHeaders = ["c": "", "a": "", "b": ""]
 
@@ -99,12 +105,13 @@ class HTTPHeadersTests: BaseTestCase {
         headers["b"] = "b"
 
         // Then
-        XCTAssertEqual(headers["c"], "c")
-        XCTAssertEqual(headers.map(\.value), ["c", "a", "b"])
-        XCTAssertEqual(headers.count, 3)
+        #expect(headers["c"] == "c")
+        #expect(headers.map(\.value) == ["c", "a", "b"])
+        #expect(headers.count == 3)
     }
 
-    func testHeadersPreserveLastFormAndValueOfAName() {
+    @Test
+    func headersPreserveLastFormAndValueOfAName() {
         // Given
         var headers: HTTPHeaders = ["c": "a"]
 
@@ -112,10 +119,11 @@ class HTTPHeadersTests: BaseTestCase {
         headers["C"] = "c"
 
         // Then
-        XCTAssertEqual(headers.description, "C: c")
+        #expect(headers.description == "C: c")
     }
 
-    func testHeadersHaveUnsortedDescription() {
+    @Test
+    func headersHaveUnsortedDescription() {
         // Given
         let headers: HTTPHeaders = ["c": "c", "a": "a", "b": "b"]
 
@@ -128,6 +136,6 @@ class HTTPHeadersTests: BaseTestCase {
         """
 
         // Then
-        XCTAssertEqual(description, expectedDescription)
+        #expect(description == expectedDescription)
     }
 }

@@ -24,136 +24,142 @@
 
 @testable import Alamofire
 import Foundation
-import XCTest
+import Testing
 
-final class StatusCodeValidationTestCase: BaseTestCase {
-    @MainActor
-    func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
+@Suite(.storesInstances)
+struct StatusCodeValidationTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithAcceptableStatusCodeResponseSucceeds() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.status(200)
 
-        let expectation1 = expectation(description: "request should return 200 status code")
-        let expectation2 = expectation(description: "download should return 200 status code")
+        let expectation1 = Completion("request should return 200 status code")
+        let expectation2 = Completion("download should return 200 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(statusCode: 200..<300)
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(statusCode: 200..<300)
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithUnacceptableStatusCodeResponseFails() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.status(404)
 
-        let expectation1 = expectation(description: "request should return 404 status code")
-        let expectation2 = expectation(description: "download should return 404 status code")
+        let expectation1 = Completion("request should return 404 status code")
+        let expectation2 = Completion("download should return 404 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(statusCode: [200])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(statusCode: [200])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
-            XCTAssertEqual(error?.responseCode, 404)
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableStatusCode == true)
+            #expect(error?.responseCode == 404)
         }
     }
 
-    @MainActor
-    func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithNoAcceptableStatusCodesFails() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.status(201)
 
-        let expectation1 = expectation(description: "request should return 201 status code")
-        let expectation2 = expectation(description: "download should return 201 status code")
+        let expectation1 = Completion("request should return 201 status code")
+        let expectation2 = Completion("download should return 201 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(statusCode: [])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(statusCode: [])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
-            XCTAssertEqual(error?.responseCode, 201)
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableStatusCode == true)
+            #expect(error?.responseCode == 201)
         }
     }
 }
 
 // MARK: -
 
-final class ContentTypeValidationTestCase: BaseTestCase {
-    @MainActor
-    func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
+@Suite(.storesInstances)
+struct ContentTypeValidationTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithAcceptableContentTypeResponseSucceeds() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.ip
 
-        let expectation1 = expectation(description: "request should succeed and return ip")
-        let expectation2 = expectation(description: "download should succeed and return ip")
+        let expectation1 = Completion("request should succeed and return ip")
+        let expectation2 = Completion("download should succeed and return ip")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
@@ -161,8 +167,8 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             .validate(contentType: ["application/json; charset=utf-8"])
             .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
@@ -170,28 +176,29 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             .validate(contentType: ["application/json; charset=utf-8"])
             .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.ip
 
-        let expectation1 = expectation(description: "request should succeed and return ip")
-        let expectation2 = expectation(description: "download should succeed and return ip")
+        let expectation1 = Completion("request should succeed and return ip")
+        let expectation2 = Completion("download should succeed and return ip")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
@@ -199,8 +206,8 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
@@ -208,68 +215,70 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithUnacceptableContentTypeResponseFails() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.xml
 
-        let expectation1 = expectation(description: "request should succeed and return xml")
-        let expectation2 = expectation(description: "download should succeed and return xml")
+        let expectation1 = Completion("request should succeed and return xml")
+        let expectation2 = Completion("download should succeed and return xml")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableContentType, true)
-            XCTAssertEqual(error?.responseContentType, "application/xml")
-            XCTAssertEqual(error?.acceptableContentTypes?.first, "application/octet-stream")
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableContentType == true)
+            #expect(error?.responseContentType == "application/xml")
+            #expect(error?.acceptableContentTypes?.first == "application/octet-stream")
         }
     }
 
-    @MainActor
-    func testThatContentTypeValidationFailureSortsPossibleContentTypes() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func contentTypeValidationFailureSortsPossibleContentTypes() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.xml
 
-        let requestDidCompleteExpectation = expectation(description: "request should succeed and return xml")
-        let downloadDidCompleteExpectation = expectation(description: "download should succeed and return xml")
+        let requestDidCompleteExpectation = Completion("request should succeed and return xml")
+        let downloadDidCompleteExpectation = Completion("download should succeed and return xml")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         let acceptableContentTypes = [ // Sorted in a random order, not alphabetically
             "application/octet-stream",
@@ -292,22 +301,22 @@ final class ContentTypeValidationTestCase: BaseTestCase {
         session.request(endpoint)
             .validate(contentType: acceptableContentTypes)
             .response { resp in
-                requestError = resp.error
-                requestDidCompleteExpectation.fulfill()
+                requestError.value = resp.error
+                requestDidCompleteExpectation.complete()
             }
 
         session.download(endpoint)
             .validate(contentType: acceptableContentTypes)
             .response { resp in
-                downloadError = resp.error
-                downloadDidCompleteExpectation.fulfill()
+                downloadError.value = resp.error
+                downloadDidCompleteExpectation.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [requestDidCompleteExpectation, downloadDidCompleteExpectation])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
         let expectedAcceptableContentTypes = [ // Sorted in a specific order, alphabetically
             "application/octet-stream",
@@ -326,379 +335,391 @@ final class ContentTypeValidationTestCase: BaseTestCase {
             "image/x-xbitmap"
         ]
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableContentType, true)
-            XCTAssertEqual(error?.responseContentType, "application/xml")
-            XCTAssertEqual(error?.acceptableContentTypes, expectedAcceptableContentTypes)
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableContentType == true)
+            #expect(error?.responseContentType == "application/xml")
+            #expect(error?.acceptableContentTypes == expectedAcceptableContentTypes)
         }
     }
 
-    @MainActor
-    func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithNoAcceptableContentTypeResponseFails() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.xml
 
-        let expectation1 = expectation(description: "request should succeed and return xml")
-        let expectation2 = expectation(description: "download should succeed and return xml")
+        let expectation1 = Completion("request should succeed and return xml")
+        let expectation2 = Completion("download should succeed and return xml")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(contentType: [])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(contentType: [])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableContentType, true)
-            XCTAssertEqual(error?.responseContentType, "application/xml")
-            XCTAssertEqual(error?.acceptableContentTypes?.isEmpty, true)
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableContentType == true)
+            #expect(error?.responseContentType == "application/xml")
+            #expect(error?.acceptableContentTypes?.isEmpty == true)
         }
     }
 
-    @MainActor
-    func testThatValidationForRequestWithNoAcceptableContentTypeResponseSucceedsWhenNoDataIsReturned() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithNoAcceptableContentTypeResponseSucceedsWhenNoDataIsReturned() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.status(204)
 
-        let expectation1 = expectation(description: "request should succeed and return no data")
-        let expectation2 = expectation(description: "download should succeed and return no data")
+        let expectation1 = Completion("request should succeed and return no data")
+        let expectation2 = Completion("download should succeed and return no data")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(contentType: [])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(contentType: [])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 }
 
 // MARK: -
 
-final class MultipleValidationTestCase: BaseTestCase {
-    @MainActor
-    func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
+@Suite(.storesInstances)
+struct MultipleValidationTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.ip
 
-        let expectation1 = expectation(description: "request should succeed and return ip")
-        let expectation2 = expectation(description: "request should succeed and return ip")
+        let expectation1 = Completion("request should succeed and return ip")
+        let expectation2 = Completion("request should succeed and return ip")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.xml
 
-        let expectation1 = expectation(description: "request should succeed and return xml")
-        let expectation2 = expectation(description: "download should succeed and return xml")
+        let expectation1 = Completion("request should succeed and return xml")
+        let expectation2 = Completion("download should succeed and return xml")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
-            XCTAssertEqual(error?.responseCode, 200)
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableStatusCode == true)
+            #expect(error?.responseCode == 200)
         }
     }
 
-    @MainActor
-    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithContentTypeError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithContentTypeError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint.xml
 
-        let expectation1 = expectation(description: "request should succeed and return xml")
-        let expectation2 = expectation(description: "download should succeed and return xml")
+        let expectation1 = Completion("request should succeed and return xml")
+        let expectation2 = Completion("download should succeed and return xml")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableContentType, true)
-            XCTAssertEqual(error?.responseContentType, "application/xml")
-            XCTAssertEqual(error?.acceptableContentTypes?.first, "application/octet-stream")
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableContentType == true)
+            #expect(error?.responseContentType == "application/xml")
+            #expect(error?.acceptableContentTypes?.first == "application/octet-stream")
         }
     }
 }
 
 // MARK: -
 
-final class AutomaticValidationTestCase: BaseTestCase {
-    @MainActor
-    func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
+@Suite(.storesInstances)
+struct AutomaticValidationTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/json")])
 
-        let expectation1 = expectation(description: "request should succeed and return ip")
-        let expectation2 = expectation(description: "download should succeed and return ip")
+        let expectation1 = Completion("request should succeed and return ip")
+        let expectation2 = Completion("download should succeed and return ip")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(urlRequest).validate().response { resp in
-            requestError = resp.error
-            expectation1.fulfill()
+            requestError.value = resp.error
+            expectation1.complete()
         }
 
         session.download(urlRequest).validate().response { resp in
-            downloadError = resp.error
-            expectation2.fulfill()
+            downloadError.value = resp.error
+            expectation2.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithUnacceptableStatusCodeResponseFails() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let request = Endpoint.status(404)
 
-        let expectation1 = expectation(description: "request should return 404 status code")
-        let expectation2 = expectation(description: "download should return 404 status code")
+        let expectation1 = Completion("request should return 404 status code")
+        let expectation2 = Completion("download should return 404 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(request)
             .validate()
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(request)
             .validate()
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
-            XCTAssertEqual(error?.responseCode, 404)
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableStatusCode == true)
+            #expect(error?.responseCode == 404)
         }
     }
 
-    @MainActor
-    func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlRequest = Endpoint.ip.modifying(\.headers, to: [.accept("application/*")])
 
-        let expectation1 = expectation(description: "request should succeed and return ip")
-        let expectation2 = expectation(description: "download should succeed and return ip")
+        let expectation1 = Completion("request should succeed and return ip")
+        let expectation2 = Completion("download should succeed and return ip")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(urlRequest).validate().response { resp in
-            requestError = resp.error
-            expectation1.fulfill()
+            requestError.value = resp.error
+            expectation1.complete()
         }
 
         session.download(urlRequest).validate().response { resp in
-            downloadError = resp.error
-            expectation2.fulfill()
+            downloadError.value = resp.error
+            expectation2.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithAcceptableComplexContentTypeResponseSucceeds() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         var urlRequest = Endpoint.xml.urlRequest
 
         let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
         urlRequest.headers["Accept"] = headerValue
 
-        let expectation1 = expectation(description: "request should succeed and return xml")
-        let expectation2 = expectation(description: "request should succeed and return xml")
+        let expectation1 = Completion("request should succeed and return xml")
+        let expectation2 = Completion("request should succeed and return xml")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(urlRequest).validate().response { resp in
-            requestError = resp.error
-            expectation1.fulfill()
+            requestError.value = resp.error
+            expectation1.complete()
         }
 
         session.download(urlRequest).validate().response { resp in
-            downloadError = resp.error
-            expectation2.fulfill()
+            downloadError.value = resp.error
+            expectation2.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationForRequestWithUnacceptableContentTypeResponseFails() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let urlRequest = Endpoint.xml.modifying(\.headers, to: [.accept("application/json")])
 
-        let expectation1 = expectation(description: "request should succeed and return xml")
-        let expectation2 = expectation(description: "download should succeed and return xml")
+        let expectation1 = Completion("request should succeed and return xml")
+        let expectation2 = Completion("download should succeed and return xml")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(urlRequest).validate().response { resp in
-            requestError = resp.error
-            expectation1.fulfill()
+            requestError.value = resp.error
+            expectation1.complete()
         }
 
         session.download(urlRequest).validate().response { resp in
-            downloadError = resp.error
-            expectation2.fulfill()
+            downloadError.value = resp.error
+            expectation2.complete()
         }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNotNil(requestError)
-        XCTAssertNotNil(downloadError)
+        #expect(requestError.value != nil)
+        #expect(downloadError.value != nil)
 
-        for error in [requestError, downloadError] {
-            XCTAssertEqual(error?.isUnacceptableContentType, true)
-            XCTAssertEqual(error?.responseContentType, "application/xml")
-            XCTAssertEqual(error?.acceptableContentTypes?.first, "application/json")
+        for error in [requestError.value, downloadError.value] {
+            #expect(error?.isUnacceptableContentType == true)
+            #expect(error?.responseContentType == "application/xml")
+            #expect(error?.acceptableContentTypes?.first == "application/json")
         }
     }
 }
@@ -743,18 +764,20 @@ extension DownloadRequest {
 
 // MARK: -
 
-final class CustomValidationTestCase: BaseTestCase {
-    @MainActor
-    func testThatCustomValidationClosureHasAccessToServerResponseData() {
+@Suite(.storesInstances)
+struct CustomValidationTestCase {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func customValidationClosureHasAccessToServerResponseData() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint()
 
-        let expectation1 = expectation(description: "request should return 200 status code")
-        let expectation2 = expectation(description: "download should return 200 status code")
+        let expectation1 = Completion("request should return 200 status code")
+        let expectation2 = Completion("download should return 200 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
@@ -763,8 +786,8 @@ final class CustomValidationTestCase: BaseTestCase {
                 return .success(())
             }
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
@@ -779,120 +802,123 @@ final class CustomValidationTestCase: BaseTestCase {
                 }
             }
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatCustomValidationCanThrowCustomError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func customValidationCanThrowCustomError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint()
 
-        let expectation1 = expectation(description: "request should return 200 status code")
-        let expectation2 = expectation(description: "download should return 200 status code")
+        let expectation1 = Completion("request should return 200 status code")
+        let expectation2 = Completion("download should return 200 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate { _, _, _ in .failure(ValidationError.missingData) }
             .validate { _, _, _ in .failure(ValidationError.missingFile) } // should be ignored
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate { _, _, _ in .failure(ValidationError.missingFile) }
             .validate { _, _, _ in .failure(ValidationError.fileReadFailed) } // should be ignored
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertEqual(requestError?.asAFError?.underlyingError as? ValidationError, .missingData)
-        XCTAssertEqual(downloadError?.asAFError?.underlyingError as? ValidationError, .missingFile)
+        #expect(requestError.asAFError?.underlyingError as? ValidationError == .missingData)
+        #expect(downloadError.asAFError?.underlyingError as? ValidationError == .missingFile)
     }
 
-    @MainActor
-    func testThatValidationExtensionHasAccessToServerResponseData() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationExtensionHasAccessToServerResponseData() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint()
 
-        let expectation1 = expectation(description: "request should return 200 status code")
-        let expectation2 = expectation(description: "download should return 200 status code")
+        let expectation1 = Completion("request should return 200 status code")
+        let expectation2 = Completion("download should return 200 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validateDataExists()
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validateDataExists()
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertNil(requestError)
-        XCTAssertNil(downloadError)
+        #expect(requestError.value == nil)
+        #expect(downloadError.value == nil)
     }
 
-    @MainActor
-    func testThatValidationExtensionCanThrowCustomError() {
+    @Test
+    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+    func validationExtensionCanThrowCustomError() async {
         // Given
-        let session = stored(Session())
+        let session = stored(Session.independent())
         let endpoint = Endpoint()
 
-        let expectation1 = expectation(description: "request should return 200 status code")
-        let expectation2 = expectation(description: "download should return 200 status code")
+        let expectation1 = Completion("request should return 200 status code")
+        let expectation2 = Completion("download should return 200 status code")
 
-        var requestError: AFError?
-        var downloadError: AFError?
+        let requestError = Capture<AFError?>()
+        let downloadError = Capture<AFError?>()
 
         // When
         session.request(endpoint)
             .validate(with: ValidationError.missingData)
             .validate(with: ValidationError.missingFile) // should be ignored
             .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
+                requestError.value = resp.error
+                expectation1.complete()
             }
 
         session.download(endpoint)
             .validate(with: ValidationError.missingFile)
             .validate(with: ValidationError.fileReadFailed) // should be ignored
             .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
+                downloadError.value = resp.error
+                expectation2.complete()
             }
 
-        waitForExpectations(timeout: timeout)
+        await wait(for: [expectation1, expectation2])
 
         // Then
-        XCTAssertEqual(requestError?.asAFError?.underlyingError as? ValidationError, .missingData)
-        XCTAssertEqual(downloadError?.asAFError?.underlyingError as? ValidationError, .missingFile)
+        #expect(requestError.asAFError?.underlyingError as? ValidationError == .missingData)
+        #expect(downloadError.asAFError?.underlyingError as? ValidationError == .missingFile)
     }
 }

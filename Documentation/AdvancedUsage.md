@@ -736,7 +736,7 @@ class OAuthAuthenticator: Authenticator {
 
     func refresh(_ credential: OAuthCredential,
                  for session: Session,
-                 completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
+                 completion: @escaping @Sendable (Result<OAuthCredential, any Error>) -> Void) {
         // Refresh the credential using the refresh token...then call completion with the new credential.
         //
         // The new credential will automatically be stored within the `AuthenticationInterceptor`. Future requests will
