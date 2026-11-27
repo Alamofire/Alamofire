@@ -355,7 +355,7 @@ extension AFError {
         return false
     }
 
-    /// Returns whether the instance is `createURLRequestFailed`. When `true`, the `underlyingError` property will
+    /// Returns whether the instance is `sessionTaskFailed`. When `true`, the `underlyingError` property will
     /// contain the associated value.
     public var isSessionTaskError: Bool {
         if case .sessionTaskFailed = self { return true }
