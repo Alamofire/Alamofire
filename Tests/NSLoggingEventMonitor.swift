@@ -223,4 +223,56 @@ public final class NSLoggingEventMonitor: EventMonitor {
     public func request(_ request: DownloadRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, temporaryURL: URL?, destinationURL: URL?, withResult result: Request.ValidationResult) {
         NSLog("%@", "Request: \(request), didValidateRequestWithResult: \(result)")
     }
+
+    #if canImport(Darwin) && !canImport(FoundationNetworking)
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+        NSLog("%@", "URLSession: \(session), webSocketTask: \(webSocketTask), didOpenWithProtocol: \(`protocol` ?? "None")")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func urlSession(_ session: URLSession,
+                           webSocketTask: URLSessionWebSocketTask,
+                           didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+                           reason: Data?) {
+        NSLog("%@", "URLSession: \(session), webSocketTask: \(webSocketTask), didCloseWith: \(closeCode), reason: \(String(describing: reason))")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didConnectWithProtocol protocol: String?) {
+        NSLog("%@", "Request: \(request), didConnectWithProtocol: \(`protocol` ?? "None")")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didDisconnectWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        NSLog("%@", "Request: \(request), didDisconnectWithCloseCode: \(closeCode), reason: \(String(describing: reason))")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didCloseWithCloseCode closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        NSLog("%@", "Request: \(request), didCloseWithCloseCode: \(closeCode), reason: \(String(describing: reason))")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didReceiveMessage message: URLSessionWebSocketTask.Message) {
+        NSLog("%@", "Request: \(request), didReceiveMessage: \(message)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request<Success: Sendable, Failure: Error>(_ request: WebSocketRequest, didReceiveEvent event: WebSocketRequest.Event<Success, Failure>) {
+        NSLog("%@", "Request: \(request), didReceiveEvent: \(event)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request(_ request: WebSocketRequest, didSendMessage message: URLSessionWebSocketTask.Message) {
+        NSLog("%@", "Request: \(request), didSendMessage: \(message)")
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func request<Value: Sendable, Failure: Error>(_ request: WebSocketRequest,
+                                                         didFailToSendMessage value: Value,
+                                                         dueToError error: WebSocketRequest.SendError<Failure>) {
+        NSLog("%@", "Request: \(request), didFailToSendMessage: \(value), dueToError: \(error)")
+    }
+    #endif
 }

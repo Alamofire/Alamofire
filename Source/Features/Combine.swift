@@ -123,13 +123,13 @@ public struct DataResponsePublisher<Value: Sendable>: Publisher {
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension DataResponsePublisher where Value == Data? {
     /// Creates an instance which publishes a `DataResponse<Data?, AFError>` value without serialization.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public init(_ request: DataRequest, queue: DispatchQueue) {
         self.request = request
         responseHandler = { request.response(queue: queue, completionHandler: $0) }
     }
 }
 
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension DataRequest {
     /// Creates a `DataResponsePublisher` for this instance using the given `ResponseSerializer` and `DispatchQueue`.
     ///
@@ -138,7 +138,6 @@ extension DataRequest {
     ///   - queue:      `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
     ///
     /// - Returns:      The `DataResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishResponse<Serializer: ResponseSerializer, T>(using serializer: Serializer, on queue: DispatchQueue = .main) -> DataResponsePublisher<T>
         where Serializer.SerializedObject == T {
         DataResponsePublisher(self, queue: queue, serializer: serializer)
@@ -156,7 +155,6 @@ extension DataRequest {
     ///   - emptyRequestMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless of
     ///                          status code. `[.head]` by default.
     /// - Returns:               The `DataResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishData(queue: DispatchQueue = .main,
                             preprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                             emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
@@ -183,7 +181,6 @@ extension DataRequest {
     ///                          status code. `[.head]` by default.
     ///
     /// - Returns:               The `DataResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishString(queue: DispatchQueue = .main,
                               preprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                               encoding: String.Encoding? = nil,
@@ -197,7 +194,6 @@ extension DataRequest {
     }
 
     @_disfavoredOverload
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     @available(*, deprecated, message: "Renamed publishDecodable(type:queue:preprocessor:decoder:emptyResponseCodes:emptyRequestMethods).")
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
@@ -228,7 +224,6 @@ extension DataRequest {
     ///                          status code. `[.head]` by default.
     ///
     /// - Returns:               The `DataResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
                                                preprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
@@ -247,7 +242,6 @@ extension DataRequest {
     ///   - queue: `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
     ///
     /// - Returns: The `DataResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishUnserialized(queue: DispatchQueue = .main) -> DataResponsePublisher<Data?> {
         DataResponsePublisher(self, queue: queue)
     }
@@ -342,6 +336,7 @@ public struct DataStreamPublisher<Value: Sendable>: Publisher {
     }
 }
 
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension DataStreamRequest {
     /// Creates a `DataStreamPublisher` for this instance using the given `DataStreamSerializer` and `DispatchQueue`.
     ///
@@ -349,7 +344,6 @@ extension DataStreamRequest {
     ///   - serializer: `DataStreamSerializer` used to serialize the streamed `Data`.
     ///   - queue:      `DispatchQueue` on which the `DataRequest.Stream` values will be published. `.main` by default.
     /// - Returns:      The `DataStreamPublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishStream<Serializer: DataStreamSerializer>(using serializer: Serializer,
                                                                 on queue: DispatchQueue = .main) -> DataStreamPublisher<Serializer.SerializedObject> {
         DataStreamPublisher(self, queue: queue, serializer: serializer)
@@ -361,7 +355,6 @@ extension DataStreamRequest {
     /// - Parameters:
     ///   - queue:      `DispatchQueue` on which the `DataRequest.Stream` values will be published. `.main` by default.
     /// - Returns:      The `DataStreamPublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishData(queue: DispatchQueue = .main) -> DataStreamPublisher<Data> {
         publishStream(using: PassthroughStreamSerializer(), on: queue)
     }
@@ -372,7 +365,6 @@ extension DataStreamRequest {
     /// - Parameters:
     ///   - queue:      `DispatchQueue` on which the `DataRequest.Stream` values will be published. `.main` by default.
     /// - Returns:      The `DataStreamPublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishString(queue: DispatchQueue = .main) -> DataStreamPublisher<String> {
         publishStream(using: StringStreamSerializer(), on: queue)
     }
@@ -387,7 +379,6 @@ extension DataStreamRequest {
     ///   - preprocessor: `DataPreprocessor` which filters incoming stream `Data` before serialization.
     ///                   `PassthroughPreprocessor()` by default.
     /// - Returns:        The `DataStreamPublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
                                                decoder: any DataDecoder = JSONDecoder(),
@@ -489,6 +480,7 @@ public struct DownloadResponsePublisher<Value: Sendable>: Publisher {
     }
 }
 
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension DownloadRequest {
     /// Creates a `DownloadResponsePublisher` for this instance using the given `ResponseSerializer` and `DispatchQueue`.
     ///
@@ -497,7 +489,6 @@ extension DownloadRequest {
     ///   - queue:      `DispatchQueue` on which the `DownloadResponse` will be published.`.main` by default.
     ///
     /// - Returns:      The `DownloadResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishResponse<Serializer: ResponseSerializer, T>(using serializer: Serializer, on queue: DispatchQueue = .main) -> DownloadResponsePublisher<T>
         where Serializer.SerializedObject == T {
         DownloadResponsePublisher(self, queue: queue, serializer: serializer)
@@ -511,7 +502,6 @@ extension DownloadRequest {
     ///   - queue:      `DispatchQueue` on which the `DownloadResponse` will be published.`.main` by default.
     ///
     /// - Returns:      The `DownloadResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishResponse<Serializer: DownloadResponseSerializerProtocol, T>(using serializer: Serializer, on queue: DispatchQueue = .main) -> DownloadResponsePublisher<T>
         where Serializer.SerializedObject == T {
         DownloadResponsePublisher(self, queue: queue, serializer: serializer)
@@ -523,7 +513,6 @@ extension DownloadRequest {
     /// - Parameter queue: `DispatchQueue` on which the `DownloadResponse` will be published. `.main` by default.
     ///
     /// - Returns:         The `DownloadResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishURL(queue: DispatchQueue = .main) -> DownloadResponsePublisher<URL> {
         publishResponse(using: URLResponseSerializer(), on: queue)
     }
@@ -541,7 +530,6 @@ extension DownloadRequest {
     ///                          status code. `[.head]` by default.
     ///
     /// - Returns:               The `DownloadResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishData(queue: DispatchQueue = .main,
                             preprocessor: any DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                             emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
@@ -568,7 +556,6 @@ extension DownloadRequest {
     ///                          status code. `[.head]` by default.
     ///
     /// - Returns:               The `DownloadResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishString(queue: DispatchQueue = .main,
                               preprocessor: any DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                               encoding: String.Encoding? = nil,
@@ -582,7 +569,6 @@ extension DownloadRequest {
     }
 
     @_disfavoredOverload
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     @available(*, deprecated, message: "Renamed publishDecodable(type:queue:preprocessor:decoder:emptyResponseCodes:emptyRequestMethods).")
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
@@ -612,7 +598,6 @@ extension DownloadRequest {
     ///                          of status code. `[.head]` by default.
     ///
     /// - Returns:               The `DownloadResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
                                                preprocessor: any DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
@@ -630,20 +615,19 @@ extension DownloadRequest {
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension DownloadResponsePublisher where Value == URL? {
     /// Creates an instance which publishes a `DownloadResponse<URL?, AFError>` value without serialization.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public init(_ request: DownloadRequest, queue: DispatchQueue) {
         self.request = request
         responseHandler = { request.response(queue: queue, completionHandler: $0) }
     }
 }
 
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension DownloadRequest {
     /// Creates a `DownloadResponsePublisher` for this instance which does not serialize the response before publishing.
     ///
     /// - Parameter queue: `DispatchQueue` on which the `DownloadResponse` will be published. `.main` by default.
     ///
     /// - Returns:         The `DownloadResponsePublisher`.
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishUnserialized(on queue: DispatchQueue = .main) -> DownloadResponsePublisher<URL?> {
         DownloadResponsePublisher(self, queue: queue)
     }

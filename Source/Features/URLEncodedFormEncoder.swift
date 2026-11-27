@@ -616,17 +616,15 @@ enum URLEncodedFormComponent {
             } else {
                 context = .array([child])
             }
-        } else {
-            if var object = context.object {
-                if let index = object.firstIndex(where: { $0.key == end.stringValue }) {
-                    object[index] = (key: end.stringValue, value: child)
-                } else {
-                    object.append((key: end.stringValue, value: child))
-                }
-                context = .object(object)
+        } else if var object = context.object {
+            if let index = object.firstIndex(where: { $0.key == end.stringValue }) {
+                object[index] = (key: end.stringValue, value: child)
             } else {
-                context = .object([(key: end.stringValue, value: child)])
+                object.append((key: end.stringValue, value: child))
             }
+            context = .object(object)
+        } else {
+            context = .object([(key: end.stringValue, value: child)])
         }
     }
 }

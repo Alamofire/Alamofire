@@ -350,34 +350,34 @@ final class SessionTestCase: BaseTestCase {
             let osName: String = {
                 #if os(iOS)
                 #if targetEnvironment(macCatalyst)
-                return "macOS(Catalyst)"
+                "macOS(Catalyst)"
                 #else
-                return "iOS"
+                "iOS"
                 #endif
                 #elseif os(watchOS)
-                return "watchOS"
+                "watchOS"
                 #elseif os(tvOS)
-                return "tvOS"
+                "tvOS"
                 #elseif os(macOS)
                 #if targetEnvironment(macCatalyst)
-                return "macOS(Catalyst)"
+                "macOS(Catalyst)"
                 #else
-                return "macOS"
+                "macOS"
                 #endif
                 #elseif os(visionOS)
-                return "visionOS"
+                "visionOS"
                 #elseif os(Linux)
-                return "Linux"
+                "Linux"
                 #elseif os(Windows)
-                return "Windows"
+                "Windows"
                 #elseif os(Android)
-                return "Android"
+                "Android"
                 #elseif os(WASI)
-                return "WASI"
+                "WASI"
                 #elseif os(FreeBSD)
-                return "FreeBSD"
+                "FreeBSD"
                 #else
-                return "Unknown"
+                "Unknown"
                 #endif
             }()
 
